@@ -90,7 +90,7 @@ class Grafana < Formula
 
   test do
     system bin/"grafana-server", "-v"
-    Dir.mktmpdir do |tdir|
+    Dir.mktmpdir("grafana", HOMEBREW_TEMP) do |tdir|
       Dir.chdir(pkgshare)
       logdir = File.join(tdir, "log")
       datadir = File.join(tdir, "data")
