@@ -100,18 +100,17 @@ class Grafana < Formula
       [logdir, datadir, plugdir].each do |d|
         Dir.mkdir(d)
       end
- 
-      lines = []
+
       r, w, pid = nil
       if v >= 1.9
-	r, w = IO.pipe
-	pid = spawn(bin/"grafana-server", "cfg:default.paths.logs=#{logdir}", "cfg:default.paths.data=#{datadir}", "cfg:default.paths.plugins=#{plugdir}", :err => w)
+        r, w = IO.pipe
+        pid = spawn(bin/"grafana-server", "cfg:default.paths.logs=#{logdir}", "cfg:default.paths.data=#{datadir}", "cfg:default.paths.plugins=#{plugdir}", :err => w)
       else
-	require 'pty'
-	res = PTY.spawn(bin/"grafana-server", "cfg:default.paths.logs=#{logdir}", "cfg:default.paths.data=#{datadir}", "cfg:default.paths.plugins=#{plugdir}")
-	r = res[0]
-	w = res[1]
-	pid = res[2]
+        require "pty"
+        res = PTY.spawn(bin/"grafana-server", "cfg:default.paths.logs=#{logdir}", "cfg:default.paths.data=#{datadir}", "cfg:default.paths.plugins=#{plugdir}")
+        r = res[0]
+        w = res[1]
+        pid = res[2]
       end
       sleep 3 # Let it have a chance to actually start up
       Process.kill("TERM", pid)
