@@ -1,6 +1,4 @@
-require "language/go"
 require "language/node"
-require "open3"
 
 class Grafana < Formula
   desc "Gorgeous metric visualizations and dashboards for timeseries databases."
@@ -14,17 +12,13 @@ class Grafana < Formula
   depends_on "node" => :build
 
   def install
-    ENV.prepend_path "PATH", "#{Formula["node"].opt_libexec}/npm/bin"
     ENV["GOPATH"] = buildpath
     grafana_path = buildpath/"src/github.com/grafana/grafana"
     grafana_path.install Dir["*"]
     grafana_path.install ".jscs.json", ".jsfmtrc", ".jshintrc", ".bowerrc"
 
-    Language::Go.stage_deps resources, buildpath/"src"
-
     cd grafana_path do
-      # Might do it differently for head vs. release
-      system %q(sed -i.bak 's/"sass-lint": "^1.6.0",/"sass-lint": "1.7.0",/;' package.json)
+      inreplace "package.json", '"sass-lint": "^1.6.0"', '"sass-lint": "1.7.0"'
       system "go", "run", "build.go", "setup"
       system "go", "run", "build.go", "build"
       system "npm", "install", *Language::Node.local_npm_install_args
@@ -36,16 +30,52 @@ class Grafana < Formula
 
     bin.install grafana_path/"bin/grafana-cli"
     bin.install grafana_path/"bin/grafana-server"
+    (grafana_path/"grafana").write(env_script)
+    chmod 0755, grafana_path/"grafana"
+    bin.install grafana_path/"grafana"
     (etc/"grafana").mkpath
-    (var/"log/grafana").mkpath
-    (var/"lib/grafana").mkpath
-    (var/"lib/grafana/plugins").mkpath
     etc.install grafana_path/"conf/grafana.ini" => "grafana/grafana.ini"
     pkgshare.install Dir[grafana_path/"conf", grafana_path/"public_gen", grafana_path/"vendor"]
     mv pkgshare/"public_gen", pkgshare/"public"
   end
 
-  plist_options :manual => "grafana-server --config=#{HOMEBREW_PREFIX}/etc/grafana/grafana.ini --homepath #{HOMEBREW_PREFIX}/share/grafana cfg:default.paths.logs=#{HOMEBREW_PREFIX}/var/log/grafana cfg:default.paths.data=#{HOMEBREW_PREFIX}/var/lib/grafana cfg:default.paths.plugins=#{HOMEBREW_PREFIX}/var/lib/grafana/plugins"
+  def post_install
+    (var/"log/grafana").mkpath
+    (var/"lib/grafana/plugins").mkpath
+  end
+
+  def env_script
+    <<-EOS.undent
+      #!/usr/bin/env bash
+      DAEMON=grafana-server
+      EXECUTABLE=#{bin/"grafana-server"}
+      CONFIG=#{HOMEBREW_PREFIX}/etc/grafana/grafana.ini
+      HOMEPATH=#{HOMEBREW_PREFIX}/share/grafana
+      LOGPATH=#{HOMEBREW_PREFIX}/var/log/grafana
+      DATAPATH=#{HOMEBREW_PREFIX}/var/lib/grafana
+      PLUGINPATH=#{HOMEBREW_PREFIX}/var/lib/grafana/plugins
+
+      case "$1" in
+      start)
+        $EXECUTABLE --config=$CONFIG --homepath=$HOMEPATH cfg:default.paths.logs=$LOGPATH cfg:default.paths.data=$DATAPATH cfg:default.paths.plugins=$PLUGINPATH 2> /dev/null &
+        [ $? -eq 0 ] && echo "$DAEMON started"
+      ;;
+      stop)
+        killall $DAEMON
+        [ $? -eq 0 ] && echo "$DAEMON stopped"
+      ;;
+      restart)
+        $0 stop
+        $0 start
+      ;;
+      *)
+        echo "Usage: $0 (start|stop|restart)"
+      ;;
+      esac
+    EOS
+  end
+
+  plist_options :manual => "grafana start"
 
   def plist; <<-EOS.undent
     <?xml version="1.0" encoding="UTF-8"?>
@@ -89,35 +119,31 @@ class Grafana < Formula
   end
 
   test do
-    system bin/"grafana-server", "-v"
-    RUBY_VERSION =~ /^(\d+\.\d+)/
-    v = $1.to_f
-    Dir.mktmpdir("grafana", HOMEBREW_TEMP) do |tdir|
-      Dir.chdir(pkgshare)
-      logdir = File.join(tdir, "log")
-      datadir = File.join(tdir, "data")
-      plugdir = File.join(tdir, "plugins")
-      [logdir, datadir, plugdir].each do |d|
-        Dir.mkdir(d)
-      end
+    require "pty"
 
-      r, w, pid = nil
-      if v >= 1.9
-        r, w = IO.pipe
-        pid = spawn(bin/"grafana-server", "cfg:default.paths.logs=#{logdir}", "cfg:default.paths.data=#{datadir}", "cfg:default.paths.plugins=#{plugdir}", :err => w)
-      else
-        require "pty"
-        res = PTY.spawn(bin/"grafana-server", "cfg:default.paths.logs=#{logdir}", "cfg:default.paths.data=#{datadir}", "cfg:default.paths.plugins=#{plugdir}")
-        r = res[0]
-        w = res[1]
-        pid = res[2]
-      end
-      sleep 3 # Let it have a chance to actually start up
-      Process.kill("TERM", pid)
-      w.close
-      lines = r.readlines
-      m = lines.find { |l| l =~ /Listen/ }
-      m ? true : false
+    # first test
+    system bin/"grafana-server", "-v"
+
+    # avoid stepping on anything that may be present in this directory
+    tdir = File.join(Dir.pwd, "grafana-test")
+    Dir.mkdir(tdir)
+    logdir = File.join(tdir, "log")
+    datadir = File.join(tdir, "data")
+    plugdir = File.join(tdir, "plugins")
+    [logdir, datadir, plugdir].each do |d|
+      Dir.mkdir(d)
     end
+    Dir.chdir(pkgshare)
+
+    res = PTY.spawn(bin/"grafana-server", "cfg:default.paths.logs=#{logdir}", "cfg:default.paths.data=#{datadir}", "cfg:default.paths.plugins=#{plugdir}")
+    r = res[0]
+    w = res[1]
+    pid = res[2]
+    sleep 3 # Let it have a chance to actually start up
+    Process.kill("TERM", pid)
+    w.close
+    lines = r.readlines
+    m = lines.find { |l| l =~ /Listen/ }
+    m ? true : false
   end
 end
