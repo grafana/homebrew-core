@@ -34,10 +34,11 @@ class Grafana < Formula
       (bin/"grafana").write(env_script)
       chmod 0755, bin/"grafana"
       (etc/"grafana").mkpath
+      cp("conf/sample.ini", "conf/grafana.ini.example")
       unless (etc/"grafana/grafana.ini").exist?
         etc.install "conf/sample.ini" => "grafana/grafana.ini"
       end
-      etc.install "conf/sample.ini" => "grafana/grafana.ini.example"
+      etc.install "conf/grafana.ini.example" => "grafana/grafana.ini.example"
       pkgshare.install Dir["conf", "vendor"]
       pkgshare.install "public_gen" => "public"
     end
