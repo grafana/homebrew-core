@@ -3,8 +3,8 @@ require "language/node"
 class Grafana < Formula
   desc "Gorgeous metric visualizations and dashboards for timeseries databases."
   homepage "http://grafana.org"
-  url "https://github.com/grafana/grafana/archive/v3.0.4.tar.gz"
-  sha256 "f26a374326e64a8f83c57fdf916ba1c8524dd55002dfe628b4854d05fed3715a"
+  url "https://github.com/grafana/grafana/archive/v3.1.0.tar.gz"
+  sha256 "658c858e905ecb05e03aabf57ce02184b484f98e1fb979b67d26e16dfd93196a"
 
   head "https://github.com/grafana/grafana.git"
 
@@ -18,11 +18,6 @@ class Grafana < Formula
     grafana_path.install ".jscs.json", ".jsfmtrc", ".jshintrc", ".bowerrc"
 
     cd grafana_path do
-      # The sass-lint npm package dependencey in package.json specifies any
-      # version greater than 1.6.0 for grafana, but on OS X versions 1.8.0+
-      # break. This replaces the specification for any version >= 1.6.0 and
-      # sets it to 1.7.0 (which works).
-      inreplace "package.json", '"sass-lint": "^1.6.0"', '"sass-lint": "1.7.0"'
       system "go", "run", "build.go", "setup"
       system "go", "run", "build.go", "build"
       system "npm", "install", *Language::Node.local_npm_install_args
@@ -35,11 +30,9 @@ class Grafana < Formula
       chmod 0755, bin/"grafana"
       (etc/"grafana").mkpath
       cp("conf/sample.ini", "conf/grafana.ini.example")
-      unless (etc/"grafana/grafana.ini").exist?
-        etc.install "conf/sample.ini" => "grafana/grafana.ini"
-      end
+      etc.install "conf/sample.ini" => "grafana/grafana.ini"
       etc.install "conf/grafana.ini.example" => "grafana/grafana.ini.example"
-      pkgshare.install Dir["conf", "vendor"]
+      pkgshare.install "conf", "vendor"
       pkgshare.install "public_gen" => "public"
     end
   end
@@ -125,6 +118,7 @@ class Grafana < Formula
 
   test do
     require "pty"
+    require "timeout"
 
     # first test
     system bin/"grafana-server", "-v"
@@ -140,15 +134,25 @@ class Grafana < Formula
     end
     Dir.chdir(pkgshare)
 
-    res = PTY.spawn(bin/"grafana-server", "cfg:default.paths.logs=#{logdir}", "cfg:default.paths.data=#{datadir}", "cfg:default.paths.plugins=#{plugdir}")
+    res = PTY.spawn(bin/"grafana-server", "cfg:default.paths.logs=#{logdir}", "cfg:default.paths.data=#{datadir}", "cfg:default.paths.plugins=#{plugdir}", "cfg:default.server.http_port=50100")
     r = res[0]
     w = res[1]
     pid = res[2]
-    sleep 3 # Let it have a chance to actually start up
+
+    listening = Timeout::timeout(5) do
+      li = false
+      r.each do |l|
+	if l =~ /Listen/
+	  li = true
+	  break
+	end
+      end
+      li
+    end
+
     Process.kill("TERM", pid)
     w.close
-    lines = r.readlines
-    m = lines.find { |l| l =~ /Listen/ }
-    m ? true : false
+    r.close
+    listening
   end
 end
