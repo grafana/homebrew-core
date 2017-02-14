@@ -30,7 +30,13 @@ class Grafana < Formula
       system buildpath/"vendor/yarn/bin/yarn", "install"
 
       system "npm", "install", "grunt-cli", *Language::Node.local_npm_install_args
-      system "node_modules/grunt-cli/bin/grunt", "build"
+
+      args = ["build"]
+
+      # Avoid PhantomJS error "unrecognized selector sent to instance"
+      args << "--force" unless build.bottle?
+
+      system "node_modules/grunt-cli/bin/grunt", *args
 
       bin.install "bin/grafana-cli"
       bin.install "bin/grafana-server"
