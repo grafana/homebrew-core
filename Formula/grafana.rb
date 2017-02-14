@@ -24,8 +24,11 @@ class Grafana < Formula
 
     cd grafana_path do
       system "go", "run", "build.go", "build"
-      system "npm", "install", "yarn", *Language::Node.local_npm_install_args
-      system "node_modules/yarn/bin/yarn", "install"
+
+      # yarn needs to be installed with --global
+      system "npm", "install", "yarn", *Language::Node.std_npm_install_args(buildpath/"vendor/yarn")
+      system buildpath/"vendor/yarn/bin/yarn", "install"
+
       system "npm", "install", "grunt-cli", *Language::Node.local_npm_install_args
       system "node_modules/grunt-cli/bin/grunt", "build"
 
