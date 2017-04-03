@@ -3,15 +3,14 @@ class Duplicity < Formula
 
   desc "Bandwidth-efficient encrypted backup"
   homepage "http://www.nongnu.org/duplicity/"
-  url "https://launchpad.net/duplicity/0.7-series/0.7.11/+download/duplicity-0.7.11.tar.gz"
-  sha256 "b047a1590a1f5bb3974643ad2cc9dfdd32f61adbf2c1989191fb12cb59c2ec07"
-  revision 1
+  url "https://launchpad.net/duplicity/0.7-series/0.7.12/+download/duplicity-0.7.12.tar.gz"
+  sha256 "11cbad44a90891af1bf9e294260ba7c21a1660ccd3ab2c6e736ba74ac5cf0fe6"
 
   bottle do
     cellar :any
-    sha256 "94bc33ceac1d50ae8974f2d5186f9fd0021f1eaad07ce48a9d56521e03dd6a47" => :sierra
-    sha256 "2ff9482a642b8fcdbfbb82c2efeee9abb70e129467312822190e211e0f451b5d" => :el_capitan
-    sha256 "8b4eebcc99aec91ef961f692fe2109c55622665c6285fa05d681dff803452499" => :yosemite
+    sha256 "1925a84c09215552a8c2f422b9530bc5a2247b96b8dcac52c29444bdb7569375" => :sierra
+    sha256 "2aa6ad3d05ec04dda268adc929bd41aaaef55a969b29151e65ac79bd160fefcd" => :el_capitan
+    sha256 "f3b5d8808429d7301515f68fae652d8f525653f730f0b3c9709e6af88f36d023" => :yosemite
   end
 
   depends_on :python if MacOS.version <= :snow_leopard

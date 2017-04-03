@@ -1,14 +1,14 @@
 class PerconaServerAT56 < Formula
   desc "Drop-in MySQL replacement"
   homepage "https://www.percona.com"
-  url "https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-5.6.33-79.0/source/tarball/percona-server-5.6.33-79.0.tar.gz"
-  version "5.6.33-79.0"
-  sha256 "ed8372340740faca1f58735938823eaf65ffbda64a5c65b18d187b959afbd34e"
+  url "https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-5.6.35-81.0/source/tarball/percona-server-5.6.35-81.0.tar.gz"
+  version "5.6.35-81.0"
+  sha256 "c71c3f80662982ade22a0a538c5fd595b1761472c98efc2509124ecc4004d1e7"
 
   bottle do
-    sha256 "2b082440614716ef21ba7439436a4e25056b8135927a22934d6f7561c063a036" => :sierra
-    sha256 "641ba21975d68d30d4000607dedec3a09253efaedc6d85594a2e070f8ba97548" => :el_capitan
-    sha256 "4e2312fa0351ab2224d7f8424d0a024e1b496d58365ac90736e6ed72039888b3" => :yosemite
+    sha256 "2baa1f237c534c5b088a63a50658aae0cda1e98bda7b8dbac18d4df226af27c5" => :sierra
+    sha256 "92ac77c2779325e14a03237e2aaa66c6367937a0f7226df05053d9dce50ec943" => :el_capitan
+    sha256 "c301571bb6c86b0e9ca0830a66a063a70d8b3a66d470379b251addcbce606385" => :yosemite
   end
 
   keg_only :versioned_formula
@@ -29,8 +29,9 @@ class PerconaServerAT56 < Formula
     @datadir ||= (var/"percona").directory? ? var/"percona" : var/"mysql"
   end
 
-  def pour_bottle?
-    datadir == var/"mysql"
+  pour_bottle? do
+    reason "The bottle needs a var/mysql datadir (yours is var/percona)."
+    satisfy { datadir == var/"mysql" }
   end
 
   def install
@@ -40,23 +41,21 @@ class PerconaServerAT56 < Formula
       "COMMAND /usr/bin/libtool -static -o ${TARGET_LOCATION}",
       "COMMAND libtool -static -o ${TARGET_LOCATION}"
 
-    args = %W[
-      -DCMAKE_INSTALL_PREFIX=#{prefix}
-      -DCMAKE_FIND_FRAMEWORK=LAST
-      -DCMAKE_VERBOSE_MAKEFILE=ON
+    args = std_cmake_args + %W[
       -DMYSQL_DATADIR=#{datadir}
+      -DSYSCONFDIR=#{etc}
+      -DINSTALL_MANDIR=#{man}
+      -DINSTALL_DOCDIR=#{doc}
+      -DINSTALL_INFODIR=#{info}
       -DINSTALL_INCLUDEDIR=include/mysql
-      -DINSTALL_MANDIR=share/man
-      -DINSTALL_DOCDIR=share/doc/#{name}
-      -DINSTALL_INFODIR=share/info
-      -DINSTALL_MYSQLSHAREDIR=share/mysql
+      -DINSTALL_MYSQLSHAREDIR=#{share.basename}/mysql
       -DWITH_SSL=yes
       -DDEFAULT_CHARSET=utf8
       -DDEFAULT_COLLATION=utf8_general_ci
-      -DSYSCONFDIR=#{etc}
       -DCOMPILATION_COMMENT=Homebrew
       -DWITH_EDITLINE=system
-      -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      -DCMAKE_FIND_FRAMEWORK=LAST
+      -DCMAKE_VERBOSE_MAKEFILE=ON
     ]
 
     # PAM plugin is Linux-only at the moment

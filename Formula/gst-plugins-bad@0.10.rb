@@ -3,12 +3,13 @@ class GstPluginsBadAT010 < Formula
   homepage "https://gstreamer.freedesktop.org/"
   url "https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-0.10.23.tar.bz2"
   sha256 "0eae7d1a1357ae8377fded6a1b42e663887beabe0e6cc336e2ef9ada42e11491"
-  revision 1
+  revision 2
 
   bottle do
-    sha256 "5b2ee005df419f9b9397fd5b618f4a97f0d2b1af60404b5cc7d15f3c7d02c243" => :sierra
-    sha256 "51c6fccf38e4825c1615207c7290c5a7712cbc68282914a3966589e663f1e6fc" => :el_capitan
-    sha256 "5d8685e6aea37bad4a76b40dfff1772daf53289e3b985e43251022d0c70b2ca8" => :yosemite
+    rebuild 1
+    sha256 "81140c3bf87251f58a1394b0a0ce3ad5cf766813ef9f7f35a96dd377d37c3ea9" => :sierra
+    sha256 "69aeea1297d3c78858e9dd2a6de786c92fa43ec5a30e4d64fc86c3425b641841" => :el_capitan
+    sha256 "dca6d59de707b54eeb09f53f7c40847e118a01364c3a7d887adeda0c2ca85d02" => :yosemite
   end
 
   depends_on "pkg-config" => :build
@@ -20,13 +21,13 @@ class GstPluginsBadAT010 < Formula
   # gst-plugins-bad-0.10.21/REQUIREMENTS and Homebrew formulae
   depends_on "dirac" => :optional
   depends_on "libdvdread" => :optional
-  depends_on "libmms" => :optional
+  depends_on "libmms" => :recommended
 
   # These are not mentioned in REQUIREMENTS, but configure look for them
   depends_on "libexif" => :optional
   depends_on "faac" => :optional
-  depends_on "faad2" => :optional
-  depends_on "libsndfile" => :optional
+  depends_on "faad2" => :recommended
+  depends_on "libsndfile" => :recommended
   depends_on "schroedinger" => :optional
   depends_on "rtmpdump" => :optional
 
@@ -38,6 +39,7 @@ class GstPluginsBadAT010 < Formula
       --disable-debug
       --disable-dependency-tracking
       --disable-sdl
+      --disable-schemas-compile
     ]
 
     # Prevent "fatal error: 'QTKit/QTKit.h' file not found"
@@ -48,6 +50,10 @@ class GstPluginsBadAT010 < Formula
     system "./configure", *args
     system "make"
     system "make", "install"
+  end
+
+  def post_install
+    system "#{Formula["glib"].opt_bin}/glib-compile-schemas", "#{HOMEBREW_PREFIX}/share/glib-2.0/schemas"
   end
 
   test do

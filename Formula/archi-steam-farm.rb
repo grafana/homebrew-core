@@ -1,15 +1,15 @@
 class ArchiSteamFarm < Formula
   desc "ASF is a C# application that allows you to farm steam cards"
   homepage "https://github.com/JustArchi/ArchiSteamFarm"
-  url "https://github.com/JustArchi/ArchiSteamFarm/releases/download/2.2.3.7/ASF.zip"
-  version "2.2.3.7"
-  sha256 "69b113821dd618373b8c34a1832fa01d7399be44c3580a4723647586b27d245c"
+  url "https://github.com/JustArchi/ArchiSteamFarm/releases/download/2.3.0.6/ASF.zip"
+  version "2.3.0.6"
+  sha256 "2f28fd5cd815b14ee278745be1a2e15a0cea6a2818b9be7a981edd1cd3e85ccb"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "cac26b71eeaacf67336cc9e5c709c37df3cb43eef05e862c4898e5abd9eb6821" => :sierra
-    sha256 "cac26b71eeaacf67336cc9e5c709c37df3cb43eef05e862c4898e5abd9eb6821" => :el_capitan
-    sha256 "cac26b71eeaacf67336cc9e5c709c37df3cb43eef05e862c4898e5abd9eb6821" => :yosemite
+    sha256 "ddf1afce7277a662a8ddc7fd554b8e413d35d8dc57535ecbbb2a6ba0c6791401" => :sierra
+    sha256 "ddf1afce7277a662a8ddc7fd554b8e413d35d8dc57535ecbbb2a6ba0c6791401" => :el_capitan
+    sha256 "ddf1afce7277a662a8ddc7fd554b8e413d35d8dc57535ecbbb2a6ba0c6791401" => :yosemite
   end
 
   depends_on "mono"

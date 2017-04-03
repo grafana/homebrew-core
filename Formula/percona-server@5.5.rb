@@ -1,15 +1,14 @@
 class PerconaServerAT55 < Formula
   desc "Drop-in MySQL replacement"
-  homepage "https://www.percona.com"
-  url "https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-5.5.41-37.0/source/tarball/percona-server-5.5.41-37.0.tar.gz"
-  version "5.5.41-37.0"
-  sha256 "4de65ccbdd6c266f18339c2ea5427a15d90a8ce1ce1c7574aa2e72f685a10833"
-  revision 1
+  homepage "https://www.percona.com/"
+  url "https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-5.5.54-38.7/source/tarball/percona-server-5.5.54-38.7.tar.gz"
+  version "5.5.54-38.7"
+  sha256 "2c5f23a5bd41e36c681d882b94e021a2fe34acfb3951945146ee2ead2aeb7f1c"
 
   bottle do
-    sha256 "09e2e9ee7529adb2da47c389a2cfc898171d7acf3b4407b80c91630964614b52" => :sierra
-    sha256 "aafb9bc5c6b2d96106dc0889a5c9a3c25d5a23524df58df62987fbf970419b36" => :el_capitan
-    sha256 "8cdefe87ed6372e3ce2e16146aa6873f2044c8a255becf04e11e8ea3889c7cdf" => :yosemite
+    sha256 "122ac9f6d7d33fafed9927c8bccfd933f82df0e3b3a64a40733e86088e07647d" => :sierra
+    sha256 "14dd4085444332e5f05fbcd0bb26e0fa8573ce9569e7817939e4b1e9a3018aad" => :el_capitan
+    sha256 "cf5ff63513d937d546119e3da98e2ca54afab297f1c062dbcfc3221ab94ccb78" => :yosemite
   end
 
   keg_only :versioned_formula
@@ -28,34 +27,38 @@ class PerconaServerAT55 < Formula
   depends_on "openssl"
 
   # Where the database files should be located. Existing installs have them
-  # under var/percona, but going forward they will be under var/msyql to be
+  # under var/percona, but going forward they will be under var/mysql to be
   # shared with the mysql and mariadb formulae.
-  def destination
-    @destination ||= (var/"percona").directory? ? "percona" : "mysql"
+  def datadir
+    @datadir ||= (var/"percona").directory? ? var/"percona" : var/"mysql"
+  end
+
+  pour_bottle? do
+    reason "The bottle needs a var/mysql datadir (yours is var/percona)."
+    satisfy { datadir == var/"mysql" }
   end
 
   def install
-    # Make sure that data directory exists
-    (var/destination).mkpath
+    args = std_cmake_args + %W[
+      -DMYSQL_DATADIR=#{datadir}
+      -DSYSCONFDIR=#{etc}
+      -DINSTALL_MANDIR=#{man}
+      -DINSTALL_DOCDIR=#{doc}
+      -DINSTALL_INFODIR=#{info}
+      -DINSTALL_INCLUDEDIR=include/mysql
+      -DINSTALL_MYSQLSHAREDIR=#{share.basename}/mysql
+      -DWITH_SSL=yes
+      -DDEFAULT_CHARSET=utf8
+      -DDEFAULT_COLLATION=utf8_general_ci
+      -DCOMPILATION_COMMENT=Homebrew
+      -DWITH_EDITLINE=system
+    ]
 
-    args = [
-      ".",
-      "-DCMAKE_INSTALL_PREFIX=#{prefix}",
-      "-DMYSQL_DATADIR=#{var}/#{destination}",
-      "-DINSTALL_MANDIR=#{man}",
-      "-DINSTALL_DOCDIR=#{doc}",
-      "-DINSTALL_INFODIR=#{info}",
-      # CMake prepends prefix, so use share.basename
-      "-DINSTALL_MYSQLSHAREDIR=#{share.basename}/mysql",
-      "-DWITH_SSL=yes",
-      "-DDEFAULT_CHARSET=utf8",
-      "-DDEFAULT_COLLATION=utf8_general_ci",
-      "-DSYSCONFDIR=#{etc}",
-      "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
-      # PAM plugin is Linux-only at the moment
-      "-DWITHOUT_AUTH_PAM=1",
-      "-DWITHOUT_AUTH_PAM_COMPAT=1",
-      "-DWITHOUT_DIALOG=1",
+    # PAM plugin is Linux-only at the moment
+    args.concat %w[
+      -DWITHOUT_AUTH_PAM=1
+      -DWITHOUT_AUTH_PAM_COMPAT=1
+      -DWITHOUT_DIALOG=1
     ]
 
     # To enable unit testing at build, we need to download the unit testing suite
@@ -106,15 +109,15 @@ class PerconaServerAT55 < Formula
   def caveats; <<-EOS.undent
     Set up databases to run AS YOUR USER ACCOUNT with:
         unset TMPDIR
-        mysql_install_db --verbose --user=`whoami` --basedir="$(brew --prefix percona-server55)" --datadir=#{var}/#{destination} --tmpdir=/tmp
+        mysql_install_db --verbose --user=`whoami` --basedir="$(brew --prefix percona-server55)" --datadir=#{datadir} --tmpdir=/tmp
 
     To set up base tables in another folder, or use a different user to run
     mysqld, view the help for mysqld_install_db:
         mysql_install_db --help
 
     and view the MySQL documentation:
-      * http://dev.mysql.com/doc/refman/5.5/en/mysql-install-db.html
-      * http://dev.mysql.com/doc/refman/5.5/en/default-privileges.html
+      * https://dev.mysql.com/doc/refman/5.5/en/mysql-install-db.html
+      * https://dev.mysql.com/doc/refman/5.5/en/default-privileges.html
 
     To run as, for instance, user "mysql", you may need to `sudo`:
         sudo mysql_install_db ...options...

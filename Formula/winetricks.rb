@@ -1,8 +1,8 @@
 class Winetricks < Formula
   desc "Download and install various runtime libraries"
   homepage "https://github.com/Winetricks/winetricks"
-  url "https://github.com/Winetricks/winetricks/archive/20170316.tar.gz"
-  sha256 "c7a4cf786a634c53e37c129fa7b02085b039e1d110008dac6541e4b9e42f7dae"
+  url "https://github.com/Winetricks/winetricks/archive/20170327.tar.gz"
+  sha256 "ad381386be95f5f2c34a69a6d1d77f3d41d86f883b8bed7ac4699947cf13e97d"
   head "https://github.com/Winetricks/winetricks.git"
 
   bottle :unneeded

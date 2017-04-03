@@ -1,14 +1,14 @@
 class Ktmpl < Formula
   desc "Parameterized templates for Kubernetes manifests."
   homepage "https://github.com/InQuicker/ktmpl"
-  url "https://github.com/InQuicker/ktmpl/archive/0.6.0.tar.gz"
-  sha256 "16338b7129c2268350d6dd780f0e41a3c5a81a7399273d85ff0939065820eba0"
+  url "https://github.com/InQuicker/ktmpl/archive/0.7.0.tar.gz"
+  sha256 "c10d26f8e834543d8f0952a76b67292cd8f10f0814128cda9bb623ffe0952615"
   head "https://github.com/InQuicker/ktmpl.git"
 
   bottle do
-    sha256 "6bd6fbfaa9674d19070d46a3acff6b364173fd731ce0eeeefb0a8557b648dc76" => :sierra
-    sha256 "f8b81fedf479b28d6f8846a200ba67c35054f1641a4c8829e673482a9fb1a7ef" => :el_capitan
-    sha256 "4df7bf2ac55cc20278a547abcb25cd3d685e2fed69d2d29a983cc2bc565f0dca" => :yosemite
+    sha256 "53bd12218388a8a5d3db81c0638d85582bf04358266309bf9b62ada65901560e" => :sierra
+    sha256 "9c969b22228adccf275ff10decb4f5667f0b9489d143679208b3100be683356b" => :el_capitan
+    sha256 "1b56cf4694e17406aca60ebf1d6e67a8bc33f6bd3921c914aef7546fabb0f020" => :yosemite
   end
 
   depends_on "rust" => :build
