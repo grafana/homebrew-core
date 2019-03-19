@@ -1,29 +1,29 @@
 class Atdtool < Formula
   desc "Command-line interface for After the Deadline language checker"
   homepage "https://github.com/lpenz/atdtool"
-  url "https://github.com/lpenz/atdtool/archive/upstream/1.3.tar.gz"
-  sha256 "eb634fd9e8a57d5d5e4d8d2ca0dd9692610aa952e28fdf24909fd678a8f39155"
+  url "https://github.com/lpenz/atdtool/archive/upstream/1.3.3.tar.gz"
+  sha256 "3e928721388cf6f58b7e663ebc5508f26d180b1c07d5b8119212356c66e57fe8"
+  revision 1
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "503058b2396590cead9a3ee6d0bd4808b7165e70bc38e3c9fee26e06725b8ad9" => :high_sierra
-    sha256 "c83db7e4362cecf9d1c44864b71577977c2b288144c651dcaffcf92779eef3de" => :sierra
-    sha256 "3c03f9deaae3f420231b6fa5331e3d213dc0d48c8817a7142403d35d54159283" => :el_capitan
-    sha256 "8120a3e4b9e2cbc74c533baa2fee5427cae2ebfbf634a39d75c3e2481159b03b" => :yosemite
-    sha256 "efda2ae7e414ac866210899a3f037e565631d07957c7ed44ffefc306d1944901" => :mavericks
+    sha256 "70d3f21f1dc1ee76fa55fcb3d4cd5369300c8d361031267fb25f6426b13bdce9" => :mojave
+    sha256 "2de45317e5c51f1fcb7365d038e667fcbf48f333af9c49eb0a27ddce2d2b1e57" => :high_sierra
+    sha256 "2de45317e5c51f1fcb7365d038e667fcbf48f333af9c49eb0a27ddce2d2b1e57" => :sierra
   end
 
-  depends_on "txt2tags" => :build
+  depends_on "python"
 
   def install
-    # Change the PREFIX to match the homebrew one, since there is no way to
-    # pass it as an option for now edit the Makefile
-    # https://github.com/lpenz/atdtool/pull/8
-    inreplace "Makefile", "PREFIX=/usr/local", "PREFIX=#{prefix}"
-    system "make", "install"
+    xy = Language::Python.major_minor_version "python3"
+    ENV.prepend_create_path "PYTHONPATH", libexec/"lib/python#{xy}/site-packages"
+    system "python3", *Language::Python.setup_install_args(libexec)
+    bin.install Dir[libexec/"bin/*"]
+    bin.env_script_all_files(libexec/"bin", :PYTHONPATH => ENV["PYTHONPATH"])
+    prefix.install libexec/"share"
   end
 
   test do
-    system "#{bin}/atdtool", "#{prefix}/AUTHORS"
+    system "#{bin}/atdtool", "--help"
   end
 end

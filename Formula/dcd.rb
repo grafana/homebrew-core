@@ -2,16 +2,15 @@ class Dcd < Formula
   desc "Auto-complete program for the D programming language"
   homepage "https://github.com/dlang-community/DCD"
   url "https://github.com/dlang-community/DCD.git",
-      :tag => "v0.9.1",
-      :revision => "9f4c6ddaf43544682de37d864d33b52e9648ca10"
-
+      :tag      => "v0.11.0",
+      :revision => "8a7a6c75acfb320e0b8aa5e00d210f5393ae3363"
   head "https://github.com/dlang-community/dcd.git", :shallow => false
 
   bottle do
-    sha256 "02904b57ac4e20bc2cd006645314e865248a39ad7186e7e356a1228293c1ad10" => :high_sierra
-    sha256 "721cfff4b43747b138373b86c8cfd373e75b645ec2177ba7581a4336ebbff137" => :sierra
-    sha256 "bc1f17d29075c6535cae3d11c53962a967e3706048a620c0a3b27e28aa5eaa2c" => :el_capitan
-    sha256 "47a7600d9a6f3a8e2fb386bb501640b47d0bd026eaefe51a5efae189efe2accb" => :yosemite
+    cellar :any_skip_relocation
+    sha256 "13b8e41055d50cebc054cb3c3be9a83f4957c655cc6b87567c2fe97c42cb3641" => :mojave
+    sha256 "e19e1b335cf1f87ac7b969d01a87c4fcc0c0565cba4357cebbcdaa4e3646a64f" => :high_sierra
+    sha256 "dfb6b5d7a1ac63b64d5d702132fbd3953ccacaa4b0554234a11efa80ec6f79d3" => :sierra
   end
 
   depends_on "dmd" => :build

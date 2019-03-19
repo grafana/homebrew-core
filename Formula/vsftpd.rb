@@ -7,23 +7,18 @@ class Vsftpd < Formula
 
   bottle do
     rebuild 2
+    sha256 "5605a908ab4b24008e48f2280107695a7afaae8a1a521964b8f2248d2baa960a" => :mojave
     sha256 "dbfc9b28f5ea49dda09d31fb630d995b72fd63b83b358e04156329252c3ab25b" => :high_sierra
     sha256 "22349437bd4d75b1ffd2fddfd90f92367e0a4f478f540b9086457541883f2c3b" => :sierra
     sha256 "108243559f3fea06d140173a3e3cb497c2f22c47d45e85ae108c088c1a1370df" => :el_capitan
     sha256 "25a9d2e92ca7e3efda6c9882a62ad5927c0c5e450eca4d62d7829c467dd086d9" => :yosemite
   end
 
-  depends_on "openssl" => :optional
-
   # Patch to remove UTMPX dependency, locate macOS's PAM library, and
   # remove incompatible LDFLAGS. (reported to developer via email)
   patch :DATA
 
   def install
-    if build.with? "openssl"
-      inreplace "builddefs.h", "#undef VSF_BUILD_SSL", "#define VSF_BUILD_SSL"
-    end
-
     inreplace "defs.h", "/etc/vsftpd.conf", "#{etc}/vsftpd.conf"
     inreplace "tunables.c", "/etc", etc
     inreplace "tunables.c", "/var", var
@@ -36,26 +31,14 @@ class Vsftpd < Formula
     man8.install "vsftpd.8"
   end
 
-  def caveats
-    s = ""
+  def caveats; <<~EOS
+    To use chroot, vsftpd requires root privileges, so you will need to run
+    `sudo vsftpd`.
+    You should be certain that you trust any software you grant root privileges.
 
-    if build.with? "openssl"
-      s += <<~EOS
-        vsftpd was compiled with SSL support. To use it you must generate a SSL
-        certificate and set 'enable_ssl=YES' in your config file.
-
-      EOS
-    end
-
-    s += <<~EOS
-      To use chroot, vsftpd requires root privileges, so you will need to run
-      `sudo vsftpd`.
-      You should be certain that you trust any software you grant root privileges.
-
-      The vsftpd.conf file must be owned by root or vsftpd will refuse to start:
-        sudo chown root #{HOMEBREW_PREFIX}/etc/vsftpd.conf
-    EOS
-    s
+    The vsftpd.conf file must be owned by root or vsftpd will refuse to start:
+      sudo chown root #{HOMEBREW_PREFIX}/etc/vsftpd.conf
+  EOS
   end
 
   plist_options :startup => true, :manual => "sudo vsftpd"
@@ -76,7 +59,7 @@ class Vsftpd < Formula
       <true/>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

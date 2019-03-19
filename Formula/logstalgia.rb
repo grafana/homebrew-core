@@ -1,13 +1,14 @@
 class Logstalgia < Formula
   desc "Web server access log visualizer with retro style"
-  homepage "http://logstalgia.io/"
-  url "https://github.com/acaudwell/Logstalgia/releases/download/logstalgia-1.1.0/logstalgia-1.1.0.tar.gz"
-  sha256 "680d47babea2665a674032abed7a60cbecf00378b5b9924d265b1c063a7110c3"
+  homepage "https://logstalgia.io/"
+  url "https://github.com/acaudwell/Logstalgia/releases/download/logstalgia-1.1.2/logstalgia-1.1.2.tar.gz"
+  sha256 "ed3f4081e401f4a509761a7204bdbd7c34f8f1aff9dcb030348885fb3995fca9"
 
   bottle do
-    sha256 "a71a48c25d569e05cb05501f205761e7172ca2bbf5629e73c54248c44ee99685" => :high_sierra
-    sha256 "21df0eed9f44a7f181ddbe290253cafe3686f906720ec67ca269ba7306d51071" => :sierra
-    sha256 "631cd193fcc281640cfe7ac40de59d1227ac099414889a0d42ae51b3e63d35cd" => :el_capitan
+    sha256 "f5f0829a847376d5d5ae691c53de7b850c26d187631b8bfae8d5cecaf69d935b" => :mojave
+    sha256 "3c70aaf704c6486a0820ad416e9b71be4ee80492fdfec509da494d95657ddc6d" => :high_sierra
+    sha256 "bf1761008179e17ff019777b60dd498174532e8feb1d7044c78d84bddbec9864" => :sierra
+    sha256 "98fd439fb47a282ef86a45568f337ff3195418d32459c6e16718d1748e5f23f7" => :el_capitan
   end
 
   head do
@@ -18,17 +19,15 @@ class Logstalgia < Formula
     depends_on "libtool" => :build
   end
 
-  depends_on "pkg-config" => :build
   depends_on "boost" => :build
   depends_on "glm" => :build
-  depends_on "sdl2"
-  depends_on "sdl2_image"
+  depends_on "pkg-config" => :build
   depends_on "freetype"
   depends_on "glew"
   depends_on "libpng"
   depends_on "pcre"
-
-  needs :cxx11
+  depends_on "sdl2"
+  depends_on "sdl2_image"
 
   def install
     # clang on Mt. Lion will try to build against libstdc++,

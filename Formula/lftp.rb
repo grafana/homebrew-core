@@ -1,18 +1,19 @@
 class Lftp < Formula
   desc "Sophisticated file transfer program"
   homepage "https://lftp.yar.ru/"
-  url "https://lftp.yar.ru/ftp/lftp-4.8.3.tar.xz"
-  sha256 "de7aee451afaa1aa391f7076b5f602922c2da0e05524a8d8fea413eda83cc78b"
+  url "https://lftp.yar.ru/ftp/lftp-4.8.4.tar.xz"
+  sha256 "4ebc271e9e5cea84a683375a0f7e91086e5dac90c5d51bb3f169f75386107a62"
+  revision 1
 
   bottle do
-    sha256 "699cbe616307d318e21e36f2665d5f6acfa616b194d9dd998feb977be61694af" => :high_sierra
-    sha256 "b9bdd2db27e79ac0fe39ac583fa2734f4296303a5f46d9f7a953122829643f75" => :sierra
-    sha256 "1bfc8491a2ff1103daf12a5b4c16f6f0b897c830d4cff85002db8bb0e1e14313" => :el_capitan
+    rebuild 1
+    sha256 "06caf0dc86f94dd6a0d6c958447580f45cf88c8ef7486b97058d2da06f7cd0f5" => :mojave
+    sha256 "648b83bad8685a0f265e9a5cc4c47fb8620dcb27100cf09a37bbd1a9133a09a2" => :sierra
   end
 
-  depends_on "readline"
-  depends_on "openssl"
   depends_on "libidn"
+  depends_on "openssl"
+  depends_on "readline"
 
   def install
     system "./configure", "--disable-dependency-tracking",

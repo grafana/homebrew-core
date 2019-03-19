@@ -1,20 +1,19 @@
 class Qtfaststart < Formula
   desc "Utility for Quicktime files"
   homepage "https://libav.org/"
-  url "https://libav.org/releases/libav-11.6.tar.gz"
-  sha256 "4df17921e3b87170d54b738f09241833c618d2173415adf398207b43d27e4b28"
+  url "https://libav.org/releases/libav-12.3.tar.gz"
+  sha256 "115b659022dd387f662e26fbc5bc0cc14ec18daa100003ffd34f4da0479b272e"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "727cd412c554e4700fb27913814dac657145cdfc8e897cdc2b4df91867d6b5a1" => :high_sierra
-    sha256 "27b695d00f82590b223f82bcd88b50a45664168c75cfa88a11f75a5de68a8e43" => :sierra
-    sha256 "da201fbe1dd453fea35599206496bdca5ece22ee80a482a327c0d51d1a264d80" => :el_capitan
-    sha256 "4e85bed5cb743e34dcc74b67ff2b3f5fb4628313ee1ba82b02ee97d81d616e2e" => :yosemite
-    sha256 "e18f2b26647d07d313f2163d16cfacdc0d4d4cdfcfd2e6558d2756cbcdc56b20" => :mavericks
+    sha256 "72a7b46a652dc99b3c24df9a868008927e795f438ef2e68fb3d7456abbc3724a" => :mojave
+    sha256 "4534f204dcc950ad18c3a141119fcd8d9a9623645092ae3f003b08dd94851dcf" => :high_sierra
+    sha256 "a11b3b623a2682567830cb05810ed4445037f5b43a52f2378a10291aad70a2c6" => :sierra
+    sha256 "00ed1702b08f3fe7d0660aab963f15baab6a5bac8db02048fe5d0b4d80b4abe0" => :el_capitan
   end
 
   resource "mov" do
-    url "http://download.wavetlan.com/SVV/Media/HTTP/H264/Talkinghead_Media/H264_test4_Talkingheadclipped_mov_480x320.mov"
+    url "https://github.com/van7hu/fanca/raw/master/examples/kmplayer/samples/H264_test4_Talkingheadclipped_mov_480x320.mov"
     sha256 "5af004e182ac7214dadf34816086d0a25c7a6cac568ae3741fca527cbbd242fc"
   end
 

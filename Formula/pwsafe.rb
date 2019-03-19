@@ -1,16 +1,15 @@
 class Pwsafe < Formula
   desc "Generate passwords and manage encrypted password databases"
-  homepage "http://nsd.dyndns.org/pwsafe/"
-  url "http://nsd.dyndns.org/pwsafe/releases/pwsafe-0.2.0.tar.gz"
+  homepage "https://github.com/nsd20463/pwsafe"
+  url "https://src.fedoraproject.org/repo/pkgs/pwsafe/pwsafe-0.2.0.tar.gz/4bb36538a2772ecbf1a542bc7d4746c0/pwsafe-0.2.0.tar.gz"
   sha256 "61e91dc5114fe014a49afabd574eda5ff49b36c81a6d492c03fcb10ba6af47b7"
-  revision 2
+  revision 3
 
   bottle do
     cellar :any
-    sha256 "be2e0da22fa321f9745b9f9bfe09c20e9fee17852f6369fe365fc457654afb34" => :high_sierra
-    sha256 "2e8928d27de84dac239832ba22f66ebbc85d14ac8c420f5971db90b407e5781e" => :sierra
-    sha256 "124f8d5da3927bf76826f0a3ccfeb59e1fc8674b7f7c8ed4e2b6aed3e86a5263" => :el_capitan
-    sha256 "6c8fffd07460664b877c97d00a9507b232d6fae885a29ed5f0842192bee410f4" => :yosemite
+    sha256 "026ad06d35f0ae8b1a6e2699d02803e45df2aa05289d7ec2beb839ec5e6c232f" => :mojave
+    sha256 "a737903a6af98cf1de3bef38bc2e168d0d2fdc0beb1a708b872776b4298d1100" => :high_sierra
+    sha256 "a0c772ed64270de75bba371d2c4292f898127c08e68adc4edd6bfc35cf769854" => :sierra
   end
 
   depends_on "openssl"
@@ -18,7 +17,7 @@ class Pwsafe < Formula
 
   # A password database for testing is provided upstream. How nice!
   resource "test-pwsafe-db" do
-    url "http://nsd.dyndns.org/pwsafe/test.dat"
+    url "https://raw.githubusercontent.com/nsd20463/pwsafe/208de3a94339df36b6e9cd8aeb7e0be0a67fd3d7/test.dat"
     sha256 "7ecff955871e6e58e55e0794d21dfdea44a962ff5925c2cd0683875667fbcc79"
   end
 

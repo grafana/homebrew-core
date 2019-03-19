@@ -1,56 +1,41 @@
 class Ruby < Formula
   desc "Powerful, clean, object-oriented scripting language"
   homepage "https://www.ruby-lang.org/"
-  url "https://cache.ruby-lang.org/pub/ruby/2.4/ruby-2.4.2.tar.xz"
-  sha256 "748a8980d30141bd1a4124e11745bb105b436fb1890826e0d2b9ea31af27f735"
-  revision 1
+  url "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.2.tar.xz"
+  sha256 "91fcde77eea8e6206d775a48ac58450afe4883af1a42e5b358320beb33a445fa"
 
   bottle do
-    sha256 "5a1d5adf5f9b0f151a484edcc292764a0b0dbef61eb667c59aa850d0ad3d7626" => :high_sierra
-    sha256 "4f9eda03468b35441712c442bd4f2493b706e2f3cd311e0e330571b6edbc6ce5" => :sierra
-    sha256 "251c9fe64952fdf202df879a111fe450e4de65dd3349435bcd354ecd937aaac4" => :el_capitan
-  end
-
-  devel do
-    url "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.0-preview1.tar.xz"
-    version "2.5.0-preview1"
-    sha256 "c2f518eb04b38bdd562ba5611abd2521248a1608fc466368563dd794ddeddd09"
+    sha256 "0370836f4107a976de5fa84a333faec65f65866bedf3bb11b4732333f933497d" => :mojave
+    sha256 "1fb93f70c550192484dcd1b41926903c5b087dfae5002f375e8e9e10cc89037d" => :high_sierra
+    sha256 "dc2fa36b6646401b745eb5593c188f9012b1ef031aaa04271051581c018560e8" => :sierra
   end
 
   head do
-    url "https://svn.ruby-lang.org/repos/ruby/trunk/"
+    url "https://github.com/ruby/ruby.git", :branch => "trunk"
     depends_on "autoconf" => :build
   end
 
-  option "with-suffix", "Suffix commands with '24'"
-  option "with-doc", "Install documentation"
+  keg_only :provided_by_macos
 
   depends_on "pkg-config" => :build
-  depends_on "readline" => :recommended
-  depends_on "gdbm" => :optional
-  depends_on "gmp" => :optional
-  depends_on "libffi" => :optional
   depends_on "libyaml"
   depends_on "openssl"
+  depends_on "readline"
 
   # Should be updated only when Ruby is updated (if an update is available).
   # The exception is Rubygem security fixes, which mandate updating this
   # formula & the versioned equivalents and bumping the revisions.
   resource "rubygems" do
-    url "https://rubygems.org/rubygems/rubygems-2.6.14.tgz"
-    sha256 "406a45d258707f52241843e9c7902bbdcf00e7edc3e88cdb79c46659b47851ec"
-  end
-
-  def program_suffix
-    build.with?("suffix") ? "24" : ""
-  end
-
-  def ruby
-    "#{bin}/ruby#{program_suffix}"
+    url "https://rubygems.org/rubygems/rubygems-3.0.3.tgz"
+    sha256 "be3a7abc31e91de667406e84cd15265b73fc502268a1dd09404214a49b4acb2c"
   end
 
   def api_version
-    Utils.popen_read("#{ruby} -e 'print Gem.ruby_api_version'")
+    Utils.popen_read("#{bin}/ruby -e 'print Gem.ruby_api_version'")
+  end
+
+  def rubygems_bindir
+    HOMEBREW_PREFIX/"lib/ruby/gems/#{api_version}/bin"
   end
 
   def install
@@ -59,29 +44,16 @@ class Ruby < Formula
 
     system "autoconf" if build.head?
 
+    paths = %w[libyaml openssl readline].map { |f| Formula[f].opt_prefix }
     args = %W[
       --prefix=#{prefix}
       --enable-shared
       --disable-silent-rules
       --with-sitedir=#{HOMEBREW_PREFIX}/lib/ruby/site_ruby
       --with-vendordir=#{HOMEBREW_PREFIX}/lib/ruby/vendor_ruby
+      --with-opt-dir=#{paths.join(":")}
     ]
-
-    args << "--program-suffix=#{program_suffix}" if build.with? "suffix"
-    args << "--disable-install-doc" if build.without? "doc"
     args << "--disable-dtrace" unless MacOS::CLT.installed?
-    args << "--without-gmp" if build.without? "gmp"
-
-    paths = [
-      Formula["libyaml"].opt_prefix,
-      Formula["openssl"].opt_prefix,
-    ]
-
-    %w[readline gdbm gmp libffi].each do |dep|
-      paths << Formula[dep].opt_prefix if build.with? dep
-    end
-
-    args << "--with-opt-dir=#{paths.join(":")}"
 
     system "./configure", *args
 
@@ -109,24 +81,34 @@ class Ruby < Formula
     resource("rubygems").stage do
       ENV.prepend_path "PATH", bin
 
-      system ruby, "setup.rb", "--prefix=#{buildpath}/vendor_gem"
+      system "#{bin}/ruby", "setup.rb", "--prefix=#{buildpath}/vendor_gem"
       rg_in = lib/"ruby/#{api_version}"
 
       # Remove bundled Rubygem version.
       rm_rf rg_in/"rubygems"
       rm_f rg_in/"rubygems.rb"
       rm_f rg_in/"ubygems.rb"
-      rm_f bin/"gem#{program_suffix}"
+      rm_f bin/"gem"
 
       # Drop in the new version.
-      (rg_in/"rubygems").install Dir[buildpath/"vendor_gem/lib/rubygems/*"]
-      rg_in.install buildpath/"vendor_gem/lib/rubygems.rb"
-      rg_in.install buildpath/"vendor_gem/lib/ubygems.rb"
-      bin.install buildpath/"vendor_gem/bin/gem" => "gem#{program_suffix}"
+      rg_in.install Dir[buildpath/"vendor_gem/lib/*"]
+      bin.install buildpath/"vendor_gem/bin/gem" => "gem"
+      (libexec/"gembin").install buildpath/"vendor_gem/bin/bundle" => "bundle"
+      (libexec/"gembin").install_symlink "bundle" => "bundler"
     end
   end
 
   def post_install
+    # Since Gem ships Bundle we want to provide that full/expected installation
+    # but to do so we need to handle the case where someone has previously
+    # installed bundle manually via `gem install`.
+    rm_f %W[
+      #{rubygems_bindir}/bundle
+      #{rubygems_bindir}/bundler
+    ]
+    rm_rf Dir[HOMEBREW_PREFIX/"lib/ruby/gems/#{api_version}/gems/bundler-*"]
+    rubygems_bindir.install_symlink Dir[libexec/"gembin/*"]
+
     # Customize rubygems to look/install in the global gem directory
     # instead of in the Cellar, making gems last across reinstalls
     config_file = lib/"ruby/#{api_version}/rubygems/defaults/operating_system.rb"
@@ -135,12 +117,8 @@ class Ruby < Formula
 
     # Create the sitedir and vendordir that were skipped during install
     %w[sitearchdir vendorarchdir].each do |dir|
-      mkdir_p `#{ruby} -rrbconfig -e 'print RbConfig::CONFIG["#{dir}"]'`
+      mkdir_p `#{bin}/ruby -rrbconfig -e 'print RbConfig::CONFIG["#{dir}"]'`
     end
-  end
-
-  def rubygems_bindir
-    "#{HOMEBREW_PREFIX}/bin"
   end
 
   def rubygems_config(api_version); <<~EOS
@@ -202,16 +180,31 @@ class Ruby < Formula
       end
 
       def self.ruby
-        "#{opt_bin}/ruby#{program_suffix}"
+        "#{opt_bin}/ruby"
       end
     end
-    EOS
+  EOS
+  end
+
+  def caveats; <<~EOS
+    By default, binaries installed by gem will be placed into:
+      #{rubygems_bindir}
+
+    You may want to add this to your PATH.
+  EOS
   end
 
   test do
-    hello_text = shell_output("#{bin}/ruby#{program_suffix} -e 'puts :hello'")
+    hello_text = shell_output("#{bin}/ruby -e 'puts :hello'")
     assert_equal "hello\n", hello_text
     ENV["GEM_HOME"] = testpath
-    system "#{bin}/gem#{program_suffix}", "install", "json"
+    system "#{bin}/gem", "install", "json"
+
+    (testpath/"Gemfile").write <<~EOS
+      source 'https://rubygems.org'
+      gem 'gemoji'
+    EOS
+    system rubygems_bindir/"bundle", "install", "--binstubs=#{testpath}/bin"
+    assert_predicate testpath/"bin/gemoji", :exist?, "gemoji is not installed in #{testpath}/bin"
   end
 end

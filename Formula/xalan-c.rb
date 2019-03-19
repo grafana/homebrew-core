@@ -7,20 +7,13 @@ class XalanC < Formula
 
   bottle do
     cellar :any
+    sha256 "5b00fab72d4db7db40495ff5331e6cd9539b30f21d6b1357d9dcc2e7275421ae" => :mojave
     sha256 "24ddfd8ff41dbe54a5570db2a004247f92ef4bc1c897554ea83dfe7c138a172f" => :high_sierra
     sha256 "dfe6413a8d4cba234c105d0936a671a34742d2ac0103db863a644bf78538c28c" => :sierra
     sha256 "0b99ebef6e23b1c0d1e67d4ed8130130ad5c7b6af03f43ea9248c2d78e19a5cc" => :el_capitan
   end
 
-  option "with-docs", "Install HTML docs"
-
-  if build.with? "docs"
-    depends_on "doxygen" => :build
-    depends_on "graphviz" => :build
-  end
   depends_on "xerces-c"
-
-  needs :cxx11
 
   # Fix segfault. See https://issues.apache.org/jira/browse/XALANC-751
   # Build with char16_t casts.  See https://issues.apache.org/jira/browse/XALANC-773
@@ -46,18 +39,7 @@ class XalanC < Formula
                             "--disable-silent-rules",
                             "--prefix=#{prefix}"
       system "make", "install"
-      if build.with? "docs"
-        ENV.prepend_path "PATH", "#{buildpath}/c/bin"
-        cd "xdocs" do
-          # Set the library path in the script which runs Xalan from
-          # the source tree, or else the libxalan-c.dylib won't be found.
-          # See https://issues.apache.org/jira/browse/XALANC-766
-          inreplace "sources/make-xalan.sh", "\"${XALANCMD}\" \\",
-                    "export DYLD_FALLBACK_LIBRARY_PATH=#{buildpath}/c/lib:$DYLD_FALLBACK_LIBRARY_PATH\n\"${XALANCMD}\" \\"
-          system "./make-apiDocs.sh"
-        end
-        (share/"doc").install "build/docs/xalan-c"
-      end
+
       # Clean up links
       rm Dir["#{lib}/*.dylib.*"]
     end
@@ -90,6 +72,7 @@ class XalanC < Formula
       </xsl:stylesheet>
     EOS
 
-    assert_match "Article: An XSLT test-case\nAuthors: \n* Roger Leigh\n* Open Microscopy Environment", shell_output("#{bin}/Xalan #{testpath}/input.xml #{testpath}/transform.xsl")
+    assert_match "Article: An XSLT test-case\nAuthors: \n* Roger Leigh\n* Open Microscopy Environment",
+                 shell_output("#{bin}/Xalan #{testpath}/input.xml #{testpath}/transform.xsl")
   end
 end

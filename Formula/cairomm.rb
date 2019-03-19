@@ -6,19 +6,17 @@ class Cairomm < Formula
 
   bottle do
     cellar :any
+    sha256 "bbea26f62be4ffee655db277b96bbaa49303ff5c3a1e8730c24c6f821e50b9c6" => :mojave
     sha256 "80db0528a9b198b3cf17d3b450982a26fd1619a15ace2087f6f52f1347b89499" => :high_sierra
     sha256 "da41ea7c4cd90ab7183f4eba82f6921fd70b8a3ad0301054f2152214efe33373" => :sierra
     sha256 "4fec10a5e15cceceee0b93e11bf000d9f6365cfc1c97dbc255b4a4d7d7d6c8dd" => :el_capitan
     sha256 "ce58504dbe14cd1a27aeecd7eed1d95c6fa7819b8ff6ab451e02462cdc699e83" => :yosemite
   end
 
-  needs :cxx11
-
   depends_on "pkg-config" => :build
-  depends_on "libsigc++"
-
-  depends_on "libpng"
   depends_on "cairo"
+  depends_on "libpng"
+  depends_on "libsigc++"
 
   def install
     ENV.cxx11

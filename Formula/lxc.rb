@@ -1,14 +1,14 @@
 class Lxc < Formula
   desc "CLI client for interacting with LXD"
   homepage "https://linuxcontainers.org"
-  url "https://linuxcontainers.org/downloads/lxd/lxd-2.19.tar.gz"
-  sha256 "9a82235d1bf636e77af2b25844628682d6d5c1842febb82f519f07e0fafe963c"
+  url "https://linuxcontainers.org/downloads/lxd/lxd-3.11.tar.gz"
+  sha256 "5d38ca401aedbba867f2b8b4cb491efe85047dd0729f22b31ae2feef21cfbf77"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "cf11313104d88294125c9bfe8cd3092c5cd7a669c98d8f3e49d6bef962bbe9a2" => :high_sierra
-    sha256 "f839fa32798aa787b122193a562a6d953594130d39f8adffdafec55a816a079f" => :sierra
-    sha256 "5d26a40b776802ad9dc71c432bac08ea77752134d6843739101894cff9ba2a6f" => :el_capitan
+    sha256 "72862f3c6b25d867e3bce109d5d37629a38422d84765fc7d84d47e715541278f" => :mojave
+    sha256 "131bc58a107261d80f0596da606969f136ca123aff4d6a65f414aef6e163ac48" => :high_sierra
+    sha256 "06016de62d29c0b807acd96312d28a9658133c231a42c86cdcf1f0f3939c1774" => :sierra
   end
 
   depends_on "go" => :build

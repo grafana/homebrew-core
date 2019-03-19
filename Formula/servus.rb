@@ -2,11 +2,12 @@ class Servus < Formula
   desc "Library and Utilities for zeroconf networking"
   homepage "https://github.com/HBPVIS/Servus"
   url "https://github.com/HBPVIS/Servus.git",
-      :tag => "1.5.1",
+      :tag      => "1.5.1",
       :revision => "eee576548a05292179f4892d48b97108d8ed07c0"
 
   bottle do
     cellar :any
+    sha256 "65daafc6c169de45d7579425522250c81e4e9f8f83aef66b58d43d4426826248" => :mojave
     sha256 "fc9303986cd2dda58a7ed71e96273eef4517120b4e8b32f2956f672f3125e312" => :high_sierra
     sha256 "6946b4f5b7151f94cdb6e75ae47fda08a1da867f5690e757ee9d82875836905a" => :sierra
     sha256 "39e8d21f40ecf08f3bf68e565648c9b94e4eb5d1acda854d8ff58676dce9a7dc" => :el_capitan
@@ -113,7 +114,10 @@ class Servus < Formula
           BOOST_CHECK_THROW( obj.toJSON(), std::runtime_error );
       }
     EOS
-    system ENV.cxx, "-lServus", "-DBOOST_TEST_DYN_LINK", "-lboost_unit_test_framework-mt", "-std=gnu++11", "test.cpp", "-o", "test"
+    system ENV.cxx, "-L#{lib}", "-lServus", "-DBOOST_TEST_DYN_LINK",
+                    "-L#{Formula["boost"].opt_lib}",
+                    "-lboost_unit_test_framework-mt",
+                    "-std=gnu++11", "test.cpp", "-o", "test"
     system "./test"
   end
 end

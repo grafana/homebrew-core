@@ -1,30 +1,49 @@
 class GnomeRecipes < Formula
   desc "Formula for GNOME recipes"
   homepage "https://wiki.gnome.org/Apps/Recipes"
-  url "https://download.gnome.org/sources/gnome-recipes/1.6/gnome-recipes-1.6.2.tar.xz"
-  sha256 "8a11ed483b422dbbedb10237dac8b47fe94d76d40cac87ae6d19292942c94f9c"
+  url "https://download.gnome.org/sources/gnome-recipes/2.0/gnome-recipes-2.0.2.tar.xz"
+  sha256 "1be9d2fcb7404a97aa029d2409880643f15071c37039247a6a4320e7478cd5fb"
+  revision 8
 
   bottle do
-    rebuild 1
-    sha256 "cf42a7711b8baaa341b2aa1e1bafa7ac0ca8b58f02cdfc221556dc23f869b896" => :high_sierra
-    sha256 "a643b6dd52e83abdc01ef3c0e5d08a05c78ad20179d3b5190fadccab85dda0e2" => :sierra
-    sha256 "d81b4cac80b65e170ba85e5b31fd3bf7d2ec6891fd7dc44d0312829a4cf98992" => :el_capitan
+    sha256 "d4b76cbd04850877a91f733dcf1039ade2abf71b4bbf46cf55dcded08cd5b823" => :mojave
+    sha256 "7a3248e3ba15d91ed5ce28520c7e384bdf1f5f05f4fcc6f8d6deb425a40b0447" => :high_sierra
+    sha256 "7c84b25efe430c5a8436e144c45243ff588177aba5ed63b2ba42ab8214196ddb" => :sierra
   end
 
+  depends_on "itstool" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
   depends_on "pkg-config" => :build
-  depends_on "itstool" => :build
-  depends_on :python3 => :build
-  depends_on "gtk+3"
+  depends_on "python" => :build
   depends_on "adwaita-icon-theme"
-  depends_on "libcanberra"
   depends_on "gnome-autoar"
-  depends_on "gspell"
-  depends_on "libsoup"
   depends_on "gnu-tar"
+  depends_on "gspell"
+  depends_on "gtk+3"
+  depends_on "json-glib" # for goa
+  depends_on "libcanberra"
+  depends_on "librest" # for goa
+  depends_on "libsoup"
+  depends_on "libxml2"
+
+  resource "goa" do
+    url "https://download.gnome.org/sources/gnome-online-accounts/3.30/gnome-online-accounts-3.30.2.tar.xz"
+    sha256 "05c7e588c884a4145db376880303588f74b76d1fa11afbeccb74c6eff36b2fdc"
+  end
 
   def install
+    resource("goa").stage do
+      system "./configure", "--disable-debug",
+                            "--disable-dependency-tracking",
+                            "--disable-silent-rules",
+                            "--prefix=#{libexec}",
+                            "--disable-backend"
+      system "make", "install"
+    end
+
+    ENV.prepend_path "PKG_CONFIG_PATH", libexec/"lib/pkgconfig"
+
     # BSD tar does not support the required options
     inreplace "src/gr-recipe-store.c", "argv[0] = \"tar\";", "argv[0] = \"gtar\";"
     # stop meson_post_install.py from doing what needs to be done in the post_install step

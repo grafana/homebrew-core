@@ -1,37 +1,19 @@
 class PostgresqlAT96 < Formula
   desc "Object-relational database system"
   homepage "https://www.postgresql.org/"
-  url "https://ftp.postgresql.org/pub/source/v9.6.6/postgresql-9.6.6.tar.bz2"
-  sha256 "399cdffcb872f785ba67e25d275463d74521566318cfef8fe219050d063c8154"
+  url "https://ftp.postgresql.org/pub/source/v9.6.11/postgresql-9.6.11.tar.bz2"
+  sha256 "38250adc69a1e8613fb926c894cda1d01031391a03648894b9a6e13ff354a530"
 
   bottle do
-    sha256 "29c788aece9031fc4da83d32fb82e18d6f795c053de4e14a744a4149ca50045b" => :high_sierra
-    sha256 "f9f7c5391ef848f02f76253d55e44ffca2b5c2a42eb0f808522b83fc9a1b57dd" => :sierra
-    sha256 "c656a67c4427dd9bb0f8c50e3abb6827069003ba0be93c323bf02790d209fcdc" => :el_capitan
+    sha256 "5745eb61597faf400d2fff86eb70a7c18cbacb5ca05d751558a7e4f16618ec76" => :mojave
+    sha256 "9bc81bcb60c55d694670d373513b6d53145b05e42d76641b51969ce9e8e3e1b9" => :high_sierra
+    sha256 "acc37cd6b58fffbe829b88d08b6c7cbb5502bab397e35b11e0bfa087112d6805" => :sierra
   end
 
   keg_only :versioned_formula
 
-  option "without-perl", "Build without Perl support"
-  option "without-tcl", "Build without Tcl support"
-  option "with-dtrace", "Build with DTrace support"
-  option "with-python", "Enable PL/Python2"
-  option "with-python3", "Enable PL/Python3 (incompatible with --with-python)"
-
-  deprecated_option "no-perl" => "without-perl"
-  deprecated_option "no-tcl" => "without-tcl"
-  deprecated_option "enable-dtrace" => "with-dtrace"
-
   depends_on "openssl"
   depends_on "readline"
-
-  depends_on :python => :optional
-  depends_on :python3 => :optional
-
-  fails_with :clang do
-    build 211
-    cause "Miscompilation resulting in segfault on queries"
-  end
 
   def install
     # avoid adding the SDK library directory to the linker search path
@@ -55,37 +37,53 @@ class PostgresqlAT96 < Formula
       --with-pam
       --with-libxml
       --with-libxslt
+      --with-perl
+      --with-uuid=e2fs
     ]
-
-    args << "--with-perl" if build.with? "perl"
-
-    which_python = nil
-    if build.with?("python") && build.with?("python3")
-      odie "Cannot provide both --with-python and --with-python3"
-    elsif build.with?("python") || build.with?("python3")
-      args << "--with-python"
-      which_python = which(build.with?("python") ? "python" : "python3")
-    end
-    ENV["PYTHON"] = which_python
 
     # The CLT is required to build Tcl support on 10.7 and 10.8 because
     # tclConfig.sh is not part of the SDK
-    if build.with?("tcl") && (MacOS.version >= :mavericks || MacOS::CLT.installed?)
-      args << "--with-tcl"
-
-      if File.exist?("#{MacOS.sdk_path}/System/Library/Frameworks/Tcl.framework/tclConfig.sh")
-        args << "--with-tclconfig=#{MacOS.sdk_path}/System/Library/Frameworks/Tcl.framework"
-      end
+    args << "--with-tcl"
+    if File.exist?("#{MacOS.sdk_path}/System/Library/Frameworks/Tcl.framework/tclConfig.sh")
+      args << "--with-tclconfig=#{MacOS.sdk_path}/System/Library/Frameworks/Tcl.framework"
     end
 
-    args << "--enable-dtrace" if build.with? "dtrace"
-    args << "--with-uuid=e2fs"
+    # As of Xcode/CLT 10.x the Perl headers were moved from /System
+    # to inside the SDK, so we need to use `-iwithsysroot` instead
+    # of `-I` to point to the correct location.
+    # https://www.postgresql.org/message-id/153558865647.1483.573481613491501077%40wrigleys.postgresql.org
+    if DevelopmentTools.clang_build_version >= 1000
+      inreplace "configure",
+                "-I$perl_archlibexp/CORE",
+                "-iwithsysroot $perl_archlibexp/CORE"
+      inreplace "contrib/hstore_plperl/Makefile",
+                "$(perl_archlibexp)/CORE",
+                "-iwithsysroot $(perl_archlibexp)/CORE"
+      inreplace "src/pl/plperl/GNUmakefile",
+                "$(perl_archlibexp)/CORE",
+                "-iwithsysroot $(perl_archlibexp)/CORE"
+    end
 
     system "./configure", *args
     system "make"
-    system "make", "install-world", "datadir=#{pkgshare}",
-                                    "libdir=#{lib}",
-                                    "pkglibdir=#{lib}"
+
+    dirs = %W[datadir=#{pkgshare} libdir=#{lib} pkglibdir=#{lib}]
+
+    # Temporarily disable building/installing the documentation.
+    # Postgresql seems to "know" the build system has been altered and
+    # tries to regenerate the documentation when using `install-world`.
+    # This results in the build failing:
+    #  `ERROR: `osx' is missing on your system.`
+    # Attempting to fix that by adding a dependency on `open-sp` doesn't
+    # work and the build errors out on generating the documentation, so
+    # for now let's simply omit it so we can package Postgresql for Mojave.
+    if DevelopmentTools.clang_build_version >= 1000
+      system "make", "all"
+      system "make", "-C", "contrib", "install", "all", *dirs
+      system "make", "install", "all", *dirs
+    else
+      system "make", "install-world", *dirs
+    end
   end
 
   def post_install
@@ -109,7 +107,7 @@ class PostgresqlAT96 < Formula
 
       You will need your previous PostgreSQL installation from brew to perform `pg_upgrade`.
         Do not run `brew cleanup postgresql@9.6` until you have performed the migration.
-    EOS
+  EOS
   end
 
   plist_options :manual => "pg_ctl -D #{HOMEBREW_PREFIX}/var/postgresql@9.6 start"
@@ -137,7 +135,7 @@ class PostgresqlAT96 < Formula
       <string>#{var}/log/#{name}.log</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

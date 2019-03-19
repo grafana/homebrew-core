@@ -6,12 +6,12 @@ class Vstr < Formula
 
   bottle do
     cellar :any
+    sha256 "8927c49aa4daba57ffab9a9ea332504346467cf22c137af3e1a16b859318a0f5" => :mojave
     sha256 "af6d9cc097c4eb9c1719496b2e29593763b5b17b279ef4c234d681cfe4174b37" => :high_sierra
     sha256 "07e2b05d9908a847c72950532d3ed12771c856365c8747c8c5917da9a5ea4413" => :sierra
     sha256 "d2d5b14e9ac589c782307e058e06815ad2408bbcf418ac721d3fac3be8b832a7" => :el_capitan
     sha256 "0d4176307ea18472c9da9a765bcb033e6256ae361d2e32b758b205a56dd7e38a" => :yosemite
     sha256 "5fc509c660fc38b3484a093ce0894ee2e9c3ea3cccc43222071c4d8139975d8d" => :mavericks
-    sha256 "10918d69a40e4516a549dae179e73c390248f4eaa8c75460228d9ba7d330fee9" => :mountain_lion
   end
 
   depends_on "pkg-config" => :build

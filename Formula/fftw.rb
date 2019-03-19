@@ -1,39 +1,33 @@
 class Fftw < Formula
   desc "C routines to compute the Discrete Fourier Transform"
   homepage "http://www.fftw.org"
-  url "http://fftw.org/fftw-3.3.6-pl2.tar.gz"
-  version "3.3.6-pl2"
-  sha256 "a5de35c5c824a78a058ca54278c706cdf3d4abba1c56b63531c2cb05f5d57da2"
+  url "http://fftw.org/fftw-3.3.8.tar.gz"
+  sha256 "6113262f6e92c5bd474f2875fa1b01054c4ad5040f6b0da7c03c98821d9ae303"
 
   bottle do
     cellar :any
-    sha256 "76ec18439c8fc1bee47919205e68cf0cb5d6d30dd27f58eb2d6964d5501eb199" => :high_sierra
-    sha256 "293e6d290a437b18e0a1563622ca1e6bb3efc0574de8db461dc7066281fcf8e4" => :sierra
-    sha256 "3b0c6440faf90169571c67ef1f6532db743adfb64ccb41e5786eaffc2a2d925f" => :el_capitan
-    sha256 "c650cf7a95ab5d2935b726a692e6f08f7f93281e24d1e44536bac0d34b440ff3" => :yosemite
+    rebuild 1
+    sha256 "8df061c7222cc121bda7fa99383762de7a4e4f5f7b722ed324e5db3aeccf7c87" => :mojave
+    sha256 "61cae18adcd0140264dd31818f3986b58b3399201ec3fc9bbc18666a815c1af9" => :high_sierra
+    sha256 "30dd2e1659c5288859e19204aa2afeb61a514cb12fc9e75a849b7c944ced314b" => :sierra
   end
 
-  option "with-fortran", "Enable Fortran bindings"
-  option "with-mpi", "Enable MPI parallel transforms"
-  option "with-openmp", "Enable OpenMP parallel transforms"
+  depends_on "gcc"
+  depends_on "open-mpi"
 
-  depends_on :fortran => :optional
-  depends_on :mpi => [:cc, :optional]
-  needs :openmp if build.with? "openmp"
+  fails_with :clang
 
   def install
-    args = ["--enable-shared",
-            "--disable-debug",
-            "--prefix=#{prefix}",
-            "--enable-threads",
-            "--disable-dependency-tracking"]
+    args = [
+      "--enable-shared",
+      "--disable-debug",
+      "--prefix=#{prefix}",
+      "--enable-threads",
+      "--disable-dependency-tracking",
+      "--enable-mpi",
+      "--enable-openmp",
+    ]
     simd_args = ["--enable-sse2"]
-    simd_args << "--enable-avx" if ENV.compiler == :clang && Hardware::CPU.avx? && !build.bottle?
-    simd_args << "--enable-avx2" if ENV.compiler == :clang && Hardware::CPU.avx2? && !build.bottle?
-
-    args << "--disable-fortran" if build.without? "fortran"
-    args << "--enable-mpi" if build.with? "mpi"
-    args << "--enable-openmp" if build.with? "openmp"
 
     # single precision
     # enable-sse2, enable-avx and enable-avx2 work for both single and double precision

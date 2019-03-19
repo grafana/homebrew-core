@@ -1,21 +1,28 @@
 class Fltk < Formula
   desc "Cross-platform C++ GUI toolkit"
-  homepage "http://www.fltk.org/"
-  url "http://fltk.org/pub/fltk/1.3.4/fltk-1.3.4-source.tar.gz"
-  mirror "https://ftp.osuosl.org/pub/blfs/conglomeration/fltk/fltk-1.3.4-source.tar.gz"
-  mirror "https://fossies.org/linux/misc/fltk-1.3.4-source.tar.gz"
-  sha256 "c8ab01c4e860d53e11d40dc28f98d2fe9c85aaf6dbb5af50fd6e66afec3dc58f"
+  homepage "https://www.fltk.org/"
+  url "https://www.fltk.org/pub/fltk/1.3.4/fltk-1.3.4-2-source.tar.gz"
+  mirror "https://dl.bintray.com/homebrew/mirror/fltk-1.3.4-2.tar.gz"
+  version "1.3.4-2"
+  sha256 "25d349c18c99508737d48f225a2eb26a43338f9247551cab72a317fa42cda910"
   revision 1
 
   bottle do
-    sha256 "7561987fff4639d07a28407b8d4f511fffe4579fb452a0aaa9dad2f0a0bde48d" => :high_sierra
-    sha256 "1fbd79e3f5c36f70cc5f2d0256520fd8c6ee969990412cb9080eacfe9e75e4a1" => :sierra
-    sha256 "fca842e5e25fc0a0566d64b3d34226e667f072f82cd51f009180a09db218666b" => :el_capitan
-    sha256 "bb481cbaefe696696c3bf527b4902b8251de3ee7c75619f89fd554a6e73b1b40" => :yosemite
+    sha256 "d4844065f8c9fb37183d610d4c0d55d1dc3447d7348ab34930d1e6e35c7f21c7" => :mojave
+    sha256 "06b17cb9b3c89f4e5df09eacb7f735af872bdec7fb1932237c83ba72be1a680d" => :high_sierra
+    sha256 "c5b58949cc184e7af5fd44fbfc65a71a37e2fc950bb08971c6fb633d85eccabc" => :sierra
   end
 
-  depends_on "libpng"
   depends_on "jpeg"
+  depends_on "libpng"
+
+  # Fix for Mojave issue https://github.com/Homebrew/homebrew-core/issues/33342
+  # Modified version of upstream commit https://github.com/fltk/fltk/commit/f76d2a2bf8c35c0c313f05bbd6deda49dd344efc
+  # Remove after next release
+  patch :p0 do
+    url "https://raw.githubusercontent.com/Homebrew/formula-patches/a68bce/fltk/mojave.patch"
+    sha256 "9483adfc70c25bd560c4400972d8d12d288ee78c27b1c03c965aa59818e59152"
+  end
 
   def install
     system "./configure", "--prefix=#{prefix}",

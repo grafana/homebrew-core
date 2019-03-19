@@ -1,15 +1,14 @@
 class Fdclone < Formula
   desc "Console-based file manager"
   homepage "https://hp.vector.co.jp/authors/VA012337/soft/fd/"
-  url "https://hp.vector.co.jp/authors/VA012337/soft/fd/FD-3.01b.tar.gz"
-  sha256 "d66d902cac9d4f64a91d42ceb487a138d544c9fd9cb2961730889cc8830303d4"
+  url "http://www.unixusers.net/src/fdclone/FD-3.01h.tar.gz"
+  sha256 "24be8af52faa48cd6f123d55cfca45d21e5fd1dc16bed24f6686497429f3e2cf"
 
   bottle do
-    sha256 "14fe7c148d8e95a516c1477ccf58f041f2029731638a401346f7dfb047313175" => :high_sierra
-    sha256 "ce0319a6a58dbf44dbfdd8d8716c86cf34fbb856bf660034eae9b18dc1362dc6" => :sierra
-    sha256 "f9992eacec6b447a8bef9946445e371f560483799c0912e5ecd6b095bbd0b542" => :el_capitan
-    sha256 "e5983768aec9c3d61a72a06ea25b121cf54178461b22f3848c446249a99b26a9" => :yosemite
-    sha256 "1add0151a1961ea9b9b167b220dc0248a0fec6263efa351c2558f7eded98c361" => :mavericks
+    sha256 "d312c649a0a3691eee27febe3c579250fda9851ae7fe800712b28dfcbd8a6beb" => :mojave
+    sha256 "58aa669b9e490b8d744bb22948f1ef37549a35bbff0cbbd216ee76251d4511d9" => :high_sierra
+    sha256 "0fd727178f488ed0c7f32f5b89aa6d38385ebe8377dc2c8abca84ce9777e6cae" => :sierra
+    sha256 "c890b9824129c9a4ac969ff4930532841de0cce4f11274f9631029af290561ba" => :el_capitan
   end
 
   depends_on "nkf" => :build
@@ -30,14 +29,14 @@ class Fdclone < Formula
       prefix.install file => "#{file}.ja"
     end
 
-    share.install "_fdrc" => "fd2rc.dist"
+    pkgshare.install "_fdrc" => "fd2rc.dist"
   end
 
   def caveats; <<~EOS
     To install the initial config file:
-        install -c -m 0644 #{share}/fd2rc.dist ~/.fd2rc
+        install -c -m 0644 #{opt_pkgshare}/fd2rc.dist ~/.fd2rc
     To set application messages to Japanese, edit your .fd2rc:
         MESSAGELANG="ja"
-    EOS
+  EOS
   end
 end

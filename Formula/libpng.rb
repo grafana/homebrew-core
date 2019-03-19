@@ -1,15 +1,15 @@
 class Libpng < Formula
   desc "Library for manipulating PNG images"
   homepage "http://www.libpng.org/pub/png/libpng.html"
-  url "https://downloads.sourceforge.net/libpng/libpng-1.6.34.tar.xz"
-  mirror "https://sourceforge.mirrorservice.org/l/li/libpng/libpng16/1.6.34/libpng-1.6.34.tar.xz"
-  sha256 "2f1e960d92ce3b3abd03d06dfec9637dfbd22febf107a536b44f7a47c60659f6"
+  url "https://downloads.sourceforge.net/libpng/libpng-1.6.36.tar.xz"
+  mirror "https://sourceforge.mirrorservice.org/l/li/libpng/libpng16/1.6.36/libpng-1.6.36.tar.xz"
+  sha256 "eceb924c1fa6b79172fdfd008d335f0e59172a86a66481e09d4089df872aa319"
 
   bottle do
     cellar :any
-    sha256 "d38a64089526ecc1413acbc22373821fd181442b80ffccfd8322a5724dc09759" => :high_sierra
-    sha256 "d587603b3079fb7ad5cecdd451ee7fdf88f80a8b88f457ed199270d85753208c" => :sierra
-    sha256 "0c17ca28357c801a0fb81667ba69c1ed820d0348ca7728766ea16e3bd9b0ff19" => :el_capitan
+    sha256 "7f6ac019c4413445dfa4d5ccbecfde564bf50b66ea32668bc360ad6edc78707d" => :mojave
+    sha256 "b79c005157a135c42d42fbd7bf2f13537964a24225cc2bae51dd97908799fe08" => :high_sierra
+    sha256 "b501cf867a3cb3adabf72b0da6c165ee3e803c39301c92b67ec449a914551238" => :sierra
   end
 
   head do
@@ -19,8 +19,6 @@ class Libpng < Formula
     depends_on "automake" => :build
     depends_on "libtool" => :build
   end
-
-  keg_only :provided_pre_mountain_lion
 
   def install
     system "./configure", "--disable-dependency-tracking",

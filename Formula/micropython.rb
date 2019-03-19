@@ -2,14 +2,15 @@ class Micropython < Formula
   desc "Python implementation for microcontrollers and constrained systems"
   homepage "https://www.micropython.org/"
   url "https://github.com/micropython/micropython.git",
-      :tag => "v1.9.3",
-      :revision => "fe45d78b1edd6d2202c3544797885cb0b12d4f03"
+      :tag      => "v1.9.4",
+      :revision => "421b84af9968e582f324899934f52b3df60381ee"
 
   bottle do
     cellar :any
-    sha256 "82a2f96e85c1d9899b6b4c316d9ead47027fb55e038d315d7c55afa081d67a58" => :high_sierra
-    sha256 "84624d68acfdac350881b703c4c719cd13cc9501bd06bf876ecd7551d1f71b92" => :sierra
-    sha256 "b16e8e3acbd1271f6449e19e60ea10a0c0c54245937cf95caec322d7a2671f9f" => :el_capitan
+    sha256 "be2d76d5b19e0c2cb18734141fe1b09fbb79f1a60989789cefd76aabc6963c3e" => :mojave
+    sha256 "4c4b34c14c357ac012cc5a140fb4d0e1cee912852911a8796b3815cc099e98b2" => :high_sierra
+    sha256 "e864ea4c00070477b60ed09d0406d6609e1b79fe440c8cdf84b35a0c78e82bce" => :sierra
+    sha256 "e7e84a7479414bf94fc8bd739bd97bf4c9996a757571e648b7d2ef04e70ccb04" => :el_capitan
   end
 
   depends_on "pkg-config" => :build
@@ -18,7 +19,12 @@ class Micropython < Formula
   def install
     cd "ports/unix" do
       system "make", "axtls"
-      system "make", "install", "PREFIX=#{prefix}", "V=1"
+      system "make", "install", "PREFIX=#{prefix}"
+    end
+
+    cd "mpy-cross" do
+      system "make"
+      bin.install "mpy-cross"
     end
   end
 
@@ -32,6 +38,7 @@ class Micropython < Formula
       printf("Hello!\\n")
     EOS
 
+    system bin/"mpy-cross", "ffi-hello.py"
     system bin/"micropython", "ffi-hello.py"
   end
 end

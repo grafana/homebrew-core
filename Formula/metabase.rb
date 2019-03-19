@@ -1,20 +1,20 @@
 class Metabase < Formula
   desc "Business intelligence report server"
   homepage "https://www.metabase.com/"
-  url "http://downloads.metabase.com/v0.26.1/metabase.jar"
-  sha256 "689861423b8124741913a7a8387f7be04d1d9484c3eafb2657ba48177159bffc"
+  url "https://downloads.metabase.com/v0.30.4/metabase.jar"
+  sha256 "9a79d17d93753296c7933ddf47f0142672072349584a8d9b6f1ca37476a17e57"
 
   head do
     url "https://github.com/metabase/metabase.git"
 
+    depends_on "leiningen" => :build
     depends_on "node" => :build
     depends_on "yarn" => :build
-    depends_on "leiningen" => :build
   end
 
   bottle :unneeded
 
-  depends_on :java => "1.7+"
+  depends_on :java => "1.8"
 
   def install
     if build.head?
@@ -23,7 +23,12 @@ class Metabase < Formula
     else
       libexec.install "metabase.jar"
     end
-    bin.write_jar_script libexec/"metabase.jar", "metabase"
+
+    (bin/"metabase").write <<~EOS
+      #!/bin/bash
+      export JAVA_HOME="$(#{Language::Java.java_home_cmd("1.8")})"
+      exec java -jar "#{libexec}/metabase.jar" "$@"
+    EOS
   end
 
   plist_options :startup => true, :manual => "metabase"
@@ -51,7 +56,7 @@ class Metabase < Formula
       <string>/dev/null</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

@@ -1,26 +1,23 @@
 class Blink1 < Formula
   desc "Control blink(1) indicator light"
   homepage "https://blink1.thingm.com/"
-  url "https://github.com/todbot/blink1/archive/v1.98.tar.gz"
-  sha256 "31f4b6d6c1456abd3e81550df502e2ef4cc10fb113cc875a544e21428d965d6e"
-  head "https://github.com/todbot/blink1.git"
+  url "https://github.com/todbot/blink1-tool.git",
+      :tag      => "v2.0.2",
+      :revision => "ddea93375101a9b43e0248205b5460a0e3b45f74"
+  head "https://github.com/todbot/blink1-tool.git"
 
   bottle do
     cellar :any
-    sha256 "cd4dfb706dc89b0f2dd4809ae0950bc8544e5ec84a11ded657ae34dac2ba0560" => :high_sierra
-    sha256 "a5f2a3f5acae040bfc697ee9c23b16d522ecc326bd7c5b74c846dd6922b7175a" => :sierra
-    sha256 "227e1fce1bcd3f50cb39231e8ec0e0638b068f68433a12c8a3bac8adfa90961c" => :el_capitan
-    sha256 "1536128c6ba6957f3d5f287ab4e0fcc28053ca54604f0ffae06eef2f96c4da88" => :yosemite
-    sha256 "1bba2becfb93f831b91654400827acad41de00c2fcfe45b5ca14336fa3545cfd" => :mavericks
+    sha256 "6a9aae3733db387dfa9e9c1bbacb9b3c7993f42486115254c8c67d9c716c455d" => :mojave
+    sha256 "0a19927c5f385f1aede59f406edc34d91cfa46b0b961d1f02bf7170e06888f4f" => :high_sierra
+    sha256 "9cc48de0d254d4e30d2ac0649d298e55ef0576b97da7b77f170261b9a913da43" => :sierra
   end
 
   def install
-    cd "commandline" do
-      system "make"
-      bin.install "blink1-tool"
-      lib.install "libBlink1.dylib"
-      include.install "blink1-lib.h"
-    end
+    system "make"
+    bin.install "blink1-tool"
+    lib.install "libBlink1.dylib"
+    include.install "blink1-lib.h"
   end
 
   test do

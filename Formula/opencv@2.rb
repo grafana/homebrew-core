@@ -1,18 +1,17 @@
 class OpencvAT2 < Formula
   desc "Open source computer vision library"
   homepage "https://opencv.org/"
-  url "https://github.com/opencv/opencv/archive/2.4.13.4.tar.gz"
-  sha256 "f8abf1fcc2da3bb1deac8776f07b8390f871372e2a44dc355c765dd379194481"
+  url "https://github.com/opencv/opencv/archive/2.4.13.7.tar.gz"
+  sha256 "192d903588ae2cdceab3d7dc5a5636b023132c8369f184ca89ccec0312ae33d0"
+  revision 2
 
   bottle do
-    sha256 "5604daf2cbb63923b5bcfed984a797bbe48bf915b7272c8588429ed8bf7c65bf" => :high_sierra
-    sha256 "a6c8afdcf22606be32b1c0d30a6c1f4e1b9534c029646f583e30efdd7087d898" => :sierra
-    sha256 "b52943718bb79e438d4c0cf695c59b27a17358672553f27182a614a4fe950b3e" => :el_capitan
+    sha256 "6580055d021fcabea83a3d2878cba7a6a7851fd2463f769e98138a099b3cc82d" => :mojave
+    sha256 "3ac9fdae51aea0627c1febfc25b7dc99b6f3832684b7c0e044a46aac771e02ac" => :high_sierra
+    sha256 "055e15f3b20df7f4db64f2d540e1a19e044edad5b33eb1f5980f747126142b5b" => :sierra
   end
 
   keg_only :versioned_formula
-
-  option "without-python", "Build without python2 support"
 
   depends_on "cmake" => :build
   depends_on "pkg-config" => :build
@@ -21,9 +20,9 @@ class OpencvAT2 < Formula
   depends_on "jpeg"
   depends_on "libpng"
   depends_on "libtiff"
+  depends_on "numpy"
   depends_on "openexr"
-  depends_on :python => :recommended if MacOS.version <= :snow_leopard
-  depends_on "numpy" if build.with? "python"
+  depends_on "python@2" # does not support Python 3
 
   def install
     jpeg = Formula["jpeg"]
@@ -39,6 +38,7 @@ class OpencvAT2 < Formula
       -DBUILD_TIFF=OFF
       -DBUILD_ZLIB=OFF
       -DBUILD_opencv_java=OFF
+      -DBUILD_opencv_python=ON
       -DWITH_CUDA=OFF
       -DWITH_EIGEN=ON
       -DWITH_FFMPEG=ON
@@ -49,26 +49,20 @@ class OpencvAT2 < Formula
       -DWITH_TBB=OFF
       -DJPEG_INCLUDE_DIR=#{jpeg.opt_include}
       -DJPEG_LIBRARY=#{jpeg.opt_lib}/libjpeg.dylib
+      -DENABLE_SSSE3=ON
     ]
 
-    args << "-DBUILD_opencv_python=" + (build.with?("python") ? "ON" : "OFF")
+    py_prefix = `python-config --prefix`.chomp
+    py_lib = "#{py_prefix}/lib"
+    args << "-DPYTHON_LIBRARY=#{py_lib}/libpython2.7.dylib"
+    args << "-DPYTHON_INCLUDE_DIR=#{py_prefix}/include/python2.7"
 
-    if build.with? "python"
-      py_prefix = `python-config --prefix`.chomp
-      py_lib = "#{py_prefix}/lib"
-      args << "-DPYTHON_LIBRARY=#{py_lib}/libpython2.7.dylib"
-      args << "-DPYTHON_INCLUDE_DIR=#{py_prefix}/include/python2.7"
+    # Make sure find_program locates system Python
+    # https://github.com/Homebrew/homebrew-science/issues/2302
+    args << "-DCMAKE_PREFIX_PATH=#{py_prefix}"
 
-      # Make sure find_program locates system Python
-      # https://github.com/Homebrew/homebrew-science/issues/2302
-      args << "-DCMAKE_PREFIX_PATH=#{py_prefix}"
-    end
-
-    if ENV.compiler == :clang && !build.bottle?
-      args << "-DENABLE_SSSE3=ON" if Hardware::CPU.ssse3?
-      args << "-DENABLE_SSE41=ON" if Hardware::CPU.sse4?
-      args << "-DENABLE_SSE42=ON" if Hardware::CPU.sse4_2?
-      args << "-DENABLE_AVX=ON" if Hardware::CPU.avx?
+    if MacOS.version.requires_sse42?
+      args << "-DENABLE_SSE41=ON" << "-DENABLE_SSE42=ON"
     end
 
     mkdir "build" do
@@ -91,7 +85,7 @@ class OpencvAT2 < Formula
     assert_equal version.to_s, shell_output("./test").strip
 
     ENV["PYTHONPATH"] = lib/"python2.7/site-packages"
-    assert_match version.to_s,
-                 shell_output("python -c 'import cv2; print(cv2.__version__)'")
+    output = shell_output("python2.7 -c 'import cv2; print(cv2.__version__)'")
+    assert_match version.to_s, output
   end
 end

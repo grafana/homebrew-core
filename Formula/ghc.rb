@@ -5,37 +5,30 @@ class Ghc < Formula
 
   desc "Glorious Glasgow Haskell Compilation System"
   homepage "https://haskell.org/ghc/"
-  url "https://downloads.haskell.org/~ghc/8.2.1/ghc-8.2.1-src.tar.xz"
-  sha256 "cfc2d496708dacea3ea7dde4c6a4b921b97a7f550ee2acea44cfa535840593f0"
+  url "https://downloads.haskell.org/~ghc/8.6.4/ghc-8.6.4-src.tar.xz"
+  sha256 "5b5d07e4463203a433c3ed3df461ba6cce11b6d2b9b264db31f3429075d0303a"
 
   bottle do
-    sha256 "e8d1939f4e5a926d54d138a41fda0192b29fe709f906762f5eb046729a3b166d" => :high_sierra
-    sha256 "c77925f6388600594ba3392d6f8a9d17911de1a24123042c3852729482cd2fb9" => :sierra
-    sha256 "1eb563c53ed1f1317c3318ed7d85507cd3251a6135c1e4da611ca70cabd85686" => :el_capitan
-    sha256 "7990e782ac5c2abaac95c645d66cc859b143e585af6e5194b73e364a96ce741a" => :yosemite
+    sha256 "4a2c5a01f9e3ef499a30b25942e4d52ee86e2cb902b33dc11c1065948b9c4e50" => :mojave
+    sha256 "72e530954801084477803d9f37265f4c067ab23ddae13826ac357acf954bb725" => :high_sierra
+    sha256 "b115dacf7a6fee79a2c929d9406258e975eb6348e1471b877fe3122c80e6b4a5" => :sierra
   end
 
   head do
-    url "https://git.haskell.org/ghc.git", :branch => "ghc-8.2"
+    url "https://git.haskell.org/ghc.git", :branch => "ghc-8.6"
 
     depends_on "autoconf" => :build
     depends_on "automake" => :build
     depends_on "libtool" => :build
 
     resource "cabal" do
-      url "https://hackage.haskell.org/package/cabal-install-1.24.0.2/cabal-install-1.24.0.2.tar.gz"
-      sha256 "2ac8819238a0e57fff9c3c857e97b8705b1b5fef2e46cd2829e85d96e2a00fe0"
+      url "https://hackage.haskell.org/package/cabal-install-2.4.0.0/cabal-install-2.4.0.0.tar.gz"
+      sha256 "1329e9564b736b0cfba76d396204d95569f080e7c54fe355b6d9618e3aa0bef6"
     end
   end
 
-  option "with-test", "Verify the build using the testsuite"
-  option "without-docs", "Do not build documentation (including man page)"
-  deprecated_option "tests" => "with-test"
-  deprecated_option "with-tests" => "with-test"
-
-  depends_on :macos => :lion
-  depends_on :python3 => :build if build.bottle? || build.with?("test")
-  depends_on "sphinx-doc" => :build if build.with? "docs"
+  depends_on "python" => :build
+  depends_on "sphinx-doc" => :build
 
   resource "gmp" do
     url "https://ftp.gnu.org/gnu/gmp/gmp-6.1.2.tar.xz"
@@ -44,60 +37,29 @@ class Ghc < Formula
     sha256 "87b565e89a9a684fe4ebeeddb8399dce2599f9c9049854ca8c0dfbdea0e21912"
   end
 
-  if MacOS.version <= :lion
-    fails_with :clang do
-      cause <<~EOS
-        Fails to bootstrap ghc-cabal. Error is:
-          libraries/Cabal/Cabal/Distribution/Compat/Binary/Class.hs:398:14:
-              The last statement in a 'do' block must be an expression
-                n <- get :: Get Int getMany n
-      EOS
-    end
-  end
-
   # https://www.haskell.org/ghc/download_ghc_8_0_1#macosx_x86_64
   # "This is a distribution for Mac OS X, 10.7 or later."
   resource "binary" do
-    url "https://downloads.haskell.org/~ghc/8.2.1/ghc-8.2.1-x86_64-apple-darwin.tar.xz"
-    sha256 "900c802025fb630060dbd30f9738e5d107a4ca5a50d5c1262cd3e69fe4467188"
-  end
-
-  resource "testsuite" do
-    url "https://downloads.haskell.org/~ghc/8.2.1/ghc-8.2.1-testsuite.tar.xz"
-    sha256 "49ea3a913c3c556d4af8bbf5afd40a7ce740341eaef3498d2db3bc842c9d431b"
+    url "https://downloads.haskell.org/~ghc/8.4.4/ghc-8.4.4-x86_64-apple-darwin.tar.xz"
+    sha256 "28dc89ebd231335337c656f4c5ead2ae2a1acc166aafe74a14f084393c5ef03a"
   end
 
   def install
     ENV["CC"] = ENV.cc
     ENV["LD"] = "ld"
 
-    # Setting -march=native, which is what --build-from-source does, fails
-    # on Skylake (and possibly other architectures as well) with the error
-    # "Segmentation fault: 11" for at least the following files:
-    #   utils/haddock/dist/build/Haddock/Backends/Hyperlinker/Types.dyn_o
-    #   utils/haddock/dist/build/Documentation/Haddock/Types.dyn_o
-    #   utils/haddock/dist/build/Haddock/GhcUtils.dyn_o
-    #   utils/haddock/dist/build/Paths_haddock.dyn_o
-    #   utils/haddock/dist/build/ResponseFile.dyn_o
-    # Setting -march=core2 works around the bug.
-    # Reported 22 May 2016: https://ghc.haskell.org/trac/ghc/ticket/12100
-    # Note that `unless build.bottle?` avoids overriding --bottle-arch=[...].
-    ENV["HOMEBREW_OPTFLAGS"] = "-march=#{Hardware.oldest_cpu}" unless build.bottle?
-
-    # Build a static gmp rather than in-tree gmp, otherwise it links to brew's.
+    # Build a static gmp rather than in-tree gmp, otherwise all ghc-compiled
+    # executables link to Homebrew's GMP.
     gmp = libexec/"integer-gmp"
 
-    # MPN_PATH: The lowest common denominator asm paths that work on Darwin,
-    # corresponding to Yonah and Merom. Obviates --disable-assembly.
-    ENV["MPN_PATH"] = "x86_64/fastsse x86_64/core2 x86_64 generic" if build.bottle?
-
-    # GMP *does not* use PIC by default without shared libs  so --with-pic
+    # GMP *does not* use PIC by default without shared libs so --with-pic
     # is mandatory or else you'll get "illegal text relocs" errors.
     resource("gmp").stage do
-      system "./configure", "--prefix=#{gmp}", "--with-pic", "--disable-shared"
+      system "./configure", "--prefix=#{gmp}", "--with-pic", "--disable-shared",
+                            "--build=#{Hardware.oldest_cpu}-apple-darwin#{`uname -r`.to_i}"
       system "make"
       system "make", "check"
-      ENV.deparallelize { system "make", "install" }
+      system "make", "install"
     end
 
     args = ["--with-gmp-includes=#{gmp}/include",
@@ -142,16 +104,9 @@ class Ghc < Formula
 
       system "./boot"
     end
+
     system "./configure", "--prefix=#{prefix}", *args
     system "make"
-
-    if build.bottle? || build.with?("test")
-      resource("testsuite").stage { buildpath.install Dir["*"] }
-      cd "testsuite" do
-        system "make", "clean"
-        system "make", "CLEANUP=1", "THREADS=#{ENV.make_jobs}", "fast"
-      end
-    end
 
     ENV.deparallelize { system "make", "install" }
     Dir.glob(lib/"*/package.conf.d/package.cache") { |f| rm f }

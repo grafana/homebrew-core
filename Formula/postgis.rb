@@ -1,15 +1,14 @@
 class Postgis < Formula
   desc "Adds support for geographic objects to PostgreSQL"
   homepage "https://postgis.net/"
-  url "http://download.osgeo.org/postgis/source/postgis-2.4.0.tar.gz"
-  sha256 "02baa90f04da41e04b6c18eedfda53110c45ae943d4e65050f6d202f7de07d29"
-  revision 1
+  url "https://download.osgeo.org/postgis/source/postgis-2.5.1.tar.gz"
+  sha256 "fb137056f43aae0e9d475dc5b7934eccce466f86f5ceeb69ec8b5cea26817a91"
 
   bottle do
     cellar :any
-    sha256 "9b90abbc56d3bbe28896bf078f34a578a9c537bbead004a96a50c1815d4331ed" => :high_sierra
-    sha256 "2a5b3074818d361d737a34061de971f55120ca12cb584e3d723871a1b2ac7ce7" => :sierra
-    sha256 "52a987c5512241e6318a72736f1267d84fc1fbf8cbc02a45a38b47508a3a18bc" => :el_capitan
+    sha256 "4b2a6bc8fd4be4eb126266b7abc893a61f0323355594768e34de2b8031d21339" => :mojave
+    sha256 "39aa93761802a7d885bc0db8b10ef66314725ca5114f77859be1be05480b3c67" => :high_sierra
+    sha256 "934efc3deeb8c3bfa3a4cf0dc2e2eb0a48853412702cc51d10405a28cdffd8ee" => :sierra
   end
 
   head do
@@ -20,36 +19,15 @@ class Postgis < Formula
     depends_on "libtool" => :build
   end
 
-  option "with-gui", "Build shp2pgsql-gui in addition to command line tools"
-  option "without-gdal", "Disable postgis raster support"
-  option "with-html-docs", "Generate multi-file HTML documentation"
-  option "with-api-docs", "Generate developer API documentation (long process)"
-
-  depends_on "pkg-config" => :build
   depends_on "gpp" => :build
+  depends_on "pkg-config" => :build
+  depends_on "gdal" # for GeoJSON and raster handling
+  depends_on "geos"
+  depends_on "json-c" # for GeoJSON and raster handling
+  depends_on "pcre"
   depends_on "postgresql"
   depends_on "proj"
-  depends_on "geos"
-
-  depends_on "gtk+" if build.with? "gui"
-
-  # For GeoJSON and raster handling
-  depends_on "json-c"
-  depends_on "gdal" => :recommended
-  depends_on "pcre" if build.with? "gdal"
-
-  # For advanced 2D/3D functions
-  depends_on "sfcgal" => :recommended
-
-  if build.with? "html-docs"
-    depends_on "imagemagick"
-    depends_on "docbook-xsl"
-  end
-
-  if build.with? "api-docs"
-    depends_on "graphviz"
-    depends_on "doxygen"
-  end
+  depends_on "sfcgal" # for advanced 2D/3D functions
 
   def install
     ENV.deparallelize
@@ -65,28 +43,9 @@ class Postgis < Formula
       "--disable-nls",
     ]
 
-    args << "--with-gui" if build.with? "gui"
-    args << "--without-raster" if build.without? "gdal"
-    args << "--with-xsldir=#{Formula["docbook-xsl"].opt_prefix}/docbook-xsl" if build.with? "html-docs"
-
     system "./autogen.sh" if build.head?
     system "./configure", *args
     system "make"
-
-    if build.with? "html-docs"
-      cd "doc" do
-        ENV["XML_CATALOG_FILES"] = "#{etc}/xml/catalog"
-        system "make", "chunked-html"
-        doc.install "html"
-      end
-    end
-
-    if build.with? "api-docs"
-      cd "doc" do
-        system "make", "doxygen"
-        doc.install "doxygen/html" => "api"
-      end
-    end
 
     mkdir "stage"
     system "make", "install", "DESTDIR=#{buildpath}/stage"
@@ -112,24 +71,6 @@ class Postgis < Formula
     ]
 
     man1.install Dir["doc/**/*.1"]
-  end
-
-  def caveats
-    <<~EOS
-      To create a spatially-enabled database, see the documentation:
-        https://postgis.net/docs/manual-2.4/postgis_installation.html#create_new_db_extensions
-      If you are currently using PostGIS 2.0+, you can go the soft upgrade path:
-        ALTER EXTENSION postgis UPDATE TO "#{version}";
-      Users of 1.5 and below will need to go the hard-upgrade path, see here:
-        https://postgis.net/docs/manual-2.4/postgis_installation.html#upgrading
-
-      PostGIS SQL scripts installed to:
-        #{opt_pkgshare}
-      PostGIS plugin libraries installed to:
-        #{HOMEBREW_PREFIX}/lib
-      PostGIS extension modules installed to:
-        #{HOMEBREW_PREFIX}/share/postgresql/extension
-      EOS
   end
 
   test do
@@ -166,7 +107,7 @@ class Postgis < Formula
       igAAABI=
     EOS
     result = shell_output("#{bin}/shp2pgsql #{testpath}/brew.shp")
-    assert_match /Point/, result
-    assert_match /AddGeometryColumn/, result
+    assert_match(/Point/, result)
+    assert_match(/AddGeometryColumn/, result)
   end
 end

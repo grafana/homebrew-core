@@ -3,19 +3,20 @@ class MysqlConnectorCxx < Formula
   homepage "https://dev.mysql.com/downloads/connector/cpp/"
   url "https://cdn.mysql.com/Downloads/Connector-C++/mysql-connector-c++-1.1.9.tar.gz"
   sha256 "3e31847a69a4e5c113b7c483731317ec4533858e3195d3a85026a0e2f509d2e4"
+  revision 2
 
   bottle do
     cellar :any
-    sha256 "b21b0c06d48189c5cee017f5bcab7c47813d7d2d8af1d236d64615f18733d043" => :high_sierra
-    sha256 "827c6bbf6a320ed506cd4a66a6c20b1f73830c286dba3673610b458f596c0a89" => :sierra
-    sha256 "d78c5b2b2fc7df740376901238fac04f2fef0ef731ae9209aa9edc46cb98b2b6" => :el_capitan
-    sha256 "7dc67ecd0f99cb8fcc8ddb1620aeef1be9f6c0d02818e12854c2da32fdbda545" => :yosemite
+    sha256 "4fb493a07a4f86fa178bb4b879048395774d9b8787575dfd0b582420a3c44960" => :mojave
+    sha256 "03e1e94df2c84a0540e306e6b9f1a121957eb18d7571be8b503c792f32def44f" => :high_sierra
+    sha256 "251a3651e8d6d0d38488e5b18c25ff29b41b3caf0103ae578e1cc31625b9b947" => :sierra
+    sha256 "bc45340a1bc8e4484cf8e06c25bc475cb455ed12d79c6265d47ecb724ee97c3d" => :el_capitan
   end
 
-  depends_on "cmake" => :build
   depends_on "boost" => :build
+  depends_on "cmake" => :build
+  depends_on "mysql-client"
   depends_on "openssl"
-  depends_on :mysql
 
   def install
     system "cmake", ".", *std_cmake_args
@@ -34,7 +35,8 @@ class MysqlConnectorCxx < Formula
         return 0;
       }
     EOS
-    system ENV.cxx, "test.cpp", `mysql_config --include`.chomp, "-L#{lib}", "-lmysqlcppconn", "-o", "test"
+    system ENV.cxx, "test.cpp", "-I#{Formula["mysql-client"].opt_include}",
+                    "-L#{lib}", "-lmysqlcppconn", "-o", "test"
     system "./test"
   end
 end

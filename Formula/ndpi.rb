@@ -1,22 +1,23 @@
 class Ndpi < Formula
   desc "Deep Packet Inspection (DPI) library"
   homepage "https://www.ntop.org/products/deep-packet-inspection/ndpi/"
-  url "https://github.com/ntop/nDPI/archive/2.0.tar.gz"
-  sha256 "a42a60ebd64bc8606f780204222893027f6dce0e3b460d7be655e5e065f5f3fa"
+  url "https://github.com/ntop/nDPI/archive/2.2.tar.gz"
+  sha256 "25607db12f466ba88a1454ef8b378e0e9eb59adffad6baa4b5610859a102a5dd"
   revision 1
   head "https://github.com/ntop/nDPI.git", :branch => "dev"
 
   bottle do
     cellar :any
-    sha256 "0cc0a288965cf60916c9732edf73332797a1931314659786acb1a944fad43ee1" => :high_sierra
-    sha256 "ae229a6b0c648df903a9036ef9c5a8ce801a97e95158ece953669da55009a40b" => :sierra
-    sha256 "855da8002f3632da5d0b576c148eabe708e598b80d9f533e07c8d0f8e43ede72" => :el_capitan
+    sha256 "ec776ec7d02f4c5fd2466ddfe9ba18b0418869ae26998f775f3b2424d2b13857" => :mojave
+    sha256 "5d746b20ffc8833427d8ebd6baa6778aaa33eadec316e759492d81a3e08a9511" => :high_sierra
+    sha256 "f93f3b4ee594ca14433be337b9afdcc830cdfcceb944a77973da81904c2e0d4e" => :sierra
+    sha256 "95310ac78ec0568667d533dfdea8f6338a44bc04d1de8d0e9bbefd5620a8cdb2" => :el_capitan
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
-  depends_on "pkg-config" => :build
   depends_on "libtool" => :build
+  depends_on "pkg-config" => :build
   depends_on "json-c"
 
   def install

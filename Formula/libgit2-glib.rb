@@ -1,49 +1,44 @@
 class Libgit2Glib < Formula
   desc "Glib wrapper library around libgit2 git access library"
   homepage "https://github.com/GNOME/libgit2-glib"
-  url "https://download.gnome.org/sources/libgit2-glib/0.26/libgit2-glib-0.26.0.tar.xz"
-  sha256 "06b16cfcc3a53d9804858618d690e5509e9af2e2245b75f0479cadbbe39745c3"
+  url "https://download.gnome.org/sources/libgit2-glib/0.27/libgit2-glib-0.27.7.tar.xz"
+  sha256 "1131df6d45e405756ef2d9b7613354d542ce99883f6a89582d6236d01bd2efc2"
+  head "https://github.com/GNOME/libgit2-glib.git"
 
   bottle do
-    sha256 "75bd2fc38577f01574ccfd85458cedb8debb755c2e6a4ba0856c8a0a2400125b" => :high_sierra
-    sha256 "90dde630fbbcbb46fb44c21cf45c711546fe880010f4fe45c4467d878db41574" => :sierra
-    sha256 "57abc504662879a7ef9267eb3a1474fa5192171367f855aef25ca1dfaefa7102" => :el_capitan
-    sha256 "d907f60a9bdd7363ae876394bf0ab9c99cbb8e51a24738d2d1a1bd2c9f598edd" => :yosemite
+    sha256 "b10a1cfe2284d4b411d2c67c784a36f73bb02bda98719bc052d39967d44a7af1" => :mojave
+    sha256 "38ebf52ea44029b96f1dd17ae760ac005ae3ec972f3a2c520d205906886a31e4" => :high_sierra
+    sha256 "b8b331065048da6f693a83f3f5206851a2e046a439771ddfc53558d8aa97c9d1" => :sierra
   end
 
-  head do
-    url "https://github.com/GNOME/libgit2-glib.git"
-
-    depends_on "libtool" => :build
-    depends_on "automake" => :build
-    depends_on "autoconf" => :build
-    depends_on "gnome-common" => :build
-    depends_on "gtk-doc" => :build
-  end
-
+  depends_on "gobject-introspection" => :build
+  depends_on "meson-internal" => :build
+  depends_on "ninja" => :build
   depends_on "pkg-config" => :build
+  depends_on "python" => :build
+  depends_on "vala" => :build
   depends_on "gettext"
-  depends_on "libgit2"
-  depends_on "gobject-introspection"
   depends_on "glib"
-  depends_on "vala" => :optional
-  depends_on :python => :optional
+  depends_on "libgit2"
 
   def install
-    args = %W[
-      --prefix=#{prefix}
-      --disable-silent-rules
-      --disable-dependency-tracking
-    ]
+    ENV.refurbish_args
 
-    args << "--enable-python=no" if build.without? "python"
-    args << "--enable-vala=no" if build.without? "vala"
+    # Fix "ld: unknown option: -Bsymbolic-functions"
+    # Reported 2 Apr 2018 https://bugzilla.gnome.org/show_bug.cgi?id=794889
+    inreplace "libgit2-glib/meson.build",
+              "libgit2_glib_link_args = [ '-Wl,-Bsymbolic-functions' ]",
+              "libgit2_glib_link_args = []"
 
-    system "./autogen.sh", *args if build.head?
-    system "./configure", *args if build.stable?
-    system "make", "install"
-
-    libexec.install "examples/.libs", "examples/clone", "examples/general", "examples/walk"
+    mkdir "build" do
+      system "meson", "--prefix=#{prefix}",
+                      "-Dpython=false",
+                      "-Dvapi=true",
+                      ".."
+      system "ninja"
+      system "ninja", "install"
+      libexec.install Dir["examples/*"]
+    end
   end
 
   test do

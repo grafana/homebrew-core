@@ -3,17 +3,20 @@ class Logentries < Formula
 
   desc "Utility for access to logentries logging infrastructure"
   homepage "https://logentries.com/doc/agent/"
-  url "https://github.com/logentries/le/archive/v1.4.41.tar.gz"
-  sha256 "eb29f1c3f22ada7818f8763c94a702e8947f084a948d55100d2dbdf614e21697"
-  head "https://github.com/logentries/le.git"
+  url "https://github.com/rapid7/le/archive/v1.4.43.tar.gz"
+  sha256 "a2ee2eeb3f2e94e9c1c58f86d0206c688cc5332921d88e48e475b54da3b3e3ef"
+  revision 1
+  head "https://github.com/rapid7/le.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "4e7c650c278735f2f7aa720bfe3d2b2bb59c685eab1a64920a70bbe53ea73dac" => :high_sierra
-    sha256 "e97d41a863d4692549bd23a9e1e2d01d6255a583b0a25cdd97aaf130e12ef276" => :sierra
-    sha256 "97c9c05730ea6abde47fd6ab054e73510d24db0541cc9394b687bafed1650f72" => :el_capitan
-    sha256 "f61a6ead7bddbedd902216a3210cd23d5ecf7e1bf941c1dee4e59a4dde4479d9" => :yosemite
+    sha256 "9d674746d2d9c704030bd420d5ae4a79576b783d6177c8708b158e47d1c7c527" => :mojave
+    sha256 "e741b4fd97759da0deadf1e458c7522677c1b9181d304a45c65f7d1edbefd3ff" => :high_sierra
+    sha256 "65698ef238e6ba9785f2bfed470e98a8f8c6004f5a1145c679c4cbd4a8df7a50" => :sierra
+    sha256 "708c87deba34989966325243046ed26daa1c3a085d7940e6266ae28b8574bee1" => :el_capitan
   end
+
+  depends_on "python@2" # does not support Python 3
 
   conflicts_with "le", :because => "both install a le binary"
 
@@ -41,7 +44,7 @@ class Logentries < Formula
         <true/>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

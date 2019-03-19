@@ -1,10 +1,12 @@
 class Splint < Formula
   desc "Secure Programming Lint"
-  homepage "http://www.splint.org/"
-  url "http://www.splint.org/downloads/splint-3.1.2.src.tgz"
+  homepage "https://sourceforge.net/projects/splint/"
+  url "https://mirrorservice.org/sites/distfiles.macports.org/splint/splint-3.1.2.src.tgz"
+  mirror "https://src.fedoraproject.org/repo/pkgs/splint/splint-3.1.2.src.tgz/25f47d70bd9c8bdddf6b03de5949c4fd/splint-3.1.2.src.tgz"
   sha256 "c78db643df663313e3fa9d565118391825dd937617819c6efc7966cdf444fb0a"
 
   bottle do
+    sha256 "eb5d2c9dd5a4ad5a95870ff62d4d4d2cf5744b7d901a918c303f4c74eab4e0c8" => :mojave
     sha256 "4d97939d58a64670256ea18422ae7ddd75ea1d12e89d12f40faa0b54e6d9d3a8" => :high_sierra
     sha256 "e5847a77e137e1f2339b55ae1fff93a94de33c6ad1a3a34c8a45b3d06a6bf0f9" => :sierra
     sha256 "9eac9f8e530c1d9fc238b57f9d4e143fbf5727450657ba92e6d721660777753b" => :el_capitan
@@ -38,7 +40,7 @@ class Splint < Formula
     EOS
 
     output = shell_output("#{bin}/splint #{path} 2>&1", 1)
-    assert_match "5:18: Variable c used before definition", output
+    assert_match /5:18:\s+Variable c used before definition/, output
   end
 end
 

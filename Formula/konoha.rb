@@ -3,12 +3,12 @@ class Konoha < Formula
   homepage "https://github.com/konoha-project/konoha3"
   url "https://github.com/konoha-project/konoha3/archive/v0.1.tar.gz"
   sha256 "e7d222808029515fe229b0ce1c4e84d0a35b59fce8603124a8df1aeba06114d3"
-  revision 2
+  revision 5
 
   bottle do
-    sha256 "02bc662f7d21b3a4a0de5fe3ab0687ad686ca7dc67fe22374abd75a34a33f78b" => :high_sierra
-    sha256 "a0b2f23dfd7fac28740fdc3dbe0d4ea1fe832fd8902f8d71eae2546067107102" => :sierra
-    sha256 "7c839e3fe6f917798f2724f3acb3cc530f5373394a6e3f74e0d59d991ac7a9d5" => :el_capitan
+    sha256 "09af29e79d082fb23348ad7b8f5e2976794bd33208502d6ec2ca3dfed5380ed4" => :mojave
+    sha256 "bbf15f9cac98871a21dae84378117cf2517c90172d41ad27106dc3bb446defec" => :high_sierra
+    sha256 "5b4d33a7fdbad806edf3948e53f29e3c7d08695d0538df3ab06cd8ff91bb50b2" => :sierra
   end
 
   head do
@@ -17,25 +17,18 @@ class Konoha < Formula
     depends_on "openssl"
   end
 
-  option "with-test", "Verify the build with make test (May currently fail)"
-
-  deprecated_option "tests" => "with-test"
-
   depends_on "cmake" => :build
-  depends_on :mpi => [:cc, :cxx]
-  depends_on "pcre"
   depends_on "json-c"
+  depends_on "mecab"
+  depends_on "open-mpi"
+  depends_on "pcre"
+  depends_on "python"
   depends_on "sqlite"
-  depends_on "mecab" if MacOS.version >= :mountain_lion
-  depends_on :python if MacOS.version <= :snow_leopard # for python glue code
 
   def install
     mkdir "build" do
       system "cmake", "..", *std_cmake_args
       system "make"
-      # `make test` currently fails. Reported upstream:
-      # https://github.com/konoha-project/konoha3/issues/438
-      system "make", "test" if build.with? "test"
       system "make", "install"
     end
   end

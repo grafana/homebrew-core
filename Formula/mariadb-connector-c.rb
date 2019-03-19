@@ -1,15 +1,13 @@
 class MariadbConnectorC < Formula
   desc "MariaDB database connector for C applications"
   homepage "https://downloads.mariadb.org/connector-c/"
-  url "https://downloads.mariadb.org/f/connector-c-2.2.2/mariadb-connector-c-2.2.2-src.tar.gz"
-  sha256 "93f56ad9f08bbaf0da8ef03bc96f7093c426ae40dede60575d485e1b99e6406b"
+  url "https://downloads.mariadb.org/f/connector-c-3.0.8/mariadb-connector-c-3.0.8-src.tar.gz"
+  sha256 "2ca368fd79e87e80497a5c9fd18922d8316af8584d87cecb35bd5897cb1efd05"
 
   bottle do
-    sha256 "d569c9bbc70e38697625aaf1ff939689b1b7189d2fcf890546a72dc0e4d8f4c8" => :high_sierra
-    sha256 "2efc882d3518dc6932d711b62d5d65a6b2151f7e44d2e6a15917ca4f1d3ce897" => :sierra
-    sha256 "fe5606d7c8ac822398f01f2b2b9045c8d6b3a46df8b862e1fe151aa17619d3b2" => :el_capitan
-    sha256 "6b5b743616a46585a9bfe1505a94addccf24802090094a9dcd791852bf8d566c" => :yosemite
-    sha256 "14f9440a48d0035a8e77ff8e7b260b50c89326453041ec77d0cc38febbf4f5cc" => :mavericks
+    sha256 "6484a2490a2b50896c990cea94d3f1d50cce7c55005efda99e27e1121dffdeca" => :mojave
+    sha256 "8dd3b15d9add1a76e5d61280477a6838c5c4d56742bb6468bb71d240a7fabafd" => :high_sierra
+    sha256 "bbf35b53bd41b21c3b66554474a7a518be3aaf37693df95499f6db92a01a1d52" => :sierra
   end
 
   depends_on "cmake" => :build

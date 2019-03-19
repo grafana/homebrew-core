@@ -1,17 +1,17 @@
 class Gpa < Formula
   desc "Graphical user interface for the GnuPG"
   homepage "https://www.gnupg.org/related_software/gpa/"
-  url "https://gnupg.org/ftp/gcrypt/gpa/gpa-0.9.10.tar.bz2"
-  mirror "https://mirrors.ocf.berkeley.edu/debian/pool/main/g/gpa/gpa_0.9.10.orig.tar.bz2"
-  sha256 "c3b9cc36fd9916e83524930f99df13b1d5f601f4c0168cb9f5d81422e282b727"
+  url "https://gnupg.org/ftp/gcrypt/gpa/gpa-0.10.0.tar.bz2"
+  mirror "https://deb.debian.org/debian/pool/main/g/gpa/gpa_0.10.0.orig.tar.bz2"
+  sha256 "95dbabe75fa5c8dc47e3acf2df7a51cee096051e5a842b4c9b6d61e40a6177b1"
 
   bottle do
-    sha256 "0f3c6b1ab260f768ca9337ae2c0f0a38daa896c1a1b76e6f19a0186911211ee8" => :high_sierra
-    sha256 "858ba357b188c140d61ba5570b0237a827b0a3bea3d4a87ac7e9aaa95e397230" => :sierra
-    sha256 "91271433b3ff2c4de071f2dc9fc1dacdc9957b6d4075211d913d61f7d2c02ed4" => :el_capitan
-    sha256 "fb0e954550a5a90a492afc6f31c13a4d96a4a5b462228a46ccbf133e62e7497b" => :yosemite
+    sha256 "fa40434b7e39fb6fd15f67ea757c9b18f3e3c0cdb0eb533940517d51793e3cfd" => :mojave
+    sha256 "ba20aa21492d9b334cbf4f1dc2ea072d0302f8a97fcd2537fc38f2539e4a19b8" => :high_sierra
+    sha256 "5ef7f508f0b6a8bb688b417abd865e53da69dea0d5e048ba0da0686bd2a67043" => :sierra
   end
 
+  depends_on "pkg-config" => :build
   depends_on "desktop-file-utils"
   depends_on "gpgme"
   depends_on "gtk+"

@@ -1,23 +1,25 @@
 class LittleCms2 < Formula
   desc "Color management engine supporting ICC profiles"
   homepage "http://www.littlecms.com/"
+  # Ensure release is announced on http://www.littlecms.com/download.html
   url "https://downloads.sourceforge.net/project/lcms/lcms/2.9/lcms2-2.9.tar.gz"
-  sha256 "00756bed09ce059a68289f10de56b00267667647393ddc30400cb87c0d9037d5"
+  sha256 "48c6fdf98396fa245ed86e622028caf49b96fa22f3e5734f853f806fbc8e7d20"
+  version_scheme 1
 
   bottle do
     cellar :any
-    sha256 "92d1a9e56ddf0a885cae2434cba907c7c3023eacf12c5255810aab212faf4355" => :high_sierra
-    sha256 "8ed590232348abf555a007b9aa9cd9a612e23f78826cfa4d7883d5e86157a40b" => :sierra
-    sha256 "9c1e5c2040ffcfea2e52493ff6084655c210bbe2c09b35da0a64fa37d63fe708" => :el_capitan
+    rebuild 1
+    sha256 "1c69f212b9754cbc1700e822ceb659103cb692afe2e26366c9ae9eb9e3fc612d" => :mojave
+    sha256 "c232c3e514ef478c4fab797dab8db675045eae3611043063d338c256f4ecb941" => :high_sierra
+    sha256 "a0ce195a712977870d9ddc414c0c5cd1b373d4e04b7130b80d00f911d04fe5b4" => :sierra
+    sha256 "fa72bb1ce13889405ee93519be86ff1cede056d8c74e1d1671cca52013762ec0" => :el_capitan
   end
 
-  depends_on "jpeg" => :recommended
-  depends_on "libtiff" => :recommended
+  depends_on "jpeg"
+  depends_on "libtiff"
 
   def install
     args = %W[--disable-dependency-tracking --prefix=#{prefix}]
-    args << "--without-tiff" if build.without? "libtiff"
-    args << "--without-jpeg" if build.without? "jpeg"
 
     system "./configure", *args
     system "make", "install"

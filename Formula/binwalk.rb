@@ -1,55 +1,45 @@
 class Binwalk < Formula
   desc "Searches a binary image for embedded files and executable code"
-  homepage "https://github.com/devttys0/binwalk"
-  url "https://github.com/devttys0/binwalk/archive/v2.1.1.tar.gz"
+  homepage "https://github.com/ReFirmLabs/binwalk"
+  url "https://github.com/ReFirmLabs/binwalk/archive/v2.1.1.tar.gz"
   sha256 "1b70a5b03489d29f60fef18008a2164974234874faab48a4f47ec53d461d284a"
-
-  revision 3
-  head "https://github.com/devttys0/binwalk.git"
+  revision 6
+  head "https://github.com/ReFirmLabs/binwalk.git"
 
   bottle do
-    sha256 "e737be262d3980463c1b587496df34295532a0548586b86c06077bb033f25d08" => :high_sierra
-    sha256 "7ea9cbc89c26df4a50a13b882a077311c123b4b86a5343a5187c896d7a5d747e" => :sierra
-    sha256 "d34e3ebcb6aa8fefd6d2807f5c47b5a7708200201a14bd66022cbdab20c9aeaa" => :el_capitan
-    sha256 "aca94d246fb634eb189b1146bd999d6777996283fde07f1d943112af7cbff802" => :yosemite
+    sha256 "17b4cc76bf3e112f76d41bef4e87fba61fffc978f62e252a17f609a3fe9c006f" => :mojave
+    sha256 "d9456458ea694cc82774c881b5b0cd7779c512ca995a2e57b2f72829d75f33e3" => :high_sierra
+    sha256 "2eedae96bc9295d3729cf897967be3408d4496a86a4e11173bc64d220382e946" => :sierra
   end
 
-  option "with-capstone", "Enable disasm options via capstone"
-
   depends_on "swig" => :build
-  depends_on :fortran
-  depends_on :python if MacOS.version <= :snow_leopard
+  depends_on "gcc" # for gfortran
   depends_on "p7zip"
+  depends_on "python"
   depends_on "ssdeep"
   depends_on "xz"
 
   resource "numpy" do
-    url "https://pypi.python.org/packages/source/n/numpy/numpy-1.10.2.tar.gz"
-    sha256 "23a3befdf955db4d616f8bb77b324680a80a323e0c42a7e8d7388ef578d8ffa9"
+    url "https://files.pythonhosted.org/packages/45/ba/2a781ebbb0cd7962cc1d12a6b65bd4eff57ffda449fdbbae4726dc05fbc3/numpy-1.15.2.zip"
+    sha256 "27a0d018f608a3fe34ac5e2b876f4c23c47e38295c47dd0775cc294cd2614bc1"
   end
 
   resource "scipy" do
-    url "https://downloads.sourceforge.net/project/scipy/scipy/0.16.1/scipy-0.16.1.tar.gz"
-    sha256 "ecd1efbb1c038accb0516151d1e6679809c6010288765eb5da6051550bf52260"
-  end
-
-  resource "capstone" do
-    url "https://files.pythonhosted.org/packages/44/3f/2ae09118f1c890b98e7b87ff1ce3d3a36e8e72ddac74ddcf0bbe8f005210/capstone-3.0.5rc2.tar.gz"
-    sha256 "c67a4e14d04b29126f6ae2a4aeb773acf96cc6705e1fa7bd9af1798fa928022a"
+    url "https://files.pythonhosted.org/packages/07/76/7e844757b9f3bf5ab9f951ccd3e4a8eed91ab8720b0aac8c2adcc2fdae9f/scipy-1.1.0.tar.gz"
+    sha256 "878352408424dffaa695ffedf2f9f92844e116686923ed9aa8626fc30d32cfd1"
   end
 
   def install
-    ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python2.7/site-packages"
-    res = %w[numpy scipy]
-    res += %w[capstone] if build.with? "capstone"
-    res.each do |r|
+    xy = Language::Python.major_minor_version "python3"
+    ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python#{xy}/site-packages"
+    %w[numpy scipy].each do |r|
       resource(r).stage do
-        system "python", *Language::Python.setup_install_args(libexec/"vendor")
+        system "python3", *Language::Python.setup_install_args(libexec/"vendor")
       end
     end
 
-    ENV.prepend_create_path "PYTHONPATH", libexec/"lib/python2.7/site-packages"
-    system "python", *Language::Python.setup_install_args(libexec)
+    ENV.prepend_create_path "PYTHONPATH", libexec/"lib/python#{xy}/site-packages"
+    system "python3", *Language::Python.setup_install_args(libexec)
     bin.install Dir["#{libexec}/bin/*"]
     bin.env_script_all_files(libexec/"bin", :PYTHONPATH => ENV["PYTHONPATH"])
   end

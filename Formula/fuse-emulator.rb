@@ -1,26 +1,27 @@
 class FuseEmulator < Formula
   desc "Free Unix Spectrum Emulator"
   homepage "https://fuse-emulator.sourceforge.io/"
-  url "https://downloads.sourceforge.net/project/fuse-emulator/fuse/1.4.1/fuse-1.4.1.tar.gz"
-  sha256 "817d57db6da95a411b5b44ccae2a00fff332b251b502957a8a886d794d475aa3"
+  url "https://downloads.sourceforge.net/project/fuse-emulator/fuse/1.5.5/fuse-1.5.5.tar.gz"
+  sha256 "bd0e58bd5a09444d79891da0971f9a84aa5670dd8018ac2b56f69e42ebda584e"
 
   bottle do
-    sha256 "60785a91bb0f2d50fe18ceaaa999270dfa60b5495d25ba49d6adbefd3916df65" => :high_sierra
-    sha256 "4a8a45aca60a1d609ac31be33b2839cb51cd9479a0b21ea7884de3316428f4b8" => :sierra
-    sha256 "0351ab9d121e21610179d065ce076c45973ffe151decbd3814ba1e16eaffd0d0" => :el_capitan
+    sha256 "4b31387b1dccb1fbf5e9cb16b6a2005a8d671ad41e21bd4a3619e981e7cb1dd8" => :mojave
+    sha256 "962a47d502bfeea1e2d10f4a4f287a658c3c0e2362b85b992810ee32ee7adb9f" => :high_sierra
+    sha256 "eb4bd91ef6dab28436830cada55c85f7834b722a207f43694d944819a6346c56" => :sierra
+    sha256 "b3092d601e7da78aadc43dcb3e1c1b32fddd478458e44e689d486d2537b505c6" => :el_capitan
   end
 
   head do
     url "https://svn.code.sf.net/p/fuse-emulator/code/trunk/fuse"
-    depends_on "automake" => :build
     depends_on "autoconf" => :build
+    depends_on "automake" => :build
     depends_on "libtool" => :build
   end
 
   depends_on "pkg-config" => :build
-  depends_on "sdl"
-  depends_on "libspectrum"
   depends_on "libpng"
+  depends_on "libspectrum"
+  depends_on "sdl"
 
   def install
     system "./autogen.sh" if build.head?

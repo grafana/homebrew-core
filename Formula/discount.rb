@@ -1,19 +1,16 @@
 class Discount < Formula
   desc "C implementation of Markdown"
-  homepage "http://www.pell.portland.or.us/~orc/Code/discount/"
-  url "http://www.pell.portland.or.us/~orc/Code/discount/discount-2.2.2.tar.bz2"
-  sha256 "ec7916731e3ef8516336333f8b7aa9e2af51e57c0017b1e03fa43f1ba6978f64"
+  homepage "https://www.pell.portland.or.us/~orc/Code/discount/"
+  url "https://www.pell.portland.or.us/~orc/Code/discount/discount-2.2.4.tar.bz2"
+  sha256 "74fd1e3cc2b4eacf7325d3fd89df38b589db60d5dd0f4f14a0115f7da5e230a5"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "f4eee2ff259e99506e5498f389b0149418c58cf07e82567364164eef37c93e0d" => :high_sierra
-    sha256 "76eb602335c8e25e5cac3e5ba71427adfd77e4668cded01e9293bff24f959e0a" => :sierra
-    sha256 "a8487f5efbecb0cc21542be3e923a1bd2553bdae3cda589a60f9e59e46e64e73" => :el_capitan
-    sha256 "bb20915dd830cdf2c6b996af682227d7c5529d99e31fef8048e7fff513dea257" => :yosemite
+    rebuild 1
+    sha256 "717446676d0861c18c2cc4f7eb968eb8abec3c91bb623df176d1735d71ed58c3" => :mojave
+    sha256 "fdcd1162af5608087a3520333760fb68a467866cf02ee059a876b38c0e684d5b" => :high_sierra
+    sha256 "4798e5e4fb0dbcbcfe92babf8c0a9eb7d0739197a636f1daa34fd52715bba05d" => :sierra
   end
-
-  option "with-fenced-code", "Enable Pandoc-style fenced code blocks."
-  option "with-shared", "Install shared library"
 
   conflicts_with "markdown", :because => "both install `markdown` binaries"
   conflicts_with "multimarkdown", :because => "both install `markdown` binaries"
@@ -27,8 +24,6 @@ class Discount < Formula
       --enable-pandoc-header
       --enable-superscript
     ]
-    args << "--with-fenced-code" if build.with? "fenced-code"
-    args << "--shared" if build.with? "shared"
     system "./configure.sh", *args
     bin.mkpath
     lib.mkpath

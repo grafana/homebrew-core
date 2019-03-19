@@ -3,30 +3,33 @@ class Ghex < Formula
   homepage "https://wiki.gnome.org/Apps/Ghex"
   url "https://download.gnome.org/sources/ghex/3.18/ghex-3.18.3.tar.xz"
   sha256 "c67450f86f9c09c20768f1af36c11a66faf460ea00fbba628a9089a6804808d3"
+  revision 1
 
   bottle do
+    cellar :any
     rebuild 1
-    sha256 "18abbf00cd515f2346c10393ff9e5adef3d477c7478578489398efd1fa3337fd" => :high_sierra
-    sha256 "02c744417d58dc442de342f0277ca4d320dde285365d5c88d002932cad2538de" => :sierra
-    sha256 "8123441a65bd5d45a1baf9a227911a1edeb514240d8c81fa563de5cc756b3fc8" => :el_capitan
-    sha256 "378e85b6e1f712c2415430f426a6381e03c692f8e8f72b93a77f94c2e205fe5a" => :yosemite
+    sha256 "15cfe34d49bf84016e783add666298473e546af509589b689af65bd866e294a5" => :mojave
+    sha256 "cd309a461d6e472c27709919220cac62bdddbf8f8efc767e7924df205006b64b" => :high_sierra
+    sha256 "95015010fd216769d84c5651a8c58fc80fd799d3ad35a9178022dece741def31" => :sierra
   end
 
-  depends_on "pkg-config" => :build
   depends_on "intltool" => :build
   depends_on "itstool" => :build
   depends_on "libxml2" => :build
-  depends_on :python => :build if MacOS.version <= :snow_leopard
+  depends_on "pkg-config" => :build
+  depends_on "python" => :build
   depends_on "gtk+3"
   depends_on "hicolor-icon-theme"
 
   def install
+    xy = Language::Python.major_minor_version "python3"
+    ENV.append_path "PYTHONPATH", "#{Formula["libxml2"].opt_lib}/python#{xy}/site-packages"
+
     system "./configure", "--disable-debug",
                           "--disable-dependency-tracking",
                           "--disable-silent-rules",
                           "--disable-schemas-compile",
                           "--prefix=#{prefix}"
-    ENV.append_path "PYTHONPATH", "#{Formula["libxml2"].opt_lib}/python2.7/site-packages"
     system "make", "install"
   end
 

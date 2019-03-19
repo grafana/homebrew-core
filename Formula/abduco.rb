@@ -3,10 +3,11 @@ class Abduco < Formula
   homepage "http://www.brain-dump.org/projects/abduco"
   url "http://www.brain-dump.org/projects/abduco/abduco-0.6.tar.gz"
   sha256 "c90909e13fa95770b5afc3b59f311b3d3d2fdfae23f9569fa4f96a3e192a35f4"
-  head "git://repo.or.cz/abduco.git"
+  head "https://github.com/martanne/abduco.git"
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "b3c5d87a9da3f70e3fd16fdf7a3d2327b41c96ab74d62e2a6efa2e3733ec78f3" => :mojave
     sha256 "8ca092b6fd5a6ad39e3c91186421bca2943af6bfdbae4ea95254b36d1e109a78" => :high_sierra
     sha256 "9367a86666aad4d14cecf2d7c20f897d3eb92d5cd913af43081d80b9452e19fd" => :sierra
     sha256 "62b4673f4fba1d3c5b201b972e220a2736ec053e0c83b1369bb4e5641a71f8e4" => :el_capitan

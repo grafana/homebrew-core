@@ -1,14 +1,13 @@
 class Squid < Formula
   desc "Advanced proxy caching server for HTTP, HTTPS, FTP, and Gopher"
   homepage "http://www.squid-cache.org/"
-  url "http://www.squid-cache.org/Versions/v3/3.5/squid-3.5.27.tar.xz"
-  sha256 "5ddb4367f2dc635921f9ca7a59d8b87edb0412fa203d1543393ac3c7f9fef0ec"
+  url "http://www.squid-cache.org/Versions/v4/squid-4.5.tar.xz"
+  sha256 "553edf76d6ee9a1627af9c2be7be850c14cd6836170b3d6c1393fd700d44ccc5"
 
   bottle do
-    sha256 "83fe784f48d6e179eeab4b5bd5a0b0e48196da897d4cc48da0903d16e32612bc" => :high_sierra
-    sha256 "72cb505a330571e0b9c246a05ff2fc053e3b77df1ce7c01ecb4b5e0d5ecb36b9" => :sierra
-    sha256 "a6ceac5be681efa27778955cf30a8c042fef597c2340f8988a68b26f81b70585" => :el_capitan
-    sha256 "24582461236da90743f2d2af2a4147b0d5d6825e4dae2b187e763340db14e6a3" => :yosemite
+    sha256 "dc48028ff57b2a850792a9009bfc0d10acdebdeb6153680df1bc659f10c25718" => :mojave
+    sha256 "4c10e05a05409468cb46c3f488d943ba5e50213928a53b4324d46502f8f8ec83" => :high_sierra
+    sha256 "954bc51b342e278f3192fc136694414d035a39f322e94f1afa8d04ab528b4549" => :sierra
   end
 
   head do
@@ -26,7 +25,7 @@ class Squid < Formula
     ENV.append "LDFLAGS", "-lresolv"
 
     # For --disable-eui, see:
-    # http://squid-web-proxy-cache.1019090.n4.nabble.com/ERROR-ARP-MAC-EUI-operations-not-supported-on-this-operating-system-td4659335.html
+    # http://www.squid-cache.org/mail-archive/squid-users/201304/0040.html
     args = %W[
       --disable-debug
       --disable-dependency-tracking
@@ -73,7 +72,7 @@ class Squid < Formula
       <string>#{var}</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

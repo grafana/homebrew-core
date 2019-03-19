@@ -1,25 +1,26 @@
 class Lapack < Formula
   desc "Linear Algebra PACKage"
-  homepage "http://www.netlib.org/lapack/"
-  url "http://www.netlib.org/lapack/lapack-3.7.1.tgz"
-  sha256 "f6c53fd9f56932f3ddb3d5e24c1c07e4cd9b3b08e7f89de9c867125eecc9a1c8"
+  homepage "https://www.netlib.org/lapack/"
+  url "https://www.netlib.org/lapack/lapack-3.8.0.tar.gz"
+  sha256 "deb22cc4a6120bff72621155a9917f485f96ef8319ac074a7afbc68aab88bcf6"
+  revision 1
   head "https://github.com/Reference-LAPACK/lapack.git"
 
   bottle do
-    rebuild 1
-    sha256 "2cb568199916473dbbc3af88a989eb2aa83a0affb02a2f1de28d0e00833a3617" => :high_sierra
-    sha256 "ec2f08b08f7d3523ff19e65d4e1def00a0751150c067685361c02345e561677b" => :sierra
-    sha256 "dbded2fffb6726a4617731c657954f5ec45701d271214dc3d8f18ba6f04e0692" => :el_capitan
-    sha256 "2eb8751ebafdf3fda1f6e79754f662015750e1889ac063d0a79e1cf375296cba" => :yosemite
+    sha256 "5cd0dfbb4814bbecda514adbc4a4fd900b3a29fd6bed13357c817a4669557fea" => :mojave
+    sha256 "fc5162e536ab2909d5232e09c78ac5257d51c8effbb6ed586e9fa5fe98b3b7d9" => :high_sierra
+    sha256 "a4257ee255778776eda1eb8b89ba27f424e99200310e277859c5df086159f58a" => :sierra
+    sha256 "e11fa8f2435edc1d9e992c59c0168a24c4402d717288d721e0b2fa4f2819f899" => :el_capitan
   end
 
-  keg_only :provided_by_osx
+  keg_only :provided_by_macos
 
   depends_on "cmake" => :build
-  depends_on :fortran
-  depends_on "gcc"
+  depends_on "gcc" # for gfortran
 
   def install
+    ENV.delete("MACOSX_DEPLOYMENT_TARGET")
+
     mkdir "build" do
       system "cmake", "..",
                       "-DBUILD_SHARED_LIBS:BOOL=ON",

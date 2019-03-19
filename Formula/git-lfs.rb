@@ -1,34 +1,39 @@
 class GitLfs < Formula
   desc "Git extension for versioning large files"
   homepage "https://github.com/git-lfs/git-lfs"
-  url "https://github.com/git-lfs/git-lfs/archive/v2.3.4.tar.gz"
-  sha256 "2594fe7bd8cc29d71effd087623b78cadab04a74e506ceeb4971a4ed9a7fbb94"
+  url "https://github.com/git-lfs/git-lfs/releases/download/v2.7.1/git-lfs-v2.7.1.tar.gz"
+  sha256 "0334bea2c917cd8ed1215bca0c3fe8f015f664651611fe410826fe14bdcae0d8"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "d7c2b6887938ad68e914106ba3e7d61c1828b2a5478b60c57fd6940cb9e67c6d" => :high_sierra
-    sha256 "a8bed726486ae5a74ea788cfe649f43b1462664d45b8c00c308f9d1bed9f9e99" => :sierra
-    sha256 "0af771189963edc8c59f05a77de9be3a7a3b4f901b1f0cde60c7307e78afcbcc" => :el_capitan
+    sha256 "759ac2c2aa483ec14fc41e79ee798dc148c608e8574772316ab228d4dac8837f" => :mojave
+    sha256 "7a9732daa19813b37895fe94f4c91d9b47bab837a488da2dc99d1134a4cbedde" => :high_sierra
+    sha256 "0a8ae7b598e77655081fe07756e13711331e44bfd01091bf024611bf054c1763" => :sierra
   end
 
   depends_on "go" => :build
 
+  # System Ruby uses old TLS versions no longer supported by RubyGems.
+  depends_on "ruby" => :build if MacOS.version <= :sierra
+
   def install
-    begin
-      deleted = ENV.delete "SDKROOT"
-      ENV["GEM_HOME"] = buildpath/"gem_home"
+    ENV["GIT_LFS_SHA"] = ""
+    ENV["VERSION"] = version
+
+    (buildpath/"src/github.com/git-lfs/git-lfs").install buildpath.children
+    cd "src/github.com/git-lfs/git-lfs" do
+      ENV["GEM_HOME"] = ".gem_home"
       system "gem", "install", "ronn"
-      ENV.prepend_path "PATH", buildpath/"gem_home/bin"
-    ensure
-      ENV["SDKROOT"] = deleted
+
+      system "make", "vendor"
+      system "make"
+      system "make", "man", "RONN=.gem_home/bin/ronn"
+
+      bin.install "bin/git-lfs"
+      man1.install Dir["man/*.1"]
+      man5.install Dir["man/*.5"]
+      doc.install Dir["man/*.html"]
     end
-
-    system "./script/bootstrap"
-    system "./script/man"
-
-    bin.install "bin/git-lfs"
-    man1.install Dir["man/*.1"]
-    doc.install Dir["man/*.html"]
   end
 
   def caveats; <<~EOS
@@ -39,7 +44,7 @@ class GitLfs < Formula
 
       # Update system git config
       $ git lfs install --system
-    EOS
+  EOS
   end
 
   test do

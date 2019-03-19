@@ -1,30 +1,31 @@
 class Exercism < Formula
   desc "Command-line tool to interact with exercism.io"
-  homepage "http://cli.exercism.io"
-  url "https://github.com/exercism/cli/archive/v2.4.1.tar.gz"
-  sha256 "47d6fe998e4c8f900b249f427292b3c268addfddccd1ebc6ce07ca0d7e390622"
+  homepage "https://cli.exercism.io/"
+  url "https://github.com/exercism/cli/archive/v3.0.11.tar.gz"
+  sha256 "544088bc562a8624e3527dd9d3ccf944dc4923b644bcdf49ef04e6d0ee48ddad"
   head "https://github.com/exercism/cli.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "c10051bcade77a4396dd4624b7d9ef513a2e2b08b4500cc11c8ea8275e34cd33" => :high_sierra
-    sha256 "a36d2e4e48bf887cb1b8fa9369e0cec990721a73aa49b702d27ce47aba58bcb7" => :sierra
-    sha256 "f3a0eda8fc9aab0217da024264686d1486d700e0773a73234b201ff59bdc8ced" => :el_capitan
-    sha256 "919a7febefd72157e0c25e81e6f9d34bd88904ecc5e372bcd4c45c1e907016f0" => :yosemite
+    sha256 "b3ff5e69c47a59e474eb667b04161882a0a22e7473f432c68f940d7fa51d2720" => :mojave
+    sha256 "a874ff0731e29ae3b1739468677c763ada9d6b5405faad5a23a323a49376a927" => :high_sierra
+    sha256 "16a0d5649378792c5abba4e443b6f1f365465121667af6cd990de225d6e6725d" => :sierra
   end
 
+  depends_on "dep" => :build
   depends_on "go" => :build
 
   def install
     ENV["GOPATH"] = buildpath
     (buildpath/"src/github.com/exercism/cli").install buildpath.children
     cd "src/github.com/exercism/cli" do
+      system "dep", "ensure", "-vendor-only"
       system "go", "build", "-o", bin/"exercism", "exercism/main.go"
       prefix.install_metafiles
     end
   end
 
   test do
-    assert_match version.to_s, shell_output("#{bin}/exercism --version")
+    assert_match version.to_s, shell_output("#{bin}/exercism version")
   end
 end

@@ -1,30 +1,22 @@
 class Glbinding < Formula
   desc "C++ binding for the OpenGL API"
   homepage "https://github.com/cginternals/glbinding"
-  url "https://github.com/cginternals/glbinding/archive/v2.1.3.tar.gz"
-  sha256 "21e219a5613c7de3668bea3f9577dc925790aaacfa597d9eb523fee2e6fda85c"
+  url "https://github.com/cginternals/glbinding/archive/v2.1.4.tar.gz"
+  sha256 "cb5971b086c0d217b2304d31368803fd2b8c12ee0d41c280d40d7c23588f8be2"
 
   bottle do
     cellar :any
-    sha256 "449a9143da94089be7edce1050470831410bd2c4cdf341f6666af9e52f6d4947" => :high_sierra
-    sha256 "792fd850648cdeea9e5e8a699ba1554e3936b62419c3a0912c81ce22b58d096e" => :sierra
-    sha256 "c26c8b3e87d1721dc224a5b8c3438c451fc2661fb184f3d450cff051f61a64cd" => :el_capitan
-    sha256 "f8143d1a2fcf8a3d08d85b964d6325068c19c19565c463559dc9f264b65766ed" => :yosemite
+    rebuild 1
+    sha256 "a44cd2f23650ce664d8f61634c27abce3a00f4b5d9efbb10687759a62ca26895" => :mojave
+    sha256 "ad79687ca8b43832ab27d5a459a71c4cb7e2be5b02d5df15c667ad7689fe38d0" => :high_sierra
+    sha256 "454bfd4f3f6a983a0614f469388cbe27437350d203c61aed34a8c05fa9bb0710" => :sierra
   end
 
-  option "with-glfw", "Enable tools that display OpenGL information for your system"
-  option "with-static", "Build static instead of shared glbinding libraries"
-
   depends_on "cmake" => :build
-  depends_on "glfw" => :optional
-  needs :cxx11
 
   def install
     ENV.cxx11
-    args = std_cmake_args
-    args << "-DGLFW_LIBRARY_RELEASE=" if build.without? "glfw"
-    args << "-DBUILD_SHARED_LIBS:BOOL=OFF" if build.with? "static"
-    system "cmake", ".", *args
+    system "cmake", ".", *std_cmake_args, "-DGLFW_LIBRARY_RELEASE="
     system "cmake", "--build", ".", "--target", "install"
   end
 
@@ -36,7 +28,7 @@ class Glbinding < Formula
       {
         glbinding::Binding::initialize();
       }
-      EOS
+    EOS
     system ENV.cxx, "-o", "test", "test.cpp", "-std=c++11", "-stdlib=libc++",
                     "-I#{include}/glbinding", "-I#{lib}/glbinding", "-framework", "OpenGL",
                     "-L#{lib}", "-lglbinding", *ENV.cflags.to_s.split

@@ -1,63 +1,38 @@
 class Libtiff < Formula
   desc "TIFF library and utilities"
   homepage "http://libtiff.maptools.org/"
-  url "http://download.osgeo.org/libtiff/tiff-4.0.8.tar.gz"
-  mirror "https://fossies.org/linux/misc/tiff-4.0.8.tar.gz"
-  sha256 "59d7a5a8ccd92059913f246877db95a2918e6c04fb9d43fd74e5c3390dac2910"
-  revision 5
+  url "https://download.osgeo.org/libtiff/tiff-4.0.10.tar.gz"
+  mirror "https://fossies.org/linux/misc/tiff-4.0.10.tar.gz"
+  sha256 "2c52d11ccaf767457db0c46795d9c7d1a8d8f76f68b0b800a3dfe45786b996e4"
+  revision 1
 
   bottle do
     cellar :any
-    sha256 "62c0b911f0e0e0e999d6362088888c754422de923f450b8d718b9bf9ec353f57" => :high_sierra
-    sha256 "b47df6ebeef991de9a33768c646677e26c447c2838b59aaae4e4e701d808e87f" => :sierra
-    sha256 "1a6b89cb8cc27e38d178799ec56498447fd74a9b758428149b103f41b6005b0b" => :el_capitan
+    sha256 "6ecdca6159e5e4db0ec0fcbddbc76dbdc65e496139b131a05f2a9ed8187914f8" => :mojave
+    sha256 "f05323c49236328f4a63e0acb9ff340baf37e589cf5699f334d1e98928f87fd4" => :high_sierra
+    sha256 "818a699c6a293cccfbae8c8b1d0320c0fd8f7ca17c711fded8764f36d11a3db6" => :sierra
   end
 
-  option :cxx11
-  option "with-xz", "Include support for LZMA compression"
-
   depends_on "jpeg"
-  depends_on "xz" => :optional
 
-  # All of these have been reported upstream & should
-  # be fixed in the next release, but please check.
+  # Patches are taken from latest Fedora package, which is currently
+  # libtiff-4.0.10-2.fc30.src.rpm and whose changelog is available at
+  # https://apps.fedoraproject.org/packages/libtiff/changelog/
+
   patch do
-    url "https://mirrors.ocf.berkeley.edu/debian/pool/main/t/tiff/tiff_4.0.8-6.debian.tar.xz"
-    mirror "https://mirrorservice.org/sites/ftp.debian.org/debian/pool/main/t/tiff/tiff_4.0.8-6.debian.tar.xz"
-    sha256 "9307f5343882fa0d8229d20f35cd03cf113dc88881bf697b0ee2b3969ffdbe72"
-    apply "patches/01-CVE-2015-7554.patch",
-          "patches/02-CVE.patch",
-          "patches/03-CVE.patch",
-          "patches/04-CVE-2016-10095_CVE-2017-9147.patch",
-          "patches/05-CVE-2017-9936.patch",
-          "patches/06-OOM_in_gtTileContig.patch",
-          "patches/07-CVE-2017-10688.patch",
-          "patches/08-LZW_compression_regression.patch",
-          "patches/09-CVE-2017-11335.patch",
-          "patches/10-CVE-2017-13726.patch",
-          "patches/11-CVE-2017-13727.patch",
-          "patches/12-prevent_OOM_in_gtTileContig.patch",
-          "patches/13-prevent_OOP_in_TIFFFetchStripThing.patch",
-          "patches/14-CVE-2017-12944.patch",
-          "patches/15-avoid_floating_point_division_by_zero_in_initCIELabConversion.patch"
+    url "https://raw.githubusercontent.com/Homebrew/formula-patches/d15e00544e7df009b5ad34f3b65351fc249092c0/libtiff/libtiff-CVE-2019-6128.patch"
+    sha256 "dbec51f5bec722905288871e3d8aa3c41059a1ba322c1ac42ddc8d62646abc66"
   end
 
   def install
-    ENV.cxx11 if build.cxx11?
-
     args = %W[
-      --disable-dependency-tracking
       --prefix=#{prefix}
-      --without-x
+      --disable-dependency-tracking
+      --disable-lzma
       --with-jpeg-include-dir=#{Formula["jpeg"].opt_include}
       --with-jpeg-lib-dir=#{Formula["jpeg"].opt_lib}
+      --without-x
     ]
-    if build.with? "xz"
-      args << "--with-lzma-include-dir=#{Formula["xz"].opt_include}"
-      args << "--with-lzma-lib-dir=#{Formula["xz"].opt_lib}"
-    else
-      args << "--disable-lzma"
-    end
     system "./configure", *args
     system "make", "install"
   end

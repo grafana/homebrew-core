@@ -1,14 +1,14 @@
 class Msitools < Formula
   desc "Windows installer (.MSI) tool"
   homepage "https://wiki.gnome.org/msitools"
-  url "https://download.gnome.org/sources/msitools/0.97/msitools-0.97.tar.xz"
-  sha256 "3a5b286c9ae3a7b7126a4a95506d12f34ac91e1a564c99e67d9644fee88fc65e"
+  url "https://download.gnome.org/sources/msitools/0.98/msitools-0.98.tar.xz"
+  sha256 "4c7198c82a6b2116515fb6f7b6e4c3cae9aeec0f6e6090e532ec4e6e871d8ba7"
 
   bottle do
-    sha256 "5e8b16daa36ebf7a12b1e3c740c2cdac418b55fd143e8c9db13e21e6cdefeade" => :high_sierra
-    sha256 "9998081784b1b9db641d50425306010fc8614b1f3da28014148d409f636e4779" => :sierra
-    sha256 "0afe60bc5926135b385307720c771e687dd0d246ba9d7dc4e8acf5eec51a13a5" => :el_capitan
-    sha256 "87c8aebb5180826e9a45e2fd8c03f2b33a2df7f250761ef52a82d0b1a0055d3c" => :yosemite
+    sha256 "b1293edb72f4c591714c1c453ae29bf904d2d8c1c2a3a3a028eb1a39dddbda22" => :mojave
+    sha256 "cacd5d3ed4c21c5d16219b5489e3f8553f47d1d1804fce6b747082fbe4a43f9d" => :high_sierra
+    sha256 "009a224ee31e3dceb59d83a5d9b852a0de8a90333158ba770f5e8685712f916f" => :sierra
+    sha256 "ccef04ecad926e360df41a418fc4bf654cebb36d251b43e49ced954acac5b9cb" => :el_capitan
   end
 
   depends_on "intltool" => :build

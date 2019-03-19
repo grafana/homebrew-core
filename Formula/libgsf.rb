@@ -1,13 +1,13 @@
 class Libgsf < Formula
   desc "I/O abstraction library for dealing with structured file formats"
   homepage "https://developer.gnome.org/gsf/"
-  url "https://download.gnome.org/sources/libgsf/1.14/libgsf-1.14.42.tar.xz"
-  sha256 "29fffb87b278b3fb1b8ae9138c3b4529c1fce664f1f94297c146a8563df80dc2"
+  url "https://download.gnome.org/sources/libgsf/1.14/libgsf-1.14.45.tar.xz"
+  sha256 "5cbc2c0f1dc44d202fa0c6e3a51e9f17b0c2deb8711ba650432bfde3180b69fa"
 
   bottle do
-    sha256 "991c1058133dd8551cf35408dac2d17d6dbc5ef0fd9a10cca9b2c80d8600f372" => :high_sierra
-    sha256 "192a8330ea0791eb95de79815207c40ab54b60a40fa287f376e286c9d4043661" => :sierra
-    sha256 "e9af6f98bb9a0cfe498bcc72897b04eae6da11b3163caee9111e0a5b8cfcda36" => :el_capitan
+    sha256 "ee188e921ec4d409d508350e7095f9eec3477c18ba8f32ebb08a50cf8cf84770" => :mojave
+    sha256 "1ee24dd553a23a8c561b538dae961bb8556f4fc2f4c62adb941d601340beb4b9" => :high_sierra
+    sha256 "694c1e3bdac79f19203dc6d9f9eb6f19721119d34908d7b5ad50725f443d6e3f" => :sierra
   end
 
   head do
@@ -22,7 +22,6 @@ class Libgsf < Formula
   depends_on "pkg-config" => :build
   depends_on "gettext"
   depends_on "glib"
-  depends_on "gdk-pixbuf" => :optional
 
   def install
     args = %W[--disable-dependency-tracking --prefix=#{prefix}]

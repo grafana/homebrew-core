@@ -1,13 +1,13 @@
 class Bmake < Formula
   desc "Portable version of NetBSD make(1)"
   homepage "http://www.crufty.net/help/sjg/bmake.html"
-  url "http://www.crufty.net/ftp/pub/sjg/bmake-20171028.tar.gz"
-  sha256 "543983e6137614ed7b92376b1f27066ba40a0808a714954ff3439dfa14a5675a"
+  url "http://www.crufty.net/ftp/pub/sjg/bmake-20181221.tar.gz"
+  sha256 "fc0948b4eb0cf21fcec4f89660c0295150c55bf070d4b7445858947f84f7e67e"
 
   bottle do
-    sha256 "8ebb9de2730548b157c50f3c8e3b6967e69670488a50b6859b84a8b9572e38c2" => :high_sierra
-    sha256 "a35614fd313244edb770ee88213548e0554a10f06c33ce0ee5b45df149e81488" => :sierra
-    sha256 "16068a18813d7c2598350ae5360914539a29d4fcd9963d9186c766cc7b3843d3" => :el_capitan
+    sha256 "982395afa33bc45fd0ae39c68c9474c5f55a4a720fb6fb4480d0c2a13e31bc30" => :mojave
+    sha256 "80827f6b3c39f696667c44a6bb44c7b31ffed5e0483249f5a5221aa3096ad489" => :high_sierra
+    sha256 "439d4fe0a306fd861ed37f6a80a7ba05c463778be449e4cafd12dddbc073103d" => :sierra
   end
 
   def install

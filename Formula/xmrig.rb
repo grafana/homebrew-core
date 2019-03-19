@@ -1,41 +1,48 @@
 class Xmrig < Formula
   desc "Monero (XMR) CPU miner"
   homepage "https://github.com/xmrig/xmrig"
-  url "https://github.com/xmrig/xmrig/archive/v2.4.2.tar.gz"
-  sha256 "72ecbf76cde84bad7af3ed0af20d82223fb6ccb2de37f8a4ea90959200b1e605"
+  url "https://github.com/xmrig/xmrig/archive/v2.13.1.tar.gz"
+  sha256 "ac71836e0320ca73ca7645216b0ed0a2c04497fcfd693225b1da1d29112e30be"
 
   bottle do
     cellar :any
-    sha256 "0f724c618ea55140036dafbb1a60f88a0a1a6a38c6d46520196e86dbaf1a86d6" => :high_sierra
-    sha256 "54978a0c00a2231cf6c219f40ec41c173783b03403284a9064e4e2961fc02976" => :sierra
-    sha256 "b5b300b3e6a4eea81f36f2aaf59822d268f4e780a1288a05cabd8ef1fcb83683" => :el_capitan
+    sha256 "ba16d9d40716caf249604ce4e2de463c81c5df9c9e7761528260999e6c025cd2" => :mojave
+    sha256 "0fc02495b28f28fea5ddc01a5a3a85bc90c9d305b8305922263abb82a037f436" => :high_sierra
+    sha256 "897f0e5c27964bf605c7898692e9322a09c514de56a13c3d682ded6fb123ff7f" => :sierra
   end
 
   depends_on "cmake" => :build
   depends_on "libmicrohttpd"
   depends_on "libuv"
+  depends_on "openssl"
 
   def install
     mkdir "build" do
-      system "cmake", "..", "-DUV_LIBRARY=#{Formula["libuv"].opt_lib}/libuv.a", *std_cmake_args
+      system "cmake", "..", "-DUV_LIBRARY=#{Formula["libuv"].opt_lib}/libuv.dylib",
+                            *std_cmake_args
       system "make"
       bin.install "xmrig"
     end
+    pkgshare.install "src/config.json"
   end
 
   test do
-    require "open3"
+    assert_match version.to_s, shell_output("#{bin}/xmrig -V")
     test_server="donotexist.localhost:65535"
     timeout=10
-    Open3.popen2e("#{bin}/xmrig", "--no-color", "--max-cpu-usage=1", "--print-time=1",
-                  "--threads=1", "--retries=1", "--url=#{test_server}") do |stdin, stdouts, _wait_thr|
-      start_time=Time.now
-      stdin.close_write
-
-      stdouts.each do |line|
-        assert (Time.now - start_time <= timeout), "No server connect after timeout"
-        break if line.include? "\] \[#{test_server}\] DNS error: \"unknown node or service\""
+    begin
+      read, write = IO.pipe
+      pid = fork do
+        exec "#{bin}/xmrig", "--no-color", "--max-cpu-usage=1", "--print-time=1",
+             "--threads=1", "--retries=1", "--url=#{test_server}", :out => write
       end
+      start_time=Time.now
+      loop do
+        assert (Time.now - start_time <= timeout), "No server connect after timeout"
+        break if read.gets.include? "\] \[#{test_server}\] DNS error: \"unknown node or service\""
+      end
+    ensure
+      Process.kill("SIGINT", pid)
     end
   end
 end

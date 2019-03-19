@@ -1,38 +1,12 @@
 class Tomcat < Formula
   desc "Implementation of Java Servlet and JavaServer Pages"
   homepage "https://tomcat.apache.org/"
-
-  stable do
-    url "https://www.apache.org/dyn/closer.cgi?path=tomcat/tomcat-8/v8.5.23/bin/apache-tomcat-8.5.23.tar.gz"
-    mirror "https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.23/bin/apache-tomcat-8.5.23.tar.gz"
-    sha256 "36aace475dd609ee2123eb3674a095ef7d4dcbbfb322cb85c38095d3c1e1dce2"
-
-    depends_on :java => "1.7+"
-
-    resource "fulldocs" do
-      url "https://www.apache.org/dyn/closer.cgi?path=/tomcat/tomcat-8/v8.5.23/bin/apache-tomcat-8.5.23-fulldocs.tar.gz"
-      mirror "https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.23/bin/apache-tomcat-8.5.23-fulldocs.tar.gz"
-      sha256 "dadc2233f2fb2203513419bca7a0012200d99d1c25a06db05ae77d99789e89fd"
-    end
-  end
-
-  devel do
-    url "https://www.apache.org/dyn/closer.cgi?path=/tomcat/tomcat-9/v9.0.1/bin/apache-tomcat-9.0.1.tar.gz"
-    mirror "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.1/bin/apache-tomcat-9.0.1.tar.gz"
-    sha256 "976d9aa996fc34d387ef8de87eed79c5f20c0679b76c1a1fcf331eaa7cdf758f"
-
-    depends_on :java => "1.8+"
-
-    resource "fulldocs" do
-      url "https://www.apache.org/dyn/closer.cgi?path=/tomcat/tomcat-9/v9.0.1/bin/apache-tomcat-9.0.1-fulldocs.tar.gz"
-      mirror "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.1/bin/apache-tomcat-9.0.1-fulldocs.tar.gz"
-      sha256 "b4e04cc298a87a7c4977394f010c89ec89000016c1698d6905572d5babad9a09"
-    end
-  end
+  url "https://www.apache.org/dyn/closer.cgi?path=/tomcat/tomcat-9/v9.0.17/bin/apache-tomcat-9.0.17.tar.gz"
+  sha256 "6c8a8bccc2bee1b28b3a8da128db26f6e22a3546a6cd44e655c8e34157a215a6"
 
   bottle :unneeded
 
-  option "with-fulldocs", "Install full documentation locally"
+  depends_on :java => "1.8+"
 
   def install
     # Remove Windows scripts
@@ -42,8 +16,6 @@ class Tomcat < Formula
     prefix.install %w[NOTICE LICENSE RELEASE-NOTES RUNNING.txt]
     libexec.install Dir["*"]
     bin.install_symlink "#{libexec}/bin/catalina.sh" => "catalina"
-
-    (pkgshare/"fulldocs").install resource("fulldocs") if build.with? "fulldocs"
   end
 
   plist_options :manual => "catalina run"
@@ -66,7 +38,7 @@ class Tomcat < Formula
         <true/>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

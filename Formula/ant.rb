@@ -1,22 +1,11 @@
 class Ant < Formula
   desc "Java build tool"
   homepage "https://ant.apache.org/"
-  url "https://www.apache.org/dyn/closer.cgi?path=ant/binaries/apache-ant-1.10.1-bin.tar.xz"
-  sha256 "51dd6b4ec740013dc5ad71812ce5d727a9956aa3a56de7164c76cbd70d015d79"
+  url "https://www.apache.org/dyn/closer.cgi?path=ant/binaries/apache-ant-1.10.5-bin.tar.xz"
+  sha256 "cebb705dbbe26a41d359b8be08ec066caba4e8686670070ce44bbf2b57ae113f"
   head "https://git-wip-us.apache.org/repos/asf/ant.git"
 
-  bottle do
-    cellar :any_skip_relocation
-    sha256 "3f2d0b309804add26321af31b17162daf3e923b8799100e987272b18ee2c53c9" => :high_sierra
-    sha256 "50070b39168c9da1a5375a19fb1073f2a15b3a640e5433d10625eb9e170b4178" => :sierra
-    sha256 "50070b39168c9da1a5375a19fb1073f2a15b3a640e5433d10625eb9e170b4178" => :el_capitan
-    sha256 "50070b39168c9da1a5375a19fb1073f2a15b3a640e5433d10625eb9e170b4178" => :yosemite
-  end
-
-  keg_only :provided_by_osx if MacOS.version < :mavericks
-
-  option "with-ivy", "Install ivy dependency manager"
-  option "with-bcel", "Install Byte Code Engineering Library"
+  bottle :unneeded
 
   depends_on :java => "1.8+"
 
@@ -26,8 +15,8 @@ class Ant < Formula
   end
 
   resource "bcel" do
-    url "https://search.maven.org/remotecontent?filepath=org/apache/bcel/bcel/6.0/bcel-6.0.jar"
-    sha256 "7eb80fdb30034dda26ba109a1b76af8dae0782c8cd27db32f1775086482d5bd0"
+    url "https://www.apache.org/dyn/closer.cgi?path=commons/bcel/binaries/bcel-6.3-bin.tar.gz"
+    sha256 "378a2d81bbf8d660a4a2515ef19dc66e74f8f6aa9495a8a909cd35b17eef3665"
   end
 
   def install
@@ -39,15 +28,13 @@ class Ant < Formula
       #!/bin/sh
       #{libexec}/bin/ant -lib #{HOMEBREW_PREFIX}/share/ant "$@"
     EOS
-    if build.with? "ivy"
-      resource("ivy").stage do
-        (libexec/"lib").install Dir["ivy-*.jar"]
-      end
+
+    resource("ivy").stage do
+      (libexec/"lib").install Dir["ivy-*.jar"]
     end
-    if build.with? "bcel"
-      resource("bcel").stage do
-        (libexec/"lib").install Dir["bcel-*.jar"]
-      end
+
+    resource("bcel").stage do
+      (libexec/"lib").install "bcel-#{resource("bcel").version}.jar"
     end
   end
 

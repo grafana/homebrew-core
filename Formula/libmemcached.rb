@@ -1,12 +1,13 @@
 class Libmemcached < Formula
   desc "C and C++ client library to the memcached server"
-  homepage "http://libmemcached.org/"
+  homepage "https://libmemcached.org/"
   url "https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz"
   sha256 "e22c0bb032fde08f53de9ffbc5a128233041d9f33b5de022c0978a2149885f82"
   revision 2
 
   bottle do
     cellar :any
+    sha256 "0c7902542fe3b047ce0a512296b1ec3e0da3d731fef0cbd5143152ce17d8f778" => :mojave
     sha256 "351ec4bceab1983a0523739f241c7b3dfb5c9c4c98fe04ae89533de71e0d462b" => :high_sierra
     sha256 "f0fc1410caf2e9bfa130c52758a3d3a98a34032fe3d37a20980ab219042b6487" => :sierra
     sha256 "7b2540dda66e3de1be0603aafa10a18a006768f698a7db289c380235dad109a3" => :el_capitan

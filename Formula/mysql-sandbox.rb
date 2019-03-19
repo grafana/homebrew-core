@@ -1,16 +1,16 @@
 class MysqlSandbox < Formula
   desc "Install one or more MySQL servers"
   homepage "https://mysqlsandbox.net"
-  url "https://github.com/datacharmer/mysql-sandbox/archive/3.2.14.tar.gz"
-  sha256 "319cfb48d14fbdcd64dbea5f085755474c2936f1ab9543c66f114735930a77a7"
+  url "https://github.com/datacharmer/mysql-sandbox/archive/3.2.17.tar.gz"
+  sha256 "3af4af111536e4e690042bc80834392f46a7e55c7143332d229ff2eb32321e89"
   head "https://github.com/datacharmer/mysql-sandbox.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "90b02707caf967fe9b274b7193ba4cc875d29f8a3c1769d0329ec499d1c83f5f" => :high_sierra
-    sha256 "3fa11324b9653efb27173bfdde42c821e3494a330eec52c54010edbc1c7d9f03" => :sierra
-    sha256 "f613b7d1d5c1d70f5d56147160bc0fc57b5376e99ee708acebd2edaea4a48f22" => :el_capitan
-    sha256 "f613b7d1d5c1d70f5d56147160bc0fc57b5376e99ee708acebd2edaea4a48f22" => :yosemite
+    sha256 "88eefc687a4a8344dfac002ea5a3183302de67d1a699324357115325f2e337cb" => :mojave
+    sha256 "da11d806c9d472f19514da7520ec448210e410983225a3b41c0459634a823ab7" => :high_sierra
+    sha256 "1829b23da5960830f426300cac7b4820f21a4f801a1260357394b205bb9340a4" => :sierra
+    sha256 "77ab4eb3bbd5d374020081b3505cd7f18de1500019af148f00ebef13a34e4222" => :el_capitan
   end
 
   def install

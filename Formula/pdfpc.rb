@@ -1,14 +1,14 @@
 class Pdfpc < Formula
   desc "Presenter console with multi-monitor support for PDF files"
   homepage "https://pdfpc.github.io/"
-  url "https://github.com/pdfpc/pdfpc/archive/v4.1.tar.gz"
-  sha256 "aee684cc4b6cd8f2f83196ebd42608b9917104c9b1572985797daf1ae68e5454"
+  url "https://github.com/pdfpc/pdfpc/archive/v4.3.0.tar.gz"
+  sha256 "15bb8f202988a978635f9b569f57be6dfe6e29e8ed3fc4929781cf8ef553ea2a"
   head "https://github.com/pdfpc/pdfpc.git"
 
   bottle do
-    sha256 "ea0c731b612f89e6f76493155454a44a84a66f82399a3cd58f1caf2ce485bb9a" => :high_sierra
-    sha256 "f450f182e9e260757977c209c36071bf4a28d6cb59e7ce941eb6b10af320ff7a" => :sierra
-    sha256 "787d3ad90500210572de480501314b30ff0b5086b24e7fa6f5363efabf30f89c" => :el_capitan
+    sha256 "47adc3527b7db1f32aee5efc071e737db59e66d99fe6eb9207d58a6f95259348" => :mojave
+    sha256 "84e7142812adbe4f04287236cd0b88084fff32bd0bbeef07fd487618b588276d" => :high_sierra
+    sha256 "af761af075aa7a3231bb447726d949afaa7f9fe55f85d11eba75ce88d41ed809" => :sierra
   end
 
   depends_on "cmake" => :build

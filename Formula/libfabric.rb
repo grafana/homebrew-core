@@ -1,14 +1,14 @@
 class Libfabric < Formula
   desc "OpenFabrics libfabric"
   homepage "https://ofiwg.github.io/libfabric/"
-  url "https://github.com/ofiwg/libfabric/releases/download/v1.5.2/libfabric-1.5.2.tar.bz2"
-  sha256 "c05f601e929bc1190683b8e1b06075e6d772196b68f0bbda87827fd08d9e0d6d"
+  url "https://github.com/ofiwg/libfabric/releases/download/v1.6.2/libfabric-1.6.2.tar.bz2"
+  sha256 "ec63f61f5e529964ef65fd101627d8782c0efc2b88b3d5fc7f0bfd2c1e95ab2c"
   head "https://github.com/ofiwg/libfabric.git"
 
   bottle do
-    sha256 "73eff6b37ac05aa1b6174453a4019befa474d3714e0b35e2cd18fc63d01cac7d" => :high_sierra
-    sha256 "40153ea7be894b3d4ca933bc39fb705c3e3be313de98c97111f305bc4120de2b" => :sierra
-    sha256 "3f69a1ce47cc4fa738fe9e057b69f04be7b4602e78ee030d27445cd49e36118e" => :el_capitan
+    sha256 "011527580e0bb34a0c374704b245406619ffbad08bbaf24d871c35a7574f9094" => :mojave
+    sha256 "7cf9f040235c4a97f2d1b5e1018ed16fc061c0eb139e0ac0fa6d4b24d4ad3ceb" => :high_sierra
+    sha256 "68bb847a11e31c2798118dbd096046e29bbb5ee76051a4b1988b01656dd9b836" => :sierra
   end
 
   depends_on "autoconf" => :build

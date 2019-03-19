@@ -1,17 +1,16 @@
 class Lmdb < Formula
   desc "Lightning memory-mapped database: key-value data store"
   homepage "https://symas.com/mdb-and-sqlite/"
-  url "https://github.com/LMDB/lmdb/archive/LMDB_0.9.21.tar.gz"
-  sha256 "1187b635a4cc415bb6972bba346121f81edd996e99b8f0816151d4090f90b559"
+  url "https://github.com/LMDB/lmdb/archive/LMDB_0.9.23.tar.gz"
+  sha256 "abf42e91f046787ed642d9eb21812a5c473f3ba5854124484d16eadbe0aa9c81"
   version_scheme 1
   head "https://github.com/LMDB/lmdb.git", :branch => "mdb.master"
 
   bottle do
     cellar :any
-    sha256 "dec11100f72b3dacd2c8da3679d9078b3badaeac42c6259e1f79894e4482d9db" => :high_sierra
-    sha256 "f7d8acade2be32886edf1d039e57070e35db0bdeca6f37ef7f42530ad404cc91" => :sierra
-    sha256 "b4dd9a1387599e22744bbb769ce71fd1588e5ea6f1ef1d83a2d32f71190cb6ff" => :el_capitan
-    sha256 "66e48198e7bf2a466a614727a71b10e3b865cf1f65451fe10c7d5d4068e46a5c" => :yosemite
+    sha256 "cd79dd93c2b5bc239f289cca47fdfec22cdb394f24ae661e15a8b5446f1ce2f2" => :mojave
+    sha256 "74974a9c57215435e9d2e91b8d401aa2c4d6343c4fe0f574355cf3853b292dc8" => :high_sierra
+    sha256 "f05c8fd72dc3b751920dbd370e6aa5bbc643bbb3379a7819c0a1da4befe08fed" => :sierra
   end
 
   def install

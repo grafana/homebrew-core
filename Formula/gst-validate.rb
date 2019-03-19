@@ -1,13 +1,13 @@
 class GstValidate < Formula
   desc "Tools to validate GstElements from GStreamer"
   homepage "https://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-validate/html/"
-  url "https://gstreamer.freedesktop.org/src/gst-validate/gst-validate-1.12.3.tar.xz"
-  sha256 "5139949d20274fdd702492438eeab2c9e55aa82f60aca17db27ebd3faf08489e"
+  url "https://gstreamer.freedesktop.org/src/gst-validate/gst-validate-1.14.4.tar.xz"
+  sha256 "18dccca94bdc0bab3cddb07817bd280df7ab4abbec9a83b92620367a22d955c7"
 
   bottle do
-    sha256 "52c6332470b9d9aa7eff6abaf6fa795ad0520d0b44243bf4c1951f63660dc124" => :high_sierra
-    sha256 "7f8fcb6f6d7a74c4e7f14f4bcfc6e58d43c7005008bf03d09aadf22a94a3fd18" => :sierra
-    sha256 "68afdac5c2b853d7b3664ad91012d739ed9405affabd3a921d2a6cd82a53966d" => :el_capitan
+    sha256 "c5e1c414ecc0232431b21cb0696e5a47f74d7d34fc652c2f6170f431c39a7fe8" => :mojave
+    sha256 "615a37ce9755d3a60b1a59e3c384af8822a29cac4cfb26be35eb308c9199e5d0" => :high_sierra
+    sha256 "f187c1ed1e8e49fcb0f423fe2841b110a7e42d2a296c83abb81546c7deab1e3a" => :sierra
   end
 
   head do
@@ -18,11 +18,11 @@ class GstValidate < Formula
     depends_on "libtool" => :build
   end
 
+  depends_on "gobject-introspection" => :build
   depends_on "pkg-config" => :build
   depends_on "gettext"
-  depends_on "gobject-introspection"
-  depends_on "gstreamer"
   depends_on "gst-plugins-base"
+  depends_on "gstreamer"
   depends_on "json-glib"
 
   def install

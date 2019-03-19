@@ -14,9 +14,16 @@
 class Ocaml < Formula
   desc "General purpose programming language in the ML family"
   homepage "https://ocaml.org/"
-  url "https://caml.inria.fr/pub/distrib/ocaml-4.06/ocaml-4.06.0.tar.xz"
-  sha256 "1236b5f91e1c075086d69e2d40cfab21e048b9fe38e902f707815bebbc20c5b7"
+  url "https://caml.inria.fr/pub/distrib/ocaml-4.07/ocaml-4.07.1.tar.xz"
+  sha256 "dfe48b1da31da9c82d77612582fae74c80e8d1ac650e1c24f5ac9059e48307b8"
   head "https://github.com/ocaml/ocaml.git", :branch => "trunk"
+
+  bottle do
+    cellar :any
+    sha256 "f8490faa0dc3814633cb2eb5f6c5af00e4e8996c867f485cca4844b460966868" => :mojave
+    sha256 "d18ce3b54b85ffe8a6ea32c6079fbdfcfdd4cda852b32919a87644ca2153e5b0" => :high_sierra
+    sha256 "6477940a49ea3a5d262a12e559a296511f5445c921ff3fdf304e0f039485b6a3" => :sierra
+  end
 
   pour_bottle? do
     # The ocaml compilers embed prefix information in weird ways that the default
@@ -25,27 +32,19 @@ class Ocaml < Formula
     satisfy { HOMEBREW_PREFIX.to_s == "/usr/local" }
   end
 
-  bottle do
-    cellar :any
-    sha256 "377756d07b0253fd30eb0d5761d7a0e53d4305daa742122dbcbe70a378277f5c" => :high_sierra
-    sha256 "e62b761a4e814661d3ec110d3e3da378316ad57416d9d01bdc2dbd445d92e2b6" => :sierra
-    sha256 "0422ddaa6ee523fc6c9b30ad239118ae4de011b64bcb9687b917b586b7794595" => :el_capitan
-  end
-
-  option "with-x11", "Install with the Graphics module"
-  option "with-flambda", "Install with flambda support"
-
-  depends_on :x11 => :optional
-
   def install
     ENV.deparallelize # Builds are not parallel-safe, esp. with many cores
 
     # the ./configure in this package is NOT a GNU autoconf script!
-    args = ["-prefix", HOMEBREW_PREFIX.to_s, "-with-debug-runtime", "-mandir", man]
-    args << "-no-graph" if build.without? "x11"
-    args << "-flambda" if build.with? "flambda"
+    args = [
+      "-prefix",
+      HOMEBREW_PREFIX.to_s,
+      "-with-debug-runtime",
+      "-mandir",
+      man.to_s,
+      "-no-graph",
+    ]
     system "./configure", *args
-
     system "make", "world.opt"
     system "make", "install", "PREFIX=#{prefix}"
   end

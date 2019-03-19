@@ -1,83 +1,81 @@
 class Poppler < Formula
   desc "PDF rendering library (based on the xpdf-3.0 code base)"
   homepage "https://poppler.freedesktop.org/"
-  url "https://poppler.freedesktop.org/poppler-0.61.1.tar.xz"
-  sha256 "1266096343f5163c1a585124e9a6d44474e1345de5cdfe55dc7b47357bcfcda9"
+  url "https://poppler.freedesktop.org/poppler-0.74.0.tar.xz"
+  sha256 "92e09fd3302567fd36146b36bb707db43ce436e8841219025a82ea9fb0076b2f"
+  head "https://anongit.freedesktop.org/git/poppler/poppler.git"
 
   bottle do
-    sha256 "19c1f79d20eb82931cf288cd66da19972537f3bb6862d31f05ee13fba69ad295" => :high_sierra
-    sha256 "a81f8e5c998238f2c399c4917eff6b14ef1fa708841ff5b21e0a868391071e4b" => :sierra
-    sha256 "1621eced6c3d6d11a1e04df49e0d1619a465f8922a47f307e21855ceb1e77159" => :el_capitan
+    sha256 "f1c8ead874f888f7324a5ca6c95efd5e04519038393a89a6f7c030b8807bddc1" => :mojave
+    sha256 "5d050e5f3355e4a72c9bfe4128108a4f64228c0e10fe6bb51aac32a07c10e707" => :high_sierra
+    sha256 "438fc1e448307d1bf17bdc37eb74bbc645ff526b26dd0423915b5f68af12a49d" => :sierra
   end
 
-  option "with-qt", "Build Qt5 backend"
-  option "with-little-cms2", "Use color management system"
-
-  deprecated_option "with-qt4" => "with-qt"
-  deprecated_option "with-qt5" => "with-qt"
-  deprecated_option "with-lcms2" => "with-little-cms2"
-
   depends_on "cmake" => :build
+  depends_on "gobject-introspection" => :build
   depends_on "pkg-config" => :build
   depends_on "cairo"
   depends_on "fontconfig"
   depends_on "freetype"
   depends_on "gettext"
   depends_on "glib"
-  depends_on "gobject-introspection"
   depends_on "jpeg"
   depends_on "libpng"
   depends_on "libtiff"
+  depends_on "little-cms2"
+  depends_on "nss"
   depends_on "openjpeg"
-  depends_on "qt" => :optional
-  depends_on "little-cms2" => :optional
+  depends_on "qt"
 
   conflicts_with "pdftohtml", "pdf2image", "xpdf",
     :because => "poppler, pdftohtml, pdf2image, and xpdf install conflicting executables"
 
   resource "font-data" do
-    url "https://poppler.freedesktop.org/poppler-data-0.4.8.tar.gz"
-    sha256 "1096a18161f263cccdc6d8a2eb5548c41ff8fcf9a3609243f1b6296abdf72872"
+    url "https://poppler.freedesktop.org/poppler-data-0.4.9.tar.gz"
+    sha256 "1f9c7e7de9ecd0db6ab287349e31bf815ca108a5a175cf906a90163bdbe32012"
   end
 
-  needs :cxx11 if build.with?("qt") || MacOS.version < :mavericks
-
   def install
-    ENV.cxx11 if build.with?("qt") || MacOS.version < :mavericks
+    ENV.cxx11
 
     args = std_cmake_args + %w[
-      -DENABLE_XPDF_HEADERS=ON
-      -DENABLE_GLIB=ON
       -DBUILD_GTK_TESTS=OFF
+      -DENABLE_CMS=lcms2
+      -DENABLE_GLIB=ON
+      -DENABLE_QT5=ON
+      -DENABLE_UNSTABLE_API_ABI_HEADERS=ON
       -DWITH_GObjectIntrospection=ON
-      -DENABLE_QT4=OFF
     ]
-
-    if build.with? "qt"
-      args << "-DENABLE_QT5=ON"
-    else
-      args << "-DENABLE_QT5=OFF"
-    end
-
-    if build.with? "little-cms2"
-      args << "-DENABLE_CMS=lcms2"
-    else
-      args << "-DENABLE_CMS=OFF"
-    end
 
     system "cmake", ".", *args
     system "make", "install"
+    system "make", "clean"
+    system "cmake", ".", "-DBUILD_SHARED_LIBS=OFF", *args
+    system "make"
+    lib.install "libpoppler.a"
+    lib.install "cpp/libpoppler-cpp.a"
+    lib.install "glib/libpoppler-glib.a"
     resource("font-data").stage do
       system "make", "install", "prefix=#{prefix}"
     end
 
     libpoppler = (lib/"libpoppler.dylib").readlink
-    ["#{lib}/libpoppler-cpp.dylib", "#{lib}/libpoppler-glib.dylib",
-     *Dir["#{bin}/*"]].each do |f|
+    [
+      "#{lib}/libpoppler-cpp.dylib",
+      "#{lib}/libpoppler-glib.dylib",
+      "#{lib}/libpoppler-qt5.dylib",
+      *Dir["#{bin}/*"],
+    ].each do |f|
       macho = MachO.open(f)
       macho.change_dylib("@rpath/#{libpoppler}", "#{lib}/#{libpoppler}")
       macho.write!
     end
+
+    # fix gobject-introspection support
+    # issue reported upstream as https://gitlab.freedesktop.org/poppler/poppler/issues/18
+    # patch attached there does not work though...
+    inreplace share/"gir-1.0/Poppler-0.18.gir", "@rpath", lib.to_s
+    system "g-ir-compiler", "--output=#{lib}/girepository-1.0/Poppler-0.18.typelib", share/"gir-1.0/Poppler-0.18.gir"
   end
 
   test do

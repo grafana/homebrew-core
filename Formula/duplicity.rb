@@ -2,24 +2,23 @@ class Duplicity < Formula
   include Language::Python::Virtualenv
 
   desc "Bandwidth-efficient encrypted backup"
-  homepage "http://www.nongnu.org/duplicity/"
-  url "https://code.launchpad.net/duplicity/0.7-series/0.7.14/+download/duplicity-0.7.14.tar.gz"
-  sha256 "7a3eb74a2a36b004b10add2970b37cfbac0bd693d79513e6311c8e4b8c3dd73e"
-  revision 1
+  homepage "https://launchpad.net/duplicity"
+  url "https://launchpad.net/duplicity/0.7-series/0.7.18.2/+download/duplicity-0.7.18.2.tar.gz"
+  sha256 "c236888f43128e96cd33017b01a2855c0e24738195fed5cadad08c28fd6b6748"
 
   bottle do
     cellar :any
     rebuild 1
-    sha256 "8a48bd794bd720760d8a40210e8e671a572af5b0bd997d5ce56f11c8aca3a6e5" => :high_sierra
-    sha256 "fd426d9cfc51510ffa77e324c1cd932c1e7d1b7ac5c53ad10efb0775ef7c9c7b" => :sierra
-    sha256 "7408ed0271bb69c962dc2fe3c2c94a385ca87791b2d9e538f33dac0eb56f8d79" => :el_capitan
+    sha256 "5e24f5c2c4fb1a78e6ecb506033775a73e8188f388c1c5697009917d87ca5341" => :mojave
+    sha256 "00f7afbd60c11985716bfce313a3d5e703d3215656c341725debac50165d0d29" => :high_sierra
+    sha256 "1a59958f8a830f5048425a659d8c83d47baecb3073c50c4c527eb05130a8245c" => :sierra
   end
 
-  depends_on :python if MacOS.version <= :snow_leopard
+  depends_on "gnupg"
   depends_on "librsync"
-  depends_on "openssl@1.1"
-  depends_on "par2" => :optional
-  depends_on :gpg => :run
+  depends_on "openssl"
+  # Dependency pycryptopp only supports Python 2
+  depends_on "python@2" # does not support Python 3
 
   # Generated with homebrew-pypi-poet from
   # for i in azure-storage boto dropbox fasteners kerberos mega.py
@@ -324,7 +323,19 @@ class Duplicity < Formula
   end
 
   test do
-    Gpg.test(testpath) do
+    (testpath/"batch.gpg").write <<~EOS
+      Key-Type: RSA
+      Key-Length: 2048
+      Subkey-Type: RSA
+      Subkey-Length: 2048
+      Name-Real: Testing
+      Name-Email: testing@foo.bar
+      Expire-Date: 1d
+      %no-protection
+      %commit
+    EOS
+    system Formula["gnupg"].opt_bin/"gpg", "--batch", "--gen-key", "batch.gpg"
+    begin
       (testpath/"test/hello.txt").write "Hello!"
       (testpath/"command.sh").write <<~EOS
         #!/usr/bin/expect -f
@@ -346,6 +357,10 @@ class Duplicity < Formula
       # Ensure requests[security] is activated
       script = "import requests as r; r.get('https://mozilla-modern.badssl.com')"
       system libexec/"bin/python", "-c", script
+    ensure
+      system Formula["gnupg"].opt_bin/"gpgconf", "--kill", "gpg-agent"
+      system Formula["gnupg"].opt_bin/"gpgconf", "--homedir", "keyrings/live",
+                                                 "--kill", "gpg-agent"
     end
   end
 end

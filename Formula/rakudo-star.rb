@@ -1,22 +1,19 @@
 class RakudoStar < Formula
   desc "Perl 6 compiler"
-  homepage "http://rakudo.org/"
-  url "https://rakudo.perl6.org/downloads/star/rakudo-star-2017.07.tar.gz"
-  sha256 "c8558f619d440add88120387cf9447b5b795532c69ba27e07af0cc69a5e350b3"
+  homepage "https://rakudo.org/"
+  url "https://rakudo.perl6.org/downloads/star/rakudo-star-2018.10.tar.gz"
+  sha256 "a4914220b58de6b3298adfc80d740a1fb69dbb1fed6155e563eb0a9d4b63a346"
 
   bottle do
-    sha256 "f059d692769442861f7733a18a9786777204cb20e4d9e604816eec33dee8ba7a" => :high_sierra
-    sha256 "4e31d5b909b4cb378fa9d7954eb441d0d6d87634cb441ebe47be7c367f94c37f" => :sierra
-    sha256 "23e2b96d1edc0f41a1957d2233475169c711470b6181c9a52ec9d20d9ca040e7" => :el_capitan
-    sha256 "f3c595ddda395ab96d36723acf939250bd597fbce98276c7e7547916d8b515b9" => :yosemite
+    sha256 "04b613aac2b3458114675aa632a9bd0d0ef533b12492d2bdf88c3f329a0f1229" => :mojave
+    sha256 "161857fada5e6f84449ef8c4c1c1094ea69539c3319ca40245f96cce79298332" => :high_sierra
+    sha256 "b6842c2ae742ea34d15ba4f14cfaded5ee982f7f830469ea1e81e5dd84e44f08" => :sierra
   end
 
-  option "with-jvm", "Build also for jvm as an alternate backend."
-
-  depends_on "gmp" => :optional
-  depends_on "icu4c" => :optional
-  depends_on "pcre" => :optional
+  depends_on "gmp"
+  depends_on "icu4c"
   depends_on "libffi"
+  depends_on "pcre"
 
   conflicts_with "parrot"
 
@@ -27,13 +24,12 @@ class RakudoStar < Formula
 
     ENV.deparallelize # An intermittent race condition causes random build failures.
 
-    backends = ["moar"]
-    generate = ["--gen-moar"]
-
-    backends << "jvm" if build.with? "jvm"
-
-    system "perl", "Configure.pl", "--prefix=#{prefix}", "--backends=" + backends.join(","), *generate
+    system "perl", "Configure.pl", "--prefix=#{prefix}",
+                   "--backends=moar", "--gen-moar"
     system "make"
+    # make install runs tests that can hang on sierra
+    # set this variable to skip those tests
+    ENV["NO_NETWORK_TESTING"] = "1"
     system "make", "install"
 
     # Panda is now in share/perl6/site/bin, so we need to symlink it too.

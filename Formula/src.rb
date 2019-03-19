@@ -1,15 +1,15 @@
 class Src < Formula
   desc "Simple revision control: RCS reloaded with a modern UI"
   homepage "http://www.catb.org/~esr/src/"
-  url "http://www.catb.org/~esr/src/src-1.12.tar.gz"
-  sha256 "f51392ef4b55618b95a1e3859555c92879a7cd09dd4736e5b091a7fee392d9d4"
+  url "http://www.catb.org/~esr/src/src-1.18.tar.gz"
+  sha256 "cc0897c1763f57e6627fd912a315de5554e4bb53fa0958c8578223e5379c1a58"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "4e661eebff98f474fbc7a362da628b4369b9ae9e46b215288cbf37d21265a734" => :high_sierra
-    sha256 "d50a826530e965755f761ceb874c6a3a2044fdecc7af29894ceee56e6f0e9fa7" => :sierra
-    sha256 "f698243fd5a6114de9792c89b37037237b41d4b002b840ed6d39b97d2c447989" => :el_capitan
-    sha256 "d50a826530e965755f761ceb874c6a3a2044fdecc7af29894ceee56e6f0e9fa7" => :yosemite
+    sha256 "c5da1fd27c011587281c2e991f53e03c06b32e78b23d293be173141ca007be73" => :mojave
+    sha256 "7b8177edd573490081ab245c28b9b7d93ad333837d754d6ec444461977f79e3d" => :high_sierra
+    sha256 "7b8177edd573490081ab245c28b9b7d93ad333837d754d6ec444461977f79e3d" => :sierra
+    sha256 "7b8177edd573490081ab245c28b9b7d93ad333837d754d6ec444461977f79e3d" => :el_capitan
   end
 
   head do

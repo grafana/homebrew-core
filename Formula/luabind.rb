@@ -1,12 +1,13 @@
 class Luabind < Formula
   desc "Library for bindings between C++ and Lua"
-  homepage "http://www.rasterbar.com/products/luabind.html"
+  homepage "https://github.com/luabind/luabind"
   url "https://downloads.sourceforge.net/project/luabind/luabind/0.9.1/luabind-0.9.1.tar.gz"
   sha256 "80de5e04918678dd8e6dac3b22a34b3247f74bf744c719bae21faaa49649aaae"
   revision 2
 
   bottle do
     cellar :any
+    sha256 "aa095d38915e09287c86d11d65871b5a4e6604799a961f0e055c9bf526ba403b" => :mojave
     sha256 "736bb4cb6a49338eecab9a179f3104e8328d7133366b921b2fece14b6fd2aa26" => :high_sierra
     sha256 "39e74593d47fd648230e177e9a8a90e1b3a888c84d6c7d38f358265d5b93ce94" => :sierra
     sha256 "914a79679264790d9ffb0726a1f303954d816da3dd23db3b8816873cf467677f" => :el_capitan
@@ -14,8 +15,8 @@ class Luabind < Formula
   end
 
   depends_on "boost-build" => :build
-  depends_on "lua@5.1"
   depends_on "boost"
+  depends_on "lua@5.1"
 
   # boost 1.57 compatibility
   # https://github.com/Homebrew/homebrew/pull/33890#issuecomment-67723688
@@ -39,11 +40,9 @@ class Luabind < Formula
 
   # include C header that is not pulled in automatically on OS X 10.9 anymore
   # submitted https://github.com/luabind/luabind/pull/20
-  if MacOS.version >= :mavericks
-    patch do
-      url "https://gist.githubusercontent.com/DennisOSRM/a246514bf7d01631dda8/raw/0e83503dbf862ebfb6ac063338a6d7bca793f94d/object_rep.diff"
-      sha256 "2fef524ac5e319d7092fbb28f6d4e3d3eccd6a570e7789a9b5b0c9a25e714523"
-    end
+  patch do
+    url "https://gist.githubusercontent.com/DennisOSRM/a246514bf7d01631dda8/raw/0e83503dbf862ebfb6ac063338a6d7bca793f94d/object_rep.diff"
+    sha256 "2fef524ac5e319d7092fbb28f6d4e3d3eccd6a570e7789a9b5b0c9a25e714523"
   end
 
   def install
@@ -72,7 +71,7 @@ class Luabind < Formula
     Version: 0.9.1
     Libs: -L${libdir} -lluabind
     Cflags: -I${includedir}
-    EOS
+  EOS
   end
 
   test do
@@ -94,8 +93,11 @@ class Luabind < Formula
           return 0;
       }
     EOS
-    system ENV.cxx, "-shared", "-o", "hello.dylib", "-I#{HOMEBREW_PREFIX}/include/lua-5.1",
-           testpath/"hello.cpp", "-L#{lib}", "-lluabind", "-llua5.1"
-    assert_match /hello world!/, `lua5.1 -e "package.loadlib('#{testpath}/hello.dylib', 'init')(); greet()"`
+    system ENV.cxx, "-shared", "hello.cpp", "-o", "hello.dylib",
+                    "-I#{Formula["lua@5.1"].include}/lua-5.1",
+                    "-L#{lib}", "-lluabind",
+                    "-L#{Formula["lua@5.1"].lib}", "-llua5.1"
+    output = `lua5.1 -e "package.loadlib('#{testpath}/hello.dylib', 'init')(); greet()"`
+    assert_match "hello world!", output
   end
 end

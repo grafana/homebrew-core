@@ -3,22 +3,15 @@ class Exiftool < Formula
   homepage "https://www.sno.phy.queensu.ca/~phil/exiftool/index.html"
   # Ensure release is tagged production before submitting.
   # https://www.sno.phy.queensu.ca/~phil/exiftool/history.html
-  url "https://www.sno.phy.queensu.ca/~phil/exiftool/Image-ExifTool-10.55.tar.gz"
-  mirror "https://downloads.sourceforge.net/project/exiftool/Image-ExifTool-10.55.tar.gz"
-  sha256 "029b81a43f423332c00b76b5402fd8f85dee975fad41a734b494faeda4e41f7d"
-  revision 1
+  url "https://www.sno.phy.queensu.ca/~phil/exiftool/Image-ExifTool-11.30.tar.gz"
+  mirror "https://downloads.sourceforge.net/project/exiftool/Image-ExifTool-11.30.tar.gz"
+  sha256 "3a53733a1532bede4ce7eee763e5ab2bb87149e75e869e11a64d0e159858726e"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "5039ab4f2bc31d2afc9b4cd1fab9ab5d6deec2bf2d1bba0a95f4d54e747dd117" => :high_sierra
-    sha256 "5039ab4f2bc31d2afc9b4cd1fab9ab5d6deec2bf2d1bba0a95f4d54e747dd117" => :sierra
-    sha256 "5039ab4f2bc31d2afc9b4cd1fab9ab5d6deec2bf2d1bba0a95f4d54e747dd117" => :el_capitan
-  end
-
-  devel do
-    url "https://sno.phy.queensu.ca/~phil/exiftool/Image-ExifTool-10.65.tar.gz"
-    mirror "https://downloads.sourceforge.net/project/exiftool/Image-ExifTool-10.65.tar.gz"
-    sha256 "206a03c3ca8f25ad3b8f25290d934c19da350c8cbafae9de2a6db074bc5c42ad"
+    sha256 "a6e176ab3141ad2b7d7604383253abd2790687f721a174208f8870dcf8733da8" => :mojave
+    sha256 "a6e176ab3141ad2b7d7604383253abd2790687f721a174208f8870dcf8733da8" => :high_sierra
+    sha256 "fa6557f353f44dca4c41c79596b9fefb52caaeaf4795b35d262836084df67e08" => :sierra
   end
 
   def install

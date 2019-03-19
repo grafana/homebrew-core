@@ -1,15 +1,14 @@
 class Clipper < Formula
   desc "Share macOS clipboard with tmux and other local and remote apps"
   homepage "https://wincent.com/products/clipper"
-  url "https://github.com/wincent/clipper/archive/0.4.2.tar.gz"
-  sha256 "e707e5f9295dd793755007fdcadae63073b91e949f115d01b1a6cc6b4642cd6d"
+  url "https://github.com/wincent/clipper/archive/2.0.0.tar.gz"
+  sha256 "9c9fa0b198d11513777d40c88e2529b2f2f84d7045a500be5946976a5cdcfe83"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "9e717b8e050d6ad0d0ba59d57d4e22d38d4e6357fb549af25bb5646064a0f7bc" => :high_sierra
-    sha256 "44d377b4219cc3d1077ae3d1b78c3fd161242f3aff440adcde904610c5ff89f2" => :sierra
-    sha256 "2bc9dc475bb45718699290b6359424e68e316cb8ec40fb38fd2f68b5c8872f0b" => :el_capitan
-    sha256 "314db80566c87edfead4c85aa203ff17ab427cc7aa1f45766fb0def3588a5c74" => :yosemite
+    sha256 "ba99d879f6edccf9555855897bcc8b029b46ae5866bba052c3f826eaaa6cc717" => :mojave
+    sha256 "918667f51ab58ce6518c3777d42d3cabb9323d14fbcf805a55b1fb7952cfe05e" => :high_sierra
+    sha256 "e3c2f97b33d9e2648cd4efe1ede9e9d427d0cd71778891324a4def3b4f98562a" => :sierra
   end
 
   depends_on "go" => :build
@@ -46,7 +45,7 @@ class Clipper < Formula
       </dict>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

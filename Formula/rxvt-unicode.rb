@@ -6,16 +6,12 @@ class RxvtUnicode < Formula
   revision 3
 
   bottle do
+    sha256 "126bda5982eb1d785cdaf84ab108024d85c3904cc3039514f13e12ebb80652a9" => :mojave
     sha256 "01a97a5842a1507ae1e9c99d973811e300d0aac95b3fb744e8181918b6ac11eb" => :high_sierra
     sha256 "2946f3abe2481ad6e4f52be7a9e51259bcd0846f38602e74384343946479eb4a" => :sierra
     sha256 "5d6060cc30061763809d7255b8654309be0a709fccdcda1b799f0fac16fd085d" => :el_capitan
     sha256 "9b674dd3738ab25fa6145680f92ca036df470ced089448abcb6647439320e075" => :yosemite
   end
-
-  option "without-iso14755", "Disable ISO 14775 Shift+Ctrl hotkey"
-  option "without-unicode3", "Disable 21-bit Unicode 3 (non-BMP) character support"
-
-  deprecated_option "disable-iso14755" => "without-iso14755"
 
   depends_on "pkg-config" => :build
   depends_on :x11
@@ -31,10 +27,8 @@ class RxvtUnicode < Formula
       --with-term=rxvt-unicode-256color
       --with-terminfo=/usr/share/terminfo
       --enable-smart-resize
+      --enable-unicode3
     ]
-
-    args << "--disable-iso14755" if build.without? "iso14755"
-    args << "--enable-unicode3" if build.with? "unicode3"
 
     system "./configure", *args
     system "make", "install"

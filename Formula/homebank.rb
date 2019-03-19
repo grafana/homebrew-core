@@ -1,33 +1,29 @@
 class Homebank < Formula
   desc "Manage your personal accounts at home"
   homepage "http://homebank.free.fr"
-  url "http://homebank.free.fr/public/homebank-5.1.6.tar.gz"
-  sha256 "2861e11590a00f5cbc505293821cb8caeabb74c26babe8a6a9d728f3404290e0"
+  url "http://homebank.free.fr/public/homebank-5.2.2.tar.gz"
+  sha256 "acc8221fffbbe4b6ddc23fe845fa061cae2ecf7643f2ed858adc9a2e6e2295a5"
 
   bottle do
-    rebuild 1
-    sha256 "f80774c00fb67105c433725215f6d3747be822a2a6f700291fc4fdb36867a4b3" => :high_sierra
-    sha256 "525a76bfbc463b3e82ec304a0052836cd726778b5445e4e95de82149b9c2ba50" => :sierra
-    sha256 "7c81a61b0d1e787070ebacbc1d047b3779674d628661ba1d4a3bfb417e1a161c" => :el_capitan
+    sha256 "f8f1db3659b1a87ce1ff8d970b58248156a6ca9fb5d57fed560afdb3af9b780f" => :mojave
+    sha256 "73a738ffdbc69b90ba8b4d6e2cd567d2d4667c3303c811fc9e37784f3c022194" => :high_sierra
+    sha256 "150d6652d687822536b9482023ea85485b48eb546ee87ebc8a3248ceaa7e79e7" => :sierra
   end
 
-  depends_on "pkg-config" => :build
   depends_on "intltool" => :build
+  depends_on "pkg-config" => :build
+  depends_on "adwaita-icon-theme"
+  depends_on "fontconfig"
+  depends_on "freetype"
   depends_on "gettext"
   depends_on "gtk+3"
-  depends_on "adwaita-icon-theme"
   depends_on "hicolor-icon-theme"
-  depends_on "freetype"
-  depends_on "fontconfig"
+  depends_on "libofx"
   depends_on "libsoup"
-  depends_on "libofx" => :optional
 
   def install
-    args = ["--disable-dependency-tracking",
-            "--prefix=#{prefix}"]
-    args << "--with-ofx" if build.with? "libofx"
-
-    system "./configure", *args
+    system "./configure", "--disable-dependency-tracking",
+                          "--prefix=#{prefix}", "--with-ofx"
     chmod 0755, "./install-sh"
     system "make", "install"
   end

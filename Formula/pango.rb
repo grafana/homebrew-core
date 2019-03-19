@@ -1,29 +1,31 @@
 class Pango < Formula
   desc "Framework for layout and rendering of i18n text"
-  homepage "http://www.pango.org/"
-  url "https://download.gnome.org/sources/pango/1.40/pango-1.40.13.tar.xz"
-  sha256 "f84e98db1078772ff4935b40a1629ff82ef0dfdd08d2cbcc0130c8c437857196"
+  homepage "https://www.pango.org/"
+  url "https://download.gnome.org/sources/pango/1.42/pango-1.42.4.tar.xz"
+  sha256 "1d2b74cd63e8bd41961f2f8d952355aa0f9be6002b52c8aa7699d9f5da597c9d"
+  revision 1
 
   bottle do
-    sha256 "62cb3ef7e0109d4c24c70fd1e9fe271d0c5a3deaf6c672776b4d4d59cb975108" => :high_sierra
-    sha256 "871314096662fa2f3b23836f9d670c06be0626b993c197e3e29803b5fbf00313" => :sierra
-    sha256 "2e986b3b39eb080b872cfb06c19be4151b71c8a499797a51ddc66eed91261a59" => :el_capitan
+    sha256 "16c404ecab2dcf3d6eda9b93fe512c0f6b90b0d73887f80da814bc5d470c1ef3" => :mojave
+    sha256 "f1d5d2471ff6a0f6bdf643fd821d6d96fef211819ee080a0a6352554ce71fdb9" => :high_sierra
+    sha256 "9800e829c90780dd7a31f3a1806bd92a25bafadc47506830eaefb148d4b71570" => :sierra
   end
 
   head do
-    url "https://git.gnome.org/browse/pango.git"
+    url "https://gitlab.gnome.org/GNOME/pango.git"
 
-    depends_on "automake" => :build
     depends_on "autoconf" => :build
-    depends_on "libtool" => :build
+    depends_on "automake" => :build
     depends_on "gtk-doc" => :build
+    depends_on "libtool" => :build
   end
 
+  depends_on "gobject-introspection" => :build
   depends_on "pkg-config" => :build
   depends_on "cairo"
   depends_on "fontconfig"
+  depends_on "fribidi"
   depends_on "glib"
-  depends_on "gobject-introspection"
   depends_on "harfbuzz"
 
   def install
@@ -33,7 +35,6 @@ class Pango < Formula
                           "--prefix=#{prefix}",
                           "--with-html-dir=#{share}/doc",
                           "--enable-introspection=yes",
-                          "--enable-man",
                           "--enable-static",
                           "--without-xft"
 

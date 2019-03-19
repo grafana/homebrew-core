@@ -10,8 +10,7 @@ class Audiofile < Formula
     # Fixes CVE-2015-7747. Fixed upstream but doesn't apply cleanly.
     # https://github.com/mpruett/audiofile/commit/b62c902dd258125cac86cd2df21fc898035a43d3
     patch do
-      url "https://mirrors.ocf.berkeley.edu/debian/pool/main/a/audiofile/audiofile_0.3.6-4.debian.tar.xz"
-      mirror "https://mirrorservice.org/sites/ftp.debian.org/debian/pool/main/a/audiofile/audiofile_0.3.6-4.debian.tar.xz"
+      url "https://deb.debian.org/debian/pool/main/a/audiofile/audiofile_0.3.6-4.debian.tar.xz"
       sha256 "0620675a52bdb40b775980cc1820e308df329348bb847f9a4a8361b3799fa241"
       apply "patches/03_CVE-2015-7747.patch"
     end
@@ -19,6 +18,7 @@ class Audiofile < Formula
 
   bottle do
     cellar :any
+    sha256 "9d1038463e8eaa68f1cee8c447d566dc5acd32e2697f41837a9c08fedb0b2088" => :mojave
     sha256 "cf1f732ca5565a0e5d24a8d90714e554f95b4fbd3662da18ec843c0c356fff16" => :high_sierra
     sha256 "0a6cc39d6cce2c4436008f3d5679dbac6a8e0c0a1a91ea5db34597737fd5fb54" => :sierra
     sha256 "8e725b2809f539e2382b07a2fb64a551cbb09fdbaad168dd05784142e07ce495" => :el_capitan
@@ -32,10 +32,6 @@ class Audiofile < Formula
     depends_on "automake" => :build
     depends_on "libtool" => :build
   end
-
-  option "with-test", "Run the test suite during install (~30sec)"
-
-  deprecated_option "with-check" => "with-test"
 
   # These have all been reported upstream but beside
   # 03_CVE-2015-7747 not yet merged or fixed.
@@ -52,8 +48,7 @@ class Audiofile < Formula
   # https://github.com/mpruett/audiofile/issues/41
   # https://github.com/mpruett/audiofile/pull/42
   patch do
-    url "https://mirrors.ocf.berkeley.edu/debian/pool/main/a/audiofile/audiofile_0.3.6-4.debian.tar.xz"
-    mirror "https://mirrorservice.org/sites/ftp.debian.org/debian/pool/main/a/audiofile/audiofile_0.3.6-4.debian.tar.xz"
+    url "https://deb.debian.org/debian/pool/main/a/audiofile/audiofile_0.3.6-4.debian.tar.xz"
     sha256 "0620675a52bdb40b775980cc1820e308df329348bb847f9a4a8361b3799fa241"
     apply "patches/04_clamp-index-values-to-fix-index-overflow-in-IMA.cpp.patch",
           "patches/05_Always-check-the-number-of-coefficients.patch",
@@ -74,7 +69,6 @@ class Audiofile < Formula
     args = ["--disable-dependency-tracking", "--prefix=#{prefix}"]
     system configure, *args
     system "make"
-    system "make", "check" if build.with? "test"
     system "make", "install"
   end
 

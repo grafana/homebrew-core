@@ -1,21 +1,21 @@
 class ClutterGst < Formula
   desc "ClutterMedia interface using GStreamer for video and audio"
   homepage "https://developer.gnome.org/clutter-gst/"
-  url "https://download.gnome.org/sources/clutter-gst/3.0/clutter-gst-3.0.24.tar.xz"
-  sha256 "e9f1c87d8f4c47062e952fb8008704f8942cf2d6f290688f3f7d13e83578cc6c"
+  url "https://download.gnome.org/sources/clutter-gst/3.0/clutter-gst-3.0.27.tar.xz"
+  sha256 "fe69bd6c659d24ab30da3f091eb91cd1970026d431179b0724f13791e8ad9f9d"
 
   bottle do
-    sha256 "4751b85cf45b43953c0831ab0a6baee8ab555f28b07824ba9826cc9ebb5a4af2" => :high_sierra
-    sha256 "01ee56b08e394349a122c49946723ae3160fd929e69433ec217b147ef669772e" => :sierra
-    sha256 "076425aafd980be4f68320ab5b9ea0168c4b46669a8ec4780483bda559c042ca" => :el_capitan
-    sha256 "9a2970791ee1915aca45d49e265fdf7a4ff1730b5a371eda3b6c9e352141e13b" => :yosemite
+    sha256 "4ea9ed8a60919e1971e10623a59c9e43a110c3dcf06bc80b643244fbf2fecce0" => :mojave
+    sha256 "0b75349dfc8507b63397f4e8465e90c1ae8d4828b3b140477c3f56b559520d15" => :high_sierra
+    sha256 "8b8200f4f41d56c0de1e2f809a4fcb4ee52e7cc428826c82fa8b2fc1eb299232" => :sierra
   end
 
+  depends_on "gobject-introspection" => :build
   depends_on "pkg-config" => :build
   depends_on "clutter"
-  depends_on "gstreamer"
-  depends_on "gst-plugins-base"
   depends_on "gdk-pixbuf"
+  depends_on "gst-plugins-base"
+  depends_on "gstreamer"
 
   def install
     args = %W[
@@ -26,10 +26,6 @@ class ClutterGst < Formula
       --disable-silent-rules
       --disable-gtk-doc-html
     ]
-
-    # the source code requires gdk-pixbuf but configure doesn't look for it
-    ENV.append "CFLAGS", `pkg-config --cflags gdk-pixbuf-2.0`.chomp
-    ENV.append "LIBS", `pkg-config --libs gdk-pixbuf-2.0`.chomp
 
     system "./configure", *args
     system "make", "install"

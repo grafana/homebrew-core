@@ -1,43 +1,43 @@
 class LibtorrentRasterbar < Formula
   desc "C++ bittorrent library by Rasterbar Software"
-  homepage "http://www.libtorrent.org/"
-  url "https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_5/libtorrent-rasterbar-1.1.5.tar.gz"
-  sha256 "103134068389155a0f2bccaca72a57765460eb8188495089dcad280dcf426930"
+  homepage "https://www.libtorrent.org/"
+  url "https://github.com/arvidn/libtorrent/releases/download/libtorrent_1_1_11/libtorrent-rasterbar-1.1.11.tar.gz"
+  sha256 "7c23deba7fa279825642307587609d51c9935ac7606e0ef2f2d0ba10728b5847"
 
   bottle do
     cellar :any
-    sha256 "f246cd55b9798e90a8658f6bd105aa594a6527008b4de7ed1491f9ef3f9570c8" => :high_sierra
-    sha256 "dc6442a8e547e15c465bd1203b96da165fdd7087e79133f22cc266fcf43f47e7" => :sierra
-    sha256 "c84078547bb3a00bd0471c3a84de980776373b0c13475a12cb78b841c2a89175" => :el_capitan
+    sha256 "ce18f1e7cb6bc5be735c1b9388995312d92781d0f543e88d7d1c0c2bdbfcc643" => :mojave
+    sha256 "1950410d90d2e1b5342fd917ba498abbb3caeb31080a6f6908de80988a9cc06e" => :high_sierra
+    sha256 "45bdf1f92a889fb71b61213e65a61aa17245120cbd4e4e08b2fae2215bf69da4" => :sierra
   end
 
   head do
     url "https://github.com/arvidn/libtorrent.git"
-    depends_on "automake" => :build
     depends_on "autoconf" => :build
+    depends_on "automake" => :build
     depends_on "libtool" => :build
   end
 
   depends_on "pkg-config" => :build
-  depends_on "openssl"
-  depends_on :python => :optional
   depends_on "boost"
-  depends_on "boost-python" if build.with? "python"
+  depends_on "boost-python3"
+  depends_on "openssl"
+  depends_on "python"
 
   def install
     ENV.cxx11
-    args = ["--disable-debug",
-            "--disable-dependency-tracking",
-            "--disable-silent-rules",
-            "--enable-encryption",
-            "--prefix=#{prefix}",
-            "--with-boost=#{Formula["boost"].opt_prefix}"]
 
-    # Build python bindings requires forcing usage of the mt version of boost_python.
-    if build.with? "python"
-      args << "--enable-python-binding"
-      args << "--with-boost-python=boost_python-mt"
-    end
+    args = %W[
+      --disable-debug
+      --disable-dependency-tracking
+      --disable-silent-rules
+      --prefix=#{prefix}
+      --enable-encryption
+      --enable-python-binding
+      --with-boost=#{Formula["boost"].opt_prefix}
+      --with-boost-python=boost_python37-mt
+      PYTHON=python3
+    ]
 
     if build.head?
       system "./bootstrap.sh", *args
@@ -51,7 +51,8 @@ class LibtorrentRasterbar < Formula
 
   test do
     system ENV.cxx, "-L#{lib}", "-ltorrent-rasterbar",
-           "-I#{Formula["boost"].include}/boost", "-lboost_system",
+           "-I#{Formula["boost"].include}/boost",
+           "-L#{Formula["boost"].lib}", "-lboost_system",
            libexec/"examples/make_torrent.cpp", "-o", "test"
     system "./test", test_fixtures("test.mp3"), "-o", "test.torrent"
     assert_predicate testpath/"test.torrent", :exist?

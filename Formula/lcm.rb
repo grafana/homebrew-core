@@ -1,51 +1,31 @@
 class Lcm < Formula
   desc "Libraries and tools for message passing and data marshalling"
   homepage "https://lcm-proj.github.io/"
-  url "https://github.com/lcm-proj/lcm/releases/download/v1.3.1/lcm-1.3.1.zip"
-  sha256 "3fd7c736cf218549dfc1bff1830000ad96f3d8a8d78d166904323b1df573ade1"
+  url "https://github.com/lcm-proj/lcm/releases/download/v1.4.0/lcm-1.4.0.zip"
+  sha256 "e249d7be0b8da35df8931899c4a332231aedaeb43238741ae66dc9baf4c3d186"
+
+  head "https://github.com/lcm-proj/lcm.git"
 
   bottle do
     cellar :any
-    rebuild 1
-    sha256 "50c9a39de7592b1685e4072b0f53880751a5af7ccc5667d1b8c633e15ee474ff" => :high_sierra
-    sha256 "9dcbc09da69140c343224fa1851d4c03c90908254d882aad467e189e95cbd610" => :sierra
-    sha256 "58d75c428869f70200220e5948468805f61a4190ca775e1f693c42cce72edc9f" => :el_capitan
-    sha256 "41819c23b58c30b04c44864f2b820f0aa47b8805d78b39b5c6a023588c0cb1fb" => :yosemite
+    sha256 "581550e90083da755a152c94e58ecec5da4fe688376426619614a35756acf41f" => :mojave
+    sha256 "295aa49f70201ca48b4e27e3da5342e616f429293cce7f31a06d8075471417b5" => :high_sierra
+    sha256 "3fc46725af663bc19f0e8625bb8ab0a4d699a324d7f7f1a01aabb5c3bd7518e3" => :sierra
   end
 
-  head do
-    url "https://github.com/lcm-proj/lcm.git"
-
-    depends_on "xz" => :build
-    depends_on "libtool" => :build
-    depends_on "automake" => :build
-    depends_on "autoconf" => :build
-  end
-
+  depends_on "cmake" => :build
   depends_on "pkg-config" => :build
   depends_on "glib"
-  depends_on :java => :recommended
-  depends_on :python => :optional
-  depends_on :python3 => :optional
+  depends_on :java => "1.8"
 
   def install
-    if build.head?
-      system "./bootstrap.sh"
-    else
-      # This deparallelize setting can be removed after an upstream release
-      # that includes the revised makefile for the java part of LCM.
-      #
-      # (see https://github.com/lcm-proj/lcm/pull/48)
-      #
-      # Note that the pull request has been merged with the upstream master,
-      # so it will be included in the next release of LCM.
-      ENV.deparallelize
+    mkdir "build" do
+      system "cmake", "..", "-DCMAKE_CXX_FLAGS=-I/System/Library/Frameworks/Python.framework/Headers",
+                            "-DLCM_ENABLE_TESTS=OFF",
+                            *std_cmake_args
+      system "make"
+      system "make", "install"
     end
-
-    system "./configure", "--disable-dependency-tracking",
-                          "--disable-silent-rules",
-                          "--prefix=#{prefix}"
-    system "make", "install"
   end
 
   test do
@@ -64,9 +44,7 @@ class Lcm < Formula
     assert_predicate testpath/"exlcm_example_t.c", :exist?, "lcm-gen did not generate C source file"
     system "#{bin}/lcm-gen", "-x", "example_t.lcm"
     assert_predicate testpath/"exlcm/example_t.hpp", :exist?, "lcm-gen did not generate C++ header file"
-    if build.with? "java"
-      system "#{bin}/lcm-gen", "-j", "example_t.lcm"
-      assert_predicate testpath/"exlcm/example_t.java", :exist?, "lcm-gen did not generate java file"
-    end
+    system "#{bin}/lcm-gen", "-j", "example_t.lcm"
+    assert_predicate testpath/"exlcm/example_t.java", :exist?, "lcm-gen did not generate java file"
   end
 end

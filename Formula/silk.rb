@@ -1,25 +1,20 @@
 class Silk < Formula
   desc "Collection of traffic analysis tools"
   homepage "https://tools.netsa.cert.org/silk/"
-  url "https://tools.netsa.cert.org/releases/silk-3.10.2.tar.gz"
-  sha256 "56b9c481305737057cd8ca07758bfd476a21e3cf905943a2068cb2aa6120007a"
+  url "https://tools.netsa.cert.org/releases/silk-3.17.2.tar.gz"
+  sha256 "70b74eceafce7b724ceccd9e801909f4bd28985406eb8c42a94c8d25e7d58194"
 
   bottle do
     rebuild 1
-    sha256 "35f8705910a922f08e960cd9715a7ee3f27dc1dfbb8ff1be603c3186a3bcc82e" => :high_sierra
-    sha256 "77aa6b92f8f1d86d2159f4a1cd6e68748d326a0f7982f8cdf235d817f08e116f" => :sierra
-    sha256 "0bfae0e3ca1afd61819501ee8f2f43ae9e945cc3cc903bcc9682deaab4e94357" => :el_capitan
-    sha256 "3654785d4b84d693e808af69c4d9945cbd68a7bfb0ff6f1028ea405ec25ce74c" => :yosemite
-    sha256 "d096816e48aecd4f1b87bc016611d0082aea5becf3c43112826e61cff7dd48fd" => :mavericks
+    sha256 "4e308eeaef5f1be5c4be0ac6ba57616cd2dc945e2edf9f0916127e8ca6118616" => :mojave
+    sha256 "6465b56369992120281899c1d43bb7163958c976ad50630cbcc1c19284bca0ae" => :high_sierra
+    sha256 "7c50646eddfea6779a412d8a17dc2e80a258ab7fee136c5bc43f9613ec4ba213" => :sierra
   end
-
-  option "with-python", "Build with the PySiLK python interface"
 
   depends_on "pkg-config" => :build
   depends_on "glib"
   depends_on "libfixbuf"
   depends_on "yaf"
-  depends_on :python => :optional
 
   def install
     args = %W[
@@ -30,14 +25,11 @@ class Silk < Formula
       --enable-data-rootdir=#{var}/silk
     ]
 
-    if build.with? "python"
-      args << "--with-python" << "--with-python-prefix=#{prefix}"
-    end
     system "./configure", *args
     system "make"
     system "make", "install"
 
-    (var+"silk").mkpath
+    (var/"silk").mkpath
   end
 
   test do

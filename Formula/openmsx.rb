@@ -1,34 +1,22 @@
 class Openmsx < Formula
   desc "MSX emulator"
   homepage "https://openmsx.org/"
-  url "https://github.com/openMSX/openMSX/releases/download/RELEASE_0_14_0/openmsx-0.14.0.tar.gz"
-  sha256 "eb9ae4c8420c30b69e9a05edfa8c606762b7a6bf3e55d36bfb457c2400f6a7b9"
+  url "https://github.com/openMSX/openMSX/releases/download/RELEASE_0_15_0/openmsx-0.15.0.tar.gz"
+  sha256 "93f209d8fed2e04e62526469bb6bb431b82ea4d07ecdc45dab2b8cc4ca21d62a"
   head "https://github.com/openMSX/openMSX.git"
 
   bottle do
     cellar :any
-    rebuild 1
-    sha256 "1fe237fb4200b9f0574de19da59434ba04df35320d3cae9f285a17d7c3f73222" => :high_sierra
-    sha256 "14b2a737d35b8725ac2eff3e4ec02f1eef45542c7795e902d704cbdaf76c1857" => :sierra
-    sha256 "0789729f06a73ae5acd2a04df373f839a2ac7d14e5679a380f7a485a777124ff" => :el_capitan
+    sha256 "64145c0b205a9eeb64e12f06b63440ee7c8bbba0153a0e248a1e37486815fb21" => :mojave
+    sha256 "eb64da0eff2b09fb3046903b020becc06aa8683ad398e9cea08708567fbcf194" => :high_sierra
+    sha256 "a2396de7cce4f6a317d6f8f3e38e32afb304580f08ccc798c36b0c5a933fcf8f" => :sierra
   end
 
-  deprecated_option "without-opengl" => "without-glew"
-
-  option "without-glew", "Disable OpenGL post-processing renderer"
-  option "with-laserdisc", "Enable Laserdisc support"
-
+  depends_on "freetype"
+  depends_on "glew"
+  depends_on "libpng"
   depends_on "sdl"
   depends_on "sdl_ttf"
-  depends_on "freetype"
-  depends_on "libpng"
-  depends_on "glew" => :recommended
-
-  if build.with? "laserdisc"
-    depends_on "libogg"
-    depends_on "libvorbis"
-    depends_on "theora"
-  end
 
   def install
     # Fixes a clang crash; this is an LLVM/Apple bug, not an openmsx bug

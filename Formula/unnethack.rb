@@ -1,29 +1,20 @@
 class Unnethack < Formula
   desc "Fork of Nethack"
   homepage "https://sourceforge.net/projects/unnethack/"
-  url "https://downloads.sourceforge.net/project/unnethack/unnethack/5.1.0/unnethack-5.1.0-20131208.tar.gz"
-  sha256 "d92886a02fd8f5a427d1acf628e12ee03852fdebd3af0e7d0d1279dc41c75762"
-
+  url "https://downloads.sourceforge.net/project/unnethack/unnethack/5.2.0/unnethack-5.2.0.tar.gz"
+  sha256 "1dc6a47e79229265b14ccb224ef151b2b04b327ab1865ae770078b5e8c724119"
   head "https://github.com/UnNetHack/UnNetHack.git"
 
   bottle do
-    sha256 "7da0d5eada4191f5bfd1d3beb6c9d74ed3bc26c54c3ec0d7ff6620592504c131" => :high_sierra
-    sha256 "2801362d487c397485b6849a2421c080ddb1261563e77bf64d16aa982843d332" => :sierra
-    sha256 "f0e6315f7a8d6135f80290dd20d8e2d80dc8224ad865b073fb71c05771d799eb" => :el_capitan
-    sha256 "a6345197d1067ce08e9220bd74701355d19add9c251794b3f12210cded3dce46" => :yosemite
+    sha256 "c95ffced18c9be00207e55c4d592f477cd5975fd04412115de66629d74e66088" => :mojave
+    sha256 "4648259b51fa627ee3ad0ef01b5040e573741f9528385d8c04d8b6354ec745c8" => :high_sierra
+    sha256 "4ccafeafee0cd1e9cc7705ee312101229748100ea32b5cb1c7c63b29ed1d7742" => :sierra
   end
 
   # directory for temporary level data of running games
   skip_clean "var/unnethack/level"
 
-  option "with-lisp-graphics", "Enable lisp graphics (play in Emacs)"
-  option "with-curses-graphics", "Enable curses graphics (play with fanciness)"
-
   def install
-    # crashes when using clang and gsl with optimizations
-    # https://github.com/mxcl/homebrew/pull/8035#issuecomment-3923558
-    ENV.no_optimization
-
     # directory for version specific files that shouldn't be deleted when
     # upgrading/uninstalling
     version_specific_directory = "#{var}/unnethack/#{version}"
@@ -39,11 +30,8 @@ class Unnethack < Formula
       "--enable-wizmode=#{`id -un`}",
     ]
 
-    args << "--enable-lisp-graphics" if build.with? "lisp-graphics"
-    args << "--enable-curses-graphics" if build.with? "curses-graphics"
-
     system "./configure", *args
-    ENV.j1 # Race condition in make
+    ENV.deparallelize # Race condition in make
 
     # disable the `chgrp` calls
     system "make", "install", "CHGRP=#"

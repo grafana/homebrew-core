@@ -1,35 +1,26 @@
 class Nginx < Formula
   desc "HTTP(S) server and reverse proxy, and IMAP/POP3 proxy server"
   homepage "https://nginx.org/"
-  url "https://nginx.org/download/nginx-1.12.2.tar.gz"
-  sha256 "305f379da1d5fb5aefa79e45c829852ca6983c7cd2a79328f8e084a324cf0416"
-  revision 1
+  # Use "mainline" releases only (odd minor version number), not "stable"
+  # See https://www.nginx.com/blog/nginx-1-12-1-13-released/ for why
+  url "https://nginx.org/download/nginx-1.15.9.tar.gz"
+  sha256 "e4cfba989bba614cd53f3f406ac6da9f05977d6b1296e5d20a299f10c2d7ae43"
   head "https://hg.nginx.org/nginx/", :using => :hg
 
   bottle do
-    sha256 "b773b2394e84c697d5193242589361c611869560200269e4b325634c2ca1464c" => :high_sierra
-    sha256 "817a7928bd81518e419c6837c1483cacf4d969f3d6acbf711567f5d5f731497f" => :sierra
-    sha256 "4e9d4c1ce74bc3b3fea4d90ba6c7c73c6d0457eff26da37163f9393dfc027ac0" => :el_capitan
+    sha256 "01235eb30ff0d8e79f47735ee0cf527d2dbe6cab12b33ec8e0525405a1d40f34" => :mojave
+    sha256 "82dc5cb72d60737035d6c5e11cbdfe0a4cf5c17ca67856bd383083923a2ce3e2" => :high_sierra
+    sha256 "a92aaf5fd66dc3b486c2c090d01470ed415c104cc71518fd4a427da627405818" => :sierra
   end
 
-  devel do
-    url "https://nginx.org/download/nginx-1.13.6.tar.gz"
-    sha256 "8512fc6f986a20af293b61f33b0e72f64a72ea5b1acbcc790c4c4e2d6f63f8f8"
-  end
-
-  # Before submitting more options to this formula please check they aren't
-  # already in Homebrew/homebrew-nginx/nginx-full:
-  # https://github.com/Homebrew/homebrew-nginx/blob/master/Formula/nginx-full.rb
-  option "with-passenger", "Compile with support for Phusion Passenger module"
-  option "with-webdav", "Compile with support for WebDAV module"
-  option "with-debug", "Compile with support for debug log"
-  option "with-gunzip", "Compile with support for gunzip module"
-
-  depends_on "openssl" # don't switch to 1.1 until passenger is switched, too
+  depends_on "openssl"
   depends_on "pcre"
-  depends_on "passenger" => :optional
 
   def install
+    # keep clean copy of source for compiling dynamic modules e.g. passenger
+    (pkgshare/"src").mkpath
+    system "tar", "-cJf", (pkgshare/"src/src.tar.xz"), "--options", "compression-level=9", "."
+
     # Changes default port to 8080
     inreplace "conf/nginx.conf" do |s|
       s.gsub! "listen       80;", "listen       8080;"
@@ -44,8 +35,6 @@ class Nginx < Formula
 
     args = %W[
       --prefix=#{prefix}
-      --with-http_ssl_module
-      --with-pcre
       --sbin-path=#{bin}/nginx
       --with-cc-opt=#{cc_opt}
       --with-ld-opt=#{ld_opt}
@@ -59,18 +48,35 @@ class Nginx < Formula
       --http-scgi-temp-path=#{var}/run/nginx/scgi_temp
       --http-log-path=#{var}/log/nginx/access.log
       --error-log-path=#{var}/log/nginx/error.log
+      --with-debug
+      --with-http_addition_module
+      --with-http_auth_request_module
+      --with-http_dav_module
+      --with-http_degradation_module
+      --with-http_flv_module
+      --with-http_gunzip_module
       --with-http_gzip_static_module
+      --with-http_mp4_module
+      --with-http_random_index_module
+      --with-http_realip_module
+      --with-http_secure_link_module
+      --with-http_slice_module
+      --with-http_ssl_module
+      --with-http_stub_status_module
+      --with-http_sub_module
       --with-http_v2_module
+      --with-ipv6
+      --with-mail
+      --with-mail_ssl_module
+      --with-pcre
+      --with-pcre-jit
+      --with-stream
+      --with-stream_realip_module
+      --with-stream_ssl_module
+      --with-stream_ssl_preread_module
     ]
 
-    if build.with? "passenger"
-      nginx_ext = `#{Formula["passenger"].opt_bin}/passenger-config --nginx-addon-dir`.chomp
-      args << "--add-module=#{nginx_ext}"
-    end
-
-    args << "--with-http_dav_module" if build.with? "webdav"
-    args << "--with-debug" if build.with? "debug"
-    args << "--with-http_gunzip_module" if build.with? "gunzip"
+    (pkgshare/"src/configure_args.txt").write args.join("\n")
 
     if build.head?
       system "./auto/configure", *args
@@ -115,15 +121,8 @@ class Nginx < Formula
     end
   end
 
-  def passenger_caveats; <<~EOS
-    To activate Phusion Passenger, add this to #{etc}/nginx/nginx.conf, inside the 'http' context:
-      passenger_root #{Formula["passenger"].opt_libexec}/src/ruby_supportlib/phusion_passenger/locations.ini;
-      passenger_ruby /usr/bin/ruby;
-    EOS
-  end
-
   def caveats
-    s = <<~EOS
+    <<~EOS
       Docroot is: #{var}/www
 
       The default port has been set in #{etc}/nginx/nginx.conf to 8080 so that
@@ -131,8 +130,6 @@ class Nginx < Formula
 
       nginx will load all files in #{etc}/nginx/servers/.
     EOS
-    s << "\n" << passenger_caveats if build.with? "passenger"
-    s
   end
 
   plist_options :manual => "nginx"
@@ -158,11 +155,11 @@ class Nginx < Formula
         <string>#{HOMEBREW_PREFIX}</string>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do
-    (testpath/"nginx.conf").write <<-EOS
+    (testpath/"nginx.conf").write <<~EOS
       worker_processes 4;
       error_log #{testpath}/error.log;
       pid #{testpath}/nginx.pid;

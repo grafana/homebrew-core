@@ -1,16 +1,15 @@
 class DmtxUtils < Formula
   desc "Read and write data matrix barcodes"
   homepage "https://github.com/dmtx/dmtx-utils"
-  url "https://github.com/dmtx/dmtx-utils/archive/v0.7.5.tar.gz"
-  sha256 "6fa365cd321609db40800f6b34a2387c0ac56ef4643f6101ac83cb762f5ce9ef"
-  revision 2
+  url "https://github.com/dmtx/dmtx-utils/archive/v0.7.6.tar.gz"
+  sha256 "0d396ec14f32a8cf9e08369a4122a16aa2e5fa1675e02218f16f1ab777ea2a28"
 
   bottle do
     cellar :any
-    sha256 "2373f702d73deef207316466fa1ea724c33db397b1b6fa18fca6fc333b619bb1" => :high_sierra
-    sha256 "1ddf7aa4238bc24df4c249041e3cd964987ae6c773d2b3ac6c12b95b9784631d" => :sierra
-    sha256 "8ce569eb1a9af3a0ea25936d9ee9947bd830301615db43ee04cbd5c22863c47e" => :el_capitan
-    sha256 "d045cc55b0bd09b36dd81ae3168dd8e996743c0e4dd2578649658615b9daf48c" => :yosemite
+    sha256 "fe694e604d62e41231d194d13fde0908c12b1e6495e48409479567c2a7d5f85b" => :mojave
+    sha256 "05d42a829bd84a769a9c96d6cc26737eb86f9a32126d210cccc55fa0ceef3d22" => :high_sierra
+    sha256 "0a9fde419f3e14cb13b3f1f527e83653e66f61f054727f93da9e7b4bbd709ea6" => :sierra
+    sha256 "f9b43f0bbeada1a08355536d51c63a068d51897cf968f7d65699c6f6745f2f81" => :el_capitan
   end
 
   depends_on "autoconf" => :build
@@ -18,7 +17,7 @@ class DmtxUtils < Formula
   depends_on "pkg-config" => :build
   depends_on "imagemagick"
   depends_on "libdmtx"
-  depends_on "libtool" => :run
+  depends_on "libtool"
 
   resource "test_image12" do
     url "https://raw.githubusercontent.com/dmtx/libdmtx/ca9313f/test/rotate_test/images/test_image12.png"

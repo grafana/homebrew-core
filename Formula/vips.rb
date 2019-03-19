@@ -1,21 +1,24 @@
 class Vips < Formula
   desc "Image processing library"
-  homepage "https://github.com/jcupitt/libvips"
-  url "https://github.com/jcupitt/libvips/releases/download/v8.5.9/vips-8.5.9.tar.gz"
-  sha256 "5e2bc42074be92606e4c6f50c816c18a7df0046bc5243fd459c95ca28f7a4e15"
+  homepage "https://github.com/libvips/libvips"
+  url "https://github.com/libvips/libvips/releases/download/v8.7.4/vips-8.7.4.tar.gz"
+  sha256 "ce7518a8f31b1d29a09b3d7c88e9852a5a2dcb3ee1501524ab477e433383f205"
+  revision 1
 
   bottle do
-    sha256 "366cb92f9fe2d25f38233d5ad6a72bebd892d54dfc1664119669da965645f695" => :high_sierra
-    sha256 "4a58ca3c72d9109000a07c0cab7e99f233100a3b3919d47761c6cc3aeb843db7" => :sierra
-    sha256 "6a5f0bf7e6bb646286756f3dbefc510a762de831e0abb443d75701f074a054b2" => :el_capitan
+    sha256 "b79a1dd2a31c66ccaef76c1a80b45fed626070892170fb6b2d17fc77aae2169d" => :mojave
+    sha256 "5b0e853a2df0f58a23fc050727293b4c8a3157b6d162f5d42b1c83d0d26da21c" => :high_sierra
+    sha256 "4d3c4c02757bad0508029fb491331fb8a5217af2852e4a52811ed911326e8438" => :sierra
   end
 
+  depends_on "gobject-introspection" => :build
   depends_on "pkg-config" => :build
+  depends_on "fftw"
   depends_on "fontconfig"
   depends_on "gettext"
   depends_on "giflib"
   depends_on "glib"
-  depends_on "gobject-introspection"
+  depends_on "imagemagick"
   depends_on "jpeg"
   depends_on "libexif"
   depends_on "libgsf"
@@ -23,30 +26,19 @@ class Vips < Formula
   depends_on "librsvg"
   depends_on "libtiff"
   depends_on "little-cms2"
+  depends_on "openexr"
+  depends_on "openslide"
   depends_on "orc"
   depends_on "pango"
-  depends_on "pygobject3"
-  depends_on "fftw" => :recommended
-  depends_on "poppler" => :recommended
-  depends_on "graphicsmagick" => :optional
-  depends_on "imagemagick" => :optional
-  depends_on "jpeg-turbo" => :optional
-  depends_on "mozjpeg" => :optional
-  depends_on "openexr" => :optional
-  depends_on "openslide" => :optional
-  depends_on "webp" => :optional
+  depends_on "poppler"
+  depends_on "webp"
 
   def install
     args = %W[
       --disable-dependency-tracking
       --prefix=#{prefix}
+      --with-magick
     ]
-
-    if build.with? "graphicsmagick"
-      args << "--with-magick" << "--with-magickpackage=GraphicsMagick"
-    end
-
-    args << "--without-libwebp" if build.without? "webp"
 
     system "./configure", *args
     system "make", "install"

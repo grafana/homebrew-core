@@ -1,16 +1,15 @@
 class Prips < Formula
   desc "Print the IP addresses in a given range"
   homepage "https://devel.ringlet.net/sysutils/prips/"
-  url "https://devel.ringlet.net/files/sys/prips/prips-1.0.1.tar.xz"
-  mirror "https://mirrors.ocf.berkeley.edu/debian/pool/main/p/prips/prips_1.0.1.orig.tar.xz"
-  sha256 "56b5a8de4c8df39dfaf9ffce7fbd5e80cb897f491eb2f7de83930756390f36b6"
+  url "https://devel.ringlet.net/files/sys/prips/prips-1.1.0.tar.xz"
+  mirror "https://deb.debian.org/debian/pool/main/p/prips/prips_1.1.0.orig.tar.xz"
+  sha256 "f6f85ee0234218e426cb72b27411902a55e1daa02f22d1e7270ff41e07fe0444"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "10f3802a208d576fc43ef60bdc37f610690fc2db3fd30af433ecce7df2992e90" => :high_sierra
-    sha256 "7fd356876cb6ae47363d09405ac14e2dd129e51ded5b81603e9028132b96b86c" => :sierra
-    sha256 "70eaa7f0bc91f0f6fbea259a2db276e15beea29ff4bd391f545bcb76b0588af1" => :el_capitan
-    sha256 "37b66f0c4ccee70d7495e9f7bf822446214df33798af61b3e89ead65929de68b" => :yosemite
+    sha256 "6dd9b01ce2a3e4267378068d0e48539d82637be1147064b1417f7bb70c4eed8b" => :mojave
+    sha256 "5ce5225196dc7056ca5083f4b872ba0db72a1e2482f6410c8f6e20e92b838525" => :high_sierra
+    sha256 "fc7f9aa1dcb04691722fe04f020c69da38eec97f4292269350a2934f624ac373" => :sierra
   end
 
   def install

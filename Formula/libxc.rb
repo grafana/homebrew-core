@@ -1,29 +1,23 @@
 class Libxc < Formula
   desc "Library of exchange and correlation functionals for codes"
-  homepage "http://octopus-code.org/wiki/Libxc"
-  url "http://www.tddft.org/programs/octopus/down.php?file=libxc/libxc-3.0.0.tar.gz"
-  sha256 "5542b99042c09b2925f2e3700d769cda4fb411b476d446c833ea28c6bfa8792a"
-  revision 1
+  homepage "https://tddft.org/programs/libxc/"
+  url "https://tddft.org/programs/octopus/download/libxc/4.2.3/libxc-4.2.3.tar.gz"
+  sha256 "02e49e9ba7d21d18df17e9e57eae861e6ce05e65e966e1e832475aa09e344256"
 
   bottle do
     cellar :any
-    sha256 "d3322d32b265367ac0c798073dd6b68394faa006c88b9aedbe88138b92930afe" => :high_sierra
-    sha256 "984695d0b1ffadebe99d03c5c9061740bb45eaa6024595bb675213d388a3cebf" => :sierra
-    sha256 "a5f71cb519b4573600046acfa3203febeb9bc56e79c89978289421dc8e07be01" => :el_capitan
-    sha256 "729c2a9d858dae15cdc960c6a816ae6f153307c078cc2b21cad51263f0b27879" => :yosemite
+    sha256 "d3cae48aff1879bd255e227fd5a305f5bfc537ad9e3b5709e09b434e4a43dffa" => :mojave
+    sha256 "57b6d9d003ad48a50b571722e9fa59a3786f43fe90eab310ce75526c207c4b4f" => :high_sierra
+    sha256 "ae70a828ecc3c097f6bc74660bbb60618be640b3c0f80db6c5fce0ea129c0c8c" => :sierra
   end
 
-  depends_on :fortran
+  depends_on "gcc" # for gfortran
 
   def install
     system "./configure", "--prefix=#{prefix}",
                           "--enable-shared",
-                          "FCCPP=#{ENV.fc} -E -x c",
-                          "CC=#{ENV.cc}",
-                          "CFLAGS=-pipe"
-    system "make"
-    # Disable testsuite, as of 3.0.0 is fails due to upstream issue: http://www.tddft.org/trac/libxc/ticket/22
-    # system "make", "check"
+                          "FCCPP=gfortran -E -x c",
+                          "CC=#{ENV.cc}"
     system "make", "install"
   end
 
@@ -47,8 +41,8 @@ class Libxc < Formula
         use xc_f90_lib_m
       end program lxctest
     EOS
-    ENV.fortran
-    system ENV.fc, "test.f90", "-L#{lib}", "-lxc", "-I#{include}", "-o", "ftest"
+    system "gfortran", "test.f90", "-L#{lib}", "-lxc", "-I#{include}",
+                       "-o", "ftest"
     system "./ftest"
   end
 end

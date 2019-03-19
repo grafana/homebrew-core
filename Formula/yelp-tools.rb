@@ -1,29 +1,28 @@
 class YelpTools < Formula
   desc "Tools that help create and edit Mallard or DocBook documentation"
   homepage "https://github.com/GNOME/yelp-tools"
-  url "https://download.gnome.org/sources/yelp-tools/3.18/yelp-tools-3.18.0.tar.xz"
-  sha256 "c6c1d65f802397267cdc47aafd5398c4b60766e0a7ad2190426af6c0d0716932"
+  url "https://download.gnome.org/sources/yelp-tools/3.32/yelp-tools-3.32.0.tar.xz"
+  sha256 "bfdd40d10d837d1a170c7fe70b3436d30e6698db809d5be459ea0f7fbb69ee0c"
+  revision 1
 
   bottle do
     cellar :any_skip_relocation
-    rebuild 2
-    sha256 "362bd3f0673ad7e44f9d37b37f46989512823d218d06aa27e452c47faf589b41" => :high_sierra
-    sha256 "b0ea184a43def810986761f163243688d08e1f891ddfdb104793b5dcb7c9155c" => :sierra
-    sha256 "b0ea184a43def810986761f163243688d08e1f891ddfdb104793b5dcb7c9155c" => :el_capitan
-    sha256 "b0ea184a43def810986761f163243688d08e1f891ddfdb104793b5dcb7c9155c" => :yosemite
+    sha256 "4f47c6d9828e28b9135d7b99c7d5ecab1dd44b247a05e849abd1c02edbdfa38f" => :mojave
+    sha256 "1ccfac8c04c1049d1f03c538bc43a525874c8db74298e8c67025dab2910015c8" => :high_sierra
+    sha256 "e3aa9c7a280f00c63e91c385807155b3c50ac7a6877db4d2420fd35b3acfcd8c" => :sierra
   end
 
   depends_on "gettext" => :build
-  depends_on "gtk+3"
   depends_on "intltool" => :build
   depends_on "itstool" => :build
   depends_on "libxml2" => :build
   depends_on "libxslt" => :build
   depends_on "pkg-config" => :build
+  depends_on "gtk+3"
 
   resource "yelp-xsl" do
-    url "https://download.gnome.org/sources/yelp-xsl/3.20/yelp-xsl-3.20.1.tar.xz"
-    sha256 "dc61849e5dca473573d32e28c6c4e3cf9c1b6afe241f8c26e29539c415f97ba0"
+    url "https://download.gnome.org/sources/yelp-xsl/3.32/yelp-xsl-3.32.1.tar.xz"
+    sha256 "cac31bc150545d6aa0de15dce04560cbf591008d17a783a1d1d9cdd47b147f04"
   end
 
   def install
@@ -49,13 +48,5 @@ class YelpTools < Formula
     system "#{bin}/yelp-new", "task", "ducksinarow"
     system "#{bin}/yelp-build", "html", "ducksinarow.page"
     system "#{bin}/yelp-check", "validate", "ducksinarow.page"
-    [
-      prefix/"share/yelp-xsl/icons/hicolor/24x24/status/yelp-note-warning.png",
-      prefix/"share/yelp-xsl/js/jquery.syntax.brush.smalltalk.js",
-      prefix/"share/yelp-xsl/xslt/mallard/html/mal2html-links.xsl",
-      share/"pkgconfig/yelp-xsl.pc",
-    ].each do |filename|
-      assert filename.exist?, "#{filename} doesn't exist"
-    end
   end
 end

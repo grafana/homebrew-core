@@ -1,19 +1,25 @@
 class Haproxy < Formula
   desc "Reliable, high performance TCP/HTTP load balancer"
   homepage "https://www.haproxy.org/"
-  url "https://www.haproxy.org/download/1.7/src/haproxy-1.7.9.tar.gz"
-  sha256 "1072337e54fa188dc6e0cfe3ba4c2200b07082e321cbfe5a0882d85d54db068e"
+  url "https://www.haproxy.org/download/1.9/src/haproxy-1.9.4.tar.gz"
+  sha256 "8483fe12b30256f83d542b3f699e165d8f71bf2dfac8b16bb53716abce4ba74f"
 
   bottle do
     cellar :any
-    sha256 "79af48600b3a69bc8617613abd520b1b95c33fa22fe88214871ae92c81505be0" => :high_sierra
-    sha256 "f27784d7dee1e22ca45cc396479341c9fd3daec90832b5004d732b2fb7d808f0" => :sierra
-    sha256 "6cbe3f8dcb16ff84fb93a14bff0c47e5920a0b95d6c61469d5672740fbd690cf" => :el_capitan
-    sha256 "f6f9d3853bbfd4eaf5000af53f6da78e0e694559ad2a30d6f21db08a88f00d60" => :yosemite
+    sha256 "005dc544ba30b5eb288ab7582bafb2c1016a4683158ac06f5885b2f63f491526" => :mojave
+    sha256 "33ff7981eb28bc40e4771b6a9f6dbe7ac25172c17b5b914009ec3c6e87292a30" => :high_sierra
+    sha256 "9fda53095c30ede7977de844002bf646b577e50bce218219a27b0187ac3da4c3" => :sierra
   end
 
   depends_on "openssl"
   depends_on "pcre"
+
+  # Patch for BUILD/MEDIUM: initcall: Fix build on MacOS. See haproxy/haproxy#42
+  # Should be safe to remove on > 1.9.4 release as upstream intend to backport
+  patch do
+    url "https://github.com/haproxy/haproxy/commit/9efa7b8.patch?full_index=1"
+    sha256 "756b26d3518cbf9a84f5957719beb764ac4d25bdb783f839d5b05c5283ac2f62"
+  end
 
   def install
     args = %w[
@@ -22,6 +28,7 @@ class Haproxy < Formula
       USE_POLL=1
       USE_PCRE=1
       USE_OPENSSL=1
+      USE_THREAD=1
       USE_ZLIB=1
       ADDLIB=-lcrypto
     ]
@@ -55,7 +62,7 @@ class Haproxy < Formula
         <string>#{var}/log/haproxy.log</string>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

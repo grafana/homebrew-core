@@ -8,6 +8,7 @@ class Xsd < Formula
 
   bottle do
     cellar :any
+    sha256 "cb064aa81b48f1777f14888e4c6df4ae3782159f5a315944df49882bce06b231" => :mojave
     sha256 "25dfd3dbcbe7f6f442bf6d45adaa849b5fbc4e7360ca4d9084bb1910252f992d" => :high_sierra
     sha256 "935d1bcd6d9cf35cdd42e68ddb9931ad29df0834b76d6f4b9cdaa743176d7bae" => :sierra
     sha256 "4e4a26fc0a99b11e8a740b6f5041964b682048de7ff0a9cbfd15ffea263f0c62" => :el_capitan
@@ -16,7 +17,7 @@ class Xsd < Formula
   depends_on "pkg-config" => :build
   depends_on "xerces-c"
 
-  needs :cxx11
+  conflicts_with "mono", :because => "both install `xsd` binaries"
 
   # Patches:
   # 1. As of version 4.0.0, Clang fails to compile if the <iostream> header is
@@ -28,8 +29,6 @@ class Xsd < Formula
   #    list (xsd-users@codesynthesis.com). I have sent this patch there but have
   #    received no response (yet).
   patch :DATA
-
-  conflicts_with "mono", :because => "both install `xsd` binaries"
 
   def install
     ENV.append "LDFLAGS", `pkg-config --libs --static xerces-c`.chomp
@@ -68,7 +67,8 @@ class Xsd < Formula
     system "#{bin}/xsd", "cxx-tree", schema
     assert_predicate testpath/"meaningoflife.hxx", :exist?
     assert_predicate testpath/"meaningoflife.cxx", :exist?
-    system "c++", "-o", "xsdtest", "xsdtest.cxx", "meaningoflife.cxx", "-lxerces-c"
+    system "c++", "-o", "xsdtest", "xsdtest.cxx", "meaningoflife.cxx",
+                  "-L#{Formula["xerces-c"].opt_lib}", "-lxerces-c"
     assert_predicate testpath/"xsdtest", :exist?
     system testpath/"xsdtest", instance
   end

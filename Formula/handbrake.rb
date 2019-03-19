@@ -1,22 +1,24 @@
 class Handbrake < Formula
   desc "Open-source video transcoder available for Linux, Mac, and Windows"
   homepage "https://handbrake.fr/"
-  url "https://handbrake.fr/mirror/HandBrake-1.0.7.tar.bz2"
-  sha256 "ffdee112f0288f0146b965107956cd718408406b75db71c44d2188f5296e677f"
+  url "https://download.handbrake.fr/releases/1.2.2/HandBrake-1.2.2-source.tar.bz2"
+  sha256 "df6816f517d60ae8a6626aa731821af2d1966c155fa53b2b9a06c47f3c565e4c"
   head "https://github.com/HandBrake/HandBrake.git"
 
   bottle do
-    sha256 "defe7d13eebbcd54f269fff4fb0d600333bb14a25deea57a4605045356d74d45" => :high_sierra
-    sha256 "61a9dce983af5963dc6233fadef0a4c4c79391057f71e584298172e6fe80d3dc" => :sierra
-    sha256 "37c825fa81b75fa8ea85ff58b00fe152a71acaaa52d02a490a8c13766dfa33c1" => :el_capitan
-    sha256 "b14c568a5f20f04f6f15805111df263dd231ad86f599af9a928aa6eaf0b4f9d7" => :yosemite
+    cellar :any_skip_relocation
+    sha256 "62a2eb518d2058921f467312c37214a6b9cabd0e5d7e0efe95015a5dd38c9425" => :mojave
+    sha256 "c5b58b1d1cd02b23975833e737ec09568e9f36e622e7137aa6c0939ef764b03e" => :high_sierra
+    sha256 "0f92e1d55b7d537313e3c2b01e7a780c58956f044a3f3968f84a13ae00050dd9" => :sierra
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "cmake" => :build
   depends_on "libtool" => :build
+  depends_on "nasm" => :build
   depends_on "pkg-config" => :build
+  depends_on "python@2" => :build
   depends_on "yasm" => :build
 
   def install

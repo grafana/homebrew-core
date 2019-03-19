@@ -1,18 +1,16 @@
 class Blastem < Formula
   desc "Fast and accurate Genesis emulator"
   homepage "https://www.retrodev.com/blastem/"
-  url "https://www.retrodev.com/repos/blastem/archive/1ffa7891b4ec.tar.gz"
-  version "0.4.1"
-  sha256 "f9a15d2e381c7eb6f55f12b0d00f3d2779b0b29bea99b422484d6ada250655ba"
-  revision 1
+  url "https://www.retrodev.com/repos/blastem/archive/357b4951d9b2.tar.gz"
+  version "0.6.1"
+  sha256 "63ed9a1d068d97f7bb47770449715767442a1356912cb15bee1f7fe8765b9880"
   head "https://www.retrodev.com/repos/blastem", :using => :hg
 
   bottle do
     cellar :any
-    sha256 "86142831b5e0f7ec52b7c99d14eb224c53e5a554b415f1792f0c005eb607e1ae" => :high_sierra
-    sha256 "2e048cbac4f4acb8b98580376552778c3381b4b76244bffcd63f8d750433bfd1" => :sierra
-    sha256 "d3a42007ab6a2cf184c4b0f9309c352a828b0baee8394d92622121dcd9f663a6" => :el_capitan
-    sha256 "80fdc3f0a77c9f0e23c676f3ee42d632e81641649390604ae726b42c3d88b249" => :yosemite
+    sha256 "4becc15b16ef0a6b58a731d7e78bb5dfdf3360cb4ccd3b86bb274d25c2ef6152" => :mojave
+    sha256 "26b745117fe55e41fa2d3dfde89e6ea092983e3f2f09934bbcc46325a60f4b50" => :high_sierra
+    sha256 "0c7a00d5ed0f16fa729be9f24b440a2f2ab21bbb6822bfc80e78d59c8f6f1092" => :sierra
   end
 
   depends_on "freetype" => :build
@@ -20,6 +18,7 @@ class Blastem < Formula
   depends_on "libpng" => :build # for xcftools
   depends_on "pkg-config" => :build
   depends_on "glew"
+  depends_on "python@2"
   depends_on "sdl2"
 
   resource "Pillow" do
@@ -28,7 +27,7 @@ class Blastem < Formula
   end
 
   resource "vasm" do
-    url "http://server.owl.de/~frank/tags/vasm1_7e.tar.gz"
+    url "https://server.owl.de/~frank/tags/vasm1_7e.tar.gz"
     sha256 "2878c9c62bd7b33379111a66649f6de7f9267568946c097ffb7c08f0acd0df92"
   end
 
@@ -40,14 +39,14 @@ class Blastem < Formula
   def install
     ENV.prepend_create_path "PYTHONPATH", buildpath/"vendor/lib/python2.7/site-packages"
 
-    unless MacOS::CLT.installed?
+    if MacOS.sdk_path_if_needed
       ENV.append "CPPFLAGS", "-I#{MacOS.sdk_path}/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers"
       ENV.append "CPPFLAGS", "-I#{MacOS.sdk_path}/usr/include/ffi" # libffi
     end
 
     resource("Pillow").stage do
       inreplace "setup.py" do |s|
-        sdkprefix = MacOS::CLT.installed? ? "" : MacOS.sdk_path
+        sdkprefix = MacOS.sdk_path_if_needed ? MacOS.sdk_path : ""
         s.gsub! "ZLIB_ROOT = None", "ZLIB_ROOT = ('#{sdkprefix}/usr/lib', '#{sdkprefix}/usr/include')"
         s.gsub! "JPEG_ROOT = None", "JPEG_ROOT = ('#{Formula["jpeg"].opt_prefix}/lib', '#{Formula["jpeg"].opt_prefix}/include')"
         s.gsub! "FREETYPE_ROOT = None", "FREETYPE_ROOT = ('#{Formula["freetype"].opt_prefix}/lib', '#{Formula["freetype"].opt_prefix}/include')"

@@ -1,23 +1,19 @@
 class Atkmm < Formula
   desc "Official C++ interface for the ATK accessibility toolkit library"
   homepage "https://www.gtkmm.org/"
-  url "https://download.gnome.org/sources/atkmm/2.24/atkmm-2.24.2.tar.xz"
-  sha256 "ff95385759e2af23828d4056356f25376cfabc41e690ac1df055371537e458bd"
+  url "https://download.gnome.org/sources/atkmm/2.28/atkmm-2.28.0.tar.xz"
+  sha256 "4c4cfc917fd42d3879ce997b463428d6982affa0fb660cafcc0bc2d9afcedd3a"
 
   bottle do
     cellar :any
-    sha256 "a5207112418684edbb8fa1b355e85137a1cf1615343e14c04f70212c6c3a3c54" => :high_sierra
-    sha256 "99c33466b55c8f1b850dc129bd737f15c243b7e79782c5927fdc55d59d4df551" => :sierra
-    sha256 "70c5c9652b337efe41f26d61480dad331095a6ded8cae26bc8dc0066c06adfb5" => :el_capitan
-    sha256 "a7ddfcacea2a645a939c0eb7b5d2c026d9f9af9ba3e579ee66df28fbe6339879" => :yosemite
-    sha256 "a39942b931ea636033cd6018ddbe25d050dbcdda5ef80f0c9d9cc81a7d9636d4" => :mavericks
+    sha256 "f332838475850cc497c531395162d2e37582448e15f04c86a05f27f582e0cf96" => :mojave
+    sha256 "cc71c5e0c4ee2ba05c2ae7be9746599ce194eadbe48a039fc784eaa9895b2ede" => :high_sierra
+    sha256 "d273495ffec79f6f3353edffddce8ef0e14ff57afa1d561d6bde9cce20fed18b" => :sierra
   end
 
   depends_on "pkg-config" => :build
   depends_on "atk"
   depends_on "glibmm"
-
-  needs :cxx11
 
   def install
     ENV.cxx11

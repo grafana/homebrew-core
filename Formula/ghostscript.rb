@@ -1,13 +1,24 @@
 class Ghostscript < Formula
   desc "Interpreter for PostScript and PDF"
   homepage "https://www.ghostscript.com/"
-  url "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs922/ghostscript-9.22.tar.xz"
-  sha256 "c1f862e6f40f997dbe3feba89355e8cb05d55818994e10f4932b0dd9b627d1bb"
+  revision 1
+
+  stable do
+    url "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs926/ghostpdl-9.26.tar.xz"
+    sha256 "9c586554c653bb92ef5d271b12ad76ac6fabc05193173cb9e2b799bb069317fe"
+
+    # CVE-2019-6116 https://bugs.chromium.org/p/project-zero/issues/detail?id=1729
+    patch do
+      url "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs926/0001-Bug700317-Address-.force-operators-exposure.tgz"
+      sha256 "54ab7d8f8007259c27fd4f11fd12f5ef0dbf6fe570da30b9335edec7deb3fa25"
+      apply "0001-Bug700317-Address-.force-operators-exposure.patch"
+    end
+  end
 
   bottle do
-    sha256 "dec4d99345c0d402cd78e12fc2b6d1c2efa9fc9e207480bb665b60cbcfef1c21" => :high_sierra
-    sha256 "45a8136781fc46574f134114b7db8417994406c81160211ad4e7252b17154810" => :sierra
-    sha256 "f935b2fc2d7a5dc580e530f4e571bca53ed2423633461e1a8c34957990258adf" => :el_capitan
+    sha256 "746bbd395ce189a451c237893042f06737fa0d5fc19ba4ea631722d7ac00aa37" => :mojave
+    sha256 "6300074457a9e86e463aabeea75e95ff22ca15c94e7796a9520f8efbf125b1db" => :high_sierra
+    sha256 "319173da1daa8d383d7eb6922d9a131df8d407ea7ca239d03daa2054bf7f245b" => :sierra
   end
 
   head do
@@ -19,17 +30,16 @@ class Ghostscript < Formula
     depends_on "libtool" => :build
   end
 
-  patch :DATA # Uncomment macOS-specific make vars
-
   depends_on "pkg-config" => :build
-  depends_on "little-cms2"
-  depends_on :x11 => :optional
+  depends_on "libtiff"
 
   # https://sourceforge.net/projects/gs-fonts/
   resource "fonts" do
     url "https://downloads.sourceforge.net/project/gs-fonts/gs-fonts/8.11%20%28base%2035%2C%20GPL%29/ghostscript-fonts-std-8.11.tar.gz"
     sha256 "0eb6f356119f2e49b2563210852e17f57f9dcc5755f350a69a46a0d641a0c401"
   end
+
+  patch :DATA # Uncomment macOS-specific make vars
 
   def install
     args = %W[
@@ -39,8 +49,9 @@ class Ghostscript < Formula
       --disable-gtk
       --disable-fontconfig
       --without-libidn
+      --with-system-libtiff
+      --without-x
     ]
-    args << "--without-x" if build.without? "x11"
 
     if build.head?
       system "./autogen.sh", *args
@@ -63,11 +74,13 @@ class Ghostscript < Formula
 end
 
 __END__
-diff --git a/base/unix-dll.mak b/base/unix-dll.mak
-index ae2d7d8..4f4daed 100644
---- a/base/unix-dll.mak
-+++ b/base/unix-dll.mak
-@@ -64,12 +64,12 @@ GS_SONAME_MAJOR_MINOR=$(GS_SONAME_BASE)$(GS_SOEXT)$(SO_LIB_VERSION_SEPARATOR)$(G
+diff --git i/base/unix-dll.mak w/base/unix-dll.mak
+index f50c09c00adb..8855133b400c 100644
+--- i/base/unix-dll.mak
++++ w/base/unix-dll.mak
+@@ -89,18 +89,33 @@ GPDL_SONAME_MAJOR_MINOR=$(GPDL_SONAME_BASE)$(GS_SOEXT)$(SO_LIB_VERSION_SEPARATOR
+ # similar linkers it must containt the trailing "="
+ # LDFLAGS_SO=-shared -Wl,$(LD_SET_DT_SONAME)$(LDFLAGS_SO_PREFIX)$(GS_SONAME_MAJOR)
  
  
  # MacOS X
@@ -81,8 +94,26 @@ index ae2d7d8..4f4daed 100644
 +GS_SONAME_MAJOR_MINOR=$(GS_SONAME_BASE).$(GS_VERSION_MAJOR).$(GS_VERSION_MINOR).$(GS_SOEXT)
  #LDFLAGS_SO=-dynamiclib -flat_namespace
 -#LDFLAGS_SO_MAC=-dynamiclib -install_name $(GS_SONAME_MAJOR_MINOR)
-+LDFLAGS_SO_MAC=-dynamiclib -install_name __PREFIX__/lib/$(GS_SONAME_MAJOR_MINOR)
++GS_LDFLAGS_SO=-dynamiclib -install_name $(GS_SONAME_MAJOR_MINOR)
  #LDFLAGS_SO=-dynamiclib -install_name $(FRAMEWORK_NAME)
  
++PCL_SONAME=$(PCL_SONAME_BASE).$(GS_SOEXT)
++PCL_SONAME_MAJOR=$(PCL_SONAME_BASE).$(GS_VERSION_MAJOR).$(GS_SOEXT)
++PCL_SONAME_MAJOR_MINOR=$(PCL_SONAME_BASE).$(GS_VERSION_MAJOR).$(GS_VERSION_MINOR).$(GS_SOEXT)
++PCL_LDFLAGS_SO=-dynamiclib -install_name $(PCL_SONAME_MAJOR_MINOR)
++
++XPS_SONAME=$(XPS_SONAME_BASE).$(GS_SOEXT)
++XPS_SONAME_MAJOR=$(XPS_SONAME_BASE).$(GS_VERSION_MAJOR).$(GS_SOEXT)
++XPS_SONAME_MAJOR_MINOR=$(XPS_SONAME_BASE).$(GS_VERSION_MAJOR).$(GS_VERSION_MINOR).$(GS_SOEXT)
++XPS_LDFLAGS_SO=-dynamiclib -install_name $(XPS_SONAME_MAJOR_MINOR)
++
++GPDL_SONAME=$(GPDL_SONAME_BASE).$(GS_SOEXT)
++GPDL_SONAME_MAJOR=$(GPDL_SONAME_BASE).$(GS_VERSION_MAJOR).$(GS_SOEXT)
++GPDL_SONAME_MAJOR_MINOR=$(GPDL_SONAME_BASE).$(GS_VERSION_MAJOR).$(GS_VERSION_MINOR).$(GS_SOEXT)
++GPDL_LDFLAGS_SO=-dynamiclib -install_name $(GPDL_SONAME_MAJOR_MINOR)
++
  GS_SO=$(BINDIR)/$(GS_SONAME)
+ GS_SO_MAJOR=$(BINDIR)/$(GS_SONAME_MAJOR)
+ GS_SO_MAJOR_MINOR=$(BINDIR)/$(GS_SONAME_MAJOR_MINOR)
 
+ PCL_SO=$(BINDIR)/$(PCL_SONAME)

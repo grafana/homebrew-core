@@ -7,6 +7,7 @@ class IosClassGuard < Formula
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "480f0437e5217cb8a47fcc0e9ffb6ffc62e4f81a79d5df9529320edeed479217" => :mojave
     sha256 "1962e7dde167e41141680b1347318396c0878fb8eeae55ec9f09460fcee33142" => :high_sierra
     sha256 "a7843a0767e916aa6be1509a984eb698bb54d125d06ad762fd25f4a3d6a55db1" => :sierra
     sha256 "0bb9abaac82cbc4e66a12493548659197559a01a779db6ceda4cf6c4439ea0bb" => :el_capitan
@@ -14,11 +15,13 @@ class IosClassGuard < Formula
     sha256 "4eddde784c843628cb8bcb8c971142683c5a17373058f5bda62356b432dec00a" => :mavericks
   end
 
-  depends_on :macos => :mavericks
   depends_on :xcode => :build
 
   def install
-    xcodebuild "-workspace", "ios-class-guard.xcworkspace", "-scheme", "ios-class-guard", "-configuration", "Release", "SYMROOT=build", "PREFIX=#{prefix}", "ONLY_ACTIVE_ARCH=YES"
+    xcodebuild "-workspace", "ios-class-guard.xcworkspace",
+               "-scheme", "ios-class-guard",
+               "-configuration", "Release",
+               "SYMROOT=build", "PREFIX=#{prefix}", "ONLY_ACTIVE_ARCH=YES"
     bin.install "build/Release/ios-class-guard"
   end
 

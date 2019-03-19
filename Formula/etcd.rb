@@ -1,23 +1,23 @@
 class Etcd < Formula
   desc "Key value store for shared configuration and service discovery"
-  homepage "https://github.com/coreos/etcd"
-  url "https://github.com/coreos/etcd/archive/v3.2.9.tar.gz"
-  sha256 "7ad70d9b0d206fe09abc40e82d29ac748d09c0423ddf255ddf4334d21867eb6f"
-  head "https://github.com/coreos/etcd.git"
+  homepage "https://github.com/etcd-io/etcd"
+  url "https://github.com/etcd-io/etcd/archive/v3.3.12.tar.gz"
+  sha256 "0452a98bd485d757fd85d2182f8eac8c2dad315bcb6cf29a797ced9e2669c413"
+  head "https://github.com/etcd-io/etcd.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "c19dd4821ad05695ef63a3e6fae78b9bcfe9c5f5fbbdf0c389f3d9f564b09af9" => :high_sierra
-    sha256 "943fb9fa7f4b38988c2f111d409dfeeaf473b6f2bb2802adb4435569a50c44cd" => :sierra
-    sha256 "b44d13c1ca349e4951c8eeafc02a1beff36ebdd1e1ea17e4041793f7971da374" => :el_capitan
+    sha256 "2d43653b282635230c278353d20371604daa844bdf23ccd57df5d245efa197fc" => :mojave
+    sha256 "a74726216e107deff2f0754783335a8f33f90e7ff44e70d1d12f187df2f73a9e" => :high_sierra
+    sha256 "ee5445e6c1303c285e3c631f9620186dd9f78dc2fdfb0ede12959ee6c8aa0ae5" => :sierra
   end
 
   depends_on "go" => :build
 
   def install
     ENV["GOPATH"] = buildpath
-    mkdir_p "src/github.com/coreos"
-    ln_s buildpath, "src/github.com/coreos/etcd"
+    mkdir_p "src/github.com/etcd-io"
+    ln_s buildpath, "src/github.com/etcd-io/etcd"
     system "./build"
     bin.install "bin/etcd"
     bin.install "bin/etcdctl"
@@ -47,7 +47,7 @@ class Etcd < Formula
         <string>#{var}</string>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

@@ -1,21 +1,21 @@
 class Libsass < Formula
   desc "C implementation of a Sass compiler"
   homepage "https://github.com/sass/libsass"
-  url "https://github.com/sass/libsass.git", :tag => "3.4.5", :revision => "31573210c0d120ae56aaea543a0dbab5255cdfb7"
+  url "https://github.com/sass/libsass.git",
+      :tag      => "3.5.5",
+      :revision => "39e30874b9a5dd6a802c20e8b0470ba44eeba929"
   head "https://github.com/sass/libsass.git"
 
   bottle do
     cellar :any
-    sha256 "2c435ac0bd3e9e6c93cf7ee6393c832ebab03632587100509af598ea8114b22a" => :high_sierra
-    sha256 "579f25eb99112b3e4bfbc69ce529a703fefa5e6607dab0b42d4888f848190ebb" => :sierra
-    sha256 "cfea481ac59c31b441bdb03db11afb5e2af55db6d3468d3aaf7b2d825fe6c1c1" => :el_capitan
-    sha256 "d9943c309ba1454a4275e262ea03d7c68e843d54eb89cbcbd9160b9e215c6ee8" => :yosemite
+    sha256 "bd0c7fe1a88cd783286ebe7adda1f5d58fed6f4ce93058cc64acef7dbd24cfe1" => :mojave
+    sha256 "bf0b547c31a0867296928d7c65a60aef8e1a7cfb362b17abf9da82e7fd6da717" => :high_sierra
+    sha256 "f093528300b5b5221e6a0bdd5e464c508cb290de2cbfb4932f6aa7ccaaab354c" => :sierra
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  needs :cxx11
 
   def install
     ENV.cxx11

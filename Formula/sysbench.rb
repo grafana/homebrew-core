@@ -1,35 +1,32 @@
 class Sysbench < Formula
   desc "System performance benchmark tool"
   homepage "https://github.com/akopytov/sysbench"
-  url "https://github.com/akopytov/sysbench/archive/1.0.10.tar.gz"
-  sha256 "34cfe9989a4610c15359a2d88b59a09f5c18846f42ce49175953c3e600deebbe"
+  url "https://github.com/akopytov/sysbench/archive/1.0.16.tar.gz"
+  sha256 "c537d0129151584b361efbd4ce9ed0b2195a69b72ce65912e2efa3a68f28b609"
 
   bottle do
-    sha256 "71501daf2051bcdc9bc34047e11e532128f7a7998559bf46e7478c54d92d6292" => :high_sierra
-    sha256 "b0ca4c4ba1b18d15810ebe62bf751df313870d29b6488b5cf584b62cd518cb47" => :sierra
-    sha256 "aa258212e72d3c3460a3ad741fd27e166d2d0c532d3a772a706a459b76b467a9" => :el_capitan
+    cellar :any
+    sha256 "c856c03de69a1d737ef1df2473b94d7ff0e58416f25f590c4a408188e8240b1d" => :mojave
+    sha256 "277a98edd7cad5d63b019c44192269d7a70c6684f1f5b0859b608d3c7c85fc7a" => :high_sierra
+    sha256 "e89a22e66923d4b1e1c104e9a69b6274265d04e2566e2266805db54d4d92574f" => :sierra
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
   depends_on "pkg-config" => :build
+  depends_on "mysql-client"
   depends_on "openssl"
-  depends_on :postgresql => :optional
-  depends_on :mysql => :recommended
 
   def install
     system "./autogen.sh"
 
-    args = ["--prefix=#{prefix}"]
-    if build.with? "mysql"
-      args << "--with-mysql"
-    else
-      args << "--without-mysql"
-    end
-    args << "--with-psql" if build.with? "postgresql"
+    # Fix for luajit build breakage.
+    # Per https://luajit.org/install.html: If MACOSX_DEPLOYMENT_TARGET
+    # is not set then it's forced to 10.4, which breaks compile on Mojave.
+    ENV["MACOSX_DEPLOYMENT_TARGET"] = MacOS.version
 
-    system "./configure", *args
+    system "./configure", "--prefix=#{prefix}", "--with-mysql"
     system "make", "install"
   end
 

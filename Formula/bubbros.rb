@@ -3,17 +3,18 @@ class Bubbros < Formula
   homepage "https://bub-n-bros.sourceforge.io"
   url "https://downloads.sourceforge.net/project/bub-n-bros/bub-n-bros/1.6.2/bubbros-1.6.2.tar.gz"
   sha256 "0ad8a359c4632071a9c85c2684bae32aa0fa278632c49f092dc4078cfb9858c4"
+  revision 1
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "d2351400c225202caf19dbd0d712da7fe32e0db3a8f29c5d933a60e44961a2f3" => :high_sierra
-    sha256 "672afb435affe29227d9755b9c06b787263506059f27e9470c98e8fd7119d9a9" => :sierra
-    sha256 "f9e5eb52706a72f8a6999e30945a5ab89035c1a9dbff403a8febd68322f56124" => :el_capitan
-    sha256 "66e1a809c1e27df455cfb0f25a2c5b1d3a4560ef9598c2c2a4b6ffce66f9b591" => :yosemite
+    rebuild 1
+    sha256 "40db40b8456691091963eeb5e7183a79dfa392c3428261b582b29f1201398163" => :mojave
+    sha256 "e808145d3d1ae843d32a437be1ef8ad70c837bf4b2ccf66e4963cd6561d45c14" => :high_sierra
+    sha256 "afee50e9fa76478ba416a51cae53efa3ac6ff9fd457d58fb5b6b0b09d343e4c9" => :sierra
+    sha256 "989c2af93a6acef698f8e02dbed8c7a282a550cec60aba5b4029db830dcbeff1" => :el_capitan
   end
 
-  depends_on :python
-  depends_on :x11 => :optional
+  depends_on "python@2" # does not support Python 3
 
   # Patches from debian https://sources.debian.net/patches/bubbros
   patch do
@@ -43,7 +44,6 @@ class Bubbros < Formula
 
   def install
     system "make", "-C", "bubbob"
-    system "make", "-C", "display" if build.with? :x11
     system "python", "bubbob/images/buildcolors.py"
 
     man6.install "doc/BubBob.py.1" => "bubbros.6"
@@ -62,16 +62,7 @@ class Bubbros < Formula
     #!/bin/bash
     cd "#{prefix}"
     python "#{target}" "$@"
-    EOS
-  end
-
-  def caveats
-    s = <<~EOS
-      The Shared Memory extension of X11 display driver is not supported.
-      Run the display client with --shm=no
-        bubbros-client --shm=no
-    EOS
-    s if build.with? :x11
+  EOS
   end
 
   test do

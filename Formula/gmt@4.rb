@@ -1,15 +1,16 @@
 class GmtAT4 < Formula
   desc "Manipulation of geographic and Cartesian data sets"
   homepage "https://gmt.soest.hawaii.edu/"
-  url "ftp://ftp.soest.hawaii.edu/gmt/gmt-4.5.16-src.tar.bz2"
-  mirror "ftp://ftp.star.nesdis.noaa.gov/pub/sod/lsa/gmt/gmt-4.5.16-src.tar.bz2"
-  sha256 "4ef6a55605821c3569279a7088586dfdcf1e779dd01b4c957db096cc60fe959d"
-  revision 1
+  url "ftp://ftp.soest.hawaii.edu/gmt/gmt-4.5.18-src.tar.bz2"
+  mirror "https://fossies.org/linux/misc/GMT/gmt-4.5.18-src.tar.bz2"
+  mirror "https://mirrors.ustc.edu.cn/gmt/gmt-4.5.18-src.tar.bz2"
+  sha256 "27c30b516c317fed8e44efa84a0262f866521d80cfe76a61bf12952efb522b63"
+  revision 3
 
   bottle do
-    sha256 "d154f52f6f416d91509797d4c3c9a639cae7af4d7efa983c8216ce371f09aeb1" => :high_sierra
-    sha256 "037a2fabacb129f616d94ee183c26fa49a62aa049d4f6fb48c97fa140efc8cf6" => :sierra
-    sha256 "ee8e350e60d834c31f5b39fd7270343e2c8363d75ba0a19ef6a7ed74d3be2905" => :el_capitan
+    sha256 "9d6f98d1a03ca89560c99f5559c3961b4cef7791ea0fcffbf3b6b2df87431e45" => :mojave
+    sha256 "db3864318a123ce2d3f5191956d7b32df71062d8b85fc7a635ffa4149f5ae6e6" => :high_sierra
+    sha256 "627ed963f0d52ac5188f25fdd6069ee18913e354084b6e1998e9f3b0d0aa9f4a" => :sierra
   end
 
   keg_only :versioned_formula
@@ -19,7 +20,8 @@ class GmtAT4 < Formula
 
   resource "gshhg" do
     url "ftp://ftp.soest.hawaii.edu/gmt/gshhg-gmt-2.3.7.tar.gz"
-    mirror "ftp://ftp.star.nesdis.noaa.gov/pub/sod/lsa/gmt/gshhg-gmt-2.3.7.tar.gz"
+    mirror "https://fossies.org/linux/misc/GMT/gshhg-gmt-2.3.7.tar.gz"
+    mirror "https://mirrors.ustc.edu.cn/gmt/gshhg-gmt-2.3.7.tar.gz"
     sha256 "9bb1a956fca0718c083bef842e625797535a00ce81f175df08b042c2a92cfe7f"
   end
 

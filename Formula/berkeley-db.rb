@@ -1,22 +1,24 @@
 class BerkeleyDb < Formula
   desc "High performance key/value database"
   homepage "https://www.oracle.com/technology/products/berkeley-db/index.html"
-  url "http://download.oracle.com/berkeley-db/db-6.2.32.tar.gz"
-  sha256 "a9c5e2b004a5777aa03510cfe5cd766a4a3b777713406b02809c17c8e0e7a8fb"
+  # Requires registration to download so we mirror it
+  url "https://dl.bintray.com/homebrew/mirror/berkeley-db-18.1.25.tar.gz"
+  sha256 "2ea8b8bc0611d9b4c2b9fee84a4a312dddfec007067af6e02ed46a26354181bb"
 
   bottle do
     cellar :any
-    sha256 "ee2f38644137df02f3ebd9fa689a09f1e12c2a21dab38a03f77e2c213a6135ef" => :high_sierra
-    sha256 "eb54f8ab1d0149e073f641ad066e6ffb179afdee83cd3211e90eeaaaa4a7bc9a" => :sierra
-    sha256 "c084857cfdd9bbc5eec028cc551d2323c050489e8a963ec40076270db8d14fb3" => :el_capitan
-    sha256 "1ed9a471cd8a38b58053a86e37b4ec83c09944781158fa20e2ba300f3b374f4f" => :yosemite
+    rebuild 1
+    sha256 "cbaa8655a8a17e46c385b9d81a610ad5f50a9a04018c6f7f3642ef1337276b22" => :mojave
+    sha256 "b08ec41ebbd72ae0428f32406a412b6172fc3a6ca6e72290da68d4e6df03c3a5" => :high_sierra
+    sha256 "6132986c6b08b8143b776f80f29ba02dfb5502e48cc0689a5c924c5e6de5c488" => :sierra
   end
 
-  depends_on :java => [:optional, :build]
+  depends_on "openssl"
 
   def install
     # BerkeleyDB dislikes parallel builds
     ENV.deparallelize
+
     # --enable-compat185 is necessary because our build shadows
     # the system berkeley db 1.x
     args = %W[
@@ -30,7 +32,6 @@ class BerkeleyDb < Formula
       --enable-dbm
       --enable-stl
     ]
-    args << "--enable-java" if build.with? "java"
 
     # BerkeleyDB requires you to build everything from the build_unix subdirectory
     cd "build_unix" do

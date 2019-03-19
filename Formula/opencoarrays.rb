@@ -1,36 +1,31 @@
 class Opencoarrays < Formula
   desc "Open-source coarray Fortran ABI, API, and compiler wrapper"
   homepage "http://opencoarrays.org"
-  url "https://github.com/sourceryinstitute/OpenCoarrays/releases/download/1.9.2/OpenCoarrays-1.9.2.tar.gz"
-  sha256 "c0b872db5449d0f3e405427e3953e81e9ca78199fe55651898d3f2ff9b3690c8"
+  url "https://github.com/sourceryinstitute/OpenCoarrays/releases/download/2.3.1/OpenCoarrays-2.3.1.tar.gz"
+  sha256 "2b87cc8c31874ecb01e0300bc99b30e4017714fc0d17690f637d8fa4d48560f3"
   revision 1
   head "https://github.com/sourceryinstitute/opencoarrays.git"
 
   bottle do
     cellar :any
-    sha256 "8a4624c38b7eaa55fecace13cf4a85bde56638eb6261a462df4f9741c4a6bab1" => :high_sierra
-    sha256 "e522dc3a089edea848a07fc4a9c7ae95b20f57f13936ea6ccaf36c3114960039" => :sierra
-    sha256 "64891872abcb2b7193112ed5a24d02e4568900bf200e34c865fb34009a241e25" => :el_capitan
+    sha256 "a827f29f1872e8dd6c144cfb1d42dacc30018ccef3940b56b9857153fc06a638" => :mojave
+    sha256 "377ee03f5ce15076516e6c7c141076f78693e4b4e81648ed4b445281bafb976b" => :high_sierra
+    sha256 "7d688179cb4e5ddeb1de8eda2c367b371f7b28ff6b2c6897b1a9274606112a35" => :sierra
   end
 
-  option "without-test", "Skip build time tests (not recommended)"
-
-  depends_on "gcc"
-  depends_on :fortran
-  depends_on :mpi => :cc
   depends_on "cmake" => :build
+  depends_on "gcc"
+  depends_on "open-mpi"
 
   def install
     mkdir "build" do
       system "cmake", "..", *std_cmake_args
       system "make"
-      system "ctest", "--output-on-failure", "--schedule-random" if build.with? "test"
       system "make", "install"
     end
   end
 
   test do
-    ENV.fortran
     (testpath/"tally.f90").write <<~EOS
       program main
         use iso_c_binding, only : c_int
@@ -52,6 +47,6 @@ class Opencoarrays < Formula
       end program
     EOS
     system "#{bin}/caf", "tally.f90", "-o", "tally"
-    system "#{bin}/cafrun", "-np", "3", "./tally"
+    system "#{bin}/cafrun", "-np", "3", "--oversubscribe", "./tally"
   end
 end

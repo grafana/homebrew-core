@@ -1,19 +1,23 @@
 class AuroraCli < Formula
   desc "Apache Aurora Scheduler Client"
   homepage "https://aurora.apache.org"
-  url "https://www.apache.org/dyn/closer.cgi?path=/aurora/0.18.0/apache-aurora-0.18.0.tar.gz"
-  sha256 "8918e041369ae415e28df07fad544b0078132a4831b4c437432a1f5f28dcf648"
+  url "https://www.apache.org/dyn/closer.cgi?path=/aurora/0.21.0/apache-aurora-0.21.0.tar.gz"
+  sha256 "4b608e5199ae72c83b0bc97569de5ed2c58d73a709f6906c3664154144438b65"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "9ae104b5eaea19b76f661682a6c3742588ace04e72b420e35de95d843214446c" => :sierra
-    sha256 "9b7fc8a05aea5bbb7f281fbc268025c3c9bb9a673249d5dc1be781bd5496af0f" => :el_capitan
-    sha256 "62e565f0d65601f88b11d8c5f5bfad89d2f1661144072876fc705e50b4284329" => :yosemite
+    rebuild 1
+    sha256 "f2945196eccad73b84c7d5c3e23b0dea0d09b0aad3d0bde1d4db8c3481546635" => :mojave
+    sha256 "dcb6e76159d6d41b2e7dd3eb83ab9c64fee3ea36cf4efa78f2a5019b30d3da19" => :high_sierra
+    sha256 "aec69c7cb0a23373f583fa124add6cb68b6fe4af7faa32e4c8167b8d3e886f74" => :sierra
   end
 
-  depends_on :python if MacOS.version <= :snow_leopard
+  depends_on "python"
 
   def install
+    # No pants yet for Mojave, so we force High Sierra binaries there
+    ENV["PANTS_BINARIES_PATH_BY_ID"] = "{('darwin','15'):('mac','10.11'),('darwin','16'):('mac','10.12'),('darwin','17'):('mac','10.13'),('darwin','18'):('mac','10.13')}"
+
     system "./pants", "binary", "src/main/python/apache/aurora/kerberos:kaurora"
     system "./pants", "binary", "src/main/python/apache/aurora/kerberos:kaurora_admin"
     bin.install "dist/kaurora.pex" => "aurora"

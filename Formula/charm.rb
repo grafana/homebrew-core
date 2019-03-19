@@ -3,28 +3,38 @@ require "language/go"
 class Charm < Formula
   desc "Tool for managing Juju Charms"
   homepage "https://github.com/juju/charmstore-client"
-  url "https://github.com/juju/charmstore-client/archive/2.2.2.tar.gz"
-  sha256 "9e603b7af4f6e136c3cdfbfff0ce0f8f986cae49c0c17fa1bee2a2e3f7f4b853"
+  url "https://github.com/juju/charmstore-client/archive/v2.3.0.tar.gz"
+  sha256 "778d20848939a8162fa19acb5284b3c761047c3fa5ab49b36a83464eb4904261"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "799504859bf743752a1b7018b0138374682682cde61067a38f1d8b414440217e" => :high_sierra
-    sha256 "ea04bd37b2df2ea2824d8d87a506929bbcb443a99f9c2c1a04a2888c1baca577" => :sierra
-    sha256 "20a11dc53ae3388fd819b7c8074eafab242eadeb79d4c3057eb5cb748205c8b7" => :el_capitan
-    sha256 "abf62af86d0061fab31f92aabc3d5a9d1ff2d9f18a524d16a49313a94774bb81" => :yosemite
+    sha256 "836809b833edd8b3b19717aaaf2569120365afbafa28ed7f7ba7e56524f85ee6" => :mojave
+    sha256 "96340b518ffcf81070c7a2fdc67b4e461b99fe97ed08214da4e05e426fdb6909" => :high_sierra
+    sha256 "e420ff6fb6d45f0041a8e3a75b75b97e9a5ea1a2e5a519940d024a04cb3a121c" => :sierra
+    sha256 "a75b8dcc4d0bd766e18a55dae39e786dae8186310eece4d88e0541e6e76aeb13" => :el_capitan
   end
 
-  depends_on "go" => :build
   depends_on "bazaar" => :build
+  depends_on "go" => :build
 
   go_resource "github.com/kisielk/gotool" do
     url "https://github.com/kisielk/gotool.git",
-        :revision => "0de1eaf82fa3f583ce21fde859f1e7e0c5e9b220"
+        :revision => "80517062f582ea3340cd4baf70e86d539ae7d84d"
+  end
+
+  go_resource "github.com/pelletier/go-toml" do
+    url "https://github.com/pelletier/go-toml.git",
+        :revision => "603baefff989777996bf283da430d693e78eba3a"
+  end
+
+  go_resource "golang.org/x/tools" do
+    url "https://go.googlesource.com/tools.git",
+        :revision => "fd2d2c45eb2dff7b87eab4303a1016b4dbf95e81"
   end
 
   go_resource "github.com/rogpeppe/godeps" do
     url "https://github.com/rogpeppe/godeps.git",
-        :revision => "e0581207fc59197e6caa4dc03f425fdca872c4a7"
+        :revision => "404a7e748cd352bb0d7449dedc645546eebbfc6e"
   end
 
   def install

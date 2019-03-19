@@ -3,20 +3,19 @@ class YouGet < Formula
 
   desc "Dumb downloader that scrapes the web"
   homepage "https://you-get.org/"
-  url "https://github.com/soimort/you-get/releases/download/v0.4.939/you-get-0.4.939.tar.gz"
-  sha256 "1a8b924592f72c19219c9809a1954b2cc8a06eb10047548fee66042cae9cae55"
+  url "https://github.com/soimort/you-get/archive/v0.4.1270.tar.gz"
+  sha256 "5fb1540242b4051334fb4933a24ca128955e230cb637b203869a5a7b04d1554c"
   head "https://github.com/soimort/you-get.git", :branch => "develop"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "e7055caf5b7b7847ad796d375a457c6e09780076c217d7fcc1289640b9a33d49" => :high_sierra
-    sha256 "1eb0f62c4f7f1b696a6df7f885fd99bfd3fa2fb256f7b7080f9df06deac69511" => :sierra
-    sha256 "e068923fa0a5fdcfe40572dd4d5eab604c32380c0a12575ef2784fd478d5bd20" => :el_capitan
+    sha256 "1ffb0654cffb1d4c152b5e01ae7186338b81fa3c5530b8b5500985f208524d5f" => :mojave
+    sha256 "018012b987a86f2413cad6b5844bf7e21c40eab37fedd8b330336d6dd3eeece4" => :high_sierra
+    sha256 "983d69ad520a3f5fe36fa073a36d48f375e8c66c490fdbb33209dc917c652b8c" => :sierra
   end
 
-  depends_on :python3
-
-  depends_on "rtmpdump" => :optional
+  depends_on "python"
+  depends_on "rtmpdump"
 
   def install
     virtualenv_install_with_resources

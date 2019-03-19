@@ -1,20 +1,20 @@
 class VarnishAT4 < Formula
   desc "High-performance HTTP accelerator"
   homepage "https://www.varnish-cache.org/"
-  url "https://varnish-cache.org/_downloads/varnish-4.1.8.tgz"
-  sha256 "908e7fbfa0325498717686b2050181134aa0a69d1495c02b2625cd34d35a4ff1"
+  url "https://varnish-cache.org/_downloads/varnish-4.1.10.tgz"
+  sha256 "364833fbf6fb7540ddd54b62b5ac52b2fb00e915049c8446d71d334323e87c22"
 
   bottle do
-    sha256 "e6a4e3609fb8caec16a3e0a55abda963aa62f6e41d4457296062f1246f1af27e" => :high_sierra
-    sha256 "feee2d796d10d27aab921d531d74be2e0a7ec789d5e5387d55d1628f0eb1d25a" => :sierra
-    sha256 "8e8e30c902fbce8dc6ed1533bf604a9d4a197645240ca770fe51928a29ec3aaf" => :el_capitan
-    sha256 "7ff168bb774232159547fdc251f4548e4e68cdcc7d01261b612872ef90c6030f" => :yosemite
+    sha256 "92ba094ad81290badf5058e7741651e7b9b5e4e549c4693eeeaaca40d2fe4d19" => :mojave
+    sha256 "e9231087ada4329fb23bb4b76afaf6545ecfa2567197abd90584513143edd20e" => :high_sierra
+    sha256 "c7b61727e6a392c17fc72eb7683d7699b7f9c5851cd3818647eac9ab2ba67bee" => :sierra
+    sha256 "06565d5821f9054953cced9d141765f018b116e57986a470a15142ec6cfb420e" => :el_capitan
   end
 
   keg_only :versioned_formula
 
-  depends_on "pkg-config" => :build
   depends_on "docutils" => :build
+  depends_on "pkg-config" => :build
   depends_on "pcre"
 
   def install
@@ -22,11 +22,11 @@ class VarnishAT4 < Formula
                           "--prefix=#{prefix}",
                           "--localstatedir=#{var}"
     system "make", "install"
-    (etc+"varnish").install "etc/example.vcl" => "default.vcl"
-    (var+"varnish").mkpath
+    (etc/"varnish").install "etc/example.vcl" => "default.vcl"
+    (var/"varnish").mkpath
   end
 
-  plist_options :manual => "#{HOMEBREW_PREFIX}/sbin/varnishd -n #{HOMEBREW_PREFIX}/var/varnish -f #{HOMEBREW_PREFIX}/etc/varnish/default.vcl -s malloc,1G -T 127.0.0.1:2000 -a 0.0.0.0:8080"
+  plist_options :manual => "#{HOMEBREW_PREFIX}/opt/varnish@4/sbin/varnishd -n #{HOMEBREW_PREFIX}/var/varnish -f #{HOMEBREW_PREFIX}/etc/varnish/default.vcl -s malloc,1G -T 127.0.0.1:2000 -a 0.0.0.0:8080"
 
   def plist
     <<~EOS

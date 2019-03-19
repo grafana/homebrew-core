@@ -1,44 +1,39 @@
 class Cayley < Formula
   desc "Graph database inspired by Freebase and Knowledge Graph"
   homepage "https://github.com/cayleygraph/cayley"
-  url "https://github.com/cayleygraph/cayley/archive/v0.6.1.tar.gz"
-  sha256 "33cfa8ef35813cf833ae79ba8ac2fab7f4c63afaf6103a54d969265e283d3399"
+  url "https://github.com/cayleygraph/cayley/archive/v0.7.5.tar.gz"
+  sha256 "4fcc8bf44f775dbbbd6146713f6fbdc80f2d88e2e8b93767f62eb5d635a56739"
   head "https://github.com/google/cayley.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "d5e1a5819797c35d96fc81844ffda26af2114f6340872e282946db0e480c78af" => :high_sierra
-    sha256 "742760d4a2fb4275a0d719df7a700e7ad4b826165a29dfb201ff09a8bfeba0fb" => :sierra
-    sha256 "4fd6749b962972990f870fc88556c48a21eb27dcc176149c0c8e0f2cf796c61e" => :el_capitan
-    sha256 "0094bc69ee5b69af082b1c73269df76956535b45fcd4984cc1bf0c90c69a3420" => :yosemite
+    sha256 "377e5180df5cf802155e5d2af615f226706c0f02774b50a53b2b5d44480a151d" => :mojave
+    sha256 "ce7a9c57fbf969e0cf60bc9cdf8f6e1d57e254dc506a9e509cc4d7052bbb53df" => :high_sierra
+    sha256 "a745c0d7c87f43e62232be852ec8df3b8ee5e18cb6595725b5588843521164a4" => :sierra
   end
 
-  option "without-samples", "Don't install sample data"
-
   depends_on "bazaar" => :build
-  depends_on :hg => :build
-  depends_on "glide" => :build
+  depends_on "dep" => :build
   depends_on "go" => :build
+  depends_on "mercurial" => :build
 
   def install
     ENV["GOPATH"] = buildpath
-    ENV["GLIDE_HOME"] = HOMEBREW_CACHE/"glide_home/#{name}"
 
     (buildpath/"src/github.com/cayleygraph/cayley").install buildpath.children
     cd "src/github.com/cayleygraph/cayley" do
-      system "glide", "install"
+      system "dep", "ensure", "-vendor-only"
       system "go", "build", "-o", bin/"cayley", "-ldflags",
              "-X main.Version=#{version}", ".../cmd/cayley"
 
-      inreplace "cayley.cfg.example", "/tmp/cayley_test", var/"cayley"
-      etc.install "cayley.cfg.example" => "cayley.conf"
+      inreplace "cayley_example.yml", "./cayley.db", var/"cayley/cayley.db"
+      etc.install "cayley_example.yml" => "cayley.yml"
 
       (pkgshare/"assets").install "docs", "static", "templates"
 
-      if build.with? "samples"
-        system "gzip", "-d", "data/30kmoviedata.nq.gz"
-        (pkgshare/"samples").install "data/testdata.nq", "data/30kmoviedata.nq"
-      end
+      # Install samples
+      system "gzip", "-d", "data/30kmoviedata.nq.gz"
+      (pkgshare/"samples").install "data/testdata.nq", "data/30kmoviedata.nq"
     end
   end
 
@@ -47,7 +42,7 @@ class Cayley < Formula
       (var/"cayley").mkpath
 
       # Initialize the database
-      system bin/"cayley", "init", "--config=#{etc}/cayley.conf"
+      system bin/"cayley", "init", "--config=#{etc}/cayley.yml"
     end
   end
 
@@ -82,7 +77,7 @@ class Cayley < Formula
         <string>#{var}/log/cayley.log</string>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

@@ -1,25 +1,17 @@
 class Dnsmasq < Formula
   desc "Lightweight DNS forwarder and DHCP server"
   homepage "http://www.thekelleys.org.uk/dnsmasq/doc.html"
-  url "http://www.thekelleys.org.uk/dnsmasq/dnsmasq-2.78.tar.gz"
-  sha256 "c92e5d78aa6353354d02aabf74590d08980bb1385d8a00b80ef9bc80430aa1dc"
+  url "http://www.thekelleys.org.uk/dnsmasq/dnsmasq-2.80.tar.gz"
+  sha256 "9e4a58f816ce0033ce383c549b7d4058ad9b823968d352d2b76614f83ea39adc"
 
   bottle do
     rebuild 1
-    sha256 "29b9a8f0b872785a893a2446098ea979a4172938aac84d4dcbc42e55ffb15e73" => :high_sierra
-    sha256 "8ec8cbc805daeeba93b450ec5c5fea02cdcc7978cf93a4e8032bb836c83c5f03" => :sierra
-    sha256 "84a562c8c0ff1a83cabfaa0bf50c9a05169715ce879c4308efbc132e66302120" => :el_capitan
+    sha256 "4d150c19c5c856435f9d38307c4b9fb153f942ea3f19ebf0f80e33f976f4790e" => :mojave
+    sha256 "10122336f50fd20aeb36488b5d4652557eac4da7b921ecf158910b23ad3ec8fb" => :high_sierra
+    sha256 "eac459e515128a405939939da7dd15f4b3f6ad4bede132b18d6d40f84330ae5e" => :sierra
   end
 
-  option "with-libidn", "Compile with IDN support"
-  option "with-dnssec", "Compile with DNSSEC support"
-
-  deprecated_option "with-idn" => "with-libidn"
-
   depends_on "pkg-config" => :build
-  depends_on "libidn" => :optional
-  depends_on "gettext" if build.with? "libidn"
-  depends_on "nettle" if build.with? "dnssec"
 
   def install
     ENV.deparallelize
@@ -37,37 +29,16 @@ class Dnsmasq < Formula
       s.gsub! "/usr/sbin/dnsmasq", HOMEBREW_PREFIX/"sbin/dnsmasq", false
     end
 
-    # Optional IDN support
-    if build.with? "libidn"
-      inreplace "src/config.h", "/* #define HAVE_IDN */", "#define HAVE_IDN"
-      ENV.append_to_cflags "-I#{Formula["gettext"].opt_include}"
-      ENV.append "LDFLAGS", "-L#{Formula["gettext"].opt_lib} -lintl"
-    end
+    # Fix compilation on newer macOS versions.
+    ENV.append_to_cflags "-D__APPLE_USE_RFC_3542"
 
-    # Optional DNSSEC support
-    if build.with? "dnssec"
-      inreplace "src/config.h", "/* #define HAVE_DNSSEC */", "#define HAVE_DNSSEC"
-      inreplace "dnsmasq.conf.example" do |s|
-        s.gsub! "#conf-file=%%PREFIX%%/share/dnsmasq/trust-anchors.conf",
-                "conf-file=#{opt_pkgshare}/trust-anchors.conf"
-        s.gsub! "#dnssec", "dnssec"
-      end
-    end
-
-    # Fix compilation on Lion
-    ENV.append_to_cflags "-D__APPLE_USE_RFC_3542" if MacOS.version >= :lion
     inreplace "Makefile" do |s|
       s.change_make_var! "CFLAGS", ENV.cflags
       s.change_make_var! "LDFLAGS", ENV.ldflags
     end
 
-    if build.with? "libidn"
-      system "make", "install-i18n", "PREFIX=#{prefix}"
-    else
-      system "make", "install", "PREFIX=#{prefix}"
-    end
+    system "make", "install", "PREFIX=#{prefix}"
 
-    pkgshare.install "trust-anchors.conf" if build.with? "dnssec"
     etc.install "dnsmasq.conf.example" => "dnsmasq.conf"
   end
 
@@ -76,12 +47,6 @@ class Dnsmasq < Formula
     (var/"run/dnsmasq").mkpath
     (etc/"dnsmasq.d/ppp").mkpath
     (etc/"dnsmasq.d/dhcpc").mkpath
-  end
-
-  def caveats; <<~EOS
-    To configure dnsmasq, take the default example configuration at
-      #{etc}/dnsmasq.conf and edit to taste.
-    EOS
   end
 
   plist_options :startup => true
@@ -106,7 +71,7 @@ class Dnsmasq < Formula
         <true/>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

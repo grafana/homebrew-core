@@ -3,17 +3,16 @@ class Socat < Formula
   homepage "http://www.dest-unreach.org/socat/"
   url "http://www.dest-unreach.org/socat/download/socat-1.7.3.2.tar.gz"
   sha256 "ce3efc17e3e544876ebce7cd6c85b3c279fda057b2857fcaaf67b9ab8bdaf034"
-  revision 1
+  revision 3
 
   bottle do
     cellar :any
-    sha256 "5a62a721c43d859b1ff8b77dc4da563fcffdba4089f4656cdfdb802a35542075" => :high_sierra
-    sha256 "c8996f731d2c595a356b0b793568aee72543c249506b4a34ad782d8f0e5fa129" => :sierra
-    sha256 "f8e75c8fb5e902928b25c27fd25279a922fa050e5f2bd329eef18e062e24481a" => :el_capitan
-    sha256 "a5c5b28d9fbf0f52ab0d69dc7cbe44f23a58876e32791b69275d96a15703d3e9" => :yosemite
+    sha256 "d6ad29176f723fe1d80f243cf4ff7d359b42f9d29d70db44f621077a291c71d4" => :mojave
+    sha256 "952d712f32b1a634ae941b924e912a01814bf0c62fc8a1756a641ac2540e36de" => :high_sierra
+    sha256 "c7276a30037b10f781498c0eacebfa00adc217a3606756439d86c65cef4ccae7" => :sierra
   end
 
-  depends_on "openssl@1.1"
+  depends_on "openssl"
   depends_on "readline"
 
   def install

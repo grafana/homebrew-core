@@ -1,17 +1,18 @@
 class Varnish < Formula
   desc "High-performance HTTP accelerator"
   homepage "https://www.varnish-cache.org/"
-  url "https://varnish-cache.org/_downloads/varnish-5.2.0.tgz"
-  sha256 "cc4826a0480f49268d3996309e4b7e465151e9a523ccf8ead499ec575149f47e"
+  url "https://varnish-cache.org/_downloads/varnish-6.1.0.tgz"
+  sha256 "161b92519801240886a55cc27484efc995dde1ad4703d9afd49fa8f32656e27d"
 
   bottle do
-    sha256 "5512f0894c01aa13ac5f46c97cc0ea92d91e3762499065871d033fb48da509fb" => :high_sierra
-    sha256 "4f258821e068b2f83718a7ead9cfaf7d1d89bd2880bc7e389429815b04668ef8" => :sierra
-    sha256 "25482a24178cf87aacaa447bd3b6c37346e495d502107795b600805ecfb98a53" => :el_capitan
+    sha256 "ba4d03d0208cd64feef54afa139f644eb9ec5c48e4117b4009108a29fcb8aeb7" => :mojave
+    sha256 "e29fef5fe3a17fae5b3b8ad51aebf667fea87148b6f5deb0e99531018391532f" => :high_sierra
+    sha256 "e860417f4e718652728f00584f4552054d3d6a7cd8c6064dc570311ba0e4f2ea" => :sierra
   end
 
-  depends_on "pkg-config" => :build
   depends_on "docutils" => :build
+  depends_on "pkg-config" => :build
+  depends_on "sphinx-doc" => :build
   depends_on "pcre"
 
   def install
@@ -19,8 +20,8 @@ class Varnish < Formula
                           "--prefix=#{prefix}",
                           "--localstatedir=#{var}"
     system "make", "install"
-    (etc+"varnish").install "etc/example.vcl" => "default.vcl"
-    (var+"varnish").mkpath
+    (etc/"varnish").install "etc/example.vcl" => "default.vcl"
+    (var/"varnish").mkpath
   end
 
   plist_options :manual => "#{HOMEBREW_PREFIX}/sbin/varnishd -n #{HOMEBREW_PREFIX}/var/varnish -f #{HOMEBREW_PREFIX}/etc/varnish/default.vcl -s malloc,1G -T 127.0.0.1:2000 -a 0.0.0.0:8080 -F"

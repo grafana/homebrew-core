@@ -1,27 +1,18 @@
 class GitCinnabar < Formula
   desc "Git remote helper to interact with mercurial repositories"
   homepage "https://github.com/glandium/git-cinnabar"
-  url "https://github.com/glandium/git-cinnabar.git",
-      :tag => "0.4.0",
-      :revision => "6d374888ff0287517084c0ec7573963961f6acec"
+  url "https://github.com/glandium/git-cinnabar/archive/0.5.0.tar.gz"
+  sha256 "1e09c7c24a34eb172681283ca243677ea06f4da179916a907f43f9027ca59dea"
   head "https://github.com/glandium/git-cinnabar.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "8f366361f486082b1f4cd2defa48af5efd1942dd8b848dc66d0560787fd06fbe" => :high_sierra
-    sha256 "03f64128f2ec4fb5f0597157c90db69e273cfa1ed521aa928c700b9de1f176d4" => :sierra
-    sha256 "5942ec7cbd204c8e6e691b48c38333f0e7cea11cd2a80714fe3952a1f14507e9" => :el_capitan
-    sha256 "3f5f4a461ab56361b323f2a934704652011c8a4ada7da719c957005ced268f67" => :yosemite
+    sha256 "2e3f534c222993f479e8e2db49e54b0692deb394d07ea79b52eceee5bbc1ad04" => :mojave
+    sha256 "cbd5edcb40be1b5cdf8fb93de3521ba409397e807f575e5a7feeebde40170be1" => :high_sierra
+    sha256 "c5a0fc3194a4d481b9429cab610ec7ba5ef849f0b76b8cfcb1c5fe3bc97025db" => :sierra
   end
 
-  devel do
-    url "https://github.com/glandium/git-cinnabar.git",
-        :tag => "0.5.0b1",
-        :revision => "f4ce4ab5ae70c11f00fbc0964e1edf4da6fe7657"
-    version "0.5.0b1"
-  end
-
-  depends_on :hg
+  depends_on "mercurial"
 
   conflicts_with "git-remote-hg", :because => "both install `git-remote-hg` binaries"
 

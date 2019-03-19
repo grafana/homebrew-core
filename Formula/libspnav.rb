@@ -6,17 +6,13 @@ class Libspnav < Formula
 
   bottle do
     cellar :any
+    sha256 "a428a0b1037ff3dfd5a7ba2463f6ca96717e69be734627d8d7abd079f17fb7d5" => :mojave
     sha256 "d61c3082aef6a700ad02d553304add7bb6bb2541236a97cf0a571dcc88f67d16" => :high_sierra
     sha256 "55cf0552148451302bb50c04a843d8d3834ca95a38c79bf5270f20ac49f82d41" => :sierra
     sha256 "48685db33ebe4acb821b33dbd609f95d03c47bd6c316b08f1bc1110d86271643" => :el_capitan
     sha256 "87bf93469bb14eef1a24de81cd521f6a62363a6aa7c04a319f3f18905de039b1" => :yosemite
     sha256 "f425659deb611eacb94f2245f0c8f8235aa0169a422874f2aa2c32f8d207b84a" => :mavericks
-    sha256 "0d0a4943d1eee96936b7ccf0a200d353a3fd35bbf67d46695e0e4e41d498df16" => :mountain_lion
   end
-
-  option "with-x11", "Enable support for sending mouse events through the x11 protocol"
-
-  depends_on :x11 => :optional
 
   def install
     args = %W[
@@ -24,9 +20,8 @@ class Libspnav < Formula
       --disable-dependency-tracking
       --disable-silent-rules
       --prefix=#{prefix}
+      --disable-x11
     ]
-
-    args << "--disable-x11" if build.without? "x11"
 
     system "./configure", *args
     system "make", "install"

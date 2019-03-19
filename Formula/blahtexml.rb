@@ -7,16 +7,13 @@ class Blahtexml < Formula
 
   bottle do
     cellar :any
+    sha256 "23f943fa053e861b0f6c9f2e9cfa1c74d6b8966ac698e6650386d44f7d7de31b" => :mojave
     sha256 "c2696cdaa1724541f0d07900219247365e30061a471df0b80f6469b3bc2b4a14" => :high_sierra
     sha256 "bcd628072b5b7d6625e2b2caad1c6f64483807facda1b2eff32795de1b25070f" => :sierra
     sha256 "b1788b8622b704c67b11295f6bf84ab881298980f8101b5fed6cb7441b4edc82" => :el_capitan
   end
 
-  deprecated_option "blahtex-only" => "without-blahtexml"
-  option "without-blahtexml", "Build only blahtex, not blahtexml"
-
-  depends_on "xerces-c" if build.with? "blahtexml"
-  needs :cxx11 if build.with? "blahtexml"
+  depends_on "xerces-c"
 
   # Add missing unistd.h includes, taken from MacPorts
   patch :p0 do
@@ -30,13 +27,17 @@ class Blahtexml < Formula
   end
 
   def install
-    ENV.cxx11 if build.with? "blahtexml"
+    ENV.cxx11
 
     system "make", "blahtex-mac"
     bin.install "blahtex"
-    if build.with? "blahtexml"
-      system "make", "blahtexml-mac"
-      bin.install "blahtexml"
-    end
+    system "make", "blahtexml-mac"
+    bin.install "blahtexml"
+  end
+
+  test do
+    input = '\sqrt{x^2+\alpha}'
+    output = pipe_output("#{bin}/blahtex --mathml", input)
+    assert_match "<msqrt><msup><mi>x</mi><mn>2</mn></msup><mo ", output
   end
 end

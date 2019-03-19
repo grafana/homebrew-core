@@ -3,14 +3,14 @@ class Pcb2gcode < Formula
   homepage "https://github.com/pcb2gcode/pcb2gcode"
   url "https://github.com/pcb2gcode/pcb2gcode/releases/download/v1.3.2/pcb2gcode-1.3.2.tar.gz"
   sha256 "c4135cd3981c4a5d6baffa81b7f8e890ae29776107b0d1938b744a8dfebdbc63"
-  revision 2
+  revision 4
 
   bottle do
     cellar :any
-    sha256 "cb1dd175729534cc8629db3a2ca577106cba0cbec844b436d07bbba429ac47da" => :high_sierra
-    sha256 "1e5aa984afb12cebb770c670f29554e7f447804c1997babf225cbae55e86b8ab" => :sierra
-    sha256 "76e311cada9b598a7f47d88969a75995d18689f4b9f8066ea93153ba0a72cf51" => :el_capitan
-    sha256 "76b51585b0b780305de0060e7614c6c35f3e738682dafb4e10092624eb03ef89" => :yosemite
+    sha256 "1461210908fa8c399a4cb0b45b734b3f5b73fc7a3a5af95d1e24d350d503569b" => :mojave
+    sha256 "0fc767ddeae68a0fa5274bdf756021b9cdb26b6b0ab0cbc5abc6edea5c0843fc" => :high_sierra
+    sha256 "1cff2417d1bfa373a0d3af179177837bda345b81ddc8bbf9c16d5bd4dd370b25" => :sierra
+    sha256 "47cce5c85523d623639e542e096e7571fe40906ae0e5345bd35200f575933950" => :el_capitan
   end
 
   head do
@@ -21,15 +21,64 @@ class Pcb2gcode < Formula
     depends_on "libtool" => :build
   end
 
-  depends_on "boost"
-  depends_on "gtkmm"
+  depends_on "pkg-config" => :build
   depends_on "gerbv"
+  depends_on "gtkmm"
+
+  # Upstream maintainer claims that the geometry library from boost >= 1.67
+  # is severely broken. Remove the vendoring once fixed.
+  # See https://github.com/Homebrew/homebrew-core/pull/30914#issuecomment-411662760
+  # and https://svn.boost.org/trac10/ticket/13645
+  resource "boost" do
+    url "https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.bz2"
+    sha256 "5721818253e6a0989583192f96782c4a98eb6204965316df9f5ad75819225ca9"
+  end
 
   def install
+    resource("boost").stage do
+      # Force boost to compile with the desired compiler
+      open("user-config.jam", "a") do |file|
+        file.write "using darwin : : #{ENV.cxx} ;\n"
+      end
+
+      bootstrap_args = %W[
+        --prefix=#{buildpath}/boost
+        --libdir=#{buildpath}/boost/lib
+        --with-libraries=program_options
+        --without-icu
+      ]
+
+      args = %W[
+        --prefix=#{buildpath}/boost
+        --libdir=#{buildpath}/boost/lib
+        -d2
+        -j#{ENV.make_jobs}
+        --ignore-site-config
+        --layout=tagged
+        --user-config=user-config.jam
+        install
+        threading=multi
+        link=static
+        optimization=space
+        variant=release
+        cxxflags=-std=c++11
+      ]
+
+      if ENV.compiler == :clang
+        args << "cxxflags=-stdlib=libc++" << "linkflags=-stdlib=libc++"
+      end
+
+      system "./bootstrap.sh", *bootstrap_args
+      system "./b2", "headers"
+      system "./b2", *args
+    end
+
     system "autoreconf", "-fvi" if build.head?
     system "./configure", "--disable-dependency-tracking",
                           "--disable-silent-rules",
-                          "--prefix=#{prefix}"
+                          "--prefix=#{prefix}",
+                          "--with-boost=#{buildpath}/boost",
+                          "--enable-static-boost"
     system "make", "install"
   end
 

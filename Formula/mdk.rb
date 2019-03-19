@@ -4,22 +4,21 @@ class Mdk < Formula
   url "https://ftp.gnu.org/gnu/mdk/v1.2.9/mdk-1.2.9.tar.gz"
   mirror "https://ftpmirror.gnu.org/mdk/v1.2.9/mdk-1.2.9.tar.gz"
   sha256 "6c265ddd7436925208513b155e7955e5a88c158cddda72c32714ccf5f3e74430"
-  revision 2
+  revision 4
 
   bottle do
-    sha256 "3149e4276b92054e213d00700eefa677f89046b8eac0c604d81a98901f9a996a" => :high_sierra
-    sha256 "f294500b0cce468da3b3420eed199ce6f7e50a6adfd582089a1d1f36080c4fbb" => :sierra
-    sha256 "2f7d0012a3a4ccb69e4ca500e16f5059642ddebc79bbac2df08dd73385d8e9e9" => :el_capitan
-    sha256 "264586d3518f0a1a5641c979471acf23860119d407c8efef608ae69e559a42cd" => :yosemite
+    sha256 "a13810f7246ea0adcd01a507c97e5041d64aae92cafcc2a6d26eeafbd5b8732b" => :mojave
+    sha256 "17b4bb66066acdc77836431aa0aa57d456aceaa097a1758ea7495d52bca49809" => :high_sierra
+    sha256 "0021a786577ff2eb6b220939a19e0a80f0f8546022d8c35eccb719e72bff2378" => :sierra
   end
 
   depends_on "intltool" => :build
   depends_on "pkg-config" => :build
-  depends_on "gtk+"
-  depends_on "libglade"
-  depends_on "glib"
   depends_on "flex"
+  depends_on "glib"
+  depends_on "gtk+"
   depends_on "guile"
+  depends_on "libglade"
   depends_on "readline"
 
   def install

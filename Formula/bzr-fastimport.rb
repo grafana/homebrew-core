@@ -7,16 +7,16 @@ class BzrFastimport < Formula
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "adb80d5f3694b382190564db1bf0f402dc4a63e5fc769846e79e61f258ff14ac" => :mojave
     sha256 "af2955ee5a026c4573dbeb4be897babf2f8d3805636765b982b48793b8143c60" => :high_sierra
     sha256 "420a665897be0a5e807a396720e51cb722b8ead02effee281d5843d56e3881be" => :sierra
     sha256 "119240e135fcf0d170a009bd414b07fe13f65734afd5929de2527a62c66b6c79" => :el_capitan
     sha256 "1155531ccdff247dcf8ab9cae133263199cbd708a1ae6ddc4d6e68133d1ab712" => :yosemite
     sha256 "d784f0b66db2e31f53f7b21fa5263c3d050b490a45684d0f206c9488ca0335a6" => :mavericks
-    sha256 "fab457013d0f24e2d88b2dd76ad72d6b0101b9356e231bb0255b71866d318259" => :mountain_lion
   end
 
-  depends_on :python if MacOS.version <= :snow_leopard
   depends_on "bazaar"
+  depends_on "python@2"
 
   resource "python-fastimport" do
     url "https://launchpad.net/python-fastimport/trunk/0.9.2/+download/python-fastimport-0.9.2.tar.gz"
@@ -32,7 +32,7 @@ class BzrFastimport < Formula
   end
 
   def caveats; <<~EOS
-    In order to use this plugin you must set your PYTHONPATH in your ~/.bashrc:
+    In order to use this plugin you must set your PYTHONPATH in your #{shell_profile}:
 
       export PYTHONPATH="#{opt_libexec}/vendor/lib/python2.7/site-packages:$PYTHONPATH"
 

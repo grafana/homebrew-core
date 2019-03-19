@@ -1,38 +1,34 @@
 class Pdfgrep < Formula
   desc "Search PDFs for strings matching a regular expression"
   homepage "https://pdfgrep.org/"
-  url "https://pdfgrep.org/download/pdfgrep-2.0.1.tar.gz"
-  sha256 "0370d744b3072d47383dbed2cb9c8b0b64b83c084da5a8961f8d4bc7669e941e"
-  revision 2
+  url "https://pdfgrep.org/download/pdfgrep-2.1.1.tar.gz"
+  sha256 "2c8155f30fe5d9d8ec4340e48133ed0b241496bbebe29498931f975c67a10c0b"
 
   bottle do
     cellar :any
-    sha256 "0873df814e1b896293b34fd31ef0d2428baf4c0d40f32c75dc6bdc1a4dd26bf0" => :high_sierra
-    sha256 "aa16e8cdc5729e82525f972bdc26bb563d347d5afa4fa18ab2409a8acba625f2" => :sierra
-    sha256 "d72885d69d7cb69270d78ccf163e2040b2d695ecf1b8f8b82824d5207b88b8a2" => :el_capitan
+    rebuild 1
+    sha256 "8a2080298573474a970fa42308b89be7447f51f6a21561b211fae068a71fde8c" => :mojave
+    sha256 "53370681817861c0931eef6b49eab6e39d63413ba0554e588aec05906613e6c0" => :high_sierra
+    sha256 "4e4683d4dbf9db612c81abf7db0c9a36f741e973432b2b8d743ac58dbec1404f" => :sierra
   end
 
   head do
     url "https://gitlab.com/pdfgrep/pdfgrep.git"
-    depends_on "automake" => :build
-    depends_on "autoconf" => :build
     depends_on "asciidoc" => :build
+    depends_on "autoconf" => :build
+    depends_on "automake" => :build
   end
 
   depends_on "pkg-config" => :build
   depends_on "libgcrypt"
+  depends_on "pcre"
   depends_on "poppler"
-  depends_on "pcre" => :optional
-
-  needs :cxx11
 
   def install
     ENV.cxx11
     system "./autogen.sh" if build.head?
 
-    args = %W[--disable-dependency-tracking --prefix=#{prefix}]
-    args << "--without-libpcre" if build.without? "pcre"
-    system "./configure", *args
+    system "./configure", "--disable-dependency-tracking", "--prefix=#{prefix}"
 
     ENV["XML_CATALOG_FILES"] = "#{etc}/xml/catalog"
     system "make", "install"

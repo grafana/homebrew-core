@@ -1,13 +1,13 @@
 class Libpq < Formula
   desc "Postgres C API library"
-  homepage "https://www.postgresql.org/docs/9.6/static/libpq.html"
-  url "https://ftp.postgresql.org/pub/source/v9.6.6/postgresql-9.6.6.tar.bz2"
-  sha256 "399cdffcb872f785ba67e25d275463d74521566318cfef8fe219050d063c8154"
+  homepage "https://www.postgresql.org/docs/11/static/libpq.html"
+  url "https://ftp.postgresql.org/pub/source/v11.2/postgresql-11.2.tar.bz2"
+  sha256 "2676b9ce09c21978032070b6794696e0aa5a476e3d21d60afc036dc0a9c09405"
 
   bottle do
-    sha256 "37358285ce2c5dd59ca16265f269da09d7087dfd6f6482b33125897fe9273f6f" => :high_sierra
-    sha256 "8c72001545d64bf639ca7acdc59ab9f8c4a728f9dd79334754cd8503c6037254" => :sierra
-    sha256 "551cd8667bebf16860333bb3f0f3887a59881d4319cf1ee5b7b2600ddb04dd9e" => :el_capitan
+    sha256 "7683b433dcc0a91262c223e58b5881339d9c8d424642f5fa27ad4db565ad8f36" => :mojave
+    sha256 "7748348f3edfaf8b3838d80374ab80f715dd7e0bbb45b4a75af5994ac2582d29" => :high_sierra
+    sha256 "1abee44829b2d83b96c144d0c54bb0efe1d4f2d05bdb0236965a32df2c23c69f" => :sierra
   end
 
   keg_only "conflicts with postgres formula"
@@ -26,7 +26,8 @@ class Libpq < Formula
   end
 
   test do
-    (testpath/"libpq.c").write <<-EOS
+    (testpath/"libpq.c").write <<~EOS
+      #include <stdlib.h>
       #include <stdio.h>
       #include <libpq-fe.h>
 

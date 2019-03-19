@@ -6,6 +6,7 @@ class BoostAT159 < Formula
 
   bottle do
     cellar :any
+    sha256 "ca391db45d5398ad1029527645bc35159083ba5b0c911728649231bdfe551ca2" => :mojave
     sha256 "6566d6a5c983add1b25e56b95ef540ce32b6fff5625aebbda81efbaf1618c9aa" => :high_sierra
     sha256 "8d21c9071cb5229469bef25efd3c598dc8d821c57581f4aa08fdfd265a88a9d9" => :sierra
     sha256 "1e061c511462de8c8ab16004d34691b70c2ef65ea0e4ca85f099b8960cd99421" => :el_capitan
@@ -13,20 +14,6 @@ class BoostAT159 < Formula
   end
 
   keg_only :versioned_formula
-
-  option "with-icu4c", "Build regexp engine with icu support"
-  option "without-single", "Disable building single-threading variant"
-  option "without-static", "Disable building static library variant"
-  option "with-mpi", "Build with MPI support"
-  option :cxx11
-
-  if build.cxx11?
-    depends_on "icu4c" => [:optional, "c++11"]
-    depends_on "open-mpi" => "c++11" if build.with? "mpi"
-  else
-    depends_on "icu4c" => :optional
-    depends_on :mpi => [:cc, :cxx, :optional]
-  end
 
   # Fixed compilation of operator<< into a record ostream, when
   # the operator right hand argument is not directly supported by
@@ -44,73 +31,40 @@ class BoostAT159 < Formula
     sha256 "2c3a3bae1691df5f8fce8fbd4e5727d57bd4dd813748b70d7471c855c4f19d1c"
   end
 
-  needs :cxx11 if build.cxx11?
-
   def install
-    # https://svn.boost.org/trac/boost/ticket/8841
-    if build.with?("mpi") && build.with?("single")
-      raise <<~EOS
-        Building MPI support for both single and multi-threaded flavors
-        is not supported.  Please use "--with-mpi" together with
-        "--without-single".
-      EOS
-    end
-
     # Force boost to compile with the desired compiler
     open("user-config.jam", "a") do |file|
       file.write "using darwin : : #{ENV.cxx} ;\n"
-      file.write "using mpi ;\n" if build.with? "mpi"
     end
 
     # libdir should be set by --prefix but isn't
-    bootstrap_args = ["--prefix=#{prefix}", "--libdir=#{lib}"]
-
-    if build.with? "icu4c"
-      icu4c_prefix = Formula["icu4c"].opt_prefix
-      bootstrap_args << "--with-icu=#{icu4c_prefix}"
-    else
-      bootstrap_args << "--without-icu"
-    end
+    bootstrap_args = %W[
+      --prefix=#{prefix}
+      --libdir=#{lib}
+      --without-icu
+    ]
 
     # Handle libraries that will not be built.
-    without_libraries = ["python"]
+    without_libraries = ["python", "mpi"]
 
     # Boost.Log cannot be built using Apple GCC at the moment. Disabled
     # on such systems.
     without_libraries << "log" if ENV.compiler == :gcc
-    without_libraries << "mpi" if build.without? "mpi"
 
     bootstrap_args << "--without-libraries=#{without_libraries.join(",")}"
 
     # layout should be synchronized with boost-python
-    args = ["--prefix=#{prefix}",
-            "--libdir=#{lib}",
-            "-d2",
-            "-j#{ENV.make_jobs}",
-            "--layout=tagged",
-            "--user-config=user-config.jam",
-            "install"]
-
-    if build.with? "single"
-      args << "threading=multi,single"
-    else
-      args << "threading=multi"
-    end
-
-    if build.with? "static"
-      args << "link=shared,static"
-    else
-      args << "link=shared"
-    end
-
-    # Trunk starts using "clang++ -x c" to select C compiler which breaks C++11
-    # handling using ENV.cxx11. Using "cxxflags" and "linkflags" still works.
-    if build.cxx11?
-      args << "cxxflags=-std=c++11"
-      if ENV.compiler == :clang
-        args << "cxxflags=-stdlib=libc++" << "linkflags=-stdlib=libc++"
-      end
-    end
+    args = %W[
+      --prefix=#{prefix}
+      --libdir=#{lib}
+      -d2
+      -j#{ENV.make_jobs}
+      --layout=tagged
+      --user-config=user-config.jam
+      install
+      threading=multi,single
+      link=shared,static
+    ]
 
     system "./bootstrap.sh", *bootstrap_args
     system "./b2", "headers"

@@ -1,35 +1,36 @@
 class GeocodeGlib < Formula
   desc "GNOME library for gecoding and reverse geocoding"
   homepage "https://developer.gnome.org/geocode-glib"
-  url "https://download.gnome.org/sources/geocode-glib/3.24/geocode-glib-3.24.0.tar.xz"
-  sha256 "19c1fef4fd89eb4bfe6decca45ac45a2eca9bb7933be560ce6c172194840c35e"
+  url "https://download.gnome.org/sources/geocode-glib/3.26/geocode-glib-3.26.1.tar.xz"
+  sha256 "5baa6ab76a76c9fc567e4c32c3af2cd1d1784934c255bc5a62c512e6af6bde1c"
 
   bottle do
-    sha256 "ccae27aef89fe0b73c44c79645b16f9cb76f2a9961c2fe3c40621f71fa6b69ec" => :high_sierra
-    sha256 "3af6bf5e3659bfc8dac46ebaecb0417725be9fc7bd134dd3e8353c2df2717eec" => :sierra
-    sha256 "260248e1447facf30f3f37a3104967d4798a4093ed93b1cff618e8ae62c26c53" => :el_capitan
-    sha256 "5f50e0e5db2c81fb487586ed701490a2253836cb1804fe051137007bb4af34bd" => :yosemite
+    sha256 "089531370e651e0420bc0c475c458c717c4b7f60f5c25295e03c7ac979e2ff62" => :mojave
+    sha256 "d4feecf40ea213121cec19cc80bccf17af7ac12139d4a9c6f64cf8ee48b1b79a" => :high_sierra
+    sha256 "635e4c949e7159977e828ef5e3e36c556c8d32eb548fbbbbc8dce69556cf7229" => :sierra
   end
 
+  depends_on "gobject-introspection" => :build
+  depends_on "meson" => :build
+  depends_on "ninja" => :build
   depends_on "pkg-config" => :build
   depends_on "gtk+3"
   depends_on "json-glib"
   depends_on "libsoup"
-  depends_on "gobject-introspection"
+
+  # submitted upstream as https://gitlab.gnome.org/GNOME/geocode-glib/merge_requests/7
+  patch :DATA
 
   def install
-    # forces use of gtk3-update-icon-cache instead of gtk-update-icon-cache. No bugreport should
-    # be filed for this since it only occurs because Homebrew renames gtk+3's gtk-update-icon-cache
-    # to gtk3-update-icon-cache in order to avoid a collision between gtk+ and gtk+3.
-    inreplace "icons/Makefile.in", "gtk-update-icon-cache", "gtk3-update-icon-cache"
-    system "./configure", "--disable-debug",
-                          "--disable-dependency-tracking",
-                          "--disable-silent-rules",
-                          "--prefix=#{prefix}"
-    system "make", "install"
+    mkdir "build" do
+      system "meson", "--prefix=#{prefix}", "-Denable-installed-tests=false", "-Denable-gtk-doc=false", ".."
+      system "ninja"
+      system "ninja", "install"
+    end
 
-    # delete icon cache file -> create it post_install
-    rm share/"icons/gnome/icon-theme.cache"
+    # to be removed when https://gitlab.gnome.org/GNOME/gobject-introspection/issues/222 is fixed
+    inreplace share/"gir-1.0/GeocodeGlib-1.0.gir", "@rpath", lib.to_s
+    system "g-ir-compiler", "--output=#{lib}/girepository-1.0/GeocodeGlib-1.0.typelib", share/"gir-1.0/GeocodeGlib-1.0.gir"
   end
 
   def post_install
@@ -66,3 +67,54 @@ class GeocodeGlib < Formula
     system "./test"
   end
 end
+
+__END__
+diff --git a/geocode-glib/meson.build b/geocode-glib/meson.build
+index 8bc2bfc..b48ec62 100644
+--- a/geocode-glib/meson.build
++++ b/geocode-glib/meson.build
+@@ -43,15 +43,32 @@ endif
+
+ include = include_directories('..')
+ gclib_map = join_paths(meson.current_source_dir(), 'geocode-glib.map')
++link_depends = []
++link_args = []
++
++if cc.has_link_argument('-Wl,--version-script,' + gclib_map)
++	link_depends += gclib_map
++	link_args += ['-Wl,--version-script,' + gclib_map]
++endif
++
++version = '0.0.0'
++version_arr = version.split('.')
++major_version = version_arr[0].to_int()
++minor_version = version_arr[1].to_int()
++micro_version = version_arr[2].to_int()
++current = major_version + minor_version + 1
++interface_age = micro_version
++darwin_versions = [current, '@0@.@1@'.format(current, interface_age)]
+
+ libgcglib = shared_library('geocode-glib',
+                            sources,
+                            dependencies: deps,
+                            include_directories: include,
+-                           link_depends: gclib_map,
+-                           link_args: [ '-Wl,--version-script,' + gclib_map ],
++                           link_depends: link_depends,
++                           link_args: link_args,
+                            soversion: '0',
+                            version: '0.0.0',
++                           darwin_versions: darwin_versions,
+                            install: true)
+
+ install_headers(headers, subdir: header_subdir)
+diff --git a/meson.build b/meson.build
+index 0873c6c..78e5079 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,4 +1,4 @@
+-project('geocode-glib', 'c', version: '3.26.1')
++project('geocode-glib', 'c', version: '3.26.1', meson_version : '>= 0.48.0')
+
+ gclib_version = meson.project_version() # set in project() below
+ ver_arr = gclib_version.split('.')

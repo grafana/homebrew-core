@@ -7,8 +7,6 @@ class Autopsy < Formula
   bottle :unneeded
 
   depends_on "sleuthkit"
-  depends_on "afflib" => :optional
-  depends_on "libewf" => :optional
 
   # fixes weird configure script that wouldn't work nicely with homebrew
   patch :DATA
@@ -45,7 +43,7 @@ class Autopsy < Formula
 
     # Evidence locker location
     $LOCKDIR = '#{var}/lib/autopsy';
-    EOS
+  EOS
   end
 
   def install
@@ -62,7 +60,7 @@ class Autopsy < Formula
   def caveats; <<~EOS
     By default, the evidence locker is in:
       #{var}/lib/autopsy
-    EOS
+  EOS
   end
 end
 

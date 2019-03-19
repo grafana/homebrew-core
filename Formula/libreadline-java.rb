@@ -3,18 +3,17 @@ class LibreadlineJava < Formula
   homepage "https://java-readline.sourceforge.io/"
   url "https://downloads.sourceforge.net/project/java-readline/java-readline/0.8.0/libreadline-java-0.8.0-src.tar.gz"
   sha256 "cdcfd9910bfe2dca4cd08b2462ec05efee7395e9b9c3efcb51e85fa70548c890"
-  revision 1
+  revision 2
 
   bottle do
     cellar :any
-    sha256 "fafccc3cee1c6e0fbc9cf517258e655cbb12d64b3ac1590731d9d1e7a63a92c9" => :high_sierra
-    sha256 "f608ae47b39418b975f21b435749c64b414325f9933cf70fee257888f6a58934" => :sierra
-    sha256 "eb99d1a6ae9817c90e228bd145450819417758007baf1ef78c763a05c4a0ac82" => :el_capitan
-    sha256 "21a487377ac0dae6c47753dd25d3f850b10fcc7ccde8f6a726b4f730bb05a3da" => :yosemite
+    sha256 "1a254f92d07e11b0a85bccc89a548f6eaff3ada1706056bb1af559a93b7d6665" => :mojave
+    sha256 "f2fc9a1faf643600da0b9b3b0711ee3b9b3beabcfdb0121d9018b5a98dba8a8d" => :high_sierra
+    sha256 "784fc9cb94f45ccaf91af932f35d6ac3570326914c4a4da866c9e34e173238a2" => :sierra
   end
 
+  depends_on :java => "1.8"
   depends_on "readline"
-  depends_on :java => "1.6+"
 
   # Fix "non-void function should return a value"-Error
   # https://sourceforge.net/p/java-readline/patches/2/
@@ -78,7 +77,7 @@ class LibreadlineJava < Formula
   def caveats; <<~EOS
     You may need to set JAVA_HOME:
       export JAVA_HOME="$(/usr/libexec/java_home)"
-    EOS
+  EOS
   end
 
   # Testing libreadline-java (can we execute and exit libreadline without exceptions?)

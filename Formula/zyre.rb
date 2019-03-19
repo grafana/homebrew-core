@@ -6,6 +6,7 @@ class Zyre < Formula
 
   bottle do
     cellar :any
+    sha256 "0bcd7f6da37e2249b2a80b00703064ec2b1332bff9979a40bff84a19c38c1d3f" => :mojave
     sha256 "7f9c25da501db588f3268e4f1fe99ec58357b41cd601a61859ebbce2eb875dee" => :high_sierra
     sha256 "f8f694368da98cd4781d43b1e4e18db94584ce1f8508b41d492d81194a15db3c" => :sierra
     sha256 "1402b11567fa689064366bf9f8fe9527dba8dfe9246e35b02130a344aa879a9b" => :el_capitan
@@ -19,24 +20,16 @@ class Zyre < Formula
     depends_on "libtool" => :build
   end
 
-  option "with-drafts", "Build and install draft classes and methods"
-
   depends_on "pkg-config" => :build
-  depends_on "zeromq"
   depends_on "czmq"
+  depends_on "zeromq"
 
   def install
-    args = [
-      "--disable-debug",
-      "--disable-dependency-tracking",
-      "--disable-silent-rules",
-      "--prefix=#{prefix}",
-    ]
-
-    args << "--enable-drafts" if build.with? "drafts"
-
     system "./autogen.sh" if build.head?
-    system "./configure", *args
+    system "./configure", "--disable-debug",
+                          "--disable-dependency-tracking",
+                          "--disable-silent-rules",
+                          "--prefix=#{prefix}"
     system "make"
     system "make", "check-verbose"
     system "make", "install"

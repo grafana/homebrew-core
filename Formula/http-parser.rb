@@ -1,16 +1,14 @@
 class HttpParser < Formula
   desc "HTTP request/response parser for c"
   homepage "https://github.com/nodejs/http-parser"
-  url "https://github.com/nodejs/http-parser/archive/v2.7.1.tar.gz"
-  sha256 "70409ad324e5de2da6a0f39e859e566d497c1ff0a249c0c38a5012df91b386b3"
+  url "https://github.com/nodejs/http-parser/archive/v2.9.0.tar.gz"
+  sha256 "ef26268c54c8084d17654ba2ed5140bffeffd2a040a895ffb22a6cca3f6c613f"
 
   bottle do
     cellar :any
-    sha256 "1c402c0dbedc5ee4bf4d6d8fb79112300a47ea0a59892297474dc5973f496274" => :high_sierra
-    sha256 "a19519cd90917dccb31171febe7e25baaa583ec9bdd7c4e4d06dcb2a7605447f" => :sierra
-    sha256 "afc0af78e3a4789b18b96ec83a09a38c5e6fc0f6ba72523a1f5c0f4b4d1441e6" => :el_capitan
-    sha256 "0d62dc8723a72e60d13fbd61f870a8e3cc3a7f29fc5814c645322c284be7514c" => :yosemite
-    sha256 "5d3aaf70d3ca4ee5ff688b9f834acd68891d4fb637721b54597deeba6fca41d0" => :mavericks
+    sha256 "242b417541f72de37926aae62fbac844979b9fa90476f9f6ffa78b6cb873a64e" => :mojave
+    sha256 "99cedc5e49ceb95e70ff222a075ee75a236dbe64abc023735d3e896c47f14f92" => :high_sierra
+    sha256 "51dad153c5f7a727336517a92a6f36b41a8b8b66610cb20843d45f8538b8c5ae" => :sierra
   end
 
   depends_on "coreutils" => :build

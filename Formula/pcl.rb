@@ -1,15 +1,15 @@
 class Pcl < Formula
   desc "Library for 2D/3D image and point cloud processing"
   homepage "http://www.pointclouds.org/"
-  url "https://github.com/PointCloudLibrary/pcl/archive/pcl-1.8.1.tar.gz"
-  sha256 "5a102a2fbe2ba77c775bf92c4a5d2e3d8170be53a68c3a76cfc72434ff7b9783"
+  url "https://github.com/PointCloudLibrary/pcl/archive/pcl-1.9.1.tar.gz"
+  sha256 "0add34d53cd27f8c468a59b8e931a636ad3174b60581c0387abb98a9fc9cddb6"
   revision 1
   head "https://github.com/PointCloudLibrary/pcl.git"
 
   bottle do
-    sha256 "4dbf8e5e03660daafb06e438267ded29b828eeef66c23a7d1a004979e1558e8f" => :high_sierra
-    sha256 "68bb8e8ec843a00c4e7a168e212e0a6f506835b0f106bb6f6139874a108e9a3e" => :sierra
-    sha256 "66c06c3740fbb4d300f4beb5463ec5b48ed2a5dbe2b5857831aa0e381da0d626" => :el_capitan
+    sha256 "6971c496d14eb5d284111b2d5a980ba5864d75e6c6cd5f0b5133a0548a7eb80d" => :mojave
+    sha256 "05ef2f7c2fad81acb5fa10f573a72ce49f8e92cf63ffccec9c0f93b6902ef005" => :high_sierra
+    sha256 "488c93ee5a4ceb22a79062626c1f59fd1470d6a7940738552faadef687cf5e38" => :sierra
   end
 
   depends_on "cmake" => :build
@@ -22,8 +22,6 @@ class Pcl < Formula
   depends_on "libusb"
   depends_on "qhull"
   depends_on "vtk"
-  depends_on "homebrew/science/openni" => :optional
-  depends_on "homebrew/science/openni2" => :optional
 
   def install
     args = std_cmake_args + %w[
@@ -49,18 +47,6 @@ class Pcl < Formula
       args << "-DBUILD_apps_modeler=AUTO_OFF"
     else
       args << "-DBUILD_apps_modeler:BOOL=OFF"
-    end
-
-    if build.with? "openni"
-      args << "-DOPENNI_INCLUDE_DIR=#{Formula["openni"].opt_include}/ni"
-    else
-      args << "-DCMAKE_DISABLE_FIND_PACKAGE_OpenNI:BOOL=TRUE"
-    end
-
-    if build.with? "openni2"
-      ENV.append "OPENNI2_INCLUDE", "#{Formula["openni2"].opt_include}/ni2"
-      ENV.append "OPENNI2_LIB", "#{Formula["openni2"].opt_lib}/ni2"
-      args << "-DBUILD_OPENNI2:BOOL=ON"
     end
 
     mkdir "build" do

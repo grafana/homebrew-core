@@ -7,6 +7,7 @@ class Plan9port < Formula
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "bdcaa55afb6e28c4f9f1540e9e1d81d111f2ed9f85db76ca4705ad1d610e57e2" => :mojave
     sha256 "5c2efeb97b9d5a9171fc41e862223682a5b86a9af064a13381d10624bdf32d04" => :high_sierra
     sha256 "5f2d48d2f3a732795c8ab050bb705caf59a18ee86d3d89c143b22533a46bd71c" => :sierra
     sha256 "eb56faa4c63a522e34ba609fc0d4eb5af9b22715c0915629776129eb64d8625f" => :el_capitan
@@ -14,13 +15,8 @@ class Plan9port < Formula
     sha256 "ef0059997655128f6b41faa1023b37a071ff9976f4c94d3b3bd706be65177aa1" => :mavericks
   end
 
-  depends_on :x11 => :optional
-
   def install
     ENV["PLAN9_TARGET"] = libexec
-
-    # Make macOS system fonts available to Plan 9
-    (buildpath/"LOCAL.config").write "FONTSRV=fontsrv" if build.with? "x11"
 
     system "./INSTALL"
     libexec.install Dir["*"]
@@ -29,13 +25,13 @@ class Plan9port < Formula
   end
 
   def caveats; <<~EOS
-    In order not to collide with OSX system binaries, the Plan 9 binaries have
+    In order not to collide with macOS system binaries, the Plan 9 binaries have
     been installed to #{opt_libexec}/bin.
     To run the Plan 9 version of a command simply call it through the command
     "9", which has been installed into the Homebrew prefix bin.  For example,
     to run Plan 9's ls run:
         # 9 ls
-    EOS
+  EOS
   end
 
   test do

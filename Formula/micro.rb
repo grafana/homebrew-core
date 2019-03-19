@@ -1,15 +1,16 @@
 class Micro < Formula
   desc "Modern and intuitive terminal-based text editor"
   homepage "https://github.com/zyedidia/micro"
-  url "https://github.com/zyedidia/micro/releases/download/v1.3.3/micro-1.3.3-src.tar.gz"
-  sha256 "142f1fcddb4fa5851a9144fb8d0fc3b53545a33b9710ed160c1dbd65c82e8f59"
+  url "https://github.com/zyedidia/micro/releases/download/v1.4.1/micro-1.4.1-src.tar.gz"
+  sha256 "0b516826226cf1ddf2fbb274f049cab456a5c162efe3d648f0871564fadcf812"
   head "https://github.com/zyedidia/micro.git", :shallow => false
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "a3b143db5d98ce39cefa8033898061a3373024e94a067a14cb6ae7721fd9a4b9" => :high_sierra
-    sha256 "542e4d8547b8c254641a36e1f36e62bbe21a95be88bbc57b90a1331bbdfd9e3d" => :sierra
-    sha256 "200e3a70ca69c2b00becf4719e4834b5a73a5ba98c58bbcda33a6a27e814432d" => :el_capitan
+    sha256 "f5176ac6e12e25b7b8c88965cc8d92fe0892f6eaec60c28359c3be3e2f460df0" => :mojave
+    sha256 "863a1f4f3cb0f48efe6ca22a0df05cf2c9adcaf63857aea622f2e26e21836dc5" => :high_sierra
+    sha256 "8426c70077cf223e6fb677de514ede5546c3635b9760da0c1980577c7b2dd016" => :sierra
+    sha256 "73755f137c49c168bf9ccc817df71b067959609fa2dc3eabda8002fb8f253e67" => :el_capitan
   end
 
   depends_on "go" => :build

@@ -6,6 +6,7 @@ class Namazu < Formula
 
   bottle do
     rebuild 1
+    sha256 "f6140424ff2a5a5bee20b4430036ce76bd66bf82705cd0a1fa52790caf617fea" => :mojave
     sha256 "15f536a0c9e3212af68689dc2202ae0d9a7634d161aa0ac3aa6d55977506f8da" => :high_sierra
     sha256 "2514d7e9209225e9f388feda1116c193ec98034952dd9c6b89bcaccafabedb1f" => :sierra
     sha256 "39cad2ecd3948e2afd69fc58b6390e1fd7fa7e82cee8176fec7f71880c6e52c2" => :el_capitan
@@ -13,24 +14,7 @@ class Namazu < Formula
     sha256 "ca6e854a626eaafd4ac26661b9a3db86dc9bc140f4aa98effd5843882aba7ecb" => :mavericks
   end
 
-  option "with-japanese", "Support for japanese character encodings."
-
-  depends_on "kakasi" if build.with? "japanese"
-
-  resource "text-kakasi" do
-    url "https://cpan.metacpan.org/authors/id/D/DA/DANKOGAI/Text-Kakasi-2.04.tar.gz"
-    mirror "http://search.cpan.org/CPAN/authors/id/D/DA/DANKOGAI/Text-Kakasi-2.04.tar.gz"
-    sha256 "844c01e78ba4bfb89c0702995a86f488de7c29b40a75e7af0e4f39d55624dba0"
-  end
-
   def install
-    if build.with? "japanese"
-      resource("text-kakasi").stage do
-        system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}"
-        system "make", "install"
-      end
-    end
-
     cd "File-MMagic" do
       system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}"
       system "make", "install"

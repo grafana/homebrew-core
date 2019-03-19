@@ -1,15 +1,14 @@
 class Opusfile < Formula
   desc "API for decoding and seeking in .opus files"
   homepage "https://www.opus-codec.org/"
-  url "https://archive.mozilla.org/pub/opus/opusfile-0.9.tar.gz"
-  sha256 "f75fb500e40b122775ac1a71ad80c4477698842a8fe9da4a1b4a1a9f16e4e979"
+  url "https://archive.mozilla.org/pub/opus/opusfile-0.11.tar.gz"
+  sha256 "74ce9b6cf4da103133e7b5c95df810ceb7195471e1162ed57af415fabf5603bf"
 
   bottle do
     cellar :any
-    sha256 "850ec3999ad31a917b761923a23fed97ca11fca431edc3f4fcd2459ef2855293" => :high_sierra
-    sha256 "71557f495eaf37e08c1987170d4b94a75e5a049fb41af7988bc53731d8500095" => :sierra
-    sha256 "2ed73162c2ae71f702da1cdbf6f9c998834f3d727cb1a9e6e09f1d59cbe35d01" => :el_capitan
-    sha256 "5b5023288476b08cb64389b002973565f84fd6ed58ece780e417770f33e3520d" => :yosemite
+    sha256 "b0832b77ee693d6b273d1ef2e46b87e827506797db7eb46ba15288e3eebeb095" => :mojave
+    sha256 "8dc04c950d22da20bd5357f248edac39bd63d9f9e6b9fc5a0d2ddbed1ab92e5e" => :high_sierra
+    sha256 "f61cae3c7434bf1f8a240e412c96fdf0f40ec16ad9a6e88bf74af3a4b07303bc" => :sierra
   end
 
   head do

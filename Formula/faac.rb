@@ -1,21 +1,18 @@
 class Faac < Formula
   desc "ISO AAC audio encoder"
-  homepage "http://www.audiocoding.com/faac.html"
-  url "https://downloads.sourceforge.net/project/faac/faac-src/faac-1.29/faac-1.29.9.tar.gz"
-  sha256 "238cb4453b6fe4eebaffb326e40a63786a155e349955c4259925006fa1e2839e"
+  homepage "https://www.audiocoding.com/faac.html"
+  url "https://downloads.sourceforge.net/project/faac/faac-src/faac-1.29/faac-1.29.9.2.tar.gz"
+  sha256 "d45f209d837c49dae6deebcdd87b8cc3b04ea290880358faecf5e7737740c771"
 
   bottle do
     cellar :any
-    sha256 "7cee7bed3b2cd0971f8c4e7310e5b5419cdfd1c647325616a8320e8727f9c634" => :high_sierra
-    sha256 "95f62317820b7349c89dd7a4252797e206ebadc48d4d94ea77961c4510018e39" => :sierra
-    sha256 "bf47a2f8598623b87948657e8e740d243e89ce6410b992368b9bf5dfee51784d" => :el_capitan
+    sha256 "27f7a5da217b0cb75caa8fd33bd19dc5a1f741b290f30b0c5491bc3a84aed38c" => :mojave
+    sha256 "73e02bf58df497bf2c35e8374c000fc8ed989c167b559b9efe2f5874687fe849" => :high_sierra
+    sha256 "9ed007e0aaeaddb47d284a81f2783c6ddcf9af86e0ed1da1a9b94aa84dfd1a34" => :sierra
+    sha256 "4dd46a72ce3a5355efa42038df34b9bfda51ae6265be89eb09f1b8957ef3653d" => :el_capitan
   end
 
   def install
-    # Fix "error: initializer element is not a compile-time constant"
-    # Reported 2 Nov 2017 https://sourceforge.net/p/faac/bugs/228/
-    inreplace "libfaac/stereo.c", "sqrt(2)", "M_SQRT2"
-
     system "./configure", "--disable-dependency-tracking",
                           "--disable-silent-rules",
                           "--prefix=#{prefix}"

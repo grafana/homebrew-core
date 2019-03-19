@@ -1,22 +1,23 @@
 class Btfs < Formula
   desc "BitTorrent filesystem based on FUSE"
   homepage "https://github.com/johang/btfs"
-  url "https://github.com/johang/btfs/archive/v2.17.tar.gz"
-  sha256 "80a5a3ad48bebf13441d506755b2402ac230dc3f1f648ce12d3855e5cf04e53b"
+  url "https://github.com/johang/btfs/archive/v2.18.tar.gz"
+  sha256 "bb9679045540554232eff303fc4f615d28eb4023461eae3f65f08f2427ec9ef2"
+  revision 2
   head "https://github.com/johang/btfs.git"
 
   bottle do
     cellar :any
-    sha256 "b52f7ee7ad70df58e4cf73135c86d5b87d5a8544ed1cc3f0b2b656af83a83fb0" => :high_sierra
-    sha256 "babf16ef8cda16858eae0ddf26dd84cb9ed31513b43b94dcea1d6e8d9f2291ff" => :sierra
-    sha256 "bc039ad8c3115de4a4111c271dc19ce4e2f014eea5336d3c42433b33fadd872e" => :el_capitan
+    sha256 "e03434b33a6b3f27436b7e31e22696d3c645c27840729559b156e42ac4f99715" => :mojave
+    sha256 "cd5cffcddc4a7a7013fd7a38edba49b70c6bb9dc6ef965db0d003682d2a032c3" => :high_sierra
+    sha256 "b5bda19961ac5e3e9729c16ee6b39de5370fc462cbffac63823f7ba0f174548e" => :sierra
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "pkg-config" => :build
-  depends_on :osxfuse
   depends_on "libtorrent-rasterbar"
+  depends_on :osxfuse
 
   def install
     ENV.cxx11

@@ -3,22 +3,21 @@ class Libgdata < Formula
   homepage "https://wiki.gnome.org/Projects/libgdata"
   url "https://download.gnome.org/sources/libgdata/0.16/libgdata-0.16.1.tar.xz"
   sha256 "8740e071ecb2ae0d2a4b9f180d2ae5fdf9dc4c41e7ff9dc7e057f62442800827"
+  revision 1
 
   bottle do
-    rebuild 1
-    sha256 "58c86c6a2a745ef88e8c00026bbd0c715aa5f54006db8e5f4d23bd722b82b848" => :high_sierra
-    sha256 "8f708e61856122562afc224ec5c23f3bb204acc4002f5108f98ea7e76b5f55cb" => :sierra
-    sha256 "2f13d11ca0a27ef52ebcf12c2aff52c921d1105b7b53fd0277a351479c9a7c43" => :el_capitan
-    sha256 "d436dd7128819045779bbbf6f957922ec011940b60982fee9dc394700bffe21d" => :yosemite
+    rebuild 2
+    sha256 "c90249af29e3632fbcac563f74a870f5acabb67ebd74c39ba5f1b175ab540c69" => :mojave
+    sha256 "4f8b1f0cdfde190203fae63cc2c16c9eb798834bca4cf9dd43f62d10e0932f97" => :high_sierra
+    sha256 "eb7c57253db92c9e5b132868ded213d252f24733a13c4af44e4f89161abb354e" => :sierra
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "gobject-introspection" => :build
   depends_on "intltool" => :build
-  depends_on "libsoup"
+  depends_on "pkg-config" => :build
   depends_on "json-glib"
   depends_on "liboauth"
-  depends_on "gobject-introspection"
-  depends_on "vala" => :optional
+  depends_on "libsoup"
 
   # submitted upstream as https://bugzilla.gnome.org/show_bug.cgi?id=754821
   patch :DATA
@@ -55,6 +54,7 @@ class Libgdata < Formula
       -I#{json_glib.opt_include}/json-glib-1.0
       -I#{liboauth.opt_include}
       -I#{libsoup.opt_include}/libsoup-2.4
+      -I#{MacOS.sdk_path}/usr/include/libxml2
       -D_REENTRANT
       -L#{gettext.opt_lib}
       -L#{glib.opt_lib}
@@ -70,11 +70,6 @@ class Libgdata < Formula
       -lsoup-2.4
       -lxml2
     ]
-    if MacOS::CLT.installed?
-      flags << "-I/usr/include/libxml2"
-    else
-      flags << "-I#{MacOS.sdk_path}/usr/include/libxml2"
-    end
     system ENV.cc, "test.c", "-o", "test", *flags
     system "./test"
   end

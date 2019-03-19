@@ -1,22 +1,24 @@
 class Gupnp < Formula
   desc "Framework for creating UPnP devices and control points"
   homepage "https://wiki.gnome.org/Projects/GUPnP"
-  url "https://download.gnome.org/sources/gupnp/1.0/gupnp-1.0.2.tar.xz"
-  sha256 "5173fda779111c6b01cd4a5e41b594322be9d04f8c74d3361f0a0c2069c77610"
+  url "https://download.gnome.org/sources/gupnp/1.0/gupnp-1.0.3.tar.xz"
+  sha256 "794b162ee566d85eded8c3f3e8c9c99f6b718a6b812d8b56f0c2ed72ac37cbbb"
 
   bottle do
-    sha256 "637290bee0b95267d9d900afbb081b437b89d2b4d353724fa492e52ba25627b2" => :high_sierra
-    sha256 "28afff235b826e62bfd7133394b91a4b3746c3bf591efb5eb35767978e6e5f9a" => :sierra
-    sha256 "122ab1bd5cd7864e3ba5e8242d62fc4d1a46fe3827801751c967c4877958a19d" => :el_capitan
-    sha256 "c75c47821df5392618b6ce7f438f509e5c6833fe7f60f6657b3081adf537da37" => :yosemite
+    cellar :any
+    rebuild 1
+    sha256 "42609b06fc41288eea51b93cd7f5b1148eb37643487e9e98e0f6843f4427c2d2" => :mojave
+    sha256 "7e27871e73f36e0a957dc59f591aa09972471cc8c3a25e7994735382e2f02daa" => :high_sierra
+    sha256 "b7e235858bce8ebc12d6f4c61a2506c6cf6fefd2ffdea083a0c474486374be6c" => :sierra
+    sha256 "3382f7c4a3b884bb604179f554d55e31028e40ba97c031fc29c4284ac8c4c19f" => :el_capitan
   end
 
-  depends_on "pkg-config" => :build
   depends_on "intltool" => :build
+  depends_on "pkg-config" => :build
   depends_on "gettext"
   depends_on "glib"
-  depends_on "libsoup"
   depends_on "gssdp"
+  depends_on "libsoup"
 
   def install
     system "./configure", "--disable-debug",
@@ -55,9 +57,10 @@ class Gupnp < Formula
            "-L#{Formula["gssdp"].opt_lib}", "-lgssdp-1.0",
            "-I#{Formula["glib"].opt_include}/glib-2.0",
            "-I#{Formula["glib"].opt_lib}/glib-2.0/include",
+           "-L#{Formula["glib"].opt_lib}",
            "-lglib-2.0", "-lgobject-2.0",
            "-I#{Formula["libsoup"].opt_include}/libsoup-2.4",
-           "-I/usr/include/libxml2",
+           "-I#{MacOS.sdk_path}/usr/include/libxml2",
            testpath/"test.c", "-o", testpath/"test"
     system "./test"
   end

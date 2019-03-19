@@ -3,32 +3,32 @@ class Widelands < Formula
   homepage "https://wl.widelands.org/"
   url "https://launchpad.net/widelands/build19/build19/+download/widelands-build19-src.tar.bz2"
   sha256 "e511f9d26828a2b71b64cdfc6674e6e847543b2da73961ab882acca36c7c01a6"
-  revision 5
+  revision 13
 
   bottle do
-    sha256 "9e3bea1677c7aadd41dfcb4a1e524277bbf8e8a2ea8f9318d15cc67f78c0871f" => :high_sierra
-    sha256 "bdca6516a0b76f3d03f7ea7600c566cc55a08c9b6616abddff19d22ae1ac2e5c" => :sierra
-    sha256 "344c11b8553f0231c3ee6cd20ee951f1b6b0b141e82c544e57e083aab7ef5a38" => :el_capitan
-    sha256 "96f8d5f417679eb8f35dbd26325590a6833515608596febb9942d3be988ddefc" => :yosemite
+    sha256 "1f47eacc59619797f3609a71460e6f8e25d3e19fcfcecb8cdec41dae621e020f" => :mojave
+    sha256 "33f630588ed1f396056e9dfe71004bd0fa8f1567082bacbfd94e882253622df4" => :high_sierra
+    sha256 "02c4096b565587cca30d721d936cf243dd5c92800a7b7693a3b7f40877ddca2e" => :sierra
   end
 
   depends_on "cmake" => :build
   depends_on "boost"
-  depends_on "libpng"
-  depends_on "minizip"
+  depends_on "doxygen"
   depends_on "gettext"
+  depends_on "glew"
+  depends_on "icu4c"
+  depends_on "libpng"
+  depends_on "lua"
+  depends_on "minizip"
   depends_on "sdl2_image"
   depends_on "sdl2_mixer"
   depends_on "sdl2_net"
   depends_on "sdl2_ttf"
-  depends_on "doxygen"
-  depends_on "glew"
-  depends_on "lua"
-  depends_on "icu4c"
-
-  needs :cxx11
 
   def install
+    # icu4c 61.1 compatability
+    ENV.append "CXXFLAGS", "-DU_USING_ICU_NAMESPACE=1"
+
     ENV.cxx11
     mkdir "build" do
       system "cmake", "..",

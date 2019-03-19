@@ -7,6 +7,7 @@ class Mkvtomp4 < Formula
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "06b96194e09c4e952de56492047f83a6af1a173aba059ba9edd3ac2664e2cbf4" => :mojave
     sha256 "2efab72b382b03ac47c70b1878587afafdd8de2b7361d96f98e837692d5b4ca4" => :high_sierra
     sha256 "4c085a7e2cbfada2a722dc1d676fab80dacc1f490c14d2a2aff10a4fa60f5225" => :sierra
     sha256 "f7610334538d3e3df8cfeab0a5cd7d9a44acfb141212b4852e340064657e50a8" => :el_capitan
@@ -14,10 +15,10 @@ class Mkvtomp4 < Formula
     sha256 "3346ab8be87d01200616db3887ed05d0d6693d2003ca4c3d5530c439ef732544" => :mavericks
   end
 
+  depends_on "ffmpeg"
   depends_on "gpac"
-  depends_on "ffmpeg" => :recommended
   depends_on "mkvtoolnix"
-  depends_on :python if MacOS.version <= :snow_leopard
+  depends_on "python@2" # does not support Python 3
 
   def install
     ENV["PYTHONPATH"] = lib+"python2.7/site-packages"

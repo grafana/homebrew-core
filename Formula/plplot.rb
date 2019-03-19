@@ -1,28 +1,26 @@
 class Plplot < Formula
   desc "Cross-platform software package for creating scientific plots"
   homepage "https://plplot.sourceforge.io"
-  url "https://downloads.sourceforge.net/project/plplot/plplot/5.13.0%20Source/plplot-5.13.0.tar.gz"
-  sha256 "ec36bbee8b03d9d1c98f8fd88f7dc3415560e559b53eb1aa991c2dcf61b25d2b"
+  url "https://downloads.sourceforge.net/project/plplot/plplot/5.14.0%20Source/plplot-5.14.0.tar.gz"
+  sha256 "331009037c9cad9fcefacd7dbe9c7cfae25e766f5590f9efd739a294c649df97"
+  revision 1
 
   bottle do
-    sha256 "d916ee384f86257d3584a27b42d0b164afd4667c23388f2eb243f5dde846e226" => :high_sierra
-    sha256 "bfc8004765fbb0ea7378951e1cbf21e1512eba73528f219bbb85acc5fef9a85d" => :sierra
-    sha256 "44fffbf81d69eb34c0746a646b2bab7d13c8c8aacab816d800e9d44ccb96762d" => :el_capitan
-    sha256 "ac125db322d3a35450b1ff0e8f4c8ceb6221e0ab8a339887d2d3177dff3b3dbe" => :yosemite
+    sha256 "d38e07c8b56d1f5eb392f655f2420eac9f6a8c4f94312499d17796c0f5e00e5b" => :mojave
+    sha256 "d912ca0e40535d001e8303b5b7e55306191c25f40aeb3e32469547f4feebb0a5" => :high_sierra
+    sha256 "d129f9e4341a5a0040cd0e7ecedfaf8d288269cbb423df89bf0e0ec559530131" => :sierra
   end
 
   depends_on "cmake" => :build
   depends_on "pkg-config" => :build
   depends_on "cairo"
   depends_on "freetype"
-  depends_on "libtool" => :run
+  depends_on "gcc" # for gfortran
   depends_on "pango"
-  depends_on :fortran
-  depends_on :java => :optional
-  depends_on :x11 => :optional
 
   def install
     args = std_cmake_args + %w[
+      -DPL_HAVE_QHULL=OFF
       -DENABLE_ada=OFF
       -DENABLE_d=OFF
       -DENABLE_qt=OFF
@@ -33,14 +31,25 @@ class Plplot < Formula
       -DPLD_xcairo=OFF
       -DPLD_wxwidgets=OFF
       -DENABLE_wxwidgets=OFF
+      -DENABLE_DYNDRIVERS=OFF
+      -DENABLE_java=OFF
+      -DPLD_xwin=OFF
     ]
-    args << "-DENABLE_java=OFF" if build.without? "java"
-    args << "-DPLD_xwin=OFF" if build.without? "x11"
 
     mkdir "plplot-build" do
       system "cmake", "..", *args
       system "make"
       system "make", "install"
+    end
+
+    # fix rpaths
+    cd (lib.to_s) do
+      Dir["*.dylib"].select { |f| File.ftype(f) == "file" }.each do |f|
+        MachO::Tools.dylibs(f).select { |d| d.start_with?("@rpath") }.each do |d|
+          d_new = d.sub("@rpath", opt_lib.to_s)
+          MachO::Tools.change_install_name(f, d, d_new)
+        end
+      end
     end
   end
 
@@ -55,7 +64,7 @@ class Plplot < Formula
       }
     EOS
     system ENV.cc, "test.c", "-o", "test", "-I#{include}/plplot", "-L#{lib}",
-                   "-lcsirocsa", "-lltdl", "-lm", "-lplplot", "-lqsastime"
+                   "-lcsirocsa", "-lm", "-lplplot", "-lqsastime"
     system "./test"
   end
 end

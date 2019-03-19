@@ -1,30 +1,26 @@
 class Rmlint < Formula
   desc "Extremely fast tool to remove dupes and other lint from your filesystem"
   homepage "https://github.com/sahib/rmlint"
-  url "https://github.com/sahib/rmlint/archive/v2.6.1.tar.gz"
-  sha256 "b4de3de2f197b5978113eb9d013ee9890efbdf01ba739416255ecc2567199b81"
+  url "https://github.com/sahib/rmlint/archive/v2.8.0.tar.gz"
+  sha256 "196bb595ac4d3d1a76ed62542b7895bda1cea47f0f77483286b2dfc8fc797253"
 
   bottle do
     cellar :any
-    sha256 "06ee1c0ab8086cfc9a91b1a6a34534db620816a6ad9dc19e80891d6e0821d3d7" => :high_sierra
-    sha256 "a574a19f089e1a24168c57472e5c95993c6b7ab5c2990bb07dfa54ecdc94b291" => :sierra
-    sha256 "5e1aad2bec7238f2087d3ac643a6e0dba2f2b58a0302bb88acda26e035e23f99" => :el_capitan
-    sha256 "7e155b9753da549229811558e2b1914a5aeb8b95b85317804a81a7cab3eb3853" => :yosemite
+    sha256 "868fb80acb784a7634e5c7fe6e75cee86d4c93615213156f0d97a22c3e27d0e6" => :mojave
+    sha256 "fa8f2ebb9224446dcf5dfbaca94f97bfe983a10888dd0d514345643c0394fd70" => :high_sierra
+    sha256 "a0987dfb0b23a5e3f5a93bb93480834cdf2e54c046784af3ba2c191336905e88" => :sierra
   end
 
-  option "with-json-glib", "Add support for reading json caches"
-  option "with-libelf", "Add support for finding non-stripped binaries"
-
-  depends_on "glib" => :run
   depends_on "gettext" => :build
   depends_on "pkg-config" => :build
   depends_on "scons" => :build
   depends_on "sphinx-doc" => :build
-  depends_on "json-glib" => :optional
-  depends_on "libelf" => :optional
+  depends_on "glib"
+  depends_on "json-glib"
+  depends_on "libelf"
 
   def install
-    scons "config"
+    system "scons", "config"
     scons
     bin.install "rmlint"
     man1.install "docs/rmlint.1.gz"

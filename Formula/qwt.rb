@@ -6,14 +6,11 @@ class Qwt < Formula
   revision 4
 
   bottle do
-    sha256 "d91a8d16588cd615df09fc8bdf288c1eea5be8c0ad7e0fe894ad70914eb47488" => :high_sierra
-    sha256 "5e25de79818df25e3dab96795d24c4de066a39ae9d616d77c05f528ace671f6f" => :sierra
-    sha256 "b486e9d7b4a9d15886b51d9536ea6b32a642262d3acff5a7ea6985d7fd88db1a" => :el_capitan
-    sha256 "81fcb45fea416bc89e99b213d991c08ccb3ed34ef7da67346a273f8a1f203293" => :yosemite
+    rebuild 1
+    sha256 "a0440f8bbfaa4a88a44ad02aac93cd1d96a45b59f0b4e3c6133c150dd877e100" => :mojave
+    sha256 "fefafb68b60362fb7c2f268171cf111a7676044d2586698d786bc448263cd315" => :high_sierra
+    sha256 "b333be61fb0188cdf98510566dd28ac51c677eba50c7257d7b5145d7619d7a44" => :sierra
   end
-
-  option "with-qwtmathml", "Build the qwtmathml library"
-  option "without-plugin", "Skip building the Qt Designer plugin"
 
   depends_on "qt"
 
@@ -24,7 +21,6 @@ class Qwt < Formula
   def install
     inreplace "qwtconfig.pri" do |s|
       s.gsub! /^\s*QWT_INSTALL_PREFIX\s*=(.*)$/, "QWT_INSTALL_PREFIX=#{prefix}"
-      s.sub! /\+(=\s*QwtDesigner)/, "-\\1" if build.without? "plugin"
 
       # Install Qt plugin in `lib/qt/plugins/designer`, not `plugins/designer`.
       s.sub! %r{(= \$\$\{QWT_INSTALL_PREFIX\})/(plugins/designer)$},
@@ -32,35 +28,15 @@ class Qwt < Formula
     end
 
     args = ["-config", "release", "-spec"]
-    # On Mavericks we want to target libc++, this requires a unsupported/macx-clang-libc++ flag
-    if ENV.compiler == :clang && MacOS.version >= :mavericks
+    if ENV.compiler == :clang
       args << "macx-clang"
     else
       args << "macx-g++"
     end
 
-    if build.with? "qwtmathml"
-      args << "QWT_CONFIG+=QwtMathML"
-      prefix.install "textengines/mathml/qtmmlwidget-license"
-    end
-
     system "qmake", *args
     system "make"
     system "make", "install"
-  end
-
-  def caveats
-    s = ""
-
-    if build.with? "qwtmathml"
-      s += <<~EOS
-        The qwtmathml library contains code of the MML Widget from the Qt solutions package.
-        Beside the Qwt license you also have to take care of its license:
-        #{opt_prefix}/qtmmlwidget-license
-      EOS
-    end
-
-    s
   end
 
   test do

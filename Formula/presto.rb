@@ -1,16 +1,16 @@
 class Presto < Formula
   desc "Distributed SQL query engine for big data"
   homepage "https://prestodb.io"
-  url "https://search.maven.org/remotecontent?filepath=com/facebook/presto/presto-server/0.188/presto-server-0.188.tar.gz"
-  sha256 "f184b9921e0dca6c982118201116a25db23ff711a590ddcf4c13468a22c6d08c"
+  url "https://search.maven.org/remotecontent?filepath=com/facebook/presto/presto-server/0.217/presto-server-0.217.tar.gz"
+  sha256 "b0e95957d56fa91dac7649853cd65f8b22532fe891499feb1b3efb0af47bfcd1"
 
   bottle :unneeded
 
   depends_on :java => "1.8+"
 
   resource "presto-cli" do
-    url "https://search.maven.org/remotecontent?filepath=com/facebook/presto/presto-cli/0.188/presto-cli-0.188-executable.jar"
-    sha256 "a18e708ceea181c6edb97514cccf2fbe25f09972e7de99f5bbd939354c4e58b6"
+    url "https://search.maven.org/remotecontent?filepath=com/facebook/presto/presto-cli/0.217/presto-cli-0.217-executable.jar"
+    sha256 "5481c46bcf5d22b3972f0e8c5811f1091cb2c3547adb1c1b30188bb6856c2b33"
   end
 
   def install
@@ -64,7 +64,7 @@ class Presto < Formula
   def caveats; <<~EOS
     Add connectors to #{libexec}/etc/catalog/. See:
     https://prestodb.io/docs/current/connector.html
-    EOS
+  EOS
   end
 
   plist_options :manual => "presto-server run"
@@ -90,7 +90,7 @@ class Presto < Formula
         </array>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

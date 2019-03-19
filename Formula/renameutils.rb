@@ -1,20 +1,22 @@
 class Renameutils < Formula
   desc "Tools for file renaming"
-  homepage "http://www.nongnu.org/renameutils/"
+  homepage "https://www.nongnu.org/renameutils/"
   url "https://download.savannah.gnu.org/releases/renameutils/renameutils-0.12.0.tar.gz"
   sha256 "cbd2f002027ccf5a923135c3f529c6d17fabbca7d85506a394ca37694a9eb4a3"
-  revision 1
+  revision 2
 
   bottle do
     cellar :any
-    sha256 "231874956b8d016cf8c8e9c70b889d61f849b718b5ed291231d8d3b1d425b071" => :high_sierra
-    sha256 "56f37984343df2fc7a632a447c8c008dbd1d775c71a1b190b9c2bd2296862b77" => :sierra
-    sha256 "69c7381af949af84d3e7cd61cbec789e3d790c154fb3cb9916b1e74730a5fbce" => :el_capitan
-    sha256 "3854a97491ab39937687fd00623e4786205163f87522e901bbd7cca6e054b574" => :yosemite
+    sha256 "9f13f1f0096e9875dfa28466cf6689203c7018a8b38cf32def6567f63fd1d3e0" => :mojave
+    sha256 "69dacfc5145602d3310aac38122aa7385956fbfb56c9af97adee0f77c2c01453" => :high_sierra
+    sha256 "89d596e819476c80807653aaf8a20f7cef7976f53570e4242d87ccebea4cb92f" => :sierra
   end
 
-  depends_on "readline" # Use instead of system libedit
   depends_on "coreutils"
+  depends_on "readline" # Use instead of system libedit
+
+  conflicts_with "ipmiutil", :because => "both install `icmd` binaries"
+  conflicts_with "irods", :because => "both install `icp` and `imv` binaries"
 
   # Use the GNU versions of certain system utilities. See:
   # https://trac.macports.org/ticket/24525
@@ -23,9 +25,6 @@ class Renameutils < Formula
   # make install to fail.  Reported upstream via email and fixed in HEAD.
   # Remove patch #4 at version > 0.12.0.  The first three should persist.
   patch :DATA
-
-  conflicts_with "ipmiutil", :because => "both install `icmd` binaries"
-  conflicts_with "irods", :because => "both install `icp` and `imv` binaries"
 
   def install
     system "./configure", "--disable-dependency-tracking",

@@ -6,6 +6,7 @@ class Chadwick < Formula
 
   bottle do
     cellar :any
+    sha256 "1fef298b5a3cfdeea069b05a4cffd3df89627374ac3d3f161e7295db8976cdb8" => :mojave
     sha256 "9696854624d829ac76b9185425c9d123495f4905ad40d9a82cf25908cab66c0c" => :high_sierra
     sha256 "9e861062afe571d353e11df00146c5eafb3bad33cc747bc0b63b2441f1d52d10" => :sierra
     sha256 "9b62dbf5675819d3ba2f770ab04086702d22054133c37096582a744624c41fce" => :el_capitan
@@ -110,11 +111,11 @@ class Chadwick < Formula
 
     # check chadwick's standard output
     exec_str = "#{bin}/cwbox -X -q -i #{attr[:game_id]} -y #{date_y} #{evn_file}"
-    out = shell_output exec_str.sub("-X", "")
+    out = shell_output(exec_str.sub("-X", ""))
     assert_match "Game of #{date_m_d_y} -- #{attr[:visitor_city]} at #{attr[:home_city]}", out
 
     # check chadwick's xml output
-    out_xml = shell_output exec_str
+    out_xml = shell_output(exec_str)
     require "rexml/document"
     doc = REXML::Document.new(out_xml)
     assert root = doc.root

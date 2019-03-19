@@ -5,11 +5,10 @@ class OpenOcd < Formula
   sha256 "7312e7d680752ac088b8b8f2b5ba3ff0d30e0a78139531847be4b75c101316ae"
 
   bottle do
-    rebuild 1
-    sha256 "eab0153f54c97d4922386996d7517b6dc22c8e418b620ba42dd6f190fc0c48f7" => :high_sierra
-    sha256 "281978e21362ed00dd198715825d77f0f2aeb64ad99954714a34ce128e1a0df8" => :sierra
-    sha256 "e1fc5f8a8bf079954a56459b330313cd82a69a219114821c14f9d3df2fd3ea25" => :el_capitan
-    sha256 "568ae702a3488805b8651b5456346c9484ca6f8486a09f3c2a4473664370a481" => :yosemite
+    rebuild 2
+    sha256 "491bec9acdc4e446a6515975041f21dec919ba330f88b5a69e8651ddd9c07468" => :mojave
+    sha256 "0258f4d658907060d890c978a4d122ac5501119c4d28bb272e4bf5bc59bd8852" => :high_sierra
+    sha256 "790605e83cc22ab4a455a382f7b6a434d44c19f82e0b8a0ee6a3bf28ac6f9f31" => :sierra
   end
 
   head do
@@ -21,33 +20,23 @@ class OpenOcd < Formula
     depends_on "texinfo" => :build
   end
 
-  option "without-hidapi", "Disable building support for devices using HIDAPI (CMSIS-DAP)"
-  option "without-libftdi", "Disable building support for libftdi-based drivers (USB-Blaster, ASIX Presto, OpenJTAG)"
-  option "without-libusb",  "Disable building support for all other USB adapters"
-
   depends_on "pkg-config" => :build
-  depends_on "libusb" => :recommended
-  # some drivers are still not converted to libusb-1.0
-  depends_on "libusb-compat" if build.with? "libusb"
-  depends_on "libftdi" => :recommended
-  depends_on "hidapi" => :recommended
+  depends_on "hidapi"
+  depends_on "libftdi"
+  depends_on "libusb"
+  depends_on "libusb-compat"
 
   def install
-    # all the libusb and hidapi-based drivers are auto-enabled when
-    # the corresponding libraries are present in the system
-    args = %W[
-      --disable-dependency-tracking
-      --prefix=#{prefix}
-      --enable-dummy
-      --enable-buspirate
-      --enable-jtag_vpi
-      --enable-remote-bitbang
-    ]
-
     ENV["CCACHE"] = "none"
 
     system "./bootstrap", "nosubmodule" if build.head?
-    system "./configure", *args
+    system "./configure", "--disable-dependency-tracking",
+                          "--prefix=#{prefix}",
+                          "--enable-buspirate",
+                          "--enable-stlink",
+                          "--enable-dummy",
+                          "--enable-jtag_vpi",
+                          "--enable-remote-bitbang"
     system "make", "install"
   end
 end

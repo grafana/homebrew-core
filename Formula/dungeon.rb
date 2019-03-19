@@ -3,16 +3,16 @@ class Dungeon < Formula
   homepage "https://github.com/GOFAI/dungeon"
   url "https://github.com/GOFAI/dungeon/archive/4.0.tar.gz"
   sha256 "be2217be9e23861f22c14c4395da272fca5fb08a1741f52fd393792908279bea"
-  revision 1
+  revision 3
 
   bottle do
-    sha256 "e0252a20faaee35aa1768a3f7a31441de5d73028bd722419f632cc66bb92d22b" => :high_sierra
-    sha256 "18af74d676dbc99acfa51088bbcf89dd4c80f89290bc25b4ca030ae23ad82c01" => :sierra
-    sha256 "7e293839e0e151c0bb20423f8bdad447d2b31c905737359c7a47cb296f223816" => :el_capitan
-    sha256 "6177df6d7568967456aad92c0b1e55c45eab0c91e4d88d25ad76ff90d9704fda" => :yosemite
+    sha256 "c05df30f6a33327dd4c47324625b0a8a51261914ce8cd2fda6acfa6e466e1f2f" => :mojave
+    sha256 "85f19d2f55617a90e061fce84224bbad7034045720241313713c9017ab427909" => :high_sierra
+    sha256 "7530638329eeba02b2d3099155524129f4b9d1e28c05206b283bbfdfac6c2353" => :sierra
+    sha256 "bad6d9bf2fc5b4343f3c5f3c677675552c7fef9facec15a7793f68c56bce4de8" => :el_capitan
   end
 
-  depends_on :fortran
+  depends_on "gcc" # for gfortran
 
   def install
     chdir "src" do

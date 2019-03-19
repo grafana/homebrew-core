@@ -6,15 +6,13 @@ class Bsdmake < Formula
 
   bottle do
     rebuild 1
+    sha256 "acee008d57c2ebe6ad2ee5932d1521a254e16453c61cdd517da2c675f60c1eb4" => :mojave
     sha256 "fa009c31c9fa5fc71f774cfe146f1338ca856158a606b796c3a1e7dbd64f3895" => :high_sierra
     sha256 "3d5b8c21cf86cd6bb9eb28d1e8cbec434b370aa15e19540e366d045ea807c8c8" => :sierra
     sha256 "b4052277ac6cf79ed579107fb73da96954c350d7bf29a124c55d87a0df8940b0" => :el_capitan
     sha256 "18d7cb56f14eb2e404cf3abb163a354f57c5e45b72991efdd6566a15fcffe90f" => :yosemite
     sha256 "5807a64aab8f81720718a4327d303d7955a09739b079aefd72a4f216519f0de7" => :mavericks
-    sha256 "7f64345157a82d82163606a09839619ec2ffc174242ceb942c2347526fee4f83" => :mountain_lion
   end
-
-  keg_only :provided_until_xcode43
 
   # MacPorts patches to make bsdmake play nice with our prefix system
   # Also a MacPorts patch to circumvent setrlimit error

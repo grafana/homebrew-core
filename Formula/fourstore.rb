@@ -1,10 +1,11 @@
 class Fourstore < Formula
   desc "Efficient, stable RDF database"
-  homepage "https://github.com/garlik/4store"
-  url "https://github.com/garlik/4store/archive/v1.1.6.tar.gz"
+  homepage "https://github.com/4store/4store"
+  url "https://github.com/4store/4store/archive/v1.1.6.tar.gz"
   sha256 "a0c8143fcceeb2f1c7f266425bb6b0581279129b86fdd10383bf1c1e1cab8e00"
 
   bottle do
+    sha256 "1e3fa6977a08db55a3973b882c443dc18ffd648d61ebd041d3109c7d5e942209" => :mojave
     sha256 "413841f69291b5a871c9fefc96f8bd439348cbb5fe35e03e6670ac74cbe89771" => :high_sierra
     sha256 "8f9626f161e1b3f063672cd07cc0d62d476eeaed5ca420aee90882d5efb9424f" => :sierra
     sha256 "e19d98e6be69d8f75483403714a639cf21976a9d21b1c10252f5798049690581" => :el_capitan
@@ -12,10 +13,10 @@ class Fourstore < Formula
     sha256 "b2ad54ba983117388e256212e55ea67e4f9548c0c7d0d1c1b8a420ac025b5f10" => :mavericks
   end
 
-  depends_on "pkg-config" => :build
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
+  depends_on "pkg-config" => :build
   depends_on "gettext"
   depends_on "glib"
   depends_on "pcre"
@@ -47,8 +48,8 @@ class Fourstore < Formula
     Start up HTTP SPARQL server without daemonizing:
         4s-httpd -p 8000 -D mydb
 
-    See http://4store.org/trac/wiki/Documentation for more information.
-    EOS
+    See https://4store.danielknoell.de/trac/wiki/Documentation/ for more information.
+  EOS
   end
 
   test do

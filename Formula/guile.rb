@@ -1,15 +1,15 @@
 class Guile < Formula
   desc "GNU Ubiquitous Intelligent Language for Extensions"
   homepage "https://www.gnu.org/software/guile/"
-  url "https://ftp.gnu.org/gnu/guile/guile-2.2.2.tar.xz"
-  mirror "https://ftpmirror.gnu.org/guile/guile-2.2.2.tar.xz"
-  sha256 "1c91a46197fb1adeba4fd62a25efcf3621c6450be166d7a7062ef6ca7e11f5ab"
+  url "https://ftp.gnu.org/gnu/guile/guile-2.2.4.tar.xz"
+  mirror "https://ftpmirror.gnu.org/guile/guile-2.2.4.tar.xz"
+  sha256 "d9e8b94af7b206fcf52bec6501b921bd7d0bd7a31fb7e896a35ba8253678e31e"
+  revision 1
 
   bottle do
-    sha256 "6c3f5a6df5527562e75c1c9e95dd4e1b0b55ea2d07ab18008ac18cf59492285c" => :high_sierra
-    sha256 "f99bf6e5381bcb8c0a77d1eeee51f5a3a10094771cba1e06c6036c66dfcc0181" => :sierra
-    sha256 "894296e0f264fb2e9b093dfd2798363ef8ece41e5d92ba9544f65f5690c9c662" => :el_capitan
-    sha256 "dd1dbd7d3c0f9c5be7ae5177e7024739026886e9422704b2e561c5ed25f11052" => :yosemite
+    sha256 "a5916710ddddf9ab79f368008fddfc708fd50ae86fc5b894a7d70cb3cebfb326" => :mojave
+    sha256 "fe1d3822f7bb1a18b3fa73907db89ba7654a85c3cae4f572eb3257a4b2e148d0" => :high_sierra
+    sha256 "a1bf9796750403fc459f8393144ac7589474f97ba4ce3a0d732fdab7aa3f3df1" => :sierra
   end
 
   head do
@@ -20,18 +20,14 @@ class Guile < Formula
     depends_on "gettext" => :build
   end
 
-  depends_on "pkg-config" => :run # guile-config is a wrapper around pkg-config.
-  depends_on "libtool" => :run
-  depends_on "libffi"
-  depends_on "libunistring"
+  depends_on "gnu-sed" => :build
   depends_on "bdw-gc"
   depends_on "gmp"
+  depends_on "libffi"
+  depends_on "libtool"
+  depends_on "libunistring"
+  depends_on "pkg-config" # guile-config is a wrapper around pkg-config.
   depends_on "readline"
-
-  fails_with :clang do
-    build 211
-    cause "Segfaults during compilation"
-  end
 
   def install
     system "./autogen.sh" unless build.stable?
@@ -44,6 +40,15 @@ class Guile < Formula
     # A really messed up workaround required on macOS --mkhl
     Pathname.glob("#{lib}/*.dylib") do |dylib|
       lib.install_symlink dylib.basename => "#{dylib.basename(".dylib")}.so"
+    end
+
+    # This is either a solid argument for guile including options for
+    # --with-xyz-prefix= for libffi and bdw-gc or a solid argument for
+    # Homebrew automatically removing Cellar paths from .pc files in favour
+    # of opt_prefix usage everywhere.
+    inreplace lib/"pkgconfig/guile-2.2.pc" do |s|
+      s.gsub! Formula["bdw-gc"].prefix.realpath, Formula["bdw-gc"].opt_prefix
+      s.gsub! Formula["libffi"].prefix.realpath, Formula["libffi"].opt_prefix
     end
 
     (share/"gdb/auto-load").install Dir["#{lib}/*-gdb.scm"]

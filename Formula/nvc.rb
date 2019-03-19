@@ -1,14 +1,14 @@
 class Nvc < Formula
   desc "VHDL compiler and simulator"
   homepage "https://github.com/nickg/nvc"
-  url "https://github.com/nickg/nvc/releases/download/r1.2.1/nvc-1.2.1.tar.gz"
-  sha256 "ff6b1067a665c6732286239e539ae448a52bb11e9ea193569af1c147d0b4fce0"
+  url "https://github.com/nickg/nvc/releases/download/r1.4.0/nvc-1.4.0.tar.gz"
+  sha256 "1a874bde284408c137a93b22f8f12b5b8c3368cefe30f3a5458ccdeffa0c6ad6"
 
   bottle do
-    sha256 "f11933a05847b9433fd505c03755767043872e145f247b7d87603e3a9dc51dc4" => :high_sierra
-    sha256 "23b8d156e8ee517b80e7736eeb31bfa3ac59e30bbdca157b53320b8cf987b633" => :sierra
-    sha256 "fec8eab13df57ffec18283f6a83366afcf431640f9e25142a4da04f63e43e2bf" => :el_capitan
-    sha256 "f33ffc17ef6123f97750b76fddedbb6ba3865fab02ebbca04c7441631740092d" => :yosemite
+    sha256 "b80db7d1bf860cf294e21504ca5016949379eb09f5e91f2ada221f7c93e0a470" => :mojave
+    sha256 "b7652f61cc91018c76c1c3ca245125b9a1bd13aacf0f7e3791d62748a0af89c8" => :high_sierra
+    sha256 "baeed30af5a9e5dfe7dd8c5fdddb7b731912bbfb99f32127e30ae9c366bb8215" => :sierra
+    sha256 "e5a6b787e66d0b9e599a86d8e780e81c7aa9ca9240e1ab8446b471e044f9b0b1" => :el_capitan
   end
 
   head do
@@ -18,9 +18,9 @@ class Nvc < Formula
     depends_on "automake" => :build
   end
 
-  depends_on "pkg-config" => :build
-  depends_on "llvm" => :build
   depends_on "check" => :build
+  depends_on "llvm" => :build
+  depends_on "pkg-config" => :build
 
   resource "vim-hdl-examples" do
     url "https://github.com/suoto/vim-hdl-examples.git",
@@ -31,7 +31,8 @@ class Nvc < Formula
     system "./autogen.sh" if build.head?
     system "./tools/fetch-ieee.sh"
     system "./configure", "--with-llvm=#{Formula["llvm"].opt_bin}/llvm-config",
-                          "--prefix=#{prefix}"
+                          "--prefix=#{prefix}",
+                          "--with-system-cc=/usr/bin/clang"
     system "make"
     system "make", "install"
   end

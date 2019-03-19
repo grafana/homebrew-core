@@ -1,14 +1,13 @@
 class Softhsm < Formula
   desc "Cryptographic store accessible through a PKCS#11 interface"
   homepage "https://www.opendnssec.org/softhsm/"
-  url "https://dist.opendnssec.org/source/softhsm-2.3.0.tar.gz"
-  sha256 "5ed604c89a3a6ef9d7d1ee92c28a2c4b3cd1f86f302c808e2d12c8f39aa2c127"
+  url "https://dist.opendnssec.org/source/softhsm-2.5.0.tar.gz"
+  sha256 "92aa56cf45e25892326e98b851c44de9cac8559e208720e579bf8e2cd1c132b2"
 
   bottle do
-    sha256 "2f05fba4b689174ca866f918bbf654f6e5a712c6434a8b05214c329ab0ac0306" => :high_sierra
-    sha256 "9c13086544e0a554bfe2a687cfa0b05961e84260407282f4c4198dfb8dc6bc04" => :sierra
-    sha256 "066d911caa4a4961939403d8f08c1862a947046e5bbc042edeb9ce9a37f8116e" => :el_capitan
-    sha256 "53cad8948c14774fc54d21c241225f4d9a32bc6c98dfc74b7888420a4c0290be" => :yosemite
+    sha256 "08706b58638ef1705eb815a68e98d1a7cb84881b947dec37fbcfedf3ed7e33c6" => :mojave
+    sha256 "e19ba4dd4666be95b69981a798814108b11ca706b20e479990feee05babe7014" => :high_sierra
+    sha256 "5e69215d66ff6210d6c100e673194140c45d356bd810f5061d6e123cbba9a63c" => :sierra
   end
 
   depends_on "openssl"

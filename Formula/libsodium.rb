@@ -1,22 +1,22 @@
 class Libsodium < Formula
   desc "NaCl networking and cryptography library"
   homepage "https://github.com/jedisct1/libsodium/"
-  url "https://github.com/jedisct1/libsodium/releases/download/1.0.15/libsodium-1.0.15.tar.gz"
-  sha256 "fb6a9e879a2f674592e4328c5d9f79f082405ee4bb05cb6e679b90afe9e178f4"
+  url "https://github.com/jedisct1/libsodium/releases/download/1.0.17/libsodium-1.0.17.tar.gz"
+  sha256 "0cc3dae33e642cc187b5ceb467e0ad0e1b51dcba577de1190e9ffa17766ac2b1"
 
   bottle do
     cellar :any
-    sha256 "b2faf056b42788bfbedeee32166c3aa9c3d382f9dadf306100b6ef0d0342a64a" => :high_sierra
-    sha256 "decfe8fd1c593c8b202c99a4dc3dc21e25adf39c9cb1e8de792c7801cef66d67" => :sierra
-    sha256 "59597f646d332373e951a7b1ff6ebd4b88898016555494f27e5f195a1bed16d2" => :el_capitan
+    sha256 "ac5455ed23e8e62db7ab5c96786ae21060f01074256f5d785a0f0d5dd6a9e1c6" => :mojave
+    sha256 "dceca36893073a2f24f4f256d4ff98ea4b80eb44de89a706c70c69c15d5c7bae" => :high_sierra
+    sha256 "b6dbce55089f4c5405272a163b98f981be44076514de098c65a1a074024d81e3" => :sierra
   end
 
   head do
     url "https://github.com/jedisct1/libsodium.git"
 
-    depends_on "libtool" => :build
     depends_on "autoconf" => :build
     depends_on "automake" => :build
+    depends_on "libtool" => :build
   end
 
   def install

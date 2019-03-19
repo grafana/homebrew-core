@@ -1,16 +1,17 @@
 class Mujs < Formula
   desc "Embeddable Javascript interpreter"
-  homepage "http://dev.mujs.com/"
-  url "https://github.com/ccxvii/mujs/archive/1.0.1.tar.gz"
-  sha256 "04cb21cb83039a9cb8c12c103a9a81a2c85e4d71de5e16665f69edef6a414e4d"
+  homepage "https://www.mujs.com/"
+  # use tag not tarball so the version in the pkg-config file isn't blank
+  url "https://github.com/ccxvii/mujs.git",
+      :tag      => "1.0.5",
+      :revision => "7448a82448aa4eff952a4fdb836f197b844e3d1d"
   head "https://github.com/ccxvii/mujs.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "09f68847e706681c7a0cd68eefd22e414b865d08adc048488ef3fde18efc3e19" => :high_sierra
-    sha256 "dc90be76e788a0562d3b6802867fdc87fa8f31b6c2d36ccacaeca92930b09a9c" => :sierra
-    sha256 "c244f1fe33371356d48794e6e82b920488cc9655a79b35f301c8e71254c6dbed" => :el_capitan
-    sha256 "f6a202784d9e03a4ac7c255fa6f60cded4119cef179ded5832d81b8efea202e0" => :yosemite
+    sha256 "d38cb53752b8e8340c8174222a8846f6bcd26b6a2bafd8e765033d514ffeec50" => :mojave
+    sha256 "7cf5ff307f83717e15e58e3e8a523291c9b98246410f92aa2cd538665030bd06" => :high_sierra
+    sha256 "debcd9dfd3b231be5315035d851bbfa9ca4e7912cbc020a2a972ee30037f3582" => :sierra
   end
 
   def install
@@ -19,7 +20,7 @@ class Mujs < Formula
   end
 
   test do
-    (testpath/"test.js").write <<-EOS
+    (testpath/"test.js").write <<~EOS
       print('hello, world'.split().reduce(function (sum, char) {
         return sum + char.charCodeAt(0);
       }, 0));

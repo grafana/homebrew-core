@@ -1,18 +1,19 @@
 class GlibNetworking < Formula
   desc "Network related modules for glib"
   homepage "https://launchpad.net/glib-networking"
-  url "https://download.gnome.org/sources/glib-networking/2.54/glib-networking-2.54.1.tar.xz"
-  sha256 "eaa787b653015a0de31c928e9a17eb57b4ce23c8cf6f277afaec0d685335012f"
+  url "https://download.gnome.org/sources/glib-networking/2.60/glib-networking-2.60.0.1.tar.xz"
+  sha256 "674e8b062c0639c274848d40b8308f8fb2ecd8b82e7eb6fe805d1aca7deb983c"
 
   bottle do
-    sha256 "656488bcc70e2347d705dfc32ef38952088c8d7a2279766e139c19485c5d87aa" => :high_sierra
-    sha256 "7afca55538868826fd196e670de31a16740efb44490f1633c57d49ac1ac3c7c3" => :sierra
-    sha256 "4ef4b72f13a2f5c83e63c7594b2a643ca93f5f141b90554a70bc7f8532af5070" => :el_capitan
+    sha256 "8ebdb6d98c8b33fcc65be98775c8427c78946e409f6744ae8732f9aea36e1951" => :mojave
+    sha256 "3ac98032519cb7a9f8362a600bd5354aff890f5efe307a4f59a1b22640f3526b" => :high_sierra
+    sha256 "c5e903fa68084991448ac8f1ed7a214d83c2d987cfa68709b5b7592c1939372b" => :sierra
   end
 
+  depends_on "meson" => :build
+  depends_on "ninja" => :build
   depends_on "pkg-config" => :build
-  depends_on "intltool" => :build
-  depends_on "gettext"
+  depends_on "python" => :build
   depends_on "glib"
   depends_on "gnutls"
   depends_on "gsettings-desktop-schemas"
@@ -20,20 +21,18 @@ class GlibNetworking < Formula
   link_overwrite "lib/gio/modules"
 
   def install
-    # Install files to `lib` instead of `HOMEBREW_PREFIX/lib`.
-    inreplace "configure", "$($PKG_CONFIG --variable giomoduledir gio-2.0)", lib/"gio/modules"
-    system "./configure", "--disable-dependency-tracking",
-                          "--disable-silent-rules",
-                          "--prefix=#{prefix}",
-                          "--with-ca-certificates=#{etc}/openssl/cert.pem",
-                          # Remove when p11-kit >= 0.20.7 builds on OSX
-                          # see https://github.com/Homebrew/homebrew/issues/36323
-                          # and https://bugs.freedesktop.org/show_bug.cgi?id=91602
-                          "--without-pkcs11"
-    system "make", "install"
+    # stop meson_post_install.py from doing what needs to be done in the post_install step
+    ENV["DESTDIR"] = "/"
 
-    # Delete the cache, will regenerate it in post_install
-    rm lib/"gio/modules/giomodule.cache"
+    mkdir "build" do
+      system "meson", "--prefix=#{prefix}",
+                      "-Dlibproxy=disabled",
+                      "-Dopenssl=disabled",
+                      "-Dgnome_proxy=disabled",
+                      ".."
+      system "ninja", "-v"
+      system "ninja", "install", "-v"
+    end
   end
 
   def post_install

@@ -1,34 +1,21 @@
 class Gearman < Formula
   desc "Application framework to farm out work to other machines or processes"
   homepage "http://gearman.org/"
-  url "https://github.com/gearman/gearmand/releases/download/1.1.17/gearmand-1.1.17.tar.gz"
-  sha256 "f9fa59d60c0ad03b449942c6fe24abe09456056852fae89a05052fa25c113c0f"
+  url "https://github.com/gearman/gearmand/releases/download/1.1.18/gearmand-1.1.18.tar.gz"
+  sha256 "d789fa24996075a64c5af5fd2adef10b13f77d71f7d44edd68db482b349c962c"
+  revision 1
 
   bottle do
-    sha256 "91bbdfb493befa2b4f45c68b43182dc2df36af5a72b0c28e4dd97adcdc9eb3ed" => :high_sierra
-    sha256 "529a37d7f9648ed0371529bab74b12173ca3ead3c9d6bd4e193f2097c0a9fe83" => :sierra
-    sha256 "8f70079e03761e0711231a5ca77f450e490bfeb4e668e4be9c8ce6de2ef52fee" => :el_capitan
-    sha256 "12616febecef3a1a5951296bf3f7efa30637688318713969c74931b95f01313f" => :yosemite
+    cellar :any
+    sha256 "a29334389cd7ca1245ee0a914959bd3472ae3562b2e4b2f92e44f0ec70d02022" => :mojave
+    sha256 "1d069b8eca915e388207d735c45f143b139f801eedd302b6c690d1f8e4aaee30" => :sierra
   end
-
-  option "with-mysql", "Compile with MySQL persistent queue enabled"
-  option "with-postgresql", "Compile with Postgresql persistent queue enabled"
-
-  # https://github.com/Homebrew/homebrew/issues/33246
-  patch :DATA
 
   depends_on "pkg-config" => :build
   depends_on "sphinx-doc" => :build
   depends_on "boost"
   depends_on "libevent"
-  depends_on "libpqxx" if build.with? "postgresql"
-  depends_on :mysql => :optional
-  depends_on :postgresql => :optional
-  depends_on "hiredis" => :optional
-  depends_on "libmemcached" => :optional
-  depends_on "openssl" => :optional
-  depends_on "wolfssl" => :optional
-  depends_on "tokyo-cabinet" => :optional
+  depends_on "libmemcached"
 
   def install
     # Work around "error: no member named 'signbit' in the global namespace"
@@ -38,43 +25,28 @@ class Gearman < Formula
     # https://bugs.launchpad.net/gearmand/+bug/1368926
     Dir["tests/**/*.cc", "libtest/main.cc"].each do |test_file|
       next unless /std::unique_ptr/ =~ File.read(test_file)
+
       inreplace test_file, "std::unique_ptr", "std::auto_ptr"
     end
 
-    args = [
-      "--prefix=#{prefix}",
-      "--localstatedir=#{var}",
-      "--disable-silent-rules",
-      "--disable-dependency-tracking",
-      "--disable-libdrizzle",
-      "--with-boost=#{Formula["boost"].opt_prefix}",
-      "--with-sqlite3",
+    args = %W[
+      --prefix=#{prefix}
+      --localstatedir=#{var}
+      --disable-silent-rules
+      --disable-dependency-tracking
+      --disable-cyassl
+      --disable-hiredis
+      --disable-libdrizzle
+      --disable-libpq
+      --disable-libtokyocabinet
+      --disable-ssl
+      --enable-libmemcached
+      --with-boost=#{Formula["boost"].opt_prefix}
+      --with-memcached=#{Formula["memcached"].opt_bin}/memcached
+      --with-sqlite3
+      --without-mysql
+      --without-postgresql
     ]
-
-    if build.with? "cyassl"
-      args << "--enable-ssl" << "--enable-cyassl"
-    elsif build.with? "openssl"
-      args << "--enable-ssl" << "--with-openssl=#{Formula["openssl"].opt_prefix}" << "--disable-cyassl"
-    else
-      args << "--disable-ssl" << "--disable-cyassl"
-    end
-
-    if build.with? "postgresql"
-      args << "--enable-libpq" << "--with-postgresql=#{Formula["postgresql"].opt_bin}/pg_config"
-    else
-      args << "--disable-libpq" << "--without-postgresql"
-    end
-
-    if build.with? "libmemcached"
-      args << "--enable-libmemcached" << "--with-memcached=#{Formula["memcached"].opt_bin}/memcached"
-    else
-      args << "--disable-libmemcached" << "--without-memcached"
-    end
-
-    args << "--disable-libtokyocabinet" if build.without? "tokyo-cabinet"
-
-    args << (build.with?("mysql") ? "--with-mysql=#{Formula["mysql"].opt_bin}/mysql_config" : "--without-mysql")
-    args << (build.with?("hiredis") ? "--enable-hiredis" : "--disable-hiredis")
 
     ENV.append_to_cflags "-DHAVE_HTONLL"
 
@@ -99,31 +71,10 @@ class Gearman < Formula
         <true/>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do
     assert_match /gearman\s*Error in usage/, shell_output("#{bin}/gearman --version 2>&1", 1)
   end
 end
-
-__END__
-diff --git a/libgearman/byteorder.cc b/libgearman/byteorder.cc
-index 674fed9..b2e2182 100644
---- a/libgearman/byteorder.cc
-+++ b/libgearman/byteorder.cc
-@@ -65,6 +65,8 @@ static inline uint64_t swap64(uint64_t in)
- }
- #endif
- 
-+#ifndef HAVE_HTONLL
-+
- uint64_t ntohll(uint64_t value)
- {
-   return swap64(value);
-@@ -74,3 +76,5 @@ uint64_t htonll(uint64_t value)
- {
-   return swap64(value);
- }
-+
-+#endif

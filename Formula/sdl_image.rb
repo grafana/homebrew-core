@@ -7,6 +7,7 @@ class SdlImage < Formula
 
   bottle do
     cellar :any
+    sha256 "eb27003d54259c16f08795435e2afc34086598e7f1d1f1ae4c2fe5a70a6bf57d" => :mojave
     sha256 "eeb44401862df80a1d1f77dde4164b265d82993458325e753285566b56477695" => :high_sierra
     sha256 "d74d6e853e78b65a7e7f266be6733bdb5839f956bcb19061b68a46c16e080a94" => :sierra
     sha256 "4304e6b83a7afa176a0462e8ba20485bc098731a16bd375261f9f449a8f8f7d3" => :el_capitan
@@ -14,11 +15,11 @@ class SdlImage < Formula
   end
 
   depends_on "pkg-config" => :build
+  depends_on "jpeg"
+  depends_on "libpng"
+  depends_on "libtiff"
   depends_on "sdl"
-  depends_on "jpeg" => :recommended
-  depends_on "libpng" => :recommended
-  depends_on "libtiff" => :recommended
-  depends_on "webp" => :recommended
+  depends_on "webp"
 
   # Fix graphical glitching
   # https://github.com/Homebrew/homebrew-python/issues/281
@@ -31,19 +32,14 @@ class SdlImage < Formula
   def install
     inreplace "SDL_image.pc.in", "@prefix@", HOMEBREW_PREFIX
 
-    args = %W[
-      --prefix=#{prefix}
-      --disable-dependency-tracking
-      --disable-imageio
-      --disable-sdltest
-    ]
-
-    args << "--disable-png-shared" if build.with? "libpng"
-    args << "--disable-jpg-shared" if build.with? "jpeg"
-    args << "--disable-tif-shared" if build.with? "libtiff"
-    args << "--disable-webp-shared" if build.with? "webp"
-
-    system "./configure", *args
+    system "./configure", "--prefix=#{prefix}",
+                          "--disable-dependency-tracking",
+                          "--disable-imageio",
+                          "--disable-jpg-shared",
+                          "--disable-png-shared",
+                          "--disable-sdltest",
+                          "--disable-tif-shared",
+                          "--disable-webp-shared"
     system "make", "install"
   end
 end

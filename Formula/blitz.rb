@@ -6,11 +6,10 @@ class Blitz < Formula
 
   bottle do
     cellar :any
-    sha256 "4c1910cab6c8b254aa71326a1504935c023258cf8e0c9724cfba0989d1f8a1ee" => :high_sierra
-    sha256 "93ec8092122febb4110ce1da374ee5272c6270b7e83fe5da29da4e7f1f1fea6f" => :sierra
-    sha256 "dda71ed3f79b926b50f988a931794674908884a411c19b2899ab2a0996a8b71a" => :el_capitan
-    sha256 "eabd24b7c07c2f99b181770faacd72bab5c55149fb3d9fb846b2baaaa4faede5" => :yosemite
-    sha256 "4baf2939ff5cbe7e0e83944ed8984da49573eafedf826761b4c4fecd954e2592" => :mavericks
+    rebuild 1
+    sha256 "1d88c433d1c5dc863d670358624cc3d733f042cdb052848c673d5eafa8a6dc33" => :mojave
+    sha256 "1fbcdb2453e10ef03721f965050244519743a6161dfc581bda663597ecf44595" => :high_sierra
+    sha256 "b676b24071752779faadf53d71b53b0c632b8ba62d1cd7c1f90d40ee5b13a85b" => :sierra
   end
 
   head do
@@ -32,5 +31,22 @@ class Blitz < Formula
                           "--disable-dot",
                           "--prefix=#{prefix}"
     system "make", "install"
+  end
+
+  test do
+    (testpath/"testfile.cpp").write <<~EOS
+      #include <blitz/array.h>
+      #include <cstdlib>
+      using namespace blitz;
+      int main(){
+        Array<float,2> A(3,1);
+        A = 17, 2, 97;
+        cout << "A = " << A << endl;
+        return 0;}
+    EOS
+    system ENV.cxx, "testfile.cpp", "-o", "testfile"
+    output = shell_output("./testfile")
+    var = "/A\ =\ \(0,2\)\ x\ \(0,0\)\n\[\ 17\ \n\ \ 2\ \n\ \ 97\ \]\n\n/"
+    assert_match output, var
   end
 end

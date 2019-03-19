@@ -6,15 +6,13 @@ class Pmdmini < Formula
 
   bottle do
     cellar :any
+    sha256 "fe87429ee546fa0629d178c52476c4cc5696abac76b21abcd3e4977c7527bd22" => :mojave
     sha256 "c3195012d5b5333e76c1a8a44b3f734575540deee884dfb6685e139e1038c138" => :high_sierra
     sha256 "59b287650c6e40c20da8000f5e73b910f8096bd949e4432b4f11e70b1c779a5d" => :sierra
     sha256 "72afd84c66fef9f142a1922fd0995a6a173b46c40d06715808345cc1c71b6702" => :el_capitan
   end
 
-  option "with-lib-only", "Do not build commandline player"
-  deprecated_option "lib-only" => "with-lib-only"
-
-  depends_on "sdl" if build.without? "lib-only"
+  depends_on "sdl"
 
   resource "test_song" do
     url "https://ftp.modland.com/pub/modules/PMD/Shiori%20Ueno/His%20Name%20Is%20Diamond/dd06.m"
@@ -24,16 +22,12 @@ class Pmdmini < Formula
   def install
     # Specify Homebrew's cc
     inreplace "mak/general.mak", "gcc", ENV.cc
-    if build.with? "lib-only"
-      system "make", "-f", "Makefile.lib"
-    else
-      system "make"
-    end
+    system "make"
 
     # Makefile doesn't build a dylib
     system "#{ENV.cc} -dynamiclib -install_name #{lib}/libpmdmini.dylib -o libpmdmini.dylib -undefined dynamic_lookup obj/*.o"
 
-    bin.install "pmdplay" if build.without? "lib-only"
+    bin.install "pmdplay"
     lib.install "libpmdmini.a", "libpmdmini.dylib"
     (include+"libpmdmini").install Dir["src/*.h"]
     (include+"libpmdmini/pmdwin").install Dir["src/pmdwin/*.h"]

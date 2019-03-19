@@ -2,105 +2,90 @@ class AnsibleLint < Formula
   include Language::Python::Virtualenv
 
   desc "Checks ansible playbooks for practices and behaviour"
-  homepage "https://github.com/willthames/ansible-lint/"
-  url "https://files.pythonhosted.org/packages/6b/51/52596a541dbda4ef137357933a48ef0c5c4e67237dc804b6bc3a278113f8/ansible-lint-3.4.17.tar.gz"
-  sha256 "9cebc110019f52a7dd66cb785d99d43b556f246c3046661b00c7bcfe74a9504d"
+  homepage "https://github.com/ansible/ansible-lint/"
+  url "https://files.pythonhosted.org/packages/e6/16/31f3244635b37474bbff4ac88afc916cfc24baf44766f8bcc8deeede187c/ansible-lint-4.1.0.tar.gz"
+  sha256 "9430ea6e654ba4bf5b9c6921efc040f46cda9c4fd2896a99ff71d21037bcb123"
 
   bottle do
     cellar :any
-    sha256 "78321748a1ebbdcff6c745640151487ce6596f96dd9c303521dafd9051013b19" => :high_sierra
-    sha256 "3eebb118d6f62674b1266c9e3e09d7737829e82b3dc94f4e4dfbf618948d1d21" => :sierra
-    sha256 "10dc62cbf53acef2c02add9d8cb6337ba32646195af26a0599ee13c0a70c295c" => :el_capitan
+    sha256 "dce161a12378bc4547475713949d944db73205d09a92c872a287f2c2ebde8c2a" => :mojave
+    sha256 "535f98f3d0893a7b90f1c2d162044e50ab622816c25fd8302dc980d04d593938" => :high_sierra
+    sha256 "b7ab3ba6c038900a46ad6698e65984e855a9d5b824e916e2c7df36f4d60276f8" => :sierra
   end
 
   depends_on "pkg-config" => :build
-  depends_on :python
   depends_on "libyaml"
-  depends_on "openssl@1.1"
+  depends_on "openssl"
+  depends_on "python"
 
   resource "ansible" do
-    url "https://files.pythonhosted.org/packages/1e/7c/385ccbeb0fbefc13eaef53df76e42ef778170bdfe5fd425879735b43106e/ansible-2.4.0.0.tar.gz"
-    sha256 "1a276fee7f72d4e6601a7994879e8467edb763dacc3e215258cfe71350b77c76"
+    url "https://files.pythonhosted.org/packages/d7/a8/79d370ba93fb62d0dcbf672c3dedaba62d6276840f4bbe161546bdf02f5b/ansible-2.7.7.tar.gz"
+    sha256 "040cc936f959b947800ffaa5f940d2508aaa41f899efe56b47a7442c89689150"
   end
 
   resource "asn1crypto" do
-    url "https://files.pythonhosted.org/packages/31/53/8bca924b30cb79d6d70dbab6a99e8731d1e4dd3b090b7f3d8412a8d8ffbc/asn1crypto-0.23.0.tar.gz"
-    sha256 "0874981329cfebb366d6584c3d16e913f2a0eb026c9463efcc4aaf42a9d94d70"
+    url "https://files.pythonhosted.org/packages/fc/f1/8db7daa71f414ddabfa056c4ef792e1461ff655c2ae2928a2b675bfed6b4/asn1crypto-0.24.0.tar.gz"
+    sha256 "9d5c20441baf0cb60a4ac34cc447c6c189024b6b4c6cd7877034f4965c464e49"
   end
 
   resource "bcrypt" do
-    url "https://files.pythonhosted.org/packages/f3/ec/bb6b384b5134fd881b91b6aa3a88ccddaad0103857760711a5ab8c799358/bcrypt-3.1.4.tar.gz"
-    sha256 "67ed1a374c9155ec0840214ce804616de49c3df9c5bc66740687c1c9b1cd9e8d"
+    url "https://files.pythonhosted.org/packages/ce/3a/3d540b9f5ee8d92ce757eebacf167b9deedb8e30aedec69a2a072b2399bb/bcrypt-3.1.6.tar.gz"
+    sha256 "44636759d222baa62806bbceb20e96f75a015a6381690d1bc2eda91c01ec02ea"
   end
 
   resource "cffi" do
-    url "https://files.pythonhosted.org/packages/c9/70/89b68b6600d479034276fed316e14b9107d50a62f5627da37fafe083fde3/cffi-1.11.2.tar.gz"
-    sha256 "ab87dd91c0c4073758d07334c1e5f712ce8fe48f007b86f8238773963ee700a6"
+    url "https://files.pythonhosted.org/packages/10/fe/b6362c613a70ac29cf7cac36307d85f08ebe4a96d9d54b895b10a807e39b/cffi-1.12.0.tar.gz"
+    sha256 "08090454ff236239e583a9119d0502a6b9817594c0a3714dd1d8593f2350ba11"
   end
 
   resource "cryptography" do
-    url "https://files.pythonhosted.org/packages/bf/da/6a9f49cc7a970380c8235b3adab0c08c7c3d4814876f7383b33e3882a577/cryptography-2.1.1.tar.gz"
-    sha256 "2699ed21e1f73dd1bdb7b0b22a517295de07809d535b23e200dd22166037fe6f"
-  end
-
-  resource "enum34" do
-    url "https://files.pythonhosted.org/packages/bf/3e/31d502c25302814a7c2f1d3959d2a3b3f78e509002ba91aea64993936876/enum34-1.1.6.tar.gz"
-    sha256 "8ad8c4783bf61ded74527bffb48ed9b54166685e4230386a9ed9b1279e2df5b1"
-  end
-
-  resource "idna" do
-    url "https://files.pythonhosted.org/packages/f4/bd/0467d62790828c23c47fc1dfa1b1f052b24efdf5290f071c7a91d0d82fd3/idna-2.6.tar.gz"
-    sha256 "2c6a5de3089009e3da7c5dde64a141dbc8551d5b7f6cf4ed7c2568d0cc520a8f"
-  end
-
-  resource "ipaddress" do
-    url "https://files.pythonhosted.org/packages/4e/13/774faf38b445d0b3a844b65747175b2e0500164b7c28d78e34987a5bfe06/ipaddress-1.0.18.tar.gz"
-    sha256 "5d8534c8e185f2d8a1fda1ef73f2c8f4b23264e8e30063feeb9511d492a413e1"
+    url "https://files.pythonhosted.org/packages/69/ed/5e97b7f54237a9e4e6291b6e52173372b7fa45ca730d36ea90b790c0059a/cryptography-2.5.tar.gz"
+    sha256 "4946b67235b9d2ea7d31307be9d5ad5959d6c4a8f98f900157b47abddf698401"
   end
 
   resource "Jinja2" do
-    url "https://files.pythonhosted.org/packages/90/61/f820ff0076a2599dd39406dcb858ecb239438c02ce706c8e91131ab9c7f1/Jinja2-2.9.6.tar.gz"
-    sha256 "ddaa01a212cd6d641401cb01b605f4a4d9f37bfc93043d7f760ec70fb99ff9ff"
+    url "https://files.pythonhosted.org/packages/56/e6/332789f295cf22308386cf5bbd1f4e00ed11484299c5d7383378cf48ba47/Jinja2-2.10.tar.gz"
+    sha256 "f84be1bb0040caca4cea721fcbbbbd61f9be9464ca236387158b0feea01914a4"
   end
 
   resource "MarkupSafe" do
-    url "https://files.pythonhosted.org/packages/4d/de/32d741db316d8fdb7680822dd37001ef7a448255de9699ab4bfcbdf4172b/MarkupSafe-1.0.tar.gz"
-    sha256 "a6be69091dac236ea9c6bc7d012beab42010fa914c459791d627dad4910eb665"
+    url "https://files.pythonhosted.org/packages/ac/7e/1b4c2e05809a4414ebce0892fe1e32c14ace86ca7d50c70f00979ca9b3a3/MarkupSafe-1.1.0.tar.gz"
+    sha256 "4e97332c9ce444b0c2c38dd22ddc61c743eb208d916e4265a2a3b575bdccb1d3"
   end
 
   resource "paramiko" do
-    url "https://files.pythonhosted.org/packages/83/78/4569a543ef2cb304e9b82387f555021c13a845d0ad1e2bb59272ade67669/paramiko-2.3.1.tar.gz"
-    sha256 "fa6b4f5c9d88f27c60fd9578146ff24e99d4b9f63391ff1343305bfd766c4660"
+    url "https://files.pythonhosted.org/packages/a4/57/86681372e7a8d642718cadeef38ead1c24c4a1af21ae852642bf974e37c7/paramiko-2.4.2.tar.gz"
+    sha256 "a8975a7df3560c9f1e2b43dc54ebd40fd00a7017392ca5445ce7df409f900fcb"
   end
 
   resource "pyasn1" do
-    url "https://files.pythonhosted.org/packages/3c/a6/4d6c88aa1694a06f6671362cb3d0350f0d856edea4685c300785200d1cd9/pyasn1-0.3.7.tar.gz"
-    sha256 "187f2a66d617683f8e82d5c00033b7c8a0287e1da88a9d577aebec321cad4965"
+    url "https://files.pythonhosted.org/packages/46/60/b7e32f6ff481b8a1f6c8f02b0fd9b693d1c92ddd2efb038ec050d99a7245/pyasn1-0.4.5.tar.gz"
+    sha256 "da2420fe13a9452d8ae97a0e478adde1dee153b11ba832a95b223a2ba01c10f7"
   end
 
   resource "pycparser" do
-    url "https://files.pythonhosted.org/packages/8c/2d/aad7f16146f4197a11f8e91fb81df177adcc2073d36a17b1491fd09df6ed/pycparser-2.18.tar.gz"
-    sha256 "99a8ca03e29851d96616ad0404b4aad7d9ee16f25c9f9708a11faf2810f7b226"
-  end
-
-  resource "pycrypto" do
-    url "https://files.pythonhosted.org/packages/60/db/645aa9af249f059cc3a368b118de33889219e0362141e75d4eaf6f80f163/pycrypto-2.6.1.tar.gz"
-    sha256 "f2ce1e989b272cfcb677616763e0a2e7ec659effa67a88aa92b3a65528f60a3c"
+    url "https://files.pythonhosted.org/packages/68/9e/49196946aee219aead1290e00d1e7fdeab8567783e83e1b9ab5585e6206a/pycparser-2.19.tar.gz"
+    sha256 "a988718abfad80b6b157acce7bf130a30876d27603738ac39f140993246b25b3"
   end
 
   resource "PyNaCl" do
-    url "https://files.pythonhosted.org/packages/8d/f3/02605b056e465bf162508c4d1635a2bccd9abd1ee3ed2a1bb4e9676eac33/PyNaCl-1.1.2.tar.gz"
-    sha256 "32f52b754abf07c319c04ce16905109cab44b0e7f7c79497431d3b2000f8af8c"
+    url "https://files.pythonhosted.org/packages/61/ab/2ac6dea8489fa713e2b4c6c5b549cc962dd4a842b5998d9e80cf8440b7cd/PyNaCl-1.3.0.tar.gz"
+    sha256 "0c6100edd16fefd1557da078c7a31e7b7d7a52ce39fdca2bec29d4f7b6e7600c"
   end
 
   resource "PyYAML" do
-    url "https://files.pythonhosted.org/packages/4a/85/db5a2df477072b2902b0eb892feb37d88ac635d36245a72a6a69b23b383a/PyYAML-3.12.tar.gz"
-    sha256 "592766c6303207a20efc445587778322d7f73b161bd994f227adaa341ba212ab"
+    url "https://files.pythonhosted.org/packages/9e/a3/1d13970c3f36777c583f136c136f804d70f500168edc1edea6daa7200769/PyYAML-3.13.tar.gz"
+    sha256 "3ef3092145e9b70e3ddd2c7ad59bdd0252a94dfe3949721633e41344de00a6bf"
+  end
+
+  resource "ruamel.yaml" do
+    url "https://files.pythonhosted.org/packages/83/78/cd935d417da1e02e80c43c5bdfcd9729caf299acd60d32a92c1b53ac363a/ruamel.yaml-0.15.88.tar.gz"
+    sha256 "ac56193c47a31c9efa151064a9e921865cdad0f7a991d229e7197e12fe8e0cd7"
   end
 
   resource "six" do
-    url "https://files.pythonhosted.org/packages/16/d8/bc6316cf98419719bd59c91742194c111b6f2e85abac88e496adefaf7afe/six-1.11.0.tar.gz"
-    sha256 "70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9"
+    url "https://files.pythonhosted.org/packages/dd/bf/4138e7bfb757de47d1f4b6994648ec67a51efe58fa907c1e11e350cddfca/six-1.12.0.tar.gz"
+    sha256 "d16a0141ec1a18405cd4ce8b4613101da75da0e9a7aec5bdd4fa804d0e0eba73"
   end
 
   def install

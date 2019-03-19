@@ -1,28 +1,30 @@
 class Liquigraph < Formula
   desc "Migration runner for Neo4j"
-  homepage "http://www.liquigraph.org"
-  url "https://github.com/fbiville/liquigraph/archive/liquigraph-3.0.1.tar.gz"
-  sha256 "7a57093f1a1229ada017a8e9fb1cbffa8ffc0dd132032e4670ef246a861707fe"
-  head "https://github.com/fbiville/liquigraph.git"
+  homepage "https://www.liquigraph.org/"
+  url "https://github.com/liquigraph/liquigraph/archive/liquigraph-3.1.0.tar.gz"
+  sha256 "29dc9bed753bfec62e7d1e187e32783bea22f635800dc68464afe31db196d40d"
+  head "https://github.com/liquigraph/liquigraph.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "1149b6d58e0cd42ba4fb226cd2faf9bef01c847c28307d25d379841a06a24d9c" => :high_sierra
-    sha256 "ee6482ffed0bc44bde7872809206eb94a7d2be36bf16458c3d25d699e82637ea" => :sierra
-    sha256 "b9977e94e803b3c9b5686e3a77707c3658142b78d7389c653117c88aa4afb560" => :el_capitan
-    sha256 "1414e187544b115f58805ecbb4ad4beb84f9620ef9b29c104c5ab2577b1de6e5" => :yosemite
+    sha256 "8771736f1e57e4a404f62ec913d8aacfac1289392f0ce79ff69638a60185d206" => :mojave
+    sha256 "abac80d37f57ce38e1c1a69aca6abb36f3807d617d65a90652acb03653c86a42" => :high_sierra
+    sha256 "75d8c7d977c82722bc7efd258012baa4d120c5b8f7033834c1a89d9a7d595cde" => :sierra
+    sha256 "fbd19556ca00346b211e78afb56bfcee4c6a530234bebc02dce7e4d40fed2b2f" => :el_capitan
   end
 
   depends_on "maven" => :build
-  depends_on :java => "1.8+"
+  depends_on :java => "1.8"
 
   def install
-    system "mvn", "-q", "clean", "package", "-DskipTests"
+    cmd = Language::Java.java_home_cmd("1.8")
+    ENV["JAVA_HOME"] = Utils.popen_read(cmd).chomp
+    system "mvn", "-B", "-q", "-am", "-pl", "liquigraph-cli", "clean", "package", "-DskipTests"
     (buildpath/"binaries").mkpath
     system "tar", "xzf", "liquigraph-cli/target/liquigraph-cli-bin.tar.gz", "-C", "binaries"
-    libexec.install "binaries/liquigraph-cli/liquigraph.sh" => "liquigraph"
+    libexec.install "binaries/liquigraph-cli/liquigraph.sh"
     libexec.install "binaries/liquigraph-cli/liquigraph-cli.jar"
-    bin.install_symlink libexec/"liquigraph"
+    (bin/"liquigraph").write_env_script libexec/"liquigraph.sh", Language::Java.java_home_env("1.8")
   end
 
   test do

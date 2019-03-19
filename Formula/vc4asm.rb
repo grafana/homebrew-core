@@ -6,13 +6,12 @@ class Vc4asm < Formula
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "fc0a060875dd9233a3675b034055b1ae23d8775701529024b91f184a7e97521e" => :mojave
     sha256 "db9bbf5ee3cb47a0f3ffa1d9bf355205873237e9f2dbd26777546935401ef4b0" => :high_sierra
     sha256 "2547c982e3fde40316d01d802bd01bf49af208e6737ecafeaeb8ad988ea3255d" => :sierra
     sha256 "72d54a4237c4e0f952fd1a3d913725d84814ed5b657affa1d6dcafa19e1cdc44" => :el_capitan
     sha256 "871b3b109ac49b09056f83e4488105196060d2388dc5052c679776b43fab5927" => :yosemite
   end
-
-  needs :cxx11
 
   # Fixes "ar: illegal option combination for -r"
   # Reported 13 Apr 2017 https://github.com/maazl/vc4asm/issues/18

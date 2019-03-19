@@ -1,16 +1,15 @@
 class Flatbuffers < Formula
   desc "Serialization library for C++, supporting Java, C#, and Go"
   homepage "https://google.github.io/flatbuffers"
-  url "https://github.com/google/flatbuffers/archive/v1.7.1.tar.gz"
-  sha256 "0f8dcdcfbbaba034756f97e4f9946a3784399b578f1b60c8deee3c85fafa3089"
+  url "https://github.com/google/flatbuffers/archive/v1.10.0.tar.gz"
+  sha256 "3714e3db8c51e43028e10ad7adffb9a36fc4aa5b1a363c2d0c4303dd1be59a7c"
   head "https://github.com/google/flatbuffers.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "ea96a72c88b9a1ba2f7725fe3ff7884e4b5a5c4415126f468c586a2535cafd37" => :high_sierra
-    sha256 "4bc2305d3d22aa17889d7b41fe1a3495590931492876afb2098371c8a9d7d70c" => :sierra
-    sha256 "4d5144e5c88a4d2fefde69bfcdf013f9ee3894a7dbb8805bdf20f491dac76c5d" => :el_capitan
-    sha256 "0f2b611a3a061dd955f7d842ad4a8c72b13e44664c7afc19b82c76ddcbb0d0be" => :yosemite
+    sha256 "bc51298d7bcf8e3787a3b67f92573571a06e5d54c11ae9551c4c2dcaf6143a3b" => :mojave
+    sha256 "e5605a8aad6a90cec130a9c80b4c1ab9128175bbeafe9c7bf47e2a47967fc0c0" => :high_sierra
+    sha256 "6bcfce8e2e75744a7599eb3cd9ed3773b5790db8d5b605c4672747e891e8fa3c" => :sierra
   end
 
   depends_on "cmake" => :build
@@ -48,7 +47,7 @@ class Flatbuffers < Formula
 
       root_type Monster;
 
-      EOS
+    EOS
     end
     (testpath/"test.fbs").write(testfbs)
 
@@ -62,7 +61,7 @@ class Flatbuffers < Formula
         hp: 80,
         name: "MyMonster"
       }
-      EOS
+    EOS
     end
     (testpath/"test.json").write(testjson)
 

@@ -1,24 +1,20 @@
 class Pangomm < Formula
   desc "C++ interface to Pango"
-  homepage "http://www.pango.org/"
-  url "https://download.gnome.org/sources/pangomm/2.40/pangomm-2.40.1.tar.xz"
-  sha256 "9762ee2a2d5781be6797448d4dd2383ce14907159b30bc12bf6b08e7227be3af"
+  homepage "https://www.pango.org/"
+  url "https://download.gnome.org/sources/pangomm/2.42/pangomm-2.42.0.tar.xz"
+  sha256 "ca6da067ff93a6445780c0b4b226eb84f484ab104b8391fb744a45cbc7edbf56"
 
   bottle do
     cellar :any
-    sha256 "f1270ae7605b8f1a679770b37c63daeb7d8d14cdb5d1af09c6d67e83484256c2" => :high_sierra
-    sha256 "0f5fe35f77d9ab084cdb0ecba758a61771ec33650de30e3c57ddf56af240cabf" => :sierra
-    sha256 "7565443483138210e191d3fe044c04d55755057b4c3d53187baf2857c966f0a5" => :el_capitan
-    sha256 "09d9b38d15273c02968cb4330159c8cfa0b9e06701f69b7495c12f64f7f370b8" => :yosemite
-    sha256 "1d2a6f8d96059a189be9d39e6d20fd5a8a7a14293cc64c71eab506522ff5c1e5" => :mavericks
+    sha256 "c008d458e22ce9f9cfaf4ecb05fa240885a8fbc43d40baa70a3acb66de81627e" => :mojave
+    sha256 "6b25f12f26122818dd7888de85efabe0fc5362e97e6ebd487a735d5011ca8bd5" => :high_sierra
+    sha256 "2e6c6e412d53446ed21018a68eca0ea227d16c5954c74f564b4f430fdc519ebd" => :sierra
   end
 
   depends_on "pkg-config" => :build
-  depends_on "glibmm"
   depends_on "cairomm"
+  depends_on "glibmm"
   depends_on "pango"
-
-  needs :cxx11
 
   def install
     ENV.cxx11

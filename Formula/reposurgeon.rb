@@ -2,38 +2,26 @@ class Reposurgeon < Formula
   desc "Edit version-control repository history"
   homepage "http://www.catb.org/esr/reposurgeon/"
   url "https://gitlab.com/esr/reposurgeon.git",
-      :tag => "3.42",
-      :revision => "885502d6c8bebd4efcf680babb28d7bc4e464a2f"
+      :tag      => "3.44",
+      :revision => "f37fa1aa8e3235bb4c64cbcd9e85a6907b4dea50"
   head "https://gitlab.com/esr/reposurgeon.git"
 
   bottle do
     cellar :any_skip_relocation
-    rebuild 1
-    sha256 "bd78fba0b4fc9a47fb10e089b9775c45e9d65bbe9cfbeb1eb975f9a8181c13ce" => :high_sierra
-    sha256 "c854e5ad35c59bd1c717f8f232f7e581b2423d80836541156255f44f0de6aecb" => :sierra
-    sha256 "38730f4bde6958779efb2f19096f45579920d18e926eedc9adc55311d9b05efa" => :el_capitan
-    sha256 "0aaefd3b688bdcfda7a3b53c485c97d5a7bcd50138dd84b9626da15aa07cfe38" => :yosemite
+    sha256 "9666a908f723015481c74de2aa895ff09f55a8a66cda57317c681593d0cf87f2" => :mojave
+    sha256 "8dae663f9138b383b4fdbe1f8a66b87cbb05f518ae929441ff46707b5bade762" => :high_sierra
+    sha256 "2dc5be9011fa4d7aad8f5ecc6ff125876a61769341d15661f93513e5603a8733" => :sierra
+    sha256 "d0ff9f9c06bd124bc9e8dc31bf59eaae1a28b124234d4b359ad719144cdff9ab" => :el_capitan
   end
 
-  option "without-cython", "Build without cython (faster compile)"
-
-  depends_on :python if MacOS.version <= :snow_leopard
   depends_on "asciidoc" => :build
   depends_on "xmlto" => :build
-  depends_on "cython" => [:build, :recommended]
+  depends_on "pypy"
 
   def install
     ENV["XML_CATALOG_FILES"] = "#{etc}/xml/catalog"
     system "make", "install", "prefix=#{prefix}"
     elisp.install "reposurgeon-mode.el"
-
-    if build.with? "cython"
-      pyincludes = Utils.popen_read("python-config --cflags").chomp
-      pylib = Utils.popen_read("python-config --ldflags").chomp
-      system "make", "install-cyreposurgeon", "prefix=#{prefix}",
-                     "CYTHON=#{Formula["cython"].opt_bin}/cython",
-                     "pyinclude=#{pyincludes}", "pylib=#{pylib}"
-    end
   end
 
   test do
@@ -41,7 +29,7 @@ class Reposurgeon < Formula
       [user]
         name = Real Person
         email = notacat@hotmail.cat
-      EOS
+    EOS
     system "git", "init"
     system "git", "commit", "--allow-empty", "--message", "brewing"
 

@@ -1,13 +1,13 @@
 class Sysdig < Formula
   desc "System-level exploration and troubleshooting tool"
   homepage "https://www.sysdig.org/"
-  url "https://github.com/draios/sysdig/archive/0.19.1.tar.gz"
-  sha256 "480d5d8fd7e7373c08008c30bd8e2c7595d5c45d710bf07bd15a522021b560f6"
+  url "https://github.com/draios/sysdig/archive/0.24.2.tar.gz"
+  sha256 "cd925afd2fb0a26728611666e017d480afd49158c2d70714c7461a97c8820807"
 
   bottle do
-    sha256 "84b93f62667e95533f85c65c9d029877a98fe2818e658c0c683470c0bf94392e" => :high_sierra
-    sha256 "1618ac9eb84ae685c44b041a26c4d7bec703d88132e1ad08407929bf631170fc" => :sierra
-    sha256 "8ed2e31379bbccf832b86e1d3f729f12138fe986cf5be9b1cd8effade5c29cb8" => :el_capitan
+    sha256 "f3eebe7276e7a1b5a579f6a095bcdad61c5c6429ada950e5d9abbf2660c59232" => :mojave
+    sha256 "dd3b00038c5d3d6efaf2c1bc0faa2595f47337d849f1728dd063aa24db96ce16" => :high_sierra
+    sha256 "42a2aa84a58542e09f47734e12af3986b0c4be83b1d362c48322c585e4aab87d" => :sierra
   end
 
   depends_on "cmake" => :build
@@ -21,8 +21,6 @@ class Sysdig < Formula
   end
 
   def install
-    ENV.libcxx if MacOS.version < :mavericks
-
     mkdir "build" do
       system "cmake", "..", "-DSYSDIG_VERSION=#{version}",
                             "-DUSE_BUNDLED_DEPS=OFF",

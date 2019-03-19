@@ -1,37 +1,22 @@
 class PostgresXc < Formula
   desc "PostgreSQL cluster based on shared-nothing architecture"
-  homepage "https://postgres-xc.sourceforge.io/"
+  homepage "https://sourceforge.net/p/postgres-xc/xc-wiki/Main_Page/"
   url "https://downloads.sourceforge.net/project/postgres-xc/Version_1.0/pgxc-v1.0.4.tar.gz"
   sha256 "b467cbb7d562a8545645182958efd1608799ed4e04a9c3906211878d477b29c1"
-  revision 1
+  revision 2
 
   bottle do
-    rebuild 1
-    sha256 "fa227de1722867aadf57d0868bc137a67f30d79b613fbf713396ba846b33f908" => :high_sierra
-    sha256 "9219ea92a221cae45f87c8119afbae22a190c396f41972ab2f8019ede381207d" => :sierra
-    sha256 "8c17e52f8c1171e0a4e36d77180ee5113aa61d35acbe0d11741372d3fe93e9f5" => :el_capitan
-    sha256 "3dc1e2e4d10cc1cf2604b5bc91c4167257bd84b27a167580d2342e7ab7539428" => :yosemite
+    sha256 "ebd62d467b624fa9c5e39360a04f2b2a270ce8ae5d4c01783c8237f203c6d332" => :mojave
+    sha256 "dc801fc18cb3371ae85ba61569a403b9b49855ea80696518baebc945a43a794f" => :high_sierra
   end
-
-  option "with-dtrace", "Build with DTrace support"
-  option "without-perl", "Build without Perl support"
-
-  deprecated_option "no-perl" => "without-perl"
-  deprecated_option "enable-dtrace" => "with-dtrace"
 
   depends_on :arch => :x86_64
   depends_on "openssl"
+  depends_on "ossp-uuid"
   depends_on "readline"
-  depends_on "ossp-uuid" => :recommended
-  depends_on :python => :optional
 
   conflicts_with "postgresql",
     :because => "postgres-xc and postgresql install the same binaries."
-
-  fails_with :clang do
-    build 211
-    cause "Miscompilation resulting in segfault on queries"
-  end
 
   # Fix PL/Python build: https://github.com/Homebrew/homebrew/issues/11162
   patch :DATA
@@ -40,38 +25,30 @@ class PostgresXc < Formula
     # Fix uuid-ossp build issues: https://www.postgresql.org/message-id/05843630-E25D-442A-A6B0-5CA63622A400@likeness.com
     ENV.append_to_cflags "-D_XOPEN_SOURCE"
     # See https://sourceforge.net/p/postgres-xc/mailman/postgres-xc-bugs/thread/82E44F89-543A-44F2-8AF8-F6909B5DC561@uniud.it/
-    ENV.append "CFLAGS", "-D_FORTIFY_SOURCE=0 -O2" if MacOS.version >= :mavericks
+    ENV.append "CFLAGS", "-D_FORTIFY_SOURCE=0 -O2"
 
     ENV.prepend "LDFLAGS", "-L#{Formula["openssl"].opt_lib} -L#{Formula["readline"].opt_lib}"
     ENV.prepend "CPPFLAGS", "-I#{Formula["openssl"].opt_include} -I#{Formula["readline"].opt_include}"
 
-    args = %W[
-      --disable-debug
-      --prefix=#{prefix}
-      --datadir=#{pkgshare}
-      --docdir=#{doc}
-      --enable-thread-safety
-      --with-bonjour
-      --with-gssapi
-      --with-krb5
-      --with-openssl
-      --with-libxml
-      --with-libxslt
+    ENV.append "CFLAGS", `uuid-config --cflags`.strip
+    ENV.append "LDFLAGS", `uuid-config --ldflags`.strip
+    ENV.append "LIBS", `uuid-config --libs`.strip
+
+    args = [
+      "--disable-debug",
+      "--prefix=#{prefix}",
+      "--datadir=#{pkgshare}",
+      "--docdir=#{doc}",
+      "--enable-thread-safety",
+      "--with-bonjour",
+      "--with-gssapi",
+      "--with-krb5",
+      "--with-libxml",
+      "--with-libxslt",
+      "--with-openssl",
+      "--with-ossp-uuid",
+      "ARCHFLAGS=-arch x86_64",
     ]
-
-    args << "--with-ossp-uuid" if build.with? "ossp-uuid"
-    args << "--with-python" if build.with? "python"
-    args << "--with-perl" if build.with? "perl"
-    args << "--enable-dtrace" if build.with? "dtrace"
-    args << "ARCHFLAGS='-arch x86_64'"
-
-    if build.with? "ossp-uuid"
-      ENV.append "CFLAGS", `uuid-config --cflags`.strip
-      ENV.append "LDFLAGS", `uuid-config --ldflags`.strip
-      ENV.append "LIBS", `uuid-config --libs`.strip
-    end
-
-    check_python_arch if build.with? "python"
 
     system "./configure", *args
 
@@ -92,31 +69,6 @@ class PostgresXc < Formula
 
   def post_install
     (var/"postgres-xc").mkpath
-  end
-
-  def check_python_arch
-    # On 64-bit systems, we need to look for a 32-bit Framework Python.
-    # The configure script prefers this Python version, and if it doesn't
-    # have 64-bit support then linking will fail.
-    framework_python = Pathname.new "/Library/Frameworks/Python.framework/Versions/Current/Python"
-    return unless framework_python.exist?
-    unless (archs_for_command framework_python).include? :x86_64
-      opoo "Detected a framework Python that does not have 64-bit support in:"
-      puts <<~EOS
-        #{framework_python}
-
-        The configure script seems to prefer this version of Python over any others,
-        so you may experience linker problems as described in:
-          https://osdir.com/ml/pgsql-general/2009-09/msg00160.html
-
-        To fix this issue, you may need to either delete the version of Python
-        shown above, or move it out of the way before brewing PostgreSQL.
-
-        Note that a framework Python in /Library/Frameworks/Python.framework is
-        the "MacPython" version, and not the system-provided version which is in:
-          /System/Library/Frameworks/Python.framework
-      EOS
-    end
   end
 
   def caveats; <<~EOS
@@ -162,7 +114,7 @@ class PostgresXc < Formula
       FATAL:  could not create shared memory segment: Cannot allocate memory
     then you need to tweak your system's shared memory parameters:
       https://www.postgresql.org/docs/current/static/kernel-resources.html#SYSVIPC
-    EOS
+  EOS
   end
 
   plist_options :startup => true
@@ -202,7 +154,7 @@ class PostgresXc < Formula
       <string>#{var}/postgres-xc/#{name}/server.log</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   def gtm_proxy_startup_plist(name); <<~EOS
@@ -236,7 +188,7 @@ class PostgresXc < Formula
       <string>#{var}/postgres-xc/#{name}/server.log</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   def coordinator_startup_plist(name); <<~EOS
@@ -266,7 +218,7 @@ class PostgresXc < Formula
       <string>#{var}/postgres-xc/#{name}/server.log</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   def datanode_startup_plist(name); <<~EOS
@@ -296,7 +248,7 @@ class PostgresXc < Formula
       <string>#{var}/postgres-xc/#{name}/server.log</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

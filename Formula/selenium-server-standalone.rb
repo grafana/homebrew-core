@@ -1,8 +1,8 @@
 class SeleniumServerStandalone < Formula
   desc "Browser automation for testing purposes"
-  homepage "http://seleniumhq.org/"
-  url "https://selenium-release.storage.googleapis.com/3.7/selenium-server-standalone-3.7.1.jar"
-  sha256 "b4a581ab35f2697618aa9c94721d7b2ca421c0a97dd96f974e341347263f09b6"
+  homepage "https://www.seleniumhq.org/"
+  url "https://selenium-release.storage.googleapis.com/3.141/selenium-server-standalone-3.141.59.jar"
+  sha256 "acf71b77d1b66b55db6fb0bed6d8bae2bbd481311bcbedfeff472c0d15e8f3cb"
 
   bottle :unneeded
 
@@ -40,7 +40,7 @@ class SeleniumServerStandalone < Formula
       <string>#{var}/log/selenium-output.log</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

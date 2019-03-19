@@ -5,37 +5,58 @@ class GitAnnex < Formula
 
   desc "Manage files with git without checking in file contents"
   homepage "https://git-annex.branchable.com/"
-  url "https://hackage.haskell.org/package/git-annex-6.20171109/git-annex-6.20171109.tar.gz"
-  sha256 "c58fef15bdb8f54761f8d980d13c0f036c35b1c32dfd3822761e0dfad52ed495"
+  url "https://hackage.haskell.org/package/git-annex-7.20181121/git-annex-7.20181121.tar.gz"
+  sha256 "d044f0557cc85ed664423ed5bc20e767bd796f6ffd32d3bf39b8a59cc7b7cb1d"
   head "git://git-annex.branchable.com/"
 
   bottle do
-    sha256 "27fa79e694e3a28a3525860769338adf59ae56b31f7b0d377f5ce6a03b27d2b2" => :high_sierra
-    sha256 "4495450c65ddb09f82d1d13348943e86deacb7a1eafe780f7d0a48f036567f86" => :sierra
-    sha256 "29d466eba27f627f7c8f211d8bbec0cfb33d84534ff4713a4586ffb58cce9583" => :el_capitan
+    sha256 "2dd3ed2ba23afc4a47ce43dd0ef88c17691ec03f5cfd9c0fc851f77345b4eeca" => :mojave
+    sha256 "dc077598afef126a61fba944aef799de03f91799f0975921c8097d0c7f1c56d1" => :high_sierra
+    sha256 "581d2b1ab2b844f9f87da719898e513e77c9f4cee1d1e36a7ab0e944e5592029" => :sierra
   end
 
-  option "with-git-union-merge", "Build the git-union-merge tool"
-
   depends_on "cabal-install" => :build
-  depends_on "ghc" => :build
+  depends_on "ghc@8.2" => :build
   depends_on "pkg-config" => :build
   depends_on "gsasl"
   depends_on "libmagic"
   depends_on "quvi"
-  depends_on "xdot" => :recommended
+  depends_on "xdot"
 
   def install
-    install_cabal_package :using => ["alex", "happy", "c2hs"],
-                          :flags => ["s3", "webapp"] do
-      # this can be made the default behavior again once git-union-merge builds properly when bottling
-      if build.with? "git-union-merge"
-        system "make", "git-union-merge", "PREFIX=#{prefix}"
-        bin.install "git-union-merge"
-        system "make", "git-union-merge.1", "PREFIX=#{prefix}"
-      end
-    end
+    # Reported 28 Feb 2018 to aws upstream https://github.com/aristidb/aws/issues/244
+    # This is already resolved in aws 0.20 but we can't move to 0.20 until
+    # esqueleto 2.6.0 ships. See https://github.com/bitemyapp/esqueleto/issues/88
+    # The network 2.7.0.1 issue has been fixed upstream but needs a new release.
+    install_cabal_package "--constraint", "http-conduit<2.3",
+                          "--constraint", "network<2.7.0.1",
+                          :using => ["alex", "happy", "c2hs"],
+                          :flags => ["s3", "webapp"]
     bin.install_symlink "git-annex" => "git-annex-shell"
+  end
+
+  plist_options :manual => "git annex assistant --autostart"
+
+  def plist; <<~EOS
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+      <dict>
+        <key>Label</key>
+        <string>#{plist_name}</string>
+        <key>RunAtLoad</key>
+        <true/>
+        <key>KeepAlive</key>
+        <false/>
+        <key>ProgramArguments</key>
+        <array>
+          <string>#{opt_bin}/git-annex</string>
+          <string>assistant</string>
+          <string>--autostart</string>
+        </array>
+      </dict>
+    </plist>
+  EOS
   end
 
   test do

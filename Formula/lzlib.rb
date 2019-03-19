@@ -1,15 +1,14 @@
 class Lzlib < Formula
   desc "Data compression library"
-  homepage "http://www.nongnu.org/lzip/lzlib.html"
-  url "https://download.savannah.gnu.org/releases/lzip/lzlib/lzlib-1.9.tar.gz"
-  sha256 "2472f8d93830d0952b0c75f67e372d38c8f7c174dde2252369d5b20c87d3ba8e"
+  homepage "https://www.nongnu.org/lzip/lzlib.html"
+  url "https://download.savannah.gnu.org/releases/lzip/lzlib/lzlib-1.11.tar.gz"
+  sha256 "6c5c5f8759d1ab7c4c3c53788ea2d9daad04aeddcf338226893f8ff134914d36"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "5a04bccace677f7d391564ce58624d3e2f3b5bc67964be861f952208037d0bec" => :high_sierra
-    sha256 "730b7d59b3c8c3f8ca12053b2be57c36effa89f036a0a5c78395455fc3619477" => :sierra
-    sha256 "116cf311291d7aaf0c13c5ac9e456a40261d036f75d21c6026e0b1c623bca2f4" => :el_capitan
-    sha256 "f7be3aeb9e6142bbf3b35ff6212c81615a2ac02f0a65ad77216bcd15051bf147" => :yosemite
+    sha256 "3c28dea3721b03227d660c7c453673d3cb40f00f41e2e4ba3f163a7171926da0" => :mojave
+    sha256 "a49b8dfcf257d31c46841a733f1925020dd49493554d049a479467e602e3e796" => :high_sierra
+    sha256 "3c6df94a873fc2268478e10c23d1aa631c6b29e1afff38de63e2839ad0f1968c" => :sierra
   end
 
   def install

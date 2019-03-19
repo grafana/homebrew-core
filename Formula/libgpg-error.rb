@@ -1,15 +1,13 @@
 class LibgpgError < Formula
   desc "Common error values for all GnuPG components"
   homepage "https://www.gnupg.org/related_software/libgpg-error/"
-  url "https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.27.tar.bz2"
-  mirror "https://mirrors.ocf.berkeley.edu/debian/pool/main/libg/libgpg-error/libgpg-error_1.27.orig.tar.bz2"
-  sha256 "4f93aac6fecb7da2b92871bb9ee33032be6a87b174f54abf8ddf0911a22d29d2"
+  url "https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.35.tar.bz2"
+  sha256 "cbd5ee62a8a8c88d48c158fff4fc9ead4132aacd1b4a56eb791f9f997d07e067"
 
   bottle do
-    sha256 "2b6f050bcd7b8c08f774aa491c2731aec585b0f1f14f972e9e485654314508f6" => :high_sierra
-    sha256 "7ffa1c12c9a452f2292cb6a171b4e88136c631cee4da67d71143529bf3352a93" => :sierra
-    sha256 "a81e55fecb35b921df543e8cf83729a8695d745fa778f716d4c96f989aceb6b4" => :el_capitan
-    sha256 "06669414f7aba892558875994c411dc2a0723aa19f5d854b435987b3c8b9f19a" => :yosemite
+    sha256 "1a96796605d2d7dc8a558848965a09678b13e50d52a971729bdf9a96b6f824c7" => :mojave
+    sha256 "168ef933ffd337d5a7ead3417b3bedec4e09982de3ed067f1b7302022c7fec00" => :high_sierra
+    sha256 "6566112d47fe7d6914158d530072d9feb1dae6262289ffb7eca4d16b54851d05" => :sierra
   end
 
   def install

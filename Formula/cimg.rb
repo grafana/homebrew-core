@@ -1,8 +1,8 @@
 class Cimg < Formula
   desc "C++ toolkit for image processing"
   homepage "http://cimg.eu/"
-  url "http://cimg.eu/files/CImg_2.1.5.zip"
-  sha256 "8f7dbcfa3048e2b785883f2c6fbcefc52403b678bcdee3c54d9463c4ed8463b9"
+  url "http://cimg.eu/files/CImg_2.3.6.zip"
+  sha256 "8d7e1a07ae8d2500d1512a214c529c8860f41e371c83931698b30f057f94e146"
 
   bottle :unneeded
 

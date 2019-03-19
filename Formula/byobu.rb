@@ -1,27 +1,28 @@
 class Byobu < Formula
   desc "Text-based window manager and terminal multiplexer"
   homepage "http://byobu.co/"
-  url "https://launchpad.net/byobu/trunk/5.123/+download/byobu_5.123.orig.tar.gz"
-  sha256 "2e5a5425368d2f74c0b8649ce88fc653420c248f6c7945b4b718f382adc5a67d"
+  url "https://launchpad.net/byobu/trunk/5.127/+download/byobu_5.127.orig.tar.gz"
+  sha256 "4bafc7cb69ff5b0ab6998816d58cd1ef7175e5de75abc1dd7ffd6d5288a4f63b"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "427e22a1554e3a9236b2fc5769d3d69faac29b9f3664805fce0f434cdf85b63e" => :high_sierra
-    sha256 "427e22a1554e3a9236b2fc5769d3d69faac29b9f3664805fce0f434cdf85b63e" => :sierra
-    sha256 "427e22a1554e3a9236b2fc5769d3d69faac29b9f3664805fce0f434cdf85b63e" => :el_capitan
+    sha256 "a38947144d88d06d05ae8443d045d2c0e230f20f5de8ca617dd4436a73d74c91" => :mojave
+    sha256 "072c0ed467ca88ca0f5f06a62e526f7e6a6891d52343a24a5bc2459c8227b739" => :high_sierra
+    sha256 "072c0ed467ca88ca0f5f06a62e526f7e6a6891d52343a24a5bc2459c8227b739" => :sierra
+    sha256 "072c0ed467ca88ca0f5f06a62e526f7e6a6891d52343a24a5bc2459c8227b739" => :el_capitan
   end
 
   head do
     url "https://github.com/dustinkirkland/byobu.git"
 
-    depends_on "automake" => :build
     depends_on "autoconf" => :build
+    depends_on "automake" => :build
   end
 
   depends_on "coreutils"
   depends_on "gnu-sed" # fails with BSD sed
-  depends_on "tmux"
   depends_on "newt"
+  depends_on "tmux"
 
   conflicts_with "ctail", :because => "both install `ctail` binaries"
 
@@ -37,7 +38,7 @@ class Byobu < Formula
   def caveats; <<~EOS
     Add the following to your shell configuration file:
       export BYOBU_PREFIX=#{HOMEBREW_PREFIX}
-    EOS
+  EOS
   end
 
   test do

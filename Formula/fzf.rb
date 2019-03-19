@@ -1,15 +1,15 @@
 class Fzf < Formula
   desc "Command-line fuzzy finder written in Go"
   homepage "https://github.com/junegunn/fzf"
-  url "https://github.com/junegunn/fzf/archive/0.17.1.tar.gz"
-  sha256 "9c881e55780c0f56b5a30b87df756634d853bfd3938e7e53cb2df6ed63aa84a7"
+  url "https://github.com/junegunn/fzf/archive/0.17.5.tar.gz"
+  sha256 "de3b39758e01b19bbc04ee0d5107e14052d3a32ce8f40d4a63d0ed311394f7ee"
   head "https://github.com/junegunn/fzf.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "ee36f59c2458c37180dbd9e4216e1b61e6a72cef9942ba23c1e3b930381a9016" => :high_sierra
-    sha256 "f22ebf6cdeb1986cca64d211cfeae3155241f5126b61b038a4e22096b6d9497c" => :sierra
-    sha256 "84ad9a940e489058b2a0ec55bdbe367a8c0eaf14c9ea2f4def920496c04df36d" => :el_capitan
+    sha256 "fbef178808dd3cee3b36ea3256579bc759e6516f87c4b8b2be00ad404ce14d4f" => :mojave
+    sha256 "7307a392d1869453b5dbfa86b4b0bb4b1e8e6178d12fd928b82e9f8cfde3926d" => :high_sierra
+    sha256 "490018ace4f9d99a470af3be3a409c793c1551fe72a6be2ad6e766dd594fa282" => :sierra
   end
 
   depends_on "glide" => :build
@@ -37,7 +37,7 @@ class Fzf < Formula
 
     To use fzf in Vim, add the following line to your .vimrc:
       set rtp+=#{opt_prefix}
-    EOS
+  EOS
   end
 
   test do

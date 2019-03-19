@@ -1,33 +1,49 @@
 class Bind < Formula
   desc "Implementation of the DNS protocols"
   homepage "https://www.isc.org/downloads/bind/"
-  url "https://ftp.isc.org/isc/bind9/9.11.2/bind-9.11.2.tar.gz"
-  mirror "https://fossies.org/linux/misc/dns/bind9/9.11.2/bind-9.11.2.tar.gz"
-  sha256 "7f46ad8620f7c3b0ac375d7a5211b15677708fda84ce25d7aeb7222fe2e3c77a"
-  head "https://source.isc.org/git/bind9.git"
+  url "https://ftp.isc.org/isc/bind9/9.12.4/bind-9.12.4.tar.gz"
+  sha256 "81bf24b2b86f7288ccf727aff59f1d752cc3e9de30a7480d24d67736256a0d53"
+  head "https://gitlab.isc.org/isc-projects/bind9.git"
 
   bottle do
-    sha256 "4e19c44b930577980e79d599dc32f7faee548a31b7a8cd5a27789ff5e5a97ff2" => :high_sierra
-    sha256 "30b8e84bd85742a0d15487a7f0dc6099ef28377f5ab24a368a5e9b62ac4d85e0" => :sierra
-    sha256 "06549eb4510412564f01bca75d4b11cf79d4cab7b43b4e7eb9b7ad817ad6853a" => :el_capitan
-    sha256 "24d17777e0547adfc569752001e1700dfae168b3d4df43c94bf79c4a3c192c89" => :yosemite
+    sha256 "d82db03a139392f57129bd79b1ea2539976d78474e12783672a938beb52ade6a" => :mojave
+    sha256 "a5fdca7936ef8bd8b4bc816529b9410d366c077969e4719c44044094ba5d59e0" => :high_sierra
+    sha256 "a772621d02fa39eed580232b8b769414e946168e40d096cf03853fb3f0cb79d0" => :sierra
   end
 
+  depends_on "json-c"
   depends_on "openssl"
-  depends_on "json-c" => :optional
+  depends_on "python"
+
+  resource "ply" do
+    url "https://files.pythonhosted.org/packages/e5/69/882ee5c9d017149285cab114ebeab373308ef0f874fcdac9beb90e0ac4da/ply-3.11.tar.gz"
+    sha256 "00c7c1aaa88358b9c765b6d3000c6eec0ba42abca5351b095321aef446081da3"
+  end
 
   def install
+    xy = Language::Python.major_minor_version "python3"
+    ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python#{xy}/site-packages"
+    resources.each do |r|
+      r.stage do
+        system "python3", *Language::Python.setup_install_args(libexec/"vendor")
+      end
+    end
+
+    # Fix "configure: error: xml2-config returns badness"
+    if MacOS.version == :sierra || MacOS.version == :el_capitan
+      ENV["SDKROOT"] = MacOS.sdk_path
+    end
+
     # enable DNSSEC signature chasing in dig
     ENV["STD_CDEFINES"] = "-DDIG_SIGCHASE=1"
 
-    json = build.with?("json-c") ? "yes" : "no"
     system "./configure", "--prefix=#{prefix}",
                           "--enable-threads",
                           "--enable-ipv6",
                           "--with-openssl=#{Formula["openssl"].opt_prefix}",
-                          "--with-libjson=#{json}"
+                          "--with-libjson=#{Formula["json-c"].opt_prefix}"
 
-    # From the bind9 README: "Do not use a parallel "make"."
+    # From the bind9 README: "Do not use a parallel "make"
     ENV.deparallelize
     system "make"
     system "make", "install"
@@ -106,7 +122,7 @@ class Bind < Formula
                     print-time yes;
             };
     };
-    EOS
+  EOS
   end
 
   def localhost_zone; <<~EOS
@@ -121,7 +137,7 @@ class Bind < Formula
 
                 1D IN NS    @
                 1D IN A        127.0.0.1
-    EOS
+  EOS
   end
 
   def named_local; <<~EOS
@@ -135,7 +151,7 @@ class Bind < Formula
                   IN      NS      localhost.
 
     1       IN      PTR     localhost.
-    EOS
+  EOS
   end
 
   plist_options :startup => true
@@ -162,7 +178,7 @@ class Bind < Formula
       <false/>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

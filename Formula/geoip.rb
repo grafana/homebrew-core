@@ -1,19 +1,22 @@
 class Geoip < Formula
   desc "This library is for the GeoIP Legacy format (dat)"
   homepage "https://github.com/maxmind/geoip-api-c"
-  url "https://github.com/maxmind/geoip-api-c/releases/download/v1.6.11/GeoIP-1.6.11.tar.gz"
-  sha256 "b0e5a92200b5ab540d118983f7b7191caf4faf1ae879c44afa3ff2a2abcdb0f5"
-
+  url "https://github.com/maxmind/geoip-api-c/releases/download/v1.6.12/GeoIP-1.6.12.tar.gz"
+  sha256 "1dfb748003c5e4b7fd56ba8c4cd786633d5d6f409547584f6910398389636f80"
   head "https://github.com/maxmind/geoip-api-c.git"
 
   bottle do
-    sha256 "e368be5961d131f0731ba47548b7cc1f7bf4040078f05129d949b238e4ebbfa4" => :high_sierra
-    sha256 "e1280ddceb39252c62e8e78a25f8abada91411b165fc521259d0d3105eb2763a" => :sierra
-    sha256 "01fedcc459368426a4dd58437d75685128fc07911271ce69f49cb9ebd1eddf16" => :el_capitan
-    sha256 "698e05101fa1a4c93a1a3bc96b95b193d000010e77c51ae9965af7ac4828983f" => :yosemite
+    cellar :any
+    rebuild 1
+    sha256 "311704d07adf7fa502e60bd0e462ba26f6830838c09461f8bbac38ccb5da77f1" => :mojave
+    sha256 "17db912ce8ffcd831d775f22c1ea428faf55d7ecb4dd19cdba6ab3234874417c" => :high_sierra
+    sha256 "166b2195350b830ddcaea41a24dbdbcea48b9d42f96673088dd3d51b8d5774d7" => :sierra
   end
 
-  depends_on "geoipupdate" => :optional
+  resource "database" do
+    url "https://src.fedoraproject.org/lookaside/pkgs/GeoIP/GeoIP.dat.gz/4bc1e8280fe2db0adc3fe48663b8926e/GeoIP.dat.gz"
+    sha256 "7fd7e4829aaaae2677a7975eeecd170134195e5b7e6fc7d30bf3caf34db41bcd"
+  end
 
   def install
     system "./configure", "--disable-dependency-tracking",
@@ -39,8 +42,9 @@ class Geoip < Formula
   end
 
   test do
-    system "curl", "-O", "https://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz"
-    system "gunzip", "GeoIP.dat.gz"
-    system "#{bin}/geoiplookup", "-f", "GeoIP.dat", "8.8.8.8"
+    resource("database").stage do
+      output = shell_output("#{bin}/geoiplookup -f GeoIP.dat 8.8.8.8")
+      assert_match "GeoIP Country Edition: US, United States", output
+    end
   end
 end

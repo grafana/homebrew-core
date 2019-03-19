@@ -1,12 +1,13 @@
 class Igraph < Formula
   desc "Network analysis package"
-  homepage "http://igraph.org"
-  url "http://igraph.org/nightly/get/c/igraph-0.7.1.tar.gz"
+  homepage "https://igraph.org/"
+  url "https://igraph.org/nightly/get/c/igraph-0.7.1.tar.gz"
   sha256 "d978030e27369bf698f3816ab70aa9141e9baf81c56cc4f55efbe5489b46b0df"
   revision 6
 
   bottle do
     cellar :any
+    sha256 "ba26e3fef6083917021816a4536bada4f29b95bcd4099a23beee7cac176aa600" => :mojave
     sha256 "f660cb85c0fc5ad020fca593b311c50078e1345fe85bc2cb5292646d1d0d6fa5" => :high_sierra
     sha256 "63d5ac34c831bfb3bdcdc89a408a6ad004198fb784a50facb3f898a567f7b9b1" => :sierra
     sha256 "8718c7a6cd3ffed8ee706f6991f2791c6d02f663db93beadd56e592c3edf544d" => :el_capitan
@@ -38,7 +39,7 @@ class Igraph < Formula
         printf("Diameter = %d\\n", (int) diameter);
         igraph_destroy(&graph);
       }
-      EOS
+    EOS
     system ENV.cc, "test.c", "-I#{include}/igraph", "-L#{lib}",
                    "-ligraph", "-o", "test"
     assert_match "Diameter = 9", shell_output("./test")

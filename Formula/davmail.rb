@@ -1,9 +1,9 @@
 class Davmail < Formula
   desc "POP/IMAP/SMTP/Caldav/Carddav/LDAP exchange gateway"
   homepage "https://davmail.sourceforge.io/"
-  url "https://downloads.sourceforge.net/project/davmail/davmail/4.8.0/davmail-4.8.0-2479.zip"
-  sha256 "5cd0dceadffa958c72be299ee2edc0ec945eaf2f66cbab3e93e20cd24408fbbf"
-  revision 1
+  url "https://downloads.sourceforge.net/project/davmail/davmail/5.2.0/davmail-5.2.0-2961.zip"
+  version "5.2.0"
+  sha256 "a50ae84879b49502b82e8387deef2ddcc222a564e6670d9642ef9f799ed4864b"
 
   bottle :unneeded
 
@@ -42,6 +42,6 @@ class Davmail < Formula
         <string>/dev/null</string>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 end

@@ -3,27 +3,20 @@ class BoostPythonAT159 < Formula
   homepage "https://www.boost.org"
   url "https://downloads.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.bz2"
   sha256 "727a932322d94287b62abb1bd2d41723eec4356a7728909e38adb65ca25241ca"
+  revision 1
 
   bottle do
-    cellar :any
-    sha256 "ba33ce18f24b422ec0440400e8418456b6b1de04c111f46d55cfbb24acc15b72" => :high_sierra
-    sha256 "72e56d744c5369bcb8de95eee92182ca9cfe8e580d596473069ca69c0b23b3d6" => :sierra
-    sha256 "1adf1e1e570236fe2f67367d2ac17e83ade9d1b25e5e356bff23ce52d0117c8a" => :el_capitan
-    sha256 "ad13c2d6ceaec797943327a08babffc6d284fe89ec7f60170a362fa134e1429b" => :yosemite
+    rebuild 1
+    sha256 "41234d5b67b98b22b823c701b88874caaca57053e18f7069f3a40e308e882a2c" => :mojave
+    sha256 "ab4e76cbdd45a69200580916a736c1aa9d0b76d25ecedd72f3e017804375d43b" => :high_sierra
+    sha256 "50b61de8e17320c4bd1d095a165cbacb6505631b825133135e4517999079488e" => :sierra
+    sha256 "79d9b0b2a2af2ddf37af79cc611d27733b3dbba6c5ca5bb86868a5521e9e37dd" => :el_capitan
   end
 
   keg_only :versioned_formula
 
-  option :cxx11
-
-  option "without-python", "Build without python 2 support"
-  depends_on :python3 => :optional
-
-  if build.cxx11?
-    depends_on "boost@1.59" => "c++11"
-  else
-    depends_on "boost@1.59"
-  end
+  depends_on "boost@1.59"
+  depends_on "python@2"
 
   def install
     # fix make_setter regression
@@ -41,18 +34,6 @@ class BoostPythonAT159 < Formula
             "--user-config=user-config.jam",
             "threading=multi,single",
             "link=shared,static"]
-
-    # Build in C++11 mode if boost was built in C++11 mode.
-    # Trunk starts using "clang++ -x c" to select C compiler which breaks C++11
-    # handling using ENV.cxx11. Using "cxxflags" and "linkflags" still works.
-    if build.cxx11?
-      args << "cxxflags=-std=c++11"
-      if ENV.compiler == :clang
-        args << "cxxflags=-stdlib=libc++" << "linkflags=-stdlib=libc++"
-      end
-    elsif Tab.for_name("boost159").cxx11?
-      odie "boost159 was built in C++11 mode so boost-python159 must be built with --c++11."
-    end
 
     # disable python detection in bootstrap.sh; it guesses the wrong include directory
     # for Python 3 headers, so we configure python manually in user-config.jam below.
@@ -79,8 +60,7 @@ class BoostPythonAT159 < Formula
                      "python=#{version}", *args
     end
 
-    lib.install Dir["stage-python3/lib/*py*"] if build.with?("python3")
-    lib.install Dir["stage-python/lib/*py*"] if build.with?("python")
+    lib.install Dir["stage-python2.7/lib/*py*"]
     doc.install Dir["libs/python/doc/*"]
   end
 
@@ -96,10 +76,11 @@ class BoostPythonAT159 < Formula
       }
     EOS
     Language::Python.each_python(build) do |python, _|
-      pyflags = (`#{python}-config --includes`.strip +
-                 `#{python}-config --ldflags`.strip).split(" ")
+      boost_python = (python == "python3") ? "boost_python3" : "boost_python"
+      pyflags = `#{python}-config --includes`.strip.split(" ") +
+                `#{python}-config --ldflags`.strip.split(" ")
       system ENV.cxx, "-shared", "hello.cpp", "-I#{Formula["boost159"].opt_include}",
-                      "-L#{lib}", "-lboost_#{python}", "-o", "hello.so", *pyflags
+                      "-L#{lib}", "-l#{boost_python}", "-o", "hello.so", *pyflags
       output = `#{python} -c "from __future__ import print_function; import hello; print(hello.greet())"`
       assert_match "Hello, world!", output
     end

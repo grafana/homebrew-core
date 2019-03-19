@@ -8,31 +8,17 @@ class Glulxe < Formula
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "cfff5a59e704d30bd2cd75955245c286183b301dc93bd63c8ba9e7e2d00c356f" => :mojave
     sha256 "229ef4b0b9e61f0e1ecf0b632ccd5fee08df494a97203820368e669a91f4028d" => :high_sierra
     sha256 "3a36753838342aef55319fdf1aab32666caffcb714fefd328a93521ed33d6adf" => :sierra
     sha256 "b5bc0c06241f2c7de3da21b27f2126903550fe959378992fe5260eeedb0f612f" => :el_capitan
     sha256 "b50be16e36671d7818d123403937496f258882c98bbc6f4d8242c2e6eb97b310" => :yosemite
   end
 
-  option "with-glkterm", "Build with glkterm (without wide character support)"
-
-  depends_on "cheapglk" => [:build, :optional]
-  depends_on "glkterm" => [:build, :optional]
-  depends_on "glktermw" => :build if build.without?("cheapglk") && build.without?("glkterm")
+  depends_on "glktermw" => :build
 
   def install
-    if build.with?("cheapglk") && build.with?("glkterm")
-      odie "Options --with-cheapglk and --with-glkterm are mutually exclusive."
-    end
-
-    if build.with? "cheapglk"
-      glk = Formula["cheapglk"]
-    elsif build.with? "glkterm"
-      glk = Formula["glkterm"]
-    else
-      glk = Formula["glktermw"]
-    end
-
+    glk = Formula["glktermw"]
     inreplace "Makefile", "GLKINCLUDEDIR = ../cheapglk", "GLKINCLUDEDIR = #{glk.include}"
     inreplace "Makefile", "GLKLIBDIR = ../cheapglk", "GLKLIBDIR = #{glk.lib}"
     inreplace "Makefile", "Make.cheapglk", "Make.#{glk.name}"
@@ -42,10 +28,6 @@ class Glulxe < Formula
   end
 
   test do
-    if build.with? "cheapglk"
-      assert shell_output("#{bin}/glulxe").start_with? "Welcome to the Cheap Glk Implementation"
-    else
-      assert pipe_output("#{bin}/glulxe -v").start_with? "GlkTerm, library version"
-    end
+    assert pipe_output("#{bin}/glulxe -v").start_with? "GlkTerm, library version"
   end
 end

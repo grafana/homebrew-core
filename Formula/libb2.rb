@@ -6,12 +6,12 @@ class Libb2 < Formula
 
   bottle do
     cellar :any
+    sha256 "a3d13e0b30f81a7046d0d964e32d3033c21d1fde36a71472e78037c47634b88a" => :mojave
     sha256 "cb51df210ccd4a438ff13825e59e149250f88651ee048d39b0326c41cd5b8231" => :high_sierra
     sha256 "27a5a741334238556009be1ddbe67fd88401a9b8a73da929304f86744c989372" => :sierra
     sha256 "6c70feb4b8eb42361fc4b626e164317a7f46d977896e928007954f2c9ca3ee80" => :el_capitan
     sha256 "4c604799e388530022494535a551c06bf08baba5d6d37fd5622f9fe50773b860" => :yosemite
     sha256 "513444d15673a2bba2b8042522db8fc68e25154955d18cb8eff6b8bb9bb4503f" => :mavericks
-    sha256 "686a12f6cd03b3ed92c4f900f8a75a0467fd33c9b703678b06ad1060773b16b5" => :mountain_lion
   end
 
   def install

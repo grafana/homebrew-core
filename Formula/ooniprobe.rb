@@ -3,23 +3,24 @@ class Ooniprobe < Formula
 
   desc "Network interference detection tool"
   homepage "https://ooni.torproject.org/"
-  url "https://pypi.python.org/packages/46/eb/e44d255dbd6b2bc8cc6de680ff8ce3c279c9b0694a6eec9059bdf4806dfc/ooniprobe-2.2.0.tar.gz"
-  sha256 "971f7630587b7ba771383f93c10973871e2c5e866a7fde98754a788679361ac3"
+  url "https://files.pythonhosted.org/packages/d8/c0/b4a2ae442dd95160a75251110313d1f9b22834a76ef9bd8f70603b4a867a/ooniprobe-2.3.0.tar.gz"
+  sha256 "b4c4a5665d37123b1a30f26ffb37b8c06bc722f7b829cf83f6c3300774b7acb6"
 
   bottle do
     cellar :any
-    sha256 "e0ddf8e7eec2b52ad4ffec112a6b06a86d87a472fa4ed162fb2d93a5b22feb01" => :high_sierra
-    sha256 "fbc47fc71b679c09454f56636756ef33532e91ecedff6c04c88b8cc5ac6ad149" => :sierra
-    sha256 "6f5cc72156fd51da46d88aa3223c5b938e0c5fa0fc05ed9d7fa2a952f5f9bc24" => :el_capitan
-    sha256 "854d30be6dad8cbf5972a64e8c0a011d17c04d5afe83b9b470d39acbe4e3a462" => :yosemite
+    rebuild 1
+    sha256 "5190bd77c40eecf39da965167329fc552690965ec9d7930352c2828814e35d0d" => :mojave
+    sha256 "32e3e7e10bfd2105caafb57a2c91d23eb1077c6508e155766ae618ed20e66a3c" => :high_sierra
+    sha256 "1482b823d3d9ee2fa338fc9b08cf30de5d29f770a1aedf339115283d1c07465e" => :sierra
+    sha256 "38b51f8ef56029ca251c100887a1b66df0dfdd099f582913ca020027b3010f83" => :el_capitan
   end
 
   depends_on "geoip"
   depends_on "libdnet"
   depends_on "libyaml"
   depends_on "openssl"
+  depends_on "python@2"
   depends_on "tor"
-  depends_on :python
 
   # these 4 need to come first or else cryptography will let setuptools
   # easy_install them (which is bad)
@@ -135,8 +136,16 @@ class Ooniprobe < Formula
   end
 
   resource "pypcap" do
-    url "https://files.pythonhosted.org/packages/83/25/dab6b3fda95a5699503c91bf722abf9d9a5c960a4480208e4bad8747dd0c/pypcap-1.1.5.tar.gz"
-    sha256 "4b60d331e83c5bff3e25c7d99e902ea0910027fe9ce7986f0eecf5e0af6e8274"
+    url "https://files.pythonhosted.org/packages/33/21/d1f24d8a93e4e11bf604d77e04080c05ecb0308a5606936a051bd2b2b5da/pypcap-1.2.2.tar.gz"
+    sha256 "a32322f45d63ff6196e33004c568b9f5019202a40aa2b16008b7f94e7e119c1f"
+
+    # https://github.com/pynetwork/pypcap/pull/79
+    # Adds support for the new CLT SDK with the 10.x
+    # series of development tools.
+    patch do
+      url "https://github.com/pynetwork/pypcap/pull/79.patch?full_index=1"
+      sha256 "cb0c9b271d293e49e504793bed296e0fa73cca546dbc2814e0ea01351e66d9b2"
+    end
   end
 
   resource "PyYAML" do
@@ -201,6 +210,10 @@ class Ooniprobe < Formula
       etc = #{etc}/ooni
     EOS
 
+    if MacOS.sdk_path_if_needed
+      ENV.append "CPPFLAGS", "-I#{MacOS.sdk_path}/usr/include/ffi"
+    end
+
     virtualenv_install_with_resources
 
     man1.install Dir["data/*.1"]
@@ -209,13 +222,14 @@ class Ooniprobe < Formula
 
   def post_install
     return if (pkgshare/"decks-available").exist?
+
     ln_s pkgshare/"decks", pkgshare/"decks-available"
     ln_s pkgshare/"decks/web.yaml", pkgshare/"current.deck"
   end
 
   def caveats; <<~EOS
     Decks are installed to #{opt_pkgshare}/decks.
-    EOS
+  EOS
   end
 
   plist_options :startup => "true", :manual => "ooniprobe -i #{HOMEBREW_PREFIX}/share/ooniprobe/current.deck"

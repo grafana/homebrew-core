@@ -1,19 +1,19 @@
 class Netcdf < Formula
   desc "Libraries and data formats for array-oriented scientific data"
   homepage "https://www.unidata.ucar.edu/software/netcdf"
-  url "ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.5.0.tar.gz"
-  mirror "https://www.gfd-dennou.org/library/netcdf/unidata-mirror/netcdf-4.5.0.tar.gz"
-  sha256 "cbe70049cf1643c4ad7453f86510811436c9580cb7a1684ada2f32b95b00ca79"
+  url "https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-c-4.6.2.tar.gz"
+  sha256 "c37525981167b3cd82d32e1afa3022afb94e59287db5f116c57f5ed4d9c6a638"
+  revision 1
 
   bottle do
-    sha256 "6a9d39204ae9bfbacc985bc082e9d3e6bf522ee78668b4b7adb2ef70081ac381" => :high_sierra
-    sha256 "8264e77321eacb944f6b5ac04622cab6abcd0c6a6138a738fc0d16fec3beb66d" => :sierra
-    sha256 "b1063f36db3172903dcfdb2451e49b710d62bf80174b4e013c29e61a61080d3b" => :el_capitan
+    sha256 "53c9261b840f4fd0386ad60e7502a994e8307880fa1f9c779dc98032838be098" => :mojave
+    sha256 "bd780fa7599392033075bdb436125739b04d2c87327d874a8b9be92383cd4ac7" => :high_sierra
+    sha256 "7d93bc01d9eb7e945903993ec1496c560ee66362308ca94221f30e2447ae0827" => :sierra
   end
 
   depends_on "cmake" => :build
+  depends_on "gcc" # for gfortran
   depends_on "hdf5"
-  depends_on :fortran
 
   resource "cxx" do
     url "https://github.com/Unidata/netcdf-cxx4/archive/v4.3.0.tar.gz"
@@ -27,7 +27,7 @@ class Netcdf < Formula
   end
 
   resource "fortran" do
-    url "ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-fortran-4.4.4.tar.gz"
+    url "https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-fortran-4.4.4.tar.gz"
     mirror "https://www.gfd-dennou.org/arch/netcdf/unidata-mirror/netcdf-fortran-4.4.4.tar.gz"
     sha256 "b2d395175f8d283e68c8be516e231a96b191ade67ad0caafaf7fa01b1e6b5d75"
   end
@@ -112,10 +112,10 @@ class Netcdf < Formula
         return 0;
       }
     EOS
-    system ENV.cc, "test.c", "-L#{lib}", "-I#{include}", "-lnetcdf", "-o", "test"
+    system ENV.cc, "test.c", "-L#{lib}", "-I#{include}", "-lnetcdf",
+                   "-o", "test"
     assert_equal `./test`, version.to_s
 
-    ENV.fortran
     (testpath/"test.f90").write <<~EOS
       program test
         use netcdf
@@ -134,8 +134,9 @@ class Netcdf < Formula
           if (status /= nf90_noerr) call abort
         end subroutine check
       end program test
-      EOS
-    system ENV.fc, "test.f90", "-L#{lib}", "-I#{include}", "-lnetcdff", "-o", "testf"
+    EOS
+    system "gfortran", "test.f90", "-L#{lib}", "-I#{include}", "-lnetcdff",
+                       "-o", "testf"
     system "./testf"
   end
 end

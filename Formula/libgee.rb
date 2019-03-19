@@ -1,20 +1,22 @@
 class Libgee < Formula
   desc "Collection library providing GObject-based interfaces"
   homepage "https://wiki.gnome.org/Projects/Libgee"
-  url "https://download.gnome.org/sources/libgee/0.20/libgee-0.20.0.tar.xz"
-  sha256 "21308ba3ed77646dda2e724c0e8d5a2f8d101fb05e078975a532d7887223c2bb"
+  url "https://download.gnome.org/sources/libgee/0.20/libgee-0.20.1.tar.xz"
+  sha256 "bb2802d29a518e8c6d2992884691f06ccfcc25792a5686178575c7111fea4630"
+  revision 1
 
   bottle do
     cellar :any
-    sha256 "930647e21105e90f0b0bb56f5fe097ab44657fe9624e1810b053cbc59c42c1bb" => :high_sierra
-    sha256 "def51b848030a5079529f08b9886177e93fa88133b39a7db5fc94f681cbca19d" => :sierra
-    sha256 "cd590c7857ad9bc2485d057cf7d4ec1e55555af4875479bfa7a416ddc02618ec" => :el_capitan
-    sha256 "c05334f4f4a72e3185ea1130a10ab939dce5ba3cf7d40a9056fc1973957c5dd3" => :yosemite
+    sha256 "8bda00ec686771f7d42a63085b9e11c93202cc9b90adbbc5f61a699666c99db8" => :mojave
+    sha256 "d4afb1bbccfd61b0a106595356d5f571a0df6a5fb0fd5e378c8321a46e152c1b" => :high_sierra
+    sha256 "b70794b96ce5d21dc3dac66f4e0e63177d7507c723d78a786110dc502d7777e1" => :sierra
+    sha256 "7602f76b0667a7dd1527c01285274c2cca24d5e638b9a0c4a90cbc004d5e097e" => :el_capitan
   end
 
+  depends_on "gobject-introspection" => :build
   depends_on "pkg-config" => :build
   depends_on "vala" => :build
-  depends_on "gobject-introspection"
+  depends_on "glib"
 
   def install
     # ensures that the gobject-introspection files remain within the keg

@@ -1,16 +1,14 @@
 class OsmiumTool < Formula
   desc "Libosmium-based command-line tool for processing OpenStreetMap data"
-  homepage "http://osmcode.org/osmium-tool/"
-  url "https://github.com/osmcode/osmium-tool/archive/v1.7.1.tar.gz"
-  sha256 "5cdb01ca22bfc0cfd2b1a59088601f61547d60ffa47296087480718ff0156c42"
-  revision 1
+  homepage "https://osmcode.org/osmium-tool/"
+  url "https://github.com/osmcode/osmium-tool/archive/v1.10.0.tar.gz"
+  sha256 "f0a75ce39ac92c43a01d978c1ecae05d864930bf7d518ea059d7ba320735dd66"
 
   bottle do
     cellar :any
-    sha256 "398b88bc8316244cefe4d9dcec282493d6b37f56b19297e149367443e58062ed" => :high_sierra
-    sha256 "05dce7612f933019fe5a2a55e7fa3746c1ecc83282d1dde5ff3f63d3e349a677" => :sierra
-    sha256 "11203e8a401505daaa5173adeac65d5a6132859855d50798b669f748764fa0dd" => :el_capitan
-    sha256 "bd7b60b6c69a008721904db31b5362bb687d147dc713af3d5749d9fe5226d95a" => :yosemite
+    sha256 "48679a4c837f6a91fa3ee7a9c20b3abc7668aace97c3c2023b376f7e89095e9a" => :mojave
+    sha256 "5dc30f884e035bfaef59e3a818907e610de1810c4b93a8532fba67d35d298abe" => :high_sierra
+    sha256 "323eb5aeb1c7672d0574a5b5ab6f33240ac86c907eab3cd687f756996d87c6a9" => :sierra
   end
 
   depends_on "cmake" => :build
@@ -18,7 +16,8 @@ class OsmiumTool < Formula
   depends_on "boost"
 
   def install
-    system "cmake", ".", *std_cmake_args
+    protozero = Formula["libosmium"].opt_libexec/"include"
+    system "cmake", ".", "-DPROTOZERO_INCLUDE_DIR=#{protozero}", *std_cmake_args
     system "make", "install"
   end
 

@@ -1,27 +1,25 @@
 class Libgit2 < Formula
   desc "C library of Git core methods that is re-entrant and linkable"
   homepage "https://libgit2.github.com/"
-  url "https://github.com/libgit2/libgit2/archive/v0.26.0.tar.gz"
-  sha256 "6a62393e0ceb37d02fe0d5707713f504e7acac9006ef33da1e88960bd78b6eac"
+  url "https://github.com/libgit2/libgit2/archive/v0.27.8.tar.gz"
+  sha256 "8313873d49dc01e8b880ec334d7430ae67496a89aaa8c6e7bbd3affb47a00c76"
   head "https://github.com/libgit2/libgit2.git"
 
   bottle do
-    sha256 "2858f330bff072c20375d4882042123022e81237f0f3ca8382c9e3a017f514d6" => :high_sierra
-    sha256 "1cb3dac0dfc74a62e40e061c3046ce938b8c28fe0fea15e398cc4862178aa940" => :sierra
-    sha256 "8705a0cc5f73017412ce12fd87677e9b6e14781d82b6f845a64ffe84e24ecb2f" => :el_capitan
-    sha256 "f44d62f41114ee8ecba3298986cf9da5cf4b6cb44a64a9a64dd0c316938712d1" => :yosemite
+    cellar :any
+    sha256 "7773513f94d34ae831a4f9a7ed733d63866005867e11bfa08bf2ec733e4b5036" => :mojave
+    sha256 "ef11dd5318c6599d308dbf813a5283346deea04ca0d2206df74aa140074d8af2" => :high_sierra
+    sha256 "4271e89f08881a039d797bdfb51da2f78ae925fd79e2dc2e60eb7ce22d2b750a" => :sierra
   end
 
-  depends_on "pkg-config" => :build
   depends_on "cmake" => :build
-  depends_on "libssh2" => :recommended
-  depends_on "openssl" if MacOS.version <= :lion # Uses SecureTransport on >10.7
+  depends_on "pkg-config" => :build
+  depends_on "libssh2"
 
   def install
     args = std_cmake_args
     args << "-DBUILD_EXAMPLES=YES"
     args << "-DBUILD_CLAR=NO" # Don't build tests.
-    args << "-DUSE_SSH=NO" if build.without? "libssh2"
 
     mkdir "build" do
       system "cmake", "..", *args
@@ -33,6 +31,10 @@ class Libgit2 < Formula
                                       "rev-list", "rev-parse", "showindex",
                                       "status", "tag"
       end
+      system "make", "clean"
+      system "cmake", "..", "-DBUILD_SHARED_LIBS=OFF", *args
+      system "make"
+      lib.install "libgit2.a"
     end
   end
 

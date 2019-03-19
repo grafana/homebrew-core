@@ -1,8 +1,8 @@
 class Carrot2 < Formula
   desc "Search results clustering engine"
   homepage "https://project.carrot2.org"
-  url "https://github.com/carrot2/carrot2/releases/download/release%2F3.15.1/carrot2-dcs-3.15.1.zip"
-  sha256 "8aedcc83fc9303a978c722f66739e85ab197034f1617c7c4e2b831fb88d43c25"
+  url "https://github.com/carrot2/carrot2/releases/download/release%2F3.16.1/carrot2-dcs-3.16.1.zip"
+  sha256 "858f298eafb2546b5a02f133ceb810bae190b183f67e3dfdc8a6aedf3072d489"
 
   bottle :unneeded
 
@@ -36,7 +36,7 @@ class Carrot2 < Formula
         </array>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

@@ -1,40 +1,69 @@
 class Metricbeat < Formula
   desc "Collect metrics from your systems and services"
   homepage "https://www.elastic.co/products/beats/metricbeat"
-  url "https://github.com/elastic/beats/archive/v5.6.4.tar.gz"
-  sha256 "c06f913af79bb54825483ba0ed4b31752db5784daf3717f53d83b6b12890c0a4"
-
+  url "https://github.com/elastic/beats.git",
+      :tag      => "v6.6.1",
+      :revision => "928f5e3f35fe28c1bd73513ff1cc89406eb212a6"
   head "https://github.com/elastic/beats.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "12127b447d1a6fd6a98aaa458dd4b137b9f3d1b1947796d496e154193a862a5b" => :high_sierra
-    sha256 "2a316d2c7eec66eb4814d52ba1b270501b81d988c8df8bb8d8024a0a6df3a933" => :sierra
-    sha256 "f0f3e2cfa6e5b40172e069985ab0cad8fe1eb7ea63b9c9fb321f6d6463488942" => :el_capitan
+    sha256 "827e31f6e456addd32b13d7a00a9c77ec9af240484df3bc0a9dcb64832adf86f" => :mojave
+    sha256 "d6f4615dff1016d86adc6a7047cf1ab394d56f5fd545293932936a819c56a665" => :high_sierra
+    sha256 "b1ac762ccd5c6e38b6df9cc35bb23e0d78a6efe77aa0251d54286486e92b805a" => :sierra
   end
 
   depends_on "go" => :build
+  depends_on "python@2" => :build
+
+  resource "virtualenv" do
+    url "https://files.pythonhosted.org/packages/8b/f4/360aa656ddb0f4168aeaa1057d8784b95d1ce12f34332c1cf52420b6db4e/virtualenv-16.3.0.tar.gz"
+    sha256 "729f0bcab430e4ef137646805b5b1d8efbb43fe53d4a0f33328624a84a5121f7"
+  end
 
   def install
-    gopath = buildpath/"gopath"
-    (gopath/"src/github.com/elastic/beats").install Dir["{*,.git,.gitignore}"]
+    # remove non open source files
+    rm_rf "x-pack"
 
-    ENV["GOPATH"] = gopath
+    ENV["GOPATH"] = buildpath
+    (buildpath/"src/github.com/elastic/beats").install buildpath.children
 
-    cd gopath/"src/github.com/elastic/beats/metricbeat" do
-      system "make"
-      libexec.install "metricbeat"
+    ENV.prepend_create_path "PYTHONPATH", buildpath/"vendor/lib/python2.7/site-packages"
 
-      (etc/"metricbeat").install "metricbeat.full.yml"
-      (etc/"metricbeat").install "metricbeat.yml"
-      (etc/"metricbeat").install "metricbeat.template.json"
-      (etc/"metricbeat").install "metricbeat.template-es2x.json"
-      (etc/"metricbeat").install "metricbeat.template-es6x.json"
+    resource("virtualenv").stage do
+      system "python", *Language::Python.setup_install_args(buildpath/"vendor")
     end
+
+    ENV.prepend_path "PATH", buildpath/"vendor/bin" # for virtualenv
+    ENV.prepend_path "PATH", buildpath/"bin" # for mage (build tool)
+
+    cd "src/github.com/elastic/beats/metricbeat" do
+      # don't build docs because it would fail creating the combined OSS/x-pack
+      # docs and we aren't installing them anyway
+      inreplace "Makefile", "collect: assets collect-docs configs kibana imports",
+                            "collect: assets configs kibana imports"
+
+      system "make", "mage"
+      # prevent downloading binary wheels during python setup
+      system "make", "PIP_INSTALL_COMMANDS=--no-binary :all", "python-env"
+      system "mage", "-v", "build"
+      system "mage", "-v", "update"
+
+      (etc/"metricbeat").install Dir["metricbeat.*", "fields.yml", "modules.d"]
+      (libexec/"bin").install "metricbeat"
+      prefix.install "_meta/kibana.generated"
+    end
+
+    prefix.install_metafiles buildpath/"src/github.com/elastic/beats"
 
     (bin/"metricbeat").write <<~EOS
       #!/bin/sh
-      exec "#{libexec}/metricbeat" --path.config "#{etc}/metricbeat" --path.home="#{prefix}" --path.logs="#{var}/log/metricbeat" --path.data="#{opt_prefix}" "$@"
+      exec #{libexec}/bin/metricbeat \
+        --path.config #{etc}/metricbeat \
+        --path.data #{var}/lib/metricbeat \
+        --path.home #{prefix} \
+        --path.logs #{var}/log/metricbeat \
+        "$@"
     EOS
   end
 
@@ -58,7 +87,7 @@ class Metricbeat < Formula
   end
 
   test do
-    (testpath/"metricbeat.yml").write <<~EOS
+    (testpath/"config/metricbeat.yml").write <<~EOS
       metricbeat.modules:
       - module: system
         metricsets: ["load"]
@@ -72,16 +101,17 @@ class Metricbeat < Formula
     (testpath/"logs").mkpath
     (testpath/"data").mkpath
 
-    metricbeat_pid = fork do
-      exec bin/"metricbeat", "-c", testpath/"metricbeat.yml",
-      "--path.data=#{testpath}/data", "--path.logs=#{testpath}/logs"
+    pid = fork do
+      exec bin/"metricbeat", "-path.config", testpath/"config", "-path.data",
+                             testpath/"data"
     end
 
     begin
-      sleep 2
+      sleep 30
       assert_predicate testpath/"data/metricbeat", :exist?
     ensure
-      Process.kill("TERM", metricbeat_pid)
+      Process.kill "SIGINT", pid
+      Process.wait pid
     end
   end
 end

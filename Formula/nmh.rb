@@ -1,21 +1,28 @@
 class Nmh < Formula
   desc "The new version of the MH mail handler"
-  homepage "http://www.nongnu.org/nmh/"
-  url "https://download.savannah.gnu.org/releases/nmh/nmh-1.6.tar.gz"
-  sha256 "29338ae2bc8722fe8a5904b7b601a63943b72b07b6fcda53f3a354edb6a64bc3"
+  homepage "https://www.nongnu.org/nmh/"
+  url "https://download.savannah.gnu.org/releases/nmh/nmh-1.7.1.tar.gz"
+  sha256 "f1fb94bbf7d95fcd43277c7cfda55633a047187f57afc6c1bb9321852bd07c11"
 
   bottle do
-    sha256 "7c17be97fcf0b6b79c9142887ce966868ed07c856bdd5e0ecdd9a2767a66fc51" => :high_sierra
-    sha256 "62b6f1754f82dcf84674eeddfe2bf7637262324b384e6d90a52bd2a694061da0" => :sierra
-    sha256 "8c508d92233154eb888357f62d84440526fd2acea65566ef5d3325fd0b57caa8" => :el_capitan
-    sha256 "bdd5c9d0e4bd341df41972b4e651761798660eadbac1332409e184e5e8e2b877" => :yosemite
+    sha256 "b0d273ecd1a67ddf6504e5aac8771bbc1b60bdea653c0635067e059eb4881507" => :mojave
+    sha256 "4d2e05b5a522f7c394b0bcb064f48ce28b55b0a73ffe1c2ff33cc3f568167e25" => :high_sierra
+    sha256 "de7b1a7e8ab420a918dfce7dd64eeb23fd3a1fcc158bf7525ebc1bee97fad759" => :sierra
+  end
+
+  head do
+    url "https://git.savannah.nongnu.org/git/nmh.git"
+
+    depends_on "autoconf" => :build
+    depends_on "automake" => :build
   end
 
   depends_on "openssl"
+  depends_on "w3m"
 
   def install
-    system "./configure", "--disable-debug",
-                          "--disable-dependency-tracking",
+    system "./autogen.sh" if build.head?
+    system "./configure", "--disable-dependency-tracking",
                           "--disable-silent-rules",
                           "--prefix=#{prefix}", "--libdir=#{libexec}",
                           "--with-cyrus-sasl",

@@ -1,46 +1,41 @@
 class Librealsense < Formula
-  desc "Camera capture for Intel RealSense F200, SR300 and R200"
+  desc "Intel RealSense D400 series and SR300 capture"
   homepage "https://github.com/IntelRealSense/librealsense"
-  url "https://github.com/IntelRealSense/librealsense/archive/v1.12.1.tar.gz"
-  sha256 "62fb4afac289ad7e25c81b6be584ee275f3d4d3742468dc7d80222ee2e4671bd"
-
+  url "https://github.com/IntelRealSense/librealsense/archive/v2.19.1.tar.gz"
+  sha256 "6c93c5680146c86951a6a65b59e0fdef02406afcec85c153f700227cd9b6c758"
   head "https://github.com/IntelRealSense/librealsense.git"
 
   bottle do
     cellar :any
-    sha256 "6d7b2b1f63606818bdbc0f8e1db5b36b3add1e2171fada3c8abced7b5a606f37" => :high_sierra
-    sha256 "3076d299219ddee4b4b11e68238f339fc6f1b85f2acc360e11d815b85ed6a577" => :sierra
-    sha256 "ee7fe9916adcdca8fbea9a2bfc9f90662db0fbe8ec94c61ef6342eb2ec27775d" => :el_capitan
-    sha256 "36faefdb0a151dfbd090ce80c4e0692bde78b9ee4a1cde7bdd8ab82f15f96dae" => :yosemite
+    sha256 "99996c85684fe60816a10102e53476a0525d432808935864c58c6444e9184ea5" => :mojave
+    sha256 "bb50802db26325be3011411c2d95e368643c1260e0b27a70a2633c4e90a9673b" => :high_sierra
+    sha256 "ae75a744c52caa3f7dc283456157b56ebc8b4bdec8c30c761a4afa9ed1e617e8" => :sierra
   end
-
-  option "with-examples", "Install examples"
 
   depends_on "cmake" => :build
   depends_on "pkg-config" => :build
-  depends_on "glfw" if build.with? "examples"
+  depends_on "glfw"
   depends_on "libusb"
 
   def install
     args = std_cmake_args
+    args << "-DENABLE_CCACHE=OFF"
 
-    args << "-DBUILD_EXAMPLES=true" if build.with? "examples"
-
-    system "cmake", ".", *args
+    system "cmake", ".", "-DBUILD_WITH_OPENMP=OFF", *args
     system "make", "install"
   end
 
   test do
     (testpath/"test.c").write <<~EOS
-      #include <librealsense/rs.h>
-      #include<stdio.h>
+      #include <librealsense2/rs.h>
+      #include <stdio.h>
       int main()
       {
-        printf(RS_API_VERSION_STR);
+        printf(RS2_API_VERSION_STR);
         return 0;
       }
     EOS
     system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-o", "test"
-    assert_equal shell_output("./test").strip, version.to_s
+    assert_equal version.to_s, shell_output("./test").strip
   end
 end

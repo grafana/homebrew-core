@@ -1,15 +1,15 @@
 class Zeromq < Formula
   desc "High-performance, asynchronous messaging library"
   homepage "http://www.zeromq.org/"
-  url "https://github.com/zeromq/libzmq/releases/download/v4.2.2/zeromq-4.2.2.tar.gz"
-  sha256 "5b23f4ca9ef545d5bd3af55d305765e3ee06b986263b31967435d285a3e6df6b"
+  url "https://github.com/zeromq/libzmq/releases/download/v4.3.1/zeromq-4.3.1.tar.gz"
+  sha256 "bcbabe1e2c7d0eec4ed612e10b94b112dd5f06fcefa994a0c79a45d835cd21eb"
+  revision 1
 
   bottle do
     cellar :any
-    sha256 "24c5d175563a388a81df502e0e56b0bc16e2d2becdff05bb74adefa091a82264" => :high_sierra
-    sha256 "e10289e3a44f78b2234347b04b9369f45455afa8b0fd61d538bc92a6de69b517" => :sierra
-    sha256 "72ca74ca177ff8ffd765d2e010b5027e3640b1e68964b1e5c7f7f3acc0a6acdd" => :el_capitan
-    sha256 "e98d0623b86749fe766a518d256493bd5cb78a73002a10dfb748a8c65763b45a" => :yosemite
+    sha256 "f5837a7056c827b6fbe3b7758f87d78969ff01e5f91ece40050d58a2762ccca5" => :mojave
+    sha256 "c520b34c98300a0b591559376b841050bc4f9d011392d8cebeb02f670de47fc0" => :high_sierra
+    sha256 "7fbd2a2be3dcf6e83760627d0e1327dacebb9b39359d729438dd2468fe3b89e0" => :sierra
   end
 
   head do
@@ -20,34 +20,24 @@ class Zeromq < Formula
     depends_on "libtool" => :build
   end
 
-  option "with-libpgm", "Build with PGM extension"
-  option "with-norm", "Build with NORM extension"
-  option "with-drafts", "Build and install draft classes and methods"
-
-  deprecated_option "with-pgm" => "with-libpgm"
-
   depends_on "asciidoc" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkg-config" => [:build, :test]
   depends_on "xmlto" => :build
-  depends_on "libpgm" => :optional
-  depends_on "libsodium" => :optional
-  depends_on "norm" => :optional
 
   def install
+    # Work around "error: no member named 'signbit' in the global namespace"
+    if MacOS.version == :high_sierra
+      ENV.delete("HOMEBREW_SDKROOT")
+      ENV.delete("SDKROOT")
+    end
+
     ENV["XML_CATALOG_FILES"] = "#{etc}/xml/catalog"
 
-    args = ["--disable-dependency-tracking", "--prefix=#{prefix}"]
-
-    args << "--with-pgm" if build.with? "libpgm"
-    args << "--with-libsodium" if build.with? "libsodium"
-    args << "--with-norm" if build.with? "norm"
-    args << "--enable-drafts" if build.with?("drafts")
-
-    ENV["LIBUNWIND_LIBS"] = "-framework System"
-    ENV["LIBUNWIND_CFLAGS"] = "-I#{MacOS.sdk_path}/usr/include"
+    # Disable libunwind support due to pkg-config problem
+    # https://github.com/Homebrew/homebrew-core/pull/35940#issuecomment-454177261
 
     system "./autogen.sh" if build.head?
-    system "./configure", *args
+    system "./configure", "--disable-dependency-tracking", "--prefix=#{prefix}"
     system "make"
     system "make", "install"
   end
@@ -66,5 +56,7 @@ class Zeromq < Formula
     EOS
     system ENV.cc, "test.c", "-L#{lib}", "-lzmq", "-o", "test"
     system "./test"
+    system "pkg-config", "libzmq", "--cflags"
+    system "pkg-config", "libzmq", "--libs"
   end
 end

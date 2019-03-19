@@ -1,38 +1,26 @@
-require "language/go"
-
 class Pilosa < Formula
   desc "Distributed bitmap index that queries across data sets"
   homepage "https://www.pilosa.com"
-  url "https://github.com/pilosa/pilosa/archive/v0.7.1.tar.gz"
-  sha256 "c889b774b78c85fb1a23984e362e0201444b8b3d7baa38d3507dbd9ad675de04"
+  url "https://github.com/pilosa/pilosa/archive/v1.2.0.tar.gz"
+  sha256 "3497808a698c83ac4b29a6597fef2e78c59d4a2d5cda55bb03e94f9763c206c9"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "079f06f54ebaede4f007c6ac550dc8062f8319f2ab39cb6f79e43e2d149c0af6" => :high_sierra
-    sha256 "8ce70bc300dfbe98ccdb11e73261f5b1b7a68c94b76dc89c542faf931d3da8ef" => :sierra
-    sha256 "2b397ff34673843663cd608fbb90f12e48088a090ac2d64676bb1ed6ca3c811a" => :el_capitan
+    sha256 "17b2abd56288854a913b80e761baac608a2f841092fbeb519b2465a254b19c31" => :mojave
+    sha256 "e53f96b58a3d8cb0344d5ef5d133608a8291fc3d6b4e169b92d28914ae11dbc8" => :high_sierra
+    sha256 "ae71b47cc9f21ffbfd250cd40dcad8f312200dfa44852e54b9b517778d1e2de2" => :sierra
   end
 
-  depends_on "go" => :build
   depends_on "dep" => :build
-
-  go_resource "github.com/rakyll/statik" do
-    url "https://github.com/rakyll/statik.git",
-        :tag => "v0.1.1"
-  end
+  depends_on "go" => :build
 
   def install
     ENV["GOPATH"] = buildpath
-    ENV.prepend_path "PATH", "#{buildpath}/bin"
-
     (buildpath/"src/github.com/pilosa/pilosa").install buildpath.children
-    Language::Go.stage_deps resources, buildpath/"src"
 
-    cd "src/github.com/rakyll/statik" do
-      system "go", "install"
-    end
     cd "src/github.com/pilosa/pilosa" do
-      system "make", "generate-statik", "pilosa", "FLAGS=-o #{bin}/pilosa", "VERSION=v#{version}"
+      system "make", "build", "FLAGS=-o #{bin}/pilosa", "VERSION=v#{version}"
+      prefix.install_metafiles
     end
   end
 
@@ -61,7 +49,7 @@ class Pilosa < Formula
         <string>#{var}</string>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do
@@ -71,7 +59,6 @@ class Pilosa < Formula
       end
       sleep 0.5
       assert_match("Welcome. Pilosa is running.", shell_output("curl localhost:10101"))
-      assert_match("<!DOCTYPE html>", shell_output("curl --user-agent NotCurl localhost:10101"))
     ensure
       Process.kill "TERM", server
       Process.wait server

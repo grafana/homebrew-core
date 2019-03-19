@@ -1,11 +1,12 @@
 class Vitetris < Formula
   desc "Terminal-based Tetris clone"
-  homepage "http://www.victornils.net/tetris/"
-  url "http://www.victornils.net/tetris/vitetris-0.57.tar.gz"
+  homepage "https://www.victornils.net/tetris/"
+  url "https://www.victornils.net/tetris/vitetris-0.57.tar.gz"
   sha256 "0c9fa6c8b16e2f8968f65e16a87f1bcd39b827d510c6efb0771f0400ab91cdc2"
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "57a4c3d266930344ac69130d2dc5075c25783d0446712ff983ce1b42c69b4a4b" => :mojave
     sha256 "1a01bb4e1ac4a04e4cd139683a0593c3ad2aadca28c8c7ed7b2ca1881400ffac" => :high_sierra
     sha256 "817866938f1d4df2dcbb69166e187ec4a5d2f61cff83d50725f5112e773c5f34" => :sierra
     sha256 "d3d2d0c8a86995742c790418cd4e11bbf46d0ea4efa6b8bd5f372a3df7f9ea2b" => :el_capitan

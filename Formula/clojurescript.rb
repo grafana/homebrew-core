@@ -1,8 +1,8 @@
 class Clojurescript < Formula
   desc "Clojure to JS compiler"
   homepage "https://github.com/clojure/clojurescript"
-  url "https://github.com/clojure/clojurescript/releases/download/r1.9.946/cljs.jar"
-  sha256 "b2aec435c8fa285bf75afe02f5c15ab041f92753bacd7570f637afa8eb63e854"
+  url "https://github.com/clojure/clojurescript/releases/download/r1.10.439/cljs.jar"
+  sha256 "969d36628b2d65f1cb206b157342b17732d30a1c4c5d250056d97802a8742cef"
   head "https://github.com/clojure/clojurescript.git"
 
   bottle :unneeded
@@ -17,7 +17,7 @@ class Clojurescript < Formula
   def caveats; <<~EOS
     This formula is useful if you need to use the ClojureScript compiler directly.
     For a more integrated workflow use Leiningen, Boot, or Maven.
-    EOS
+  EOS
   end
 
   test do

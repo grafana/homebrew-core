@@ -1,16 +1,15 @@
 class Overmind < Formula
   desc "Process manager for Procfile-based applications and tmux"
   homepage "https://github.com/DarthSim/overmind"
-  url "https://github.com/DarthSim/overmind/archive/v1.0.8.2.tar.gz"
-  sha256 "f19cd6bd60238c9c660173ecb772746d9acbf71fa0e467b3a002e758ad32822f"
+  url "https://github.com/DarthSim/overmind/archive/v2.0.1.tar.gz"
+  sha256 "71f41691d8886454e151d30d7490d9ef8599ffc4c1e77ac72934dddf3371dd08"
   head "https://github.com/DarthSim/overmind.git"
 
   bottle do
     cellar :any_skip_relocation
-    rebuild 1
-    sha256 "7e4ff21eb3a5a4d8f498870f27af669765fc9ba92cd1862382086affe81a6036" => :high_sierra
-    sha256 "c7df671d29033a384d7987c7ed01dc3a5d4905280bd2f0fc22d2d9bee71f7072" => :sierra
-    sha256 "91f58927b9a81b703d1eeb2d6dd4db3802dfc7c8790f567e216db68aba2c0f12" => :el_capitan
+    sha256 "cab67f961cff86649aa817a0e73fac8227e8674cb475e12aa8c07883f8db2938" => :mojave
+    sha256 "70cbb5075904b143799ac25134daccd0465282787c2f355ef05780bcf2902395" => :high_sierra
+    sha256 "9934a99f38852e83c8d3c0b2db16619ebea10917605e3d4ec136fa9fa1f16141" => :sierra
   end
 
   depends_on "go" => :build
@@ -26,7 +25,7 @@ class Overmind < Formula
     expected_message = "overmind: open ./Procfile: no such file or directory"
     assert_match expected_message, shell_output("#{bin}/overmind start 2>&1", 1)
     (testpath/"Procfile").write("test: echo 'test message'")
-    expected_message = "inappropriate ioctl for device"
+    expected_message = "test message"
     assert_match expected_message, shell_output("#{bin}/overmind start")
   end
 end

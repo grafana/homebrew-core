@@ -1,50 +1,52 @@
 class TclTk < Formula
   desc "Tool Command Language"
   homepage "https://www.tcl.tk/"
-
-  stable do
-    url "https://downloads.sourceforge.net/project/tcl/Tcl/8.6.7/tcl8.6.7-src.tar.gz"
-    mirror "ftp://ftp.tcl.tk/pub/tcl/tcl8_6/tcl8.6.7-src.tar.gz"
-    version "8.6.7"
-    sha256 "7c6b8f84e37332423cfe5bae503440d88450da8cc1243496249faa5268026ba5"
-
-    resource "tk" do
-      url "https://downloads.sourceforge.net/project/tcl/Tcl/8.6.7/tk8.6.7-src.tar.gz"
-      mirror "ftp://ftp.tcl.tk/pub/tcl/tcl8_6/tk8.6.7-src.tar.gz"
-      version "8.6.7"
-      sha256 "061de2a354f9b7c7d04de3984c90c9bc6dd3a1b8377bb45509f1ad8a8d6337aa"
-    end
-  end
+  url "https://downloads.sourceforge.net/project/tcl/Tcl/8.6.9/tcl8.6.9-src.tar.gz"
+  mirror "https://ftp.osuosl.org/pub/blfs/conglomeration/tcl/tcl8.6.9-src.tar.gz"
+  version "8.6.9"
+  sha256 "ad0cd2de2c87b9ba8086b43957a0de3eb2eb565c7159d5f53ccbba3feb915f4e"
 
   bottle do
-    sha256 "01e59553d910f320d358ae8ecaeff955300684c577edd0470b0c3a14a1c6f8c4" => :high_sierra
-    sha256 "0a21606596e11bc27ae105548906cc161e0e8bd1ccd0546c1df0441ae2ab1a43" => :sierra
-    sha256 "56d5506393587d99b78e458d3945833380682068091f75ea525c1d8a64d5ced9" => :el_capitan
-    sha256 "4a3b7d78452c33e84d8c55eaf71bb758e25f0aa9e16112cdd6646ba458304baf" => :yosemite
+    rebuild 1
+    sha256 "26ee537a07be3494a321daeee3a1e3fa29c3564cd7fc3f7261dfa2526be82634" => :mojave
+    sha256 "167f661c580c6e7d63157e4ba260ff656f8475f16b27b67e10817f84c56e1875" => :high_sierra
+    sha256 "8295728ef8d97edad4415fb59f00ff91381120515058650473b8f2297c67401e" => :sierra
   end
 
-  devel do
-    url "https://downloads.sourceforge.net/project/tcl/Tcl/8.7a1/tcl8.7a1-src.tar.gz"
-    mirror "ftp://ftp.tcl.tk/pub/tcl/tcl8_7/tk8.7a1-src.tar.gz"
-    version "8.7a1"
-    sha256 "2bbd4e0bbdebeaf5dc6cc823d0805afb45c764292f6667d9ce2b9fcf5399e0dc"
-
-    resource "tk" do
-      url "https://downloads.sourceforge.net/project/tcl/Tcl/8.7a1/tk8.7a1-src.tar.gz"
-      mirror "ftp://ftp.tcl.tk/pub/tcl/tcl8_7/tk8.7a1-src.tar.gz"
-      sha256 "131e4bae43a15dff0324c0479358bb42cfd7b8de0e1ca8d93c9207643c7144dd"
-    end
-  end
-
-  keg_only :provided_by_osx,
+  keg_only :provided_by_macos,
     "tk installs some X11 headers and macOS provides an (older) Tcl/Tk"
 
-  option "without-tcllib", "Don't build tcllib (utility modules)"
-  option "without-tk", "Don't build the Tk (window toolkit)"
+  depends_on "openssl"
+
+  resource "critcl" do
+    url "https://github.com/andreas-kupries/critcl/archive/3.1.17.tar.gz"
+    sha256 "fff83b341fc07b8ff23bf1f645133bb4bffe4741da2e6f31155e522a74c228e4"
+  end
 
   resource "tcllib" do
-    url "https://downloads.sourceforge.net/project/tcllib/tcllib/1.18/tcllib-1.18.tar.gz"
-    sha256 "72667ecbbd41af740157ee346db77734d1245b41dffc13ac80ca678dd3ccb515"
+    url "https://downloads.sourceforge.net/project/tcllib/tcllib/1.19/tcllib-1.19.tar.gz"
+    sha256 "01fe87cf1855b96866cf5394b6a786fd40b314022714b34110aeb6af545f6a9c"
+  end
+
+  resource "tcltls" do
+    url "https://core.tcl.tk/tcltls/uv/tcltls-1.7.16.tar.gz"
+    sha256 "6845000732bedf764e78c234cee646f95bb68df34e590c39434ab8edd6f5b9af"
+  end
+
+  resource "tk" do
+    url "https://downloads.sourceforge.net/project/tcl/Tcl/8.6.9/tk8.6.9.1-src.tar.gz"
+    mirror "https://fossies.org/linux/misc/tk8.6.9.1-src.tar.gz"
+    version "8.6.9.1"
+    sha256 "8fcbcd958a8fd727e279f4cac00971eee2ce271dc741650b1fc33375fb74ebb4"
+
+    # Upstream issue 7 Jan 2018 "Build failure with Aqua support on OS X 10.8 and 10.9"
+    # See https://core.tcl.tk/tcl/tktview/95a8293a2936e34cc8d0658c21e5214f1ca9b435
+    if MacOS.version == :mavericks
+      patch :p0 do
+        url "https://raw.githubusercontent.com/macports/macports-ports/0a883ad388b/x11/tk/files/patch-macosx-tkMacOSXXStubs.c.diff"
+        sha256 "2cdba6bbf2503307fe4f4d7200ad57c9926ebf0ff6ed3e65bf551067a30a04a9"
+      end
+    end
   end
 
   def install
@@ -63,27 +65,36 @@ class TclTk < Formula
       ln_s bin/"tclsh#{version.to_f}", bin/"tclsh"
     end
 
-    if build.with? "tk"
-      ENV.prepend_path "PATH", bin # so that tk finds our new tclsh
+    # Let tk finds our new tclsh
+    ENV.prepend_path "PATH", bin
 
-      resource("tk").stage do
-        cd "unix" do
-          system "./configure", *args, "--enable-aqua=yes",
-                                "--without-x", "--with-tcl=#{lib}"
-          system "make"
-          system "make", "install"
-          system "make", "install-private-headers"
-          ln_s bin/"wish#{version.to_f}", bin/"wish"
-        end
+    resource("tk").stage do
+      cd "unix" do
+        system "./configure", *args, "--enable-aqua=yes",
+                              "--without-x", "--with-tcl=#{lib}"
+        system "make"
+        system "make", "install"
+        system "make", "install-private-headers"
+        ln_s bin/"wish#{version.to_f}", bin/"wish"
       end
     end
 
-    if build.with? "tcllib"
-      resource("tcllib").stage do
-        system "./configure", "--prefix=#{prefix}",
-                              "--mandir=#{man}"
-        system "make", "install"
-      end
+    resource("critcl").stage do
+      system bin/"tclsh", "build.tcl", "install"
+    end
+
+    resource("tcllib").stage do
+      system "./configure", "--prefix=#{prefix}", "--mandir=#{man}"
+      system "make", "install"
+      ENV["SDKROOT"] = MacOS.sdk_path
+      system "make", "critcl"
+      cp_r "modules/tcllibc", "#{lib}/"
+      ln_s "#{lib}/tcllibc/macosx-x86_64-clang", "#{lib}/tcllibc/macosx-x86_64"
+    end
+
+    resource("tcltls").stage do
+      system "./configure", "--with-ssl=openssl", "--with-openssl-dir=#{Formula["openssl"].opt_prefix}", "--prefix=#{prefix}", "--mandir=#{man}"
+      system "make", "install"
     end
   end
 

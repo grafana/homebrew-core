@@ -7,28 +7,23 @@ class MecabJumandic < Formula
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "c9e83fb2bd4fd8aaa18b9475b512c7fb1e39a5903aca41ce23f9cccfdbdd0f09" => :mojave
     sha256 "eefafd1bf8ea2aa43a50542328ee97492beab4730e52c4ec8ce6ed06844e8382" => :high_sierra
     sha256 "4b821839b99982c506a1e262c9fa8b650620bc546a8725a5eaa1dc54b45e4822" => :sierra
     sha256 "4b821839b99982c506a1e262c9fa8b650620bc546a8725a5eaa1dc54b45e4822" => :el_capitan
     sha256 "4b821839b99982c506a1e262c9fa8b650620bc546a8725a5eaa1dc54b45e4822" => :yosemite
   end
 
-  # Via ./configure --help, valid choices are utf8 (default), euc-jp, sjis
-  option "with-charset=", "Select charset: utf8 (default), euc-jp, or sjis"
-
-  deprecated_option "charset=" => "with-charset="
-
   depends_on "mecab"
 
   link_overwrite "lib/mecab/dic"
 
   def install
-    charset = ARGV.value("with-charset") || "utf8"
     args = %W[
       --disable-debug
       --disable-dependency-tracking
       --prefix=#{prefix}
-      --with-charset=#{charset}
+      --with-charset=utf8
       --with-dicdir=#{lib}/mecab/dic/jumandic
     ]
 

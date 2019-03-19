@@ -1,12 +1,12 @@
 class Payara < Formula
   desc "Java EE application server forked from GlassFish"
   homepage "https://www.payara.fish"
-  url "https://search.maven.org/remotecontent?filepath=fish/payara/distributions/payara/4.1.2.173/payara-4.1.2.173.zip"
-  sha256 "944fae8fa38e83cf291e6176152827113a4733174096c49a2cf3d218ba1ad7f2"
+  url "https://search.maven.org/remotecontent?filepath=fish/payara/distributions/payara/5.183/payara-5.183.zip"
+  sha256 "2940a780c781643f5bc3044658e935443e5d51d96e2ee62bac4baefa7e6122df"
 
   bottle :unneeded
 
-  depends_on :java => "1.7+"
+  depends_on :java => "1.8"
 
   conflicts_with "glassfish", :because => "both install the same scripts"
 
@@ -18,7 +18,8 @@ class Payara < Formula
                              "AS_INSTALL=#{libexec}/glassfish"
 
     libexec.install Dir["*"]
-    bin.install_symlink Dir["#{libexec}/bin/*"]
+    bin.install Dir["#{libexec}/bin/*"]
+    bin.env_script_all_files(libexec/"bin", Language::Java.java_home_env("1.8"))
   end
 
   def caveats; <<~EOS
@@ -67,7 +68,7 @@ class Payara < Formula
     ENV["GLASSFISH_HOME"] = opt_libexec/"glassfish"
     output = shell_output("#{bin}/asadmin list-domains")
     assert_match /^domain1 not running$/, output
-    assert_match /^payaradomain not running$/, output
+    assert_match /^production not running$/, output
     assert_match /^Command list-domains executed successfully\.$/, output
   end
 end

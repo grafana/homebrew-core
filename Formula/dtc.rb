@@ -1,16 +1,17 @@
 class Dtc < Formula
   desc "Device tree compiler"
   homepage "https://www.devicetree.org/"
-  url "https://mirrors.ocf.berkeley.edu/debian/pool/main/d/device-tree-compiler/device-tree-compiler_1.4.5.orig.tar.gz"
-  mirror "https://mirrorservice.org/sites/ftp.debian.org/debian/pool/main/d/device-tree-compiler/device-tree-compiler_1.4.5.orig.tar.gz"
-  sha256 "d13df67f5402c1905d2c24603471fe783965112ab5004025a50f7f852cd89bc8"
+  url "https://www.kernel.org/pub/software/utils/dtc/dtc-1.5.0.tar.xz"
+  sha256 "c672e443c9f7e39f5a7c8e602da6777f9ad55ad70de87de300a43828c8050172"
 
   bottle do
     cellar :any
-    sha256 "85ede678c4e04e074e8aaf9e1331d2fd4235297cc92747be2362f7fe5604987b" => :high_sierra
-    sha256 "71aaae19cc7f53e650bc807844135b8a2527084dc153fcaaaab0d7a552e6caa4" => :sierra
-    sha256 "5affa8e37eff06e88eb1f571fbfb0dcef60cf7b1efebdc72b511c435c1509b8f" => :el_capitan
+    sha256 "a153daba5d7e2d361cc072a310379a939c8a83986584a1899edba80371e04b56" => :mojave
+    sha256 "d64946a773558b22387e1e251185180d386b592828d87c166fa43dbd35cdbf1f" => :high_sierra
+    sha256 "21635cfd955fbcd9de3a48a3e8203725c1a194e48d11eade6c95d8f481fc8e7f" => :sierra
   end
+
+  depends_on "pkg-config" => :build
 
   def install
     system "make", "NO_PYTHON=1"

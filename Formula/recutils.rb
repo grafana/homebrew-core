@@ -1,23 +1,21 @@
 class Recutils < Formula
   desc "Tools to work with human-editable, plain text data files"
   homepage "https://www.gnu.org/software/recutils/"
-  url "https://ftp.gnu.org/gnu/recutils/recutils-1.7.tar.gz"
-  mirror "https://ftpmirror.gnu.org/recutils/recutils-1.7.tar.gz"
-  sha256 "233dc6dedb1916b887de293454da7e36a74bed9ebea364f7e97e74920051bc31"
+  url "https://ftp.gnu.org/gnu/recutils/recutils-1.8.tar.gz"
+  mirror "https://ftpmirror.gnu.org/gnu/recutils/recutils-1.8.tar.gz"
+  sha256 "df8eae69593fdba53e264cbf4b2307dfb82120c09b6fab23e2dad51a89a5b193"
 
   bottle do
     cellar :any
-    rebuild 1
-    sha256 "c0663d82d44c2fb4c4baf0228e4f2e093ea15fd263447714ab2d9890a827ce1e" => :high_sierra
-    sha256 "a984710e11a1c350b9f59c37a7e1548bb0ddf500fad66d727085d1f7190227d8" => :sierra
-    sha256 "b05bab96785a80e5bef03d810ab0f764db53856e1fba5fa65d2b4db25fe3575c" => :el_capitan
-    sha256 "b91cd49a977ff93d079ac65a637b6d9681f045368e06a0a1d630ca97e14bd11a" => :yosemite
-    sha256 "7e323f2500199e0b1d8fbbd26b33c022c56a9582abdefa401c4629d7152b7f4d" => :mavericks
-    sha256 "aec2464c5e26a561b340e9ae5a080366a068936ff2ba4e86e6a4bcf0ed8a95d0" => :mountain_lion
+    sha256 "1503a69c0ed988355b959c47b2c8a5e5a4f451d41027f5a06cdf5de19f7d171f" => :mojave
+    sha256 "c2ca0221b7e7091c11840a000f02b130325a188aeb03b100947562aa8d9ce3ef" => :high_sierra
+    sha256 "694cfda88a56f30c66d71080b8a1a4763a17789e0ea54b37c778ba84107f6430" => :sierra
   end
 
   def install
-    system "./configure", "--disable-dependency-tracking", "--prefix=#{prefix}"
+    system "./configure", "--disable-dependency-tracking",
+                          "--prefix=#{prefix}",
+                          "--datarootdir=#{elisp}"
     system "make", "install"
   end
 
@@ -27,5 +25,13 @@ class Recutils < Formula
       1,2,3
     EOS
     system "#{bin}/csv2rec", "test.csv"
+
+    (testpath/"test.rec").write <<~EOS
+      %rec: Book
+      %mandatory: Title
+
+      Title: GNU Emacs Manual
+    EOS
+    system "#{bin}/recsel", "test.rec"
   end
 end

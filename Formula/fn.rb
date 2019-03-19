@@ -1,26 +1,25 @@
 class Fn < Formula
   desc "Command-line tool for the fn project"
-  homepage "https://fnproject.github.io"
-  url "https://github.com/fnproject/cli/archive/0.4.16.tar.gz"
-  sha256 "35404ecd3067834d142acee86bf5c790a14c5f2b279d0011d99a7f131f1ddbe5"
+  homepage "https://fnproject.io"
+  url "https://github.com/fnproject/cli/archive/0.5.63.tar.gz"
+  sha256 "e62c33ce7fb17abff4f5e0209859fac752700cb392993419a342c338df03fcd2"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "3eba152a4bc60919e9ae662f9420aa27f5eeee83e3b1ba5d75b1ea2c3a7a7237" => :high_sierra
-    sha256 "6e5f8d5553f40e1748e642f0732d8197087c933e34a230f9cae0b7e1bf8157ae" => :sierra
-    sha256 "33f723f6dfbcfdc175147e0ccec763a88dbfd551005a8c6115ce729692db2633" => :el_capitan
+    sha256 "dde854ac892e6f16992d821fb09c3ddbeb368a93fa8b631b12bb742c493dda04" => :mojave
+    sha256 "91eeb93121bb1b6f1fac2c60b2566dd1a9cdff6e045d36e101e3ebaa66c1d80a" => :high_sierra
+    sha256 "e3296fd5b895448f318dc319b1208eeb5ddfcf9bb8f6611c5020a646909b8b18" => :sierra
   end
 
   depends_on "go" => :build
-  depends_on "glide" => :build
 
   def install
+    ENV["GO111MODULE"] = "on"
     ENV["GOPATH"] = buildpath
-    ENV["GLIDE_HOME"] = HOMEBREW_CACHE/"glide_home/#{name}"
-    dir = buildpath/"src/github.com/fnproject/cli"
-    dir.install Dir["*"]
-    cd dir do
-      system "glide", "install", "-v", "--force", "--skip-test"
+
+    src = buildpath/"src/github.com/fnproject/cli"
+    src.install buildpath.children
+    src.cd do
       system "go", "build", "-o", "#{bin}/fn"
       prefix.install_metafiles
     end
@@ -37,7 +36,7 @@ class Fn < Formula
     pid = fork do
       loop do
         socket = server.accept
-        response = '{"route": {"path": "/myfunc", "image": "fnproject/myfunc"} }'
+        response = '{"id":"01CQNY9PADNG8G00GZJ000000A","name":"myapp","created_at":"2018-09-18T08:56:08.269Z","updated_at":"2018-09-18T08:56:08.269Z"}'
         socket.print "HTTP/1.1 200 OK\r\n" \
                     "Content-Length: #{response.bytesize}\r\n" \
                     "Connection: close\r\n"
@@ -47,10 +46,10 @@ class Fn < Formula
       end
     end
     begin
-      ENV["API_URL"] = "http://localhost:#{port}"
+      ENV["FN_API_URL"] = "http://localhost:#{port}"
       ENV["FN_REGISTRY"] = "fnproject"
-      expected = "/myfunc created with fnproject/myfunc"
-      output = shell_output("#{bin}/fn routes create myapp myfunc --image fnproject/myfunc:0.0.1")
+      expected = "Successfully created app:  myapp"
+      output = shell_output("#{bin}/fn create app myapp")
       assert_match expected, output.chomp
     ensure
       Process.kill("TERM", pid)

@@ -1,29 +1,27 @@
 class Tig < Formula
   desc "Text interface for Git repositories"
   homepage "https://jonas.github.io/tig/"
-  url "https://github.com/jonas/tig/releases/download/tig-2.3.0/tig-2.3.0.tar.gz"
-  sha256 "686f0386927904dc6410f0b1a712cb8bd7fff3303f688d7dc43162f4ad16c0ed"
+  url "https://github.com/jonas/tig/releases/download/tig-2.4.1/tig-2.4.1.tar.gz"
+  sha256 "b6b6aa183e571224d0e1fab3ec482542c1a97fa7a85b26352dc31dbafe8558b8"
+  revision 1
 
   bottle do
-    sha256 "7ee4d3602940b21b8d9a9af504e37519bca1378f2a4a959ba553f4334a4b9a27" => :high_sierra
-    sha256 "47f74e5b1b4da196651ae4852cc9d7f4496bec53752da8428fb9eb78efbfb0fc" => :sierra
-    sha256 "da55d31b23fe60a4da0658f785a001f73fcb553bbd6677920eca10c477e94539" => :el_capitan
+    cellar :any
+    sha256 "eba3a55c27fa0574f50afa7c93992e2ca977bfec4614c3cbf659a8139af33ef9" => :mojave
+    sha256 "4a73419c6034c18896d658938992a2c3ec8f4c5cd0567323cde27c6270861d03" => :high_sierra
+    sha256 "09939bc22023b396db534f278257343b0752509a53eea5f2a417cbb0a47b3b8c" => :sierra
   end
 
   head do
     url "https://github.com/jonas/tig.git"
+
+    depends_on "asciidoc" => :build
     depends_on "autoconf" => :build
     depends_on "automake" => :build
+    depends_on "xmlto" => :build
   end
 
-  option "with-docs", "Build man pages using asciidoc and xmlto"
-
-  if build.with? "docs"
-    depends_on "asciidoc"
-    depends_on "xmlto"
-  end
-
-  depends_on "readline" => :recommended
+  depends_on "readline"
 
   def install
     system "./autogen.sh" if build.head?
@@ -32,7 +30,7 @@ class Tig < Formula
     # Ensure the configured `sysconfdir` is used during runtime by
     # installing in a separate step.
     system "make", "install", "sysconfdir=#{pkgshare}/examples"
-    system "make", "install-doc-man" if build.with? "docs"
+    system "make", "install-doc-man"
     bash_completion.install "contrib/tig-completion.bash"
     zsh_completion.install "contrib/tig-completion.zsh" => "_tig"
     cp "#{bash_completion}/tig-completion.bash", zsh_completion
@@ -43,7 +41,7 @@ class Tig < Formula
       #{opt_pkgshare}/examples/tigrc
     to override the system-wide default configuration, copy the sample to:
       #{etc}/tigrc
-    EOS
+  EOS
   end
 
   test do

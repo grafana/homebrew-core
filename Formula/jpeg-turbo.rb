@@ -1,51 +1,31 @@
 class JpegTurbo < Formula
   desc "JPEG image codec that aids compression and decompression"
   homepage "https://www.libjpeg-turbo.org/"
-  url "https://downloads.sourceforge.net/project/libjpeg-turbo/1.5.2/libjpeg-turbo-1.5.2.tar.gz"
-  sha256 "9098943b270388727ae61de82adec73cf9f0dbb240b3bc8b172595ebf405b528"
+  url "https://downloads.sourceforge.net/project/libjpeg-turbo/2.0.0/libjpeg-turbo-2.0.0.tar.gz"
+  sha256 "778876105d0d316203c928fd2a0374c8c01f755d0a00b12a1c8934aeccff8868"
+  head "https://github.com/libjpeg-turbo/libjpeg-turbo.git"
 
   bottle do
-    cellar :any
-    sha256 "8c95c24c19a4f7c80be4a7d226b69235011b04ba638f7b16d1f8908f17e41962" => :high_sierra
-    sha256 "21f8159b00dadb55d54ac116fad05609c037232247de5a4a68cbecaf6370efa8" => :sierra
-    sha256 "467f1bf4bdc4b6cda9a9dde47eafe13270183c6c1d8dfa13d6149d1f1ae02ca8" => :el_capitan
-  end
-
-  head do
-    url "https://github.com/libjpeg-turbo/libjpeg-turbo.git"
-
-    depends_on "automake" => :build
-    depends_on "autoconf" => :build
+    sha256 "a796ad23629db937b87691b7cd01e1bfbdd4c841a8c534cc92bc13bf80f161fe" => :mojave
+    sha256 "3419adae8718b8b9fc41cd7e7f74803bdc4437d2f754605a59e8768d2630512f" => :high_sierra
+    sha256 "68d14fd1b5a59c349e9bdd639d25841947f790f48d3eb788898599bb62515560" => :sierra
+    sha256 "5782250ca2948367083ccd42aacba569efe888bd5a2727faa01d6ad6234d02ab" => :el_capitan
   end
 
   keg_only "libjpeg-turbo is not linked to prevent conflicts with the standard libjpeg"
 
-  option "without-test", "Skip build-time checks (Not Recommended)"
-
-  depends_on "libtool" => :build
+  depends_on "cmake" => :build
   depends_on "nasm" => :build
 
   def install
-    cp Dir["#{Formula["libtool"].opt_share}/libtool/*/config.{guess,sub}"], buildpath
-    args = %W[
-      --disable-dependency-tracking
-      --prefix=#{prefix}
-      --with-jpeg8
-      --mandir=#{man}
-    ]
-
-    system "autoreconf", "-fvi" if build.head?
-    system "./configure", *args
+    system "cmake", ".", "-DWITH_JPEG8=1", *std_cmake_args
     system "make"
-    system "make", "test" if build.with? "test"
-    ENV.deparallelize # Stops a race condition error: file exists
+    system "make", "test"
     system "make", "install"
   end
 
   test do
-    system "#{bin}/jpegtran", "-crop", "1x1",
-                              "-transpose", "-perfect",
-                              "-outfile", "out.jpg",
-                              test_fixtures("test.jpg")
+    system "#{bin}/jpegtran", "-crop", "1x1", "-transpose", "-perfect",
+                              "-outfile", "out.jpg", test_fixtures("test.jpg")
   end
 end

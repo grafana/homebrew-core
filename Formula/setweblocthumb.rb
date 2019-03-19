@@ -1,11 +1,12 @@
 class Setweblocthumb < Formula
   desc "Assigns custom icons to webloc files"
-  homepage "http://hasseg.org/setWeblocThumb"
+  homepage "https://hasseg.org/setWeblocThumb/"
   url "https://github.com/ali-rantakari/setWeblocThumb/archive/v1.0.0.tar.gz"
   sha256 "0258fdabbd24eed2ad3ff425b7832c4cd9bc706254861a6339f886efc28e35be"
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "95ec7fa6fc12d232f0ce75089ec987d91a922752578447a68e9170de743d5552" => :mojave
     sha256 "8d7536c3ba30dc46c4e3a0f2e4be411d3e8b06be939a5130c67d2094da0cef4e" => :high_sierra
     sha256 "563620905a209f198f30bbffc9177294b224cee3098719af6da8cfca74092157" => :sierra
     sha256 "2a9c327d5d594d00d7d283d6627a5eeef160731616aec9d62bab017b52d71f1a" => :el_capitan

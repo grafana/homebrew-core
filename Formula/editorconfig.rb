@@ -1,21 +1,19 @@
 class Editorconfig < Formula
   desc "Maintain consistent coding style between multiple editors"
-  homepage "http://editorconfig.org"
-  url "https://downloads.sourceforge.net/project/editorconfig/EditorConfig-C-Core/0.12.1/source/editorconfig-core-c-0.12.1.tar.gz"
-  sha256 "aa9cd57382c883f1be7b6c3470094317e4d3e64175a376ea49326987055153b8"
+  homepage "https://editorconfig.org/"
+  url "https://github.com/editorconfig/editorconfig-core-c/archive/v0.12.3.tar.gz"
+  sha256 "64edf79500e104e47035cace903f5c299edba778dcff71b814b7095a9f14cbc1"
   head "https://github.com/editorconfig/editorconfig-core-c.git"
 
   bottle do
     cellar :any
-    sha256 "a6e36c628eaf08d88b65d911c25631e977431ee3b96cb6c4a1d41f95e89a584f" => :high_sierra
-    sha256 "899680660a3fdf000c8356e1b9d6a161ce2cbd5fabcabc430f7272919929d935" => :sierra
-    sha256 "654a00e1df65376e6aa1374f57fceb651757f00ab08aacb8d077e7343230bffa" => :el_capitan
-    sha256 "0a9021863dabaf24a464bc98d1cee290f7324a175b0bd98138d364251b78f887" => :yosemite
-    sha256 "34d07fd7086716d9b0e4b078b6f45c95aa7575a1bd56acf8730a6fb69d1750e9" => :mavericks
+    sha256 "da824a4d67b8c1c1627d90e222b5f2441caf9cd7eca50de40380d3e7839db047" => :mojave
+    sha256 "26eceb21fd8d34c04799f70ba22ca0da11456c1e3fa30b0b90e592038b840d01" => :high_sierra
+    sha256 "a4655cde0acc92e11b02263337d384770bf0b592d828d44b8bef8be961572ad8" => :sierra
   end
 
   depends_on "cmake" => :build
-  depends_on "pcre"
+  depends_on "pcre2"
 
   def install
     system "cmake", ".", "-DCMAKE_INSTALL_PREFIX:PATH=#{prefix}"

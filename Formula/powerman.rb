@@ -1,15 +1,13 @@
 class Powerman < Formula
   desc "Control (remotely and in parallel) switched power distribution units"
   homepage "https://code.google.com/p/powerman/"
-  url "https://github.com/chaos/powerman/releases/download/2.3.24/powerman-2.3.24.tar.gz"
-  sha256 "85d5d0e0aef05a1637a8efe58f436f1548d2411c98c90c1616d22ee79c19d275"
+  url "https://github.com/chaos/powerman/releases/download/2.3.25/powerman-2.3.25.tar.gz"
+  sha256 "36e98a5a6b1395d8243b5bcaa8a6af42b4ab9411a63d7aa0768b4014ee0f207d"
 
   bottle do
-    sha256 "d451560676e07f1ae3f3d8b72c025bc8ad77cd9c31f52bb52cbc96e3f82ce178" => :high_sierra
-    sha256 "c31cb738ebc06c20c07cd2c6c10ff69bd21df62657cbf7f5d08a8a54317f0fc5" => :sierra
-    sha256 "26b893065e1f5e2f345d8b75fe2770bb4616fb62d7aec73022c4472df8158b2a" => :el_capitan
-    sha256 "e90be29b1ab6ab310f39775973edbaa647a0ac12d81bbde374bbc5ed262c317c" => :yosemite
-    sha256 "412042f83e03f1cbd9e285b1566bb785471dd79f93049df8bbfdde3544122a24" => :mavericks
+    sha256 "1a36b88991905a9f768f789b9d4381d5ad26992259440325fc997bc3bcd074bd" => :mojave
+    sha256 "397248285300786311331cfa9b67d74e0f3b1dfb9d93bc9d0887b7caa253bf3e" => :high_sierra
+    sha256 "8eb522e26039405245bb5159c34eb8e329683569c0b0f6654aeed183d0f13dba" => :sierra
   end
 
   head do
@@ -20,28 +18,18 @@ class Powerman < Formula
     depends_on "libtool" => :build
   end
 
-  option "without-curl", "Omits httppower"
-  option "with-net-snmp", "Builds snmppower"
-
-  depends_on "curl" => :recommended
-  depends_on "net-snmp" => :optional
-  depends_on "genders" => :optional
+  depends_on "curl"
 
   def install
-    args = %W[
-      --disable-dependency-tracking
-      --prefix=#{prefix}
-      --localstatedir=#{var}
-    ]
-
-    args << (build.with?("curl") ? "--with-httppower" : "--without-httppower")
-    args << (build.with?("net-snmp") ? "--with-snmppower" : "--without-snmppower")
-    args << (build.with?("genders") ? "--with-genders" : "--without-genders")
-    args << "--with-ncurses"
-    args << "--without-tcp-wrappers"
-
     system "./autogen.sh" if build.head?
-    system "./configure", *args
+    system "./configure", "--disable-dependency-tracking",
+                          "--prefix=#{prefix}",
+                          "--localstatedir=#{var}",
+                          "--with-httppower",
+                          "--with-ncurses",
+                          "--without-genders",
+                          "--without-snmppower",
+                          "--without-tcp-wrappers"
     system "make", "install"
   end
 

@@ -1,32 +1,24 @@
 class Hdf5AT18 < Formula
   desc "File format designed to store large amounts of data"
   homepage "https://www.hdfgroup.org/HDF5"
-  url "https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-1.8.19.tar.bz2"
-  sha256 "59c03816105d57990329537ad1049ba22c2b8afe1890085f0c022b75f1727238"
+  url "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.21/src/hdf5-1.8.21.tar.bz2"
+  sha256 "e5b1b1dee44a64b795a91c3321ab7196d9e0871fe50d42969761794e3899f40d"
 
   bottle do
-    sha256 "71c17931481e2e883e7c8cf8a3b7d3c2b9a13c60692e898bf31bd97c7303421a" => :high_sierra
-    sha256 "8ee94808d2943cfb367b85c967f3c0a8623df0215a4d875e760df277b24ca13c" => :sierra
-    sha256 "660e3cd1299e526e26e50644e51b3ccf54da002f7d39df1da8ce3e4b2d6d7a95" => :el_capitan
-    sha256 "27680e9b0f0301299031c3b78c0a2d35b83c516b37ebf5a5b77c63b37b99b30f" => :yosemite
+    sha256 "100e63ca57e49713edef20a610add098d9da6cf75f2e12146eb17a2625a6b6a3" => :mojave
+    sha256 "9df9c3319bf0734c9bed37057db565b11df30db01f380ce069d78bb54a9e01a2" => :high_sierra
+    sha256 "5dfcc37589233e529bf0094bcc376743ca6dee2c40bd7dc87c8d4d5cb6d68a6e" => :sierra
   end
 
   keg_only :versioned_formula
 
-  deprecated_option "enable-parallel" => "with-mpi"
-
-  option :cxx11
-
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
+  depends_on "gcc" # for gfortran
   depends_on "szip"
-  depends_on :fortran
-  depends_on :mpi => [:optional, :cc, :cxx, :f90]
 
   def install
-    ENV.cxx11 if build.cxx11?
-
     inreplace %w[c++/src/h5c++.in fortran/src/h5fc.in tools/misc/h5cc.in],
       "${libdir}/libhdf5.settings", "#{pkgshare}/libhdf5.settings"
 
@@ -41,21 +33,8 @@ class Hdf5AT18 < Formula
       --with-szlib=#{Formula["szip"].opt_prefix}
       --enable-build-mode=production
       --enable-fortran
+      --disable-cxx
     ]
-
-    if build.without?("mpi")
-      args << "--enable-cxx"
-    else
-      args << "--disable-cxx"
-    end
-
-    if build.with? "mpi"
-      ENV["CC"] = ENV["MPICC"]
-      ENV["CXX"] = ENV["MPICXX"]
-      ENV["FC"] = ENV["MPIFC"]
-
-      args << "--enable-parallel"
-    end
 
     system "./configure", *args
     system "make", "install"
@@ -100,7 +79,7 @@ class Hdf5AT18 < Formula
       if (error /= 0) call abort
       write (*,"(I0,'.',I0,'.',I0)") major, minor, rel
       end
-      EOS
+    EOS
     system "#{bin}/h5fc", "test.f90"
     assert_equal version.to_s, shell_output("./a.out").chomp
   end

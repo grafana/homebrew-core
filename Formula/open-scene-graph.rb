@@ -1,81 +1,54 @@
 class OpenSceneGraph < Formula
   desc "3D graphics toolkit"
   homepage "https://github.com/openscenegraph/OpenSceneGraph"
-  url "https://github.com/openscenegraph/OpenSceneGraph/archive/OpenSceneGraph-3.5.7.tar.gz"
-  sha256 "32e435184b3e0340adf50558acb890e04fce3b4c990c6b8789479c1a11f08a05"
+  url "https://github.com/openscenegraph/OpenSceneGraph/archive/OpenSceneGraph-3.6.3.tar.gz"
+  sha256 "51bbc79aa73ca602cd1518e4e25bd71d41a10abd296e18093a8acfebd3c62696"
   head "https://github.com/openscenegraph/OpenSceneGraph.git"
 
   bottle do
-    sha256 "e3a4c09eb32b2172eb3d0ace1e0b9a4e6f55b11d73fb55978482347b82547d06" => :high_sierra
-    sha256 "2f4a210187f5287422926b2b7d84d4dbb0ef3d34b5e4898166dbfb14dcd273f6" => :sierra
-    sha256 "7f6b090e7609d242738b721b7e063f1ab749661185145f4e6c0e93440a961861" => :el_capitan
+    sha256 "153c47045ba21b94581aed7375218a38534077fc8920090dc541627d09ef36c5" => :mojave
+    sha256 "adabb1b668bdfec8e6ccc1e05a91577bbe0c58487d345b662c3acaae2298e8a9" => :high_sierra
+    sha256 "8f69c72133ca7100385f49d104f33517c66aefe7c76bb22e08b28c8aaa4c6385" => :sierra
   end
 
-  option :cxx11
-  option "with-docs", "Build the documentation with Doxygen and Graphviz"
-
-  deprecated_option "docs" => "with-docs"
-  deprecated_option "with-qt5" => "with-qt"
-
   depends_on "cmake" => :build
+  depends_on "doxygen" => :build
+  depends_on "graphviz" => :build
   depends_on "pkg-config" => :build
-  depends_on "jpeg"
-  depends_on "gtkglext"
   depends_on "freetype"
+  depends_on "gtkglext"
+  depends_on "jpeg"
   depends_on "sdl"
-  depends_on "gdal" => :optional
-  depends_on "jasper" => :optional
-  depends_on "openexr" => :optional
-  depends_on "dcmtk" => :optional
-  depends_on "librsvg" => :optional
-  depends_on "collada-dom" => :optional
-  depends_on "gnuplot" => :optional
-  depends_on "ffmpeg" => :optional
-  depends_on "qt" => :optional
 
   # patch necessary to ensure support for gtkglext-quartz
   # filed as an issue to the developers https://github.com/openscenegraph/osg/issues/34
   patch :DATA
 
-  if build.with? "docs"
-    depends_on "doxygen" => :build
-    depends_on "graphviz" => :build
-  end
-
   def install
-    ENV.cxx11 if build.cxx11?
-
-    # Turning off FFMPEG takes this change or a dozen "-DFFMPEG_" variables
-    if build.without? "ffmpeg"
-      inreplace "CMakeLists.txt", "FIND_PACKAGE(FFmpeg)", "#FIND_PACKAGE(FFmpeg)"
+    # Fix "fatal error: 'os/availability.h' file not found" on 10.11 and
+    # "error: expected function body after function declarator" on 10.12
+    if MacOS.version == :sierra || MacOS.version == :el_capitan
+      ENV["SDKROOT"] = MacOS.sdk_path
     end
 
-    args = std_cmake_args
-    args << "-DBUILD_DOCUMENTATION=" + (build.with?("docs") ? "ON" : "OFF")
-    args << "-DCMAKE_CXX_FLAGS=-Wno-error=narrowing" # or: -Wno-c++11-narrowing
-
-    if MacOS.prefer_64_bit?
-      args << "-DCMAKE_OSX_ARCHITECTURES=#{Hardware::CPU.arch_64_bit}"
-      args << "-DOSG_DEFAULT_IMAGE_PLUGIN_FOR_OSX=imageio"
-      args << "-DOSG_WINDOWING_SYSTEM=Cocoa"
-    else
-      args << "-DCMAKE_OSX_ARCHITECTURES=#{Hardware::CPU.arch_32_bit}"
-    end
-
-    if build.with? "collada-dom"
-      args << "-DCOLLADA_INCLUDE_DIR=#{Formula["collada-dom"].opt_include}/collada-dom"
-    end
-
-    if build.with? "qt"
-      args << "-DCMAKE_PREFIX_PATH=#{Formula["qt"].opt_prefix}"
-    end
+    args = std_cmake_args + %w[
+      -DBUILD_DOCUMENTATION=ON
+      -DCMAKE_DISABLE_FIND_PACKAGE_FFmpeg=ON
+      -DCMAKE_DISABLE_FIND_PACKAGE_GDAL=ON
+      -DCMAKE_DISABLE_FIND_PACKAGE_TIFF=ON
+      -DCMAKE_DISABLE_FIND_PACKAGE_cairo=ON
+      -DCMAKE_CXX_FLAGS=-Wno-error=narrowing
+      -DCMAKE_OSX_ARCHITECTURES=x86_64
+      -DOSG_DEFAULT_IMAGE_PLUGIN_FOR_OSX=imageio
+      -DOSG_WINDOWING_SYSTEM=Cocoa
+    ]
 
     mkdir "build" do
       system "cmake", "..", *args
       system "make"
-      system "make", "doc_openscenegraph" if build.with? "docs"
+      system "make", "doc_openscenegraph"
       system "make", "install"
-      doc.install Dir["#{prefix}/doc/OpenSceneGraphReferenceDocs/*"] if build.with? "docs"
+      doc.install Dir["#{prefix}/doc/OpenSceneGraphReferenceDocs/*"]
     end
   end
 

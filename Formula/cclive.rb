@@ -3,20 +3,19 @@ class Cclive < Formula
   homepage "https://cclive.sourceforge.io/"
   url "https://downloads.sourceforge.net/project/cclive/0.7/cclive-0.7.16.tar.xz"
   sha256 "586a120faddcfa16f5bb058b5c901f1659336c6fc85a0d3f1538882a44ee10e1"
-  revision 2
+  revision 3
 
   bottle do
     cellar :any
-    sha256 "65a00aa88ea96cff176c5bdfd29d97686548cfaa362aaa99ff2ed9fe10d9c624" => :high_sierra
-    sha256 "a589260223c5b92d0b29551e98e068814311de8ddde82e158063bec6f834aa2d" => :sierra
-    sha256 "e77474769e3fa5b12b81fba7d476a9feeb237a9b6ba9bf9cf275e4783203c67d" => :el_capitan
-    sha256 "933a9b935bb868923702489a97780998c450c2c220a63786542bf65bfb2db155" => :yosemite
+    sha256 "2ea1ae5e7b943c10a475487b07bce6bd6ae9c31b566925b8d517acfd9274b292" => :mojave
+    sha256 "5f249a48060074837ea7d628783ed52d7bf764a613cb643c7e0af8ae47d2e1e4" => :high_sierra
+    sha256 "561b79d162682fe1f604ade8123482b3dc9ebd958834a074f4cc1f67b77f7fb8" => :sierra
   end
 
   depends_on "pkg-config" => :build
-  depends_on "quvi"
   depends_on "boost"
   depends_on "pcre"
+  depends_on "quvi"
 
   conflicts_with "clozure-cl", :because => "both install a ccl binary"
 

@@ -1,31 +1,23 @@
 class Gmsh < Formula
   desc "3D finite element grid generator with CAD engine"
   homepage "https://gmsh.info/"
-  url "https://gmsh.info/src/gmsh-3.0.6-source.tgz"
-  sha256 "9700bcc440d7a6b16a49cbfcdcdc31db33efe60e1f5113774316b6fa4186987b"
+  url "https://gmsh.info/src/gmsh-4.2.2-source.tgz"
+  sha256 "e9ee9f5c606bbec5f2adbb8c3d6023c4e2577f487fa4e4ecfcfc94a241cc8dcc"
   head "https://gitlab.onelab.info/gmsh/gmsh.git"
 
   bottle do
     cellar :any
-    sha256 "e0dd6429f73cea89717a9a492f113fa31913025910acf7d0552ed4d3f1b6c8d7" => :high_sierra
-    sha256 "f45b4752c85d4fce38cabdc24287632eebf2840d039195cf603be0605c9649d2" => :sierra
-    sha256 "464a7fff7dd8a269456c72931162291981b77921886858fdf9878c7231a714d0" => :el_capitan
+    sha256 "9fb549078d58da757682e80f0b0914132b091d792a7815de341c9165e6b80998" => :mojave
+    sha256 "58dede90657a47fe870ac7a9365a4c09f1db589c6ae337ab6e36c898539272bb" => :high_sierra
+    sha256 "b42d1cc505238581218f8b1ea20e324169c220571fcb4e84870b9f8098da6829" => :sierra
   end
-
-  option "with-oce", "Build with oce support (conflicts with opencascade)"
-  option "with-opencascade", "Build with opencascade support (conflicts with oce)"
 
   depends_on "cmake" => :build
-  depends_on :fortran
-  depends_on :mpi => [:cc, :cxx, :f90]
-  depends_on "homebrew/science/oce" => :optional
-  depends_on "homebrew/science/opencascade" => :optional
-  depends_on "fltk" => :optional
-  depends_on "cairo" if build.with? "fltk"
-
-  if build.with?("opencascade") && build.with?("oce")
-    odie "gmsh: '--with-opencascade' and '--with-oce' conflict."
-  end
+  depends_on "cairo"
+  depends_on "fltk"
+  depends_on "gcc" # for gfortran
+  depends_on "open-mpi"
+  depends_on "opencascade"
 
   def install
     args = std_cmake_args + %W[
@@ -39,19 +31,10 @@ class Gmsh < Formula
       -DENABLE_NATIVE_FILE_CHOOSER=ON
       -DENABLE_PETSC=OFF
       -DENABLE_SLEPC=OFF
+      -DENABLE_OCC=ON
     ]
 
-    if build.with? "oce"
-      ENV["CASROOT"] = Formula["oce"].opt_prefix
-      args << "-DENABLE_OCC=ON"
-    elsif build.with? "opencascade"
-      ENV["CASROOT"] = Formula["opencascade"].opt_prefix
-      args << "-DENABLE_OCC=ON"
-    else
-      args << "-DENABLE_OCC=OFF"
-    end
-
-    args << "-DENABLE_FLTK=OFF" if build.without? "fltk"
+    ENV["CASROOT"] = Formula["opencascade"].opt_prefix
 
     mkdir "build" do
       system "cmake", "..", *args
@@ -62,10 +45,6 @@ class Gmsh < Formula
       mkdir_p libexec
       mv bin/"onelab.py", libexec
     end
-  end
-
-  def caveats
-    "To use onelab.py set your PYTHONDIR to #{libexec}"
   end
 
   test do

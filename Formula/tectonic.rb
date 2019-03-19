@@ -1,15 +1,14 @@
 class Tectonic < Formula
   desc "Modernized, complete, self-contained TeX/LaTeX engine"
   homepage "https://tectonic-typesetting.github.io/"
-  url "https://github.com/tectonic-typesetting/tectonic/archive/v0.1.6.tar.gz"
-  sha256 "5c201c979069dfb780040b42d8c516847668bd6d429eabb20f5fb15a3873832c"
+  url "https://github.com/tectonic-typesetting/tectonic/archive/v0.1.11.tar.gz"
+  sha256 "e700dc691dfd092adfe098b716992136343ddfac5eaabb1e8cfae4e63f8454c7"
   revision 1
 
   bottle do
-    sha256 "58dc7ff220826df395bcd64da5ea27b583983552aeabe6d2d4c03b4178f30bfa" => :high_sierra
-    sha256 "6097b9140e73f5cd1f584991302fe10816980a9566ab19288dee511ac2c1e2f2" => :sierra
-    sha256 "647a3ae4f31aaf517149c10fb1a805f6d1eaa83cd3d008e5d85fd1f57a987cdb" => :el_capitan
-    sha256 "064efc61497c63d50105d58bf2e79d079a6833892f4b5d2134a17eaf21b8097c" => :yosemite
+    sha256 "1a7529e618b09f3b3c7852d7734f631847c7d31334ebe43d10a5da3dc14bc6b4" => :mojave
+    sha256 "5bfc6c5d8d8f1c80ed55e7543bb081a6fa1f83faa8ca01759541b179f62c9c65" => :high_sierra
+    sha256 "86202b51be7fe24c4306ca5e38aa39112bc879d0f651bffdee0d35e1ca71d72f" => :sierra
   end
 
   depends_on "pkg-config" => :build
@@ -20,17 +19,16 @@ class Tectonic < Formula
   depends_on "icu4c"
   depends_on "libpng"
   depends_on "openssl"
-  depends_on "zlib" if MacOS.version <= :el_capitan
 
   def install
     ENV.cxx11
     ENV["MACOSX_DEPLOYMENT_TARGET"] = MacOS.version # needed for CLT-only builds
-    ENV["OPENSSL_INCLUDE_DIR"] = Formula["openssl"].opt_include
-    ENV["DEP_OPENSSL_INCLUDE"] = Formula["openssl"].opt_include
-    ENV["OPENSSL_LIB_DIR"] = Formula["openssl"].opt_lib
 
-    system "cargo", "build", "--release"
-    bin.install "target/release/tectonic"
+    # Ensure that the `openssl` crate picks up the intended library.
+    # https://crates.io/crates/openssl#manual-configuration
+    ENV["OPENSSL_DIR"] = Formula["openssl"].opt_prefix
+
+    system "cargo", "install", "--root", prefix, "--path", "."
     pkgshare.install "tests"
   end
 

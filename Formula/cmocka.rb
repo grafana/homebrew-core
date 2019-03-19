@@ -1,16 +1,15 @@
 class Cmocka < Formula
   desc "Unit testing framework for C"
   homepage "https://cmocka.org/"
-  url "https://cmocka.org/files/1.1/cmocka-1.1.1.tar.xz"
-  sha256 "f02ef48a7039aa77191d525c5b1aee3f13286b77a13615d11bc1148753fc0389"
+  url "https://cmocka.org/files/1.1/cmocka-1.1.3.tar.xz"
+  sha256 "43eabcf72a9c80e3d03f7c8a1c04e408c18d2db5121eb058a3ef732a9dfabfaf"
   head "https://git.cryptomilk.org/projects/cmocka.git"
 
   bottle do
     cellar :any
-    sha256 "46556c6832c5781bf424d04a8c1a2dacf16561452eb5dbccf5e25661108ec89b" => :high_sierra
-    sha256 "cfadb41736fe22bec1e1dbe87223047b8faee2a179cf0928590fbd6090f447c9" => :sierra
-    sha256 "becddf7837ddaf693f3ad6ac509886a10acef70208be90570cdabe574002e767" => :el_capitan
-    sha256 "f14b8b0b5e5a46dab6a5aadce80d2542ad6d153b2b416309a4f4fad819dd0199" => :yosemite
+    sha256 "4f2dda00b968d99edbd3bd2aa3143ea7dd2ff37972f7e607cb4063ac059684c6" => :mojave
+    sha256 "d304c4817bc9efe26cf406ce282ded888b4364be6d0752ddb3012542ae384a52" => :high_sierra
+    sha256 "d888978c74742f86fee309289e99b9eaa379cf5c9c2692ad668021e5fa3213a4" => :sierra
   end
 
   depends_on "cmake" => :build
@@ -18,7 +17,7 @@ class Cmocka < Formula
   def install
     args = std_cmake_args
     args << "-DWITH_STATIC_LIB=ON" << "-DWITH_CMOCKERY_SUPPORT=ON" << "-DUNIT_TESTING=ON"
-    if MacOS.version == "10.11" && MacOS::Xcode.installed? && MacOS::Xcode.version >= "8.0"
+    if MacOS.version == "10.11" && MacOS::Xcode.version >= "8.0"
       args << "-DHAVE_CLOCK_GETTIME:INTERNAL=0"
     end
 

@@ -7,6 +7,7 @@ class Rdup < Formula
 
   bottle do
     cellar :any
+    sha256 "c198ebca564d97de07f9571c296c93239a58dbc195648e9c6eb25e5ba8c363e5" => :mojave
     sha256 "9a5c191bea14d721e49d5622567104e6fc1b6e6c3326e528ba8a08498fb66c46" => :high_sierra
     sha256 "43582c3cc5fb02bb50a73d71963045fa27cc38d03eed2e1e57d915a7f5c162cc" => :sierra
     sha256 "c9afd06e3d3cfb9628c9618723d1913916f2563d2b18159cffe2b2586ce0c508" => :el_capitan
@@ -14,38 +15,19 @@ class Rdup < Formula
     sha256 "ddfd0b0a7116c618739caffb054a0b149e17c7bf517c512ccb1543c3e7784275" => :mavericks
   end
 
-  option "with-test", "Verify the build with `make check`"
-
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "pkg-config" => :build
-  depends_on "nettle"
-  depends_on "pcre"
   depends_on "glib"
   depends_on "libarchive"
   depends_on "mcrypt"
-
-  if build.with? "test"
-    depends_on "deja-gnu" => :build
-    depends_on "gnu-sed" => :build
-    depends_on "coreutils" => :build
-    depends_on "gnu-tar" => :build
-  end
+  depends_on "nettle"
+  depends_on "pcre"
 
   def install
     system "autoreconf", "-fiv"
     system "./configure", "--prefix=#{prefix}"
     system "make"
-
-    if build.with? "test"
-      saved_path = ENV["PATH"]
-      ENV.prepend_path "PATH", Formula["gnu-sed"].opt_libexec/"gnubin"
-      ENV.prepend_path "PATH", Formula["coreutils"].opt_libexec/"gnubin"
-      ENV.prepend_path "PATH", Formula["gnu-tar"].opt_libexec/"gnubin"
-      system "make", "check"
-      ENV["PATH"] = saved_path
-    end
-
     system "make", "install"
   end
 

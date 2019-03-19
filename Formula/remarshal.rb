@@ -3,38 +3,37 @@ class Remarshal < Formula
 
   desc "Convert between TOML, YAML and JSON"
   homepage "https://github.com/dbohdan/remarshal"
-  url "https://github.com/dbohdan/remarshal/archive/v0.7.0.tar.gz"
-  sha256 "785f1928e3522671a21eb2e0ce7b6882e8589ccb195b4ee49dec2403fe3d6f4b"
+  url "https://github.com/dbohdan/remarshal/archive/v0.9.0.tar.gz"
+  sha256 "e763cd57f4418a537c9a4e219e43bc5153303a2041af673fda682a3767fc0d5d"
   head "https://github.com/dbohdan/remarshal.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "59a7c2f89d2bac4215499eb54430dc7099ee2ab396c219be17a13314a07bea52" => :high_sierra
-    sha256 "65c68073ccdbc44ab9c6c2228cc5b1c762ffd5d603bff557408682003fd88a92" => :sierra
-    sha256 "99c3c25f5d38962b7a922e4aacef296b23589856db37747f2624a62fd0d46447" => :el_capitan
-    sha256 "d018b3c983e5256542d1864e6908057bc942b52db07c295cd89f6c8494855405" => :yosemite
+    sha256 "66e3bccb7bc75ecc2487ca466f841759df7682a8fcc7bcd9f69dc6874ad522cd" => :mojave
+    sha256 "892eefe20149da6bdf0a6309f98158706eb882081d51976d5c62fa9d4d3f1bc9" => :high_sierra
+    sha256 "e44e9f1f7ef7fc6ccbf46899ee1757198c45618c629a9c5e189eb1c3f1c81678" => :sierra
   end
 
-  depends_on :python if MacOS.version <= :snow_leopard
+  depends_on "python"
 
   resource "PyYAML" do
-    url "https://files.pythonhosted.org/packages/4a/85/db5a2df477072b2902b0eb892feb37d88ac635d36245a72a6a69b23b383a/PyYAML-3.12.tar.gz"
-    sha256 "592766c6303207a20efc445587778322d7f73b161bd994f227adaa341ba212ab"
+    url "https://files.pythonhosted.org/packages/9e/a3/1d13970c3f36777c583f136c136f804d70f500168edc1edea6daa7200769/PyYAML-3.13.tar.gz"
+    sha256 "3ef3092145e9b70e3ddd2c7ad59bdd0252a94dfe3949721633e41344de00a6bf"
   end
 
   resource "pytoml" do
-    url "https://files.pythonhosted.org/packages/6d/2a/c5a0eb781cff59df8613a531f07f9d82bb47ea595aa91c6f114f1621a94a/pytoml-0.1.14.tar.gz"
-    sha256 "aff69147d436c3ba8c7f3bc1b3f4aa3d7e47d305a495f2631872e6429694aabf"
+    url "https://files.pythonhosted.org/packages/35/35/da1123673c54b6d701453fcd20f751d6a1fae43339b3993ae458875576e4/pytoml-0.1.20.tar.gz"
+    sha256 "ca2d0cb127c938b8b76a9a0d0f855cf930c1d50cc3a0af6d3595b566519a1013"
   end
 
   resource "python-dateutil" do
-    url "https://files.pythonhosted.org/packages/51/fc/39a3fbde6864942e8bb24c93663734b74e281b984d1b8c4f95d64b0c21f6/python-dateutil-2.6.0.tar.gz"
-    sha256 "62a2f8df3d66f878373fd0072eacf4ee52194ba302e00082828e0d263b0418d2"
+    url "https://files.pythonhosted.org/packages/0e/01/68747933e8d12263d41ce08119620d9a7e5eb72c876a3442257f74490da0/python-dateutil-2.7.5.tar.gz"
+    sha256 "88f9287c0174266bb0d8cedd395cfba9c58e87e5ad86b2ce58859bc11be3cf02"
   end
 
   resource "six" do
-    url "https://files.pythonhosted.org/packages/b3/b2/238e2590826bfdd113244a40d9d3eb26918bd798fc187e2360a8367068db/six-1.10.0.tar.gz"
-    sha256 "105f8d68616f8248e24bf0e9372ef04d3cc10104f1980f54d57b2ce73a5ad56a"
+    url "https://files.pythonhosted.org/packages/16/d8/bc6316cf98419719bd59c91742194c111b6f2e85abac88e496adefaf7afe/six-1.11.0.tar.gz"
+    sha256 "70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9"
   end
 
   def install

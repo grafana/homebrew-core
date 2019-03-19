@@ -1,25 +1,16 @@
 class Libunistring < Formula
   desc "C string library for manipulating Unicode strings"
   homepage "https://www.gnu.org/software/libunistring/"
-  url "https://ftp.gnu.org/gnu/libunistring/libunistring-0.9.7.tar.xz"
-  mirror "https://ftpmirror.gnu.org/libunistring/libunistring-0.9.7.tar.xz"
-  sha256 "2e3764512aaf2ce598af5a38818c0ea23dedf1ff5460070d1b6cee5c3336e797"
+  url "https://ftp.gnu.org/gnu/libunistring/libunistring-0.9.10.tar.xz"
+  mirror "https://ftpmirror.gnu.org/libunistring/libunistring-0.9.10.tar.xz"
+  sha256 "eb8fb2c3e4b6e2d336608377050892b54c3c983b646c561836550863003c05d7"
 
   bottle do
     cellar :any
-    sha256 "ab87b179bc5ac0d54cbf003d62fdae4e0924e7cf5e1dba67af70fdd65668f5cd" => :high_sierra
-    sha256 "d82c6b7c72707aa04eb00bd3e6a4a995ef830b41b02271111ee6006585eaca80" => :sierra
-    sha256 "c80c64fdd7d05bf0e387b3286238e1740e7989098ba6bde403151a1c14d57812" => :el_capitan
-    sha256 "e2143b25bf7bdc85ddb00b065cf1f72c665d77a6737563cd81a88420bc72e51f" => :yosemite
-  end
-
-  # Fix crash from usage of %n in dynamic format strings on High Sierra
-  # Repurposed patch, credit to Jeremy Huddleston Sequoia <jeremyhu@apple.com>
-  if MacOS.version >= :high_sierra
-    patch :p0 do
-      url "https://raw.githubusercontent.com/macports/macports-ports/edf0ee1e2cf/devel/m4/files/secure_snprintf.patch"
-      sha256 "57f972940a10d448efbd3d5ba46e65979ae4eea93681a85e1d998060b356e0d2"
-    end
+    sha256 "1d0c8e266acddcebeef3d9f6162d6f7fa0b193f5f71837174fb2ef0b39d324f3" => :mojave
+    sha256 "5eeec8fdede3d6ae2c1082179879a41d3b600a36e7d83acc5ea0587ad85d5a9d" => :high_sierra
+    sha256 "3a7a0e8737c19995bc8a263724a90a26b418b177deee90b4e6746c353b348e12" => :sierra
+    sha256 "df01e794e8d11926ea023798f9f95d516a6c28009cbdfd29ea1d1a9107812d66" => :el_capitan
   end
 
   def install

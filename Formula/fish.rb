@@ -1,49 +1,42 @@
 class Fish < Formula
   desc "User-friendly command-line shell for UNIX-like operating systems"
   homepage "https://fishshell.com"
-
-  stable do
-    url "https://github.com/fish-shell/fish-shell/releases/download/2.6.0/fish-2.6.0.tar.gz"
-    mirror "https://fishshell.com/files/2.6.0/fish-2.6.0.tar.gz"
-    sha256 "7ee5bbd671c73e5323778982109241685d58a836e52013e18ee5d9f2e638fdfb"
-  end
+  url "https://github.com/fish-shell/fish-shell/releases/download/3.0.2/fish-3.0.2.tar.gz"
+  sha256 "14728ccc6b8e053d01526ebbd0822ca4eb0235e6487e832ec1d0d22f1395430e"
 
   bottle do
-    sha256 "f763473b4f907d5869565c210a94760753f27f0d2a0d2ae203499a6f0041f86e" => :high_sierra
-    sha256 "c40e50463f8c2c3f6a7112117aead0cd367dcabd460f5c477cd84eb90f7ca9fa" => :sierra
-    sha256 "0e96903e4fdd6a58dfd9e96a920e33056919f952de2dfecd9e4122db5a29b036" => :el_capitan
-    sha256 "b9ce33c6f9066e4f72a8e2870f1113cf7c89d7975fd77be5a97358398f30221b" => :yosemite
-  end
-
-  devel do
-    url "https://github.com/fish-shell/fish-shell/releases/download/2.7b1/fish-2.7b1.tar.gz"
-    sha256 "326dbea5d0f20eba54fa0b0c5525e58b4a39ebd8c52c14cfffc5f4d6cdf55385"
+    cellar :any
+    sha256 "0dda76c64b0e2b4f1bfe48b816346f54a3fd9531550439caadadc6a1641c6d6b" => :mojave
+    sha256 "aaa15fbea68f8414084124da4347aec31484a3ab6320daf5f1cd54e208bf32c1" => :high_sierra
+    sha256 "65eb56f5d3e5978051743e0e1a6616983f34922cad65cbe0964b671d9bf4437e" => :sierra
   end
 
   head do
     url "https://github.com/fish-shell/fish-shell.git", :shallow => false
 
-    depends_on "autoconf" => :build
-    depends_on "automake" => :build
-    depends_on "doxygen" => :build
+    depends_on "sphinx-doc" => :build
   end
 
+  depends_on "cmake" => :build
   depends_on "pcre2"
 
   def install
-    system "autoreconf", "--no-recursive" if build.head?
-
     # In Homebrew's 'superenv' sed's path will be incompatible, so
     # the correct path is passed into configure here.
     args = %W[
-      --prefix=#{prefix}
-      --with-extra-functionsdir=#{HOMEBREW_PREFIX}/share/fish/vendor_functions.d
-      --with-extra-completionsdir=#{HOMEBREW_PREFIX}/share/fish/vendor_completions.d
-      --with-extra-confdir=#{HOMEBREW_PREFIX}/share/fish/vendor_conf.d
-      SED=/usr/bin/sed
+      -Dextra_functionsdir=#{HOMEBREW_PREFIX}/share/fish/vendor_functions.d
+      -Dextra_completionsdir=#{HOMEBREW_PREFIX}/share/fish/vendor_completions.d
+      -Dextra_confdir=#{HOMEBREW_PREFIX}/share/fish/vendor_conf.d
+      -DSED=/usr/bin/sed
     ]
-    system "./configure", *args
+    system "cmake", ".", *std_cmake_args, *args
     system "make", "install"
+  end
+
+  def post_install
+    (pkgshare/"vendor_functions.d").mkpath
+    (pkgshare/"vendor_completions.d").mkpath
+    (pkgshare/"vendor_conf.d").mkpath
   end
 
   def caveats; <<~EOS
@@ -54,13 +47,7 @@ class Fish < Formula
     Then run:
       chsh -s #{HOMEBREW_PREFIX}/bin/fish
     to make fish your default shell.
-    EOS
-  end
-
-  def post_install
-    (pkgshare/"vendor_functions.d").mkpath
-    (pkgshare/"vendor_completions.d").mkpath
-    (pkgshare/"vendor_conf.d").mkpath
+  EOS
   end
 
   test do

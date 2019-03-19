@@ -1,14 +1,13 @@
 class Fail2ban < Formula
   desc "Scan log files and ban IPs showing malicious signs"
   homepage "https://www.fail2ban.org/"
-  url "https://github.com/fail2ban/fail2ban/archive/0.10.0.tar.gz"
-  sha256 "3517b68bff71924f179609eb51dd2fe66d78653646528cdf8edf2370ff047c80"
+  url "https://github.com/fail2ban/fail2ban/archive/0.10.4.tar.gz"
+  sha256 "d6ca1bbc7e7944f7acb2ba7c1065953cd9837680bc4d175f30ed155c6a372449"
 
   bottle do
-    sha256 "126df67c8b1f6ed5ad4284fa375a792775cefe614b09502f80b15b1232ab3611" => :high_sierra
-    sha256 "9b116287cbc7a0382bb31523f60986c6b3106b367a0f59e2bc4b98b7efd4d39d" => :sierra
-    sha256 "9b116287cbc7a0382bb31523f60986c6b3106b367a0f59e2bc4b98b7efd4d39d" => :el_capitan
-    sha256 "9b116287cbc7a0382bb31523f60986c6b3106b367a0f59e2bc4b98b7efd4d39d" => :yosemite
+    sha256 "8a94f2acb50779d21bf5f419ef4ab65692d03e827d1d618a878b14b5174fba59" => :mojave
+    sha256 "96f7b39c78cab991ea75e7c68e65b764fe1ce0299ce82281e25800a255662bb9" => :high_sierra
+    sha256 "96f7b39c78cab991ea75e7c68e65b764fe1ce0299ce82281e25800a255662bb9" => :sierra
   end
 
   depends_on "help2man" => :build
@@ -20,6 +19,7 @@ class Fail2ban < Formula
     rm "setup.cfg"
     Dir["config/paths-*.conf"].each do |r|
       next if File.basename(r) =~ /paths-common\.conf|paths-osx\.conf/
+
       rm r
     end
 

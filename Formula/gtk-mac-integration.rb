@@ -1,21 +1,29 @@
 class GtkMacIntegration < Formula
   desc "Integrates GTK macOS applications with the Mac desktop"
   homepage "https://wiki.gnome.org/Projects/GTK+/OSX/Integration"
-  url "https://download.gnome.org/sources/gtk-mac-integration/2.0/gtk-mac-integration-2.0.8.tar.xz"
-  sha256 "74fce9dbc5efe4e3d07a20b24796be1b1d6c3ac10a0ee6b1f1d685c809071b79"
-  revision 1
+  url "https://download.gnome.org/sources/gtk-mac-integration/2.1/gtk-mac-integration-2.1.3.tar.xz"
+  sha256 "d5f72302daad1f517932194d72967a32e72ed8177cfa38aaf64f0a80564ce454"
 
   bottle do
-    sha256 "386b6c17f5130f9b1b5c3e1d8735c203fe4631b33897acf056ff29dc3af686ab" => :high_sierra
-    sha256 "f955fce167b47c28be3280a669c8748efdc1190c50e3df05f3118bf9c42e85ae" => :sierra
-    sha256 "070978d2d305868a4550f204f2b00950fac7e4d3e98033f2ed3c64998d4c4f38" => :el_capitan
-    sha256 "f5930dd44baf83b11de0e0cfe2f9e3be5491622cd32984398554d1760fe86e4e" => :yosemite
+    sha256 "bc2988431033aac212a91ebf5f24cb4186fa754392a394a0a18b21e37e82546b" => :mojave
+    sha256 "48784429c9f1a8edde39c21ed4fdc7aca9fa7163a02b66d9dc2e998b45e7dbb5" => :high_sierra
+    sha256 "708be6c171f2a5b0291350e9670efd03e4df32f9e1e743fa2d9531e7c1d85d77" => :sierra
   end
 
+  head do
+    url "https://github.com/jralls/gtk-mac-integration.git"
+
+    depends_on "autoconf" => :build
+    depends_on "automake" => :build
+    depends_on "gtk-doc" => :build
+    depends_on "libtool" => :build
+  end
+
+  depends_on "gobject-introspection" => :build
   depends_on "pkg-config" => :build
+  depends_on "gettext"
   depends_on "gtk+"
-  depends_on "gtk+3" => :recommended
-  depends_on "gobject-introspection"
+  depends_on "gtk+3"
   depends_on "pygtk"
 
   def install
@@ -24,12 +32,16 @@ class GtkMacIntegration < Formula
       --disable-silent-rules
       --prefix=#{prefix}
       --with-gtk2
+      --with-gtk3
       --enable-python=yes
       --enable-introspection=yes
     ]
 
-    args << (build.without?("gtk+3") ? "--without-gtk3" : "--with-gtk3")
-    system "./configure", *args
+    if build.head?
+      system "./autogen.sh", *args
+    else
+      system "./configure", *args
+    end
     system "make", "install"
   end
 

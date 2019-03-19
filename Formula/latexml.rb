@@ -1,12 +1,13 @@
 class Latexml < Formula
   desc "LaTeX to XML/HTML/MathML Converter"
-  homepage "http://dlmf.nist.gov/LaTeXML"
-  url "http://dlmf.nist.gov/LaTeXML/releases/LaTeXML-0.8.2.tar.gz"
+  homepage "https://dlmf.nist.gov/LaTeXML/"
+  url "https://dlmf.nist.gov/LaTeXML/releases/LaTeXML-0.8.2.tar.gz"
   sha256 "3d41a3012760d31d721b569d8c1b430cde1df2b68fcc3c66f41ec640965caabf"
   head "https://github.com/brucemiller/LaTeXML.git"
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "36de089404dd52d462028b937d3c05af353e3c418b19c45a463bc0395d04a5fa" => :mojave
     sha256 "bbbeb393b7ed0258fdbf875e103a6f2f82103a6c19fce6b77ce5dd99fde9dc72" => :high_sierra
     sha256 "3d995988dc683269f6949f8071148ceaf7454e8e7eb37cd8d391a1eb4467fc76" => :sierra
     sha256 "5ae3ca257610559471ea0e1bbc9d5ff8f122790564a8e7027841e5b2356b6f8f" => :el_capitan
@@ -16,12 +17,11 @@ class Latexml < Formula
 
   resource "Image::Size" do
     url "https://cpan.metacpan.org/authors/id/R/RJ/RJRAY/Image-Size-3.300.tar.gz"
-    mirror "http://search.cpan.org/CPAN/authors/id/R/RJ/RJRAY/Image-Size-3.300.tar.gz"
     sha256 "53c9b1f86531cde060ee63709d1fda73cabc0cf2d581d29b22b014781b9f026b"
   end
 
   resource "Text::Unidecode" do
-    url "http://search.cpan.org/CPAN/authors/id/S/SB/SBURKE/Text-Unidecode-1.27.tar.gz"
+    url "https://cpan.metacpan.org/authors/id/S/SB/SBURKE/Text-Unidecode-1.27.tar.gz"
     sha256 "11876a90f0ce858d31203e80d62900383bb642ed8a470c67539b607f2a772d02"
   end
 
@@ -40,6 +40,7 @@ class Latexml < Formula
     doc.install "manual.pdf"
     (libexec+"bin").find.each do |path|
       next if path.directory?
+
       program = path.basename
       (bin+program).write_env_script("#{libexec}/bin/#{program}", :PERL5LIB => ENV["PERL5LIB"])
     end

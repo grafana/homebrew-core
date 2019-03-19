@@ -3,18 +3,18 @@ class Thefuck < Formula
 
   desc "Programatically correct mistyped console commands"
   homepage "https://github.com/nvbn/thefuck"
-  url "https://files.pythonhosted.org/packages/e6/1b/d05fc958700634bcb6b82fefb2f701587fa6ad08cb2f7e02e46a0f00a329/thefuck-3.24.tar.gz"
-  sha256 "c8484ab5b8c72d5284d9c94b5836cea5451468fe8239aa657e21fd0427145fa5"
+  url "https://files.pythonhosted.org/packages/79/5e/a8a5ae5bfbe14f6ec01b1b9cee68383b1ff71e59be41a8923e3290c6fc21/thefuck-3.28.tar.gz"
+  sha256 "cc123eb1e6962d315b777db286e6a172231f02eff00ab340fdd38c4504badc3a"
   head "https://github.com/nvbn/thefuck.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "85c7af988c0081a2727b9659da57491077879341efc35986c55dc0b06f12176c" => :high_sierra
-    sha256 "f81a57481dd119f21377ac1f7fbf341c8102fd6c493742526602f6ae3b976da4" => :sierra
-    sha256 "e38c62f20f99893728847e9a99c986ddcb5237ebf9265aff0ee9925150089b0a" => :el_capitan
+    sha256 "ba156420e76de319599e62504d73aef820ff06a8d363e5c6501124dd71337c76" => :mojave
+    sha256 "5c4e966a4939ae0a6cf59b7f544656c87d98dd98cae7b645b6a0e1cb3538eda1" => :high_sierra
+    sha256 "4829a8bb95a312c52a996b0cb4a6520bebc2c464391dd0eb3b08572dddc7a8ab" => :sierra
   end
 
-  depends_on :python3
+  depends_on "python"
 
   resource "colorama" do
     url "https://files.pythonhosted.org/packages/e6/76/257b53926889e2835355d74fec73d82662100135293e17d382e2b74d1669/colorama-0.3.9.tar.gz"
@@ -22,18 +22,18 @@ class Thefuck < Formula
   end
 
   resource "decorator" do
-    url "https://files.pythonhosted.org/packages/bb/e0/f6e41e9091e130bf16d4437dabbac3993908e4d6485ecbc985ef1352db94/decorator-4.1.2.tar.gz"
-    sha256 "7cb64d38cb8002971710c8899fbdfb859a23a364b7c99dab19d1f719c2ba16b5"
+    url "https://files.pythonhosted.org/packages/6f/24/15a229626c775aae5806312f6bf1e2a73785be3402c0acdec5dbddd8c11e/decorator-4.3.0.tar.gz"
+    sha256 "c39efa13fbdeb4506c476c9b3babf6a718da943dab7811c206005a4a956c080c"
   end
 
   resource "psutil" do
-    url "https://files.pythonhosted.org/packages/8d/96/1fc6468be91521192861966c40bd73fdf8b065eae6d82dd0f870b9825a65/psutil-5.4.0.tar.gz"
-    sha256 "8e6397ec24a2ec09751447d9f169486b68b37ac7a8d794dca003ace4efaafc6a"
+    url "https://files.pythonhosted.org/packages/14/a2/8ac7dda36eac03950ec2668ab1b466314403031c83a95c5efc81d2acf163/psutil-5.4.5.tar.gz"
+    sha256 "ebe293be36bb24b95cdefc5131635496e88b17fabbcf1e4bc9b5c01f5e489cfe"
   end
 
   resource "pyte" do
-    url "https://files.pythonhosted.org/packages/d2/1c/f65766736e40916b9a27c6cd582313e78092501b68284d44a1b014f30230/pyte-0.7.0.tar.gz"
-    sha256 "873acb47b624b9f30e9c54fab9c06a53be3b6bfa4b3d863ab30f55e93724c5aa"
+    url "https://files.pythonhosted.org/packages/66/37/6fed89b484c8012a0343117f085c92df8447a18af4966d25599861cd5aa0/pyte-0.8.0.tar.gz"
+    sha256 "7e71d03e972d6f262cbe8704ff70039855f05ee6f7ad9d7129df9c977b5a88c5"
   end
 
   resource "six" do
@@ -56,7 +56,7 @@ class Thefuck < Formula
       eval $(thefuck --alias)
 
     For other shells, check https://github.com/nvbn/thefuck/wiki/Shell-aliases
-    EOS
+  EOS
   end
 
   test do

@@ -5,18 +5,37 @@ class Flex < Formula
   sha256 "e87aae032bf07c26f85ac0ed3250998c37621d95f8bd748b31f15b33c45ee995"
 
   bottle do
+    sha256 "f326d68bc795592b3211e0ab7401222cdfe4f510cd5d3e5fd364678ae8cba2b2" => :mojave
     sha256 "0abf12786daea0fb1be796e24f41163f41943eb3dfb7ba71e4c09f1821083c11" => :high_sierra
     sha256 "89fb9ae2ac9be0f60706f40379cdfa51ced78f1638ac8729bc0074e4fcde70cf" => :sierra
     sha256 "95c2da56e5487b53ee4afe3ed52a7f59ffe86df4508768b3e48ef042d66e6cc1" => :el_capitan
     sha256 "c8aaca29a77a6b3e2383f7d80b12eccbbf131162e5157a4a320117d4c564a4bf" => :yosemite
   end
 
-  keg_only :provided_by_osx, "some formulae require a newer version of flex"
+  head do
+    url "https://github.com/westes/flex.git"
+
+    depends_on "autoconf" => :build
+    depends_on "automake" => :build
+
+    # https://github.com/westes/flex/issues/294
+    depends_on "gnu-sed" => :build
+
+    depends_on "libtool" => :build
+  end
+
+  keg_only :provided_by_macos, "some formulae require a newer version of flex"
 
   depends_on "help2man" => :build
   depends_on "gettext"
 
   def install
+    if build.head?
+      ENV.prepend_path "PATH", Formula["gnu-sed"].opt_libexec/"gnubin"
+
+      system "./autogen.sh"
+    end
+
     system "./configure", "--disable-dependency-tracking",
                           "--disable-silent-rules",
                           "--enable-shared",

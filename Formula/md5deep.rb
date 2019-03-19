@@ -7,22 +7,22 @@ class Md5deep < Formula
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "48fe3167c6211f51af6d8c1e39062438a7385e1b136078fbc0215170842ecbbe" => :mojave
     sha256 "5f5636f7731398f775d757cb4ae913762f725d4d7bd3060a2640c155207d7a2a" => :high_sierra
     sha256 "4ee90230c25f9872541d3f895fbe010765dd2e5449e56a0987e3652f89014916" => :sierra
     sha256 "986dad46d2945aac775eb625e41b0236f2413b3924244d5e9aba445994c38687" => :el_capitan
     sha256 "227b8b8e4f4dd71972cd02062faefef90515b44ef5c3ce55f5c665cf679a26d1" => :yosemite
     sha256 "1bacd45d420975ff8b90d633e361b54c7f6a14776a41f175313360d31fb03ba4" => :mavericks
-    sha256 "5d68af238b95cffd8959418d804212c50a69cbae90c203d4abb56ceafea93399" => :mountain_lion
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
 
   # Fix compilation error due to pointer comparison
-  if MacOS.version >= :high_sierra
+  if MacOS.version >= :sierra
     patch do
-      url "https://github.com/jessek/hashdeep/pull/361.diff?full_index=1"
-      sha256 "26af2c70fc573bbe09cf67af7fd9d121799771b448a460ee0efa958cbd80e584"
+      url "https://github.com/jessek/hashdeep/commit/8776134.patch?full_index=1"
+      sha256 "3d4e3114aee5505d1336158b76652587fd6f76e1d3af784912277a1f93518c64"
     end
   end
 

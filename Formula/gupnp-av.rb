@@ -1,18 +1,17 @@
 class GupnpAv < Formula
   desc "Library to help implement UPnP A/V profiles"
   homepage "https://wiki.gnome.org/GUPnP/"
-  url "https://download.gnome.org/sources/gupnp-av/0.12/gupnp-av-0.12.10.tar.xz"
-  sha256 "8038ef84dddbe7ad91c205bf91dddf684f072df8623f39b6555a6bb72837b85a"
+  url "https://download.gnome.org/sources/gupnp-av/0.12/gupnp-av-0.12.11.tar.xz"
+  sha256 "689dcf1492ab8991daea291365a32548a77d1a2294d85b33622b55cca9ce6fdc"
 
   bottle do
-    sha256 "0765d8ba4e39bbbb16726d472cdff252fcaac5c5ddbfb62527e91e80967f39e0" => :high_sierra
-    sha256 "87410e9f5a9aa1fb9b7d706d55762d540922f35fade1394ce8f65614e9d3a16a" => :sierra
-    sha256 "a92492fb1109fd453415e73bcf2b7ac5e99aefa3ea85f863d94b741277394a6a" => :el_capitan
-    sha256 "368db5c08311273ff6bd51c2f30afe9acfd06481c93191e76d73cce6050c128e" => :yosemite
+    sha256 "42b45028bd4f1fdc042c02f3c5087924f940a925dd62e6e397cbeb0331bd80ab" => :mojave
+    sha256 "ac4c7a4be3cd9d0b59c9a601ab44e8b3246a659bb97a1813c46a9925b36ded66" => :high_sierra
+    sha256 "05a98ecd787aa47ec3a4f8396890c8727dae8f404db2a928fbd7519973c849f9" => :sierra
   end
 
-  depends_on "pkg-config" => :build
   depends_on "intltool" => :build
+  depends_on "pkg-config" => :build
   depends_on "gettext"
   depends_on "gupnp"
 

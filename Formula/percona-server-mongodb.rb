@@ -1,85 +1,84 @@
-require "language/go"
-
 class PerconaServerMongodb < Formula
   desc "Drop-in MongoDB replacement"
   homepage "https://www.percona.com"
-  url "https://www.percona.com/downloads/percona-server-mongodb-3.4/percona-server-mongodb-3.4.9-2.9/source/tarball/percona-server-mongodb-3.4.9-2.9.tar.gz"
-  version "3.4.9-2.9"
-  sha256 "489675e6568dfcdc842d12872e552f0cd1ea5b2db2b6fe5d6548216c494778ba"
+  url "https://www.percona.com/downloads/percona-server-mongodb-3.6/percona-server-mongodb-3.6.6-1.4/source/tarball/percona-server-mongodb-3.6.6-1.4.tar.gz"
+  version "3.6.6-1.4"
+  sha256 "a30d3932c449b61df049807a51d7fbaf6c3534b68116e82829f63049dff69d2a"
 
   bottle do
-    sha256 "e5ccf64c9a283e50a6302f75a3752c561bbbe855d4ee7749379b1b9a5c57d41a" => :high_sierra
-    sha256 "ab38604e27bf3eb5a5fac8ed6357981455d367fe852bacd11d1f1ce7e4ac17d2" => :sierra
-    sha256 "90744840454940fef1add8a06d2cc80ebee995fefcf78c36714c0d2d7ea99a5c" => :el_capitan
+    cellar :any
+    rebuild 1
+    sha256 "65e23fd9b4e0a03964950fa1d0323e3730c41d47c511e3f7ef8c08352538e2de" => :mojave
+    sha256 "2908790361d2e6248f0505c6e7997f6fb45f33e436a6eb8c35e42fc49625486d" => :high_sierra
+    sha256 "f43cd51a2678db2ca1a1ef80076bd029681c91cc8ccb176dc9931b1638b1db82" => :sierra
   end
 
-  option "with-boost", "Compile using installed boost, not the version shipped with this formula"
-  option "with-sasl", "Compile with SASL support"
-
-  depends_on "boost" => :optional
   depends_on "go" => :build
-  depends_on :macos => :mountain_lion
+  depends_on "pkg-config" => :build
   depends_on "scons" => :build
-  depends_on "openssl" => :recommended
+  depends_on :macos => :sierra
+  depends_on "openssl"
 
   conflicts_with "mongodb",
     :because => "percona-server-mongodb and mongodb install the same binaries."
 
-  go_resource "github.com/mongodb/mongo-tools" do
-    url "https://github.com/mongodb/mongo-tools.git",
-        :tag => "r3.4.9",
-        :revision => "4f093ae71cdb4c6a6e9de7cd1dc67ea4405f0013",
-        :shallow => false
+  resource "Cheetah" do
+    url "https://files.pythonhosted.org/packages/cd/b0/c2d700252fc251e91c08639ff41a8a5203b627f4e0a2ae18a6b662ab32ea/Cheetah-2.4.4.tar.gz"
+    sha256 "be308229f0c1e5e5af4f27d7ee06d90bb19e6af3059794e5fd536a6f29a9b550"
   end
 
-  needs :cxx11
+  resource "PyYAML" do
+    url "https://files.pythonhosted.org/packages/9e/a3/1d13970c3f36777c583f136c136f804d70f500168edc1edea6daa7200769/PyYAML-3.13.tar.gz"
+    sha256 "3ef3092145e9b70e3ddd2c7ad59bdd0252a94dfe3949721633e41344de00a6bf"
+  end
+
+  resource "typing" do
+    url "https://files.pythonhosted.org/packages/ec/cc/28444132a25c113149cec54618abc909596f0b272a74c55bab9593f8876c/typing-3.6.4.tar.gz"
+    sha256 "d400a9344254803a2368533e4533a4200d21eb7b6b729c173bc38201a74db3f2"
+  end
 
   def install
-    ENV.cxx11 if MacOS.version < :mavericks
-    ENV.libcxx if build.devel?
+    ["Cheetah", "PyYAML", "typing"].each do |r|
+      resource(r).stage do
+        system "python", *Language::Python.setup_install_args(buildpath/"vendor")
+      end
+    end
+
+    (buildpath/".brew_home/Library/Python/2.7/lib/python/site-packages/vendor.pth").write <<~EOS
+      import site; site.addsitedir("#{buildpath}/vendor/lib/python2.7/site-packages")
+    EOS
 
     # New Go tools have their own build script but the server scons "install" target is still
     # responsible for installing them.
-    Language::Go.stage_deps resources, buildpath/"src"
 
-    cd "src/github.com/mongodb/mongo-tools" do
-      args = %w[]
-
-      if build.with? "openssl"
-        args << "ssl"
-        ENV["LIBRARY_PATH"] = Formula["openssl"].opt_lib
-        ENV["CPATH"] = Formula["openssl"].opt_include
+    cd "src/mongo/gotools" do
+      inreplace "build.sh" do |s|
+        s.gsub! "$(git describe)", version.to_s.split("-")[0]
+        s.gsub! "$(git rev-parse HEAD)", "homebrew"
       end
 
-      args << "sasl" if build.with? "sasl"
+      ENV["LIBRARY_PATH"] = Formula["openssl"].opt_lib
+      ENV["CPATH"] = Formula["openssl"].opt_include
 
-      system "./build.sh", *args
+      system "./build.sh", "ssl"
     end
 
-    (buildpath/"src/mongo-tools").install Dir["src/github.com/mongodb/mongo-tools/bin/*"]
+    (buildpath/"src/mongo-tools").install Dir["src/mongo/gotools/bin/*"]
 
     args = %W[
       --prefix=#{prefix}
+      --ssl
+      --use-new-tools
       -j#{ENV.make_jobs}
-      --osx-version-min=#{MacOS.version}
+      CC=#{ENV.cc}
+      CXX=#{ENV.cxx}
+      CCFLAGS=-I#{Formula["openssl"].opt_include}
+      LINKFLAGS=-L#{Formula["openssl"].opt_lib}
     ]
 
-    args << "CC=#{ENV.cc}"
-    args << "CXX=#{ENV.cxx}"
-
-    args << "--use-sasl-client" if build.with? "sasl"
-    args << "--use-system-boost" if build.with? "boost"
-    args << "--use-new-tools"
     args << "--disable-warnings-as-errors" if MacOS.version >= :yosemite
 
-    if build.with? "openssl"
-      args << "--ssl"
-
-      args << "CCFLAGS=-I#{Formula["openssl"].opt_include}"
-      args << "LINKFLAGS=-L#{Formula["openssl"].opt_lib}"
-    end
-
-    scons "install", *args
+    system "scons", "install", *args
 
     (buildpath/"mongod.conf").write <<~EOS
       systemLog:
@@ -136,7 +135,7 @@ class PerconaServerMongodb < Formula
       </dict>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

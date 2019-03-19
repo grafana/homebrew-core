@@ -1,16 +1,15 @@
 class Talloc < Formula
   desc "Hierarchical, reference-counted memory pool with destructors"
   homepage "https://talloc.samba.org/"
-  url "https://www.samba.org/ftp/talloc/talloc-2.1.10.tar.gz"
-  mirror "https://sources.voidlinux.eu/talloc-2.1.10/talloc-2.1.10.tar.gz"
-  sha256 "c985e94bebd6ec2f6af3d95dcc3fcb192a2ddb7781a021d70ee899e26221f619"
+  url "https://www.samba.org/ftp/talloc/talloc-2.1.14.tar.gz"
+  sha256 "b185602756a628bac507fa8af8b9df92ace69d27c0add5dab93190ad7c3367ce"
 
   bottle do
     cellar :any
-    sha256 "f067641d705b891ecd10a13af13edde6670a24d4745ae1d867390fd97d373595" => :high_sierra
-    sha256 "a9c830bacedca452b99f9ff33181fbe170a1a8ee4534b859704ba62ed0de974d" => :sierra
-    sha256 "d6ec63f5bf8d85c274aab1bb635efc85284e3c71c908e5c1e7061c939ed814fc" => :el_capitan
-    sha256 "4a9e0e1720e4294e4aa31d5c9ac5bc77e2d225a28f6ca8a3bd14fc645e85a7a7" => :yosemite
+    sha256 "f57a3c49190148c184c8c41e2872dacd7db4dba5174dab901a132594a806749b" => :mojave
+    sha256 "ec36bac486e6f474745eadc80c421f3647205d6df7f13559c8b720a1dffb6cac" => :high_sierra
+    sha256 "c95ae1f0a8bcb15608fa616dfc9282132ef575be9a9b3e1a79c6dcc8843dffb7" => :sierra
+    sha256 "560fb76da75d8fdb6e81168e3123ffcce31eb44a6c186c0d929b79fb7af5cf5d" => :el_capitan
   end
 
   def install

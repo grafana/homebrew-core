@@ -3,18 +3,17 @@ class Nanomsgxx < Formula
   homepage "https://achille-roussel.github.io/nanomsgxx/doc/nanomsgxx.7.html"
   url "https://github.com/achille-roussel/nanomsgxx/archive/0.2.tar.gz"
   sha256 "116ad531b512d60ea75ef21f55fd9d31c00b172775548958e5e7d4edaeeedbaa"
-  revision 1
+  revision 2
 
   bottle do
     cellar :any
-    sha256 "b35ef1c194aea9a8b1c59495dadec535d748ad21003843caf1d520743d4e6a88" => :high_sierra
-    sha256 "31944634bba1c194586658fd0d7ab9bc5c2564f334a9fbbea3d1af57dc43ef55" => :sierra
-    sha256 "e70ca4633486bd83259989bf62041e5e140401fbecc7bb4e855375229b016312" => :el_capitan
+    rebuild 1
+    sha256 "ece20152a6ddcd9bd5a931b8c190de6c998da9ad3bacb195ae69fc3671767d50" => :mojave
+    sha256 "dd6e547bd44055f348857c15843c16965b4dd03ea82713069cbb5df9836f1009" => :high_sierra
+    sha256 "25067fb5373110f213ef8fb8e662e274db47c84e6058777e646489e1257d457d" => :sierra
   end
 
   depends_on "pkg-config" => :build
-  depends_on :python => :build if MacOS.version <= :snow_leopard
-
   depends_on "nanomsg"
 
   def install

@@ -1,22 +1,21 @@
 class Qcli < Formula
   desc "Report audiovisual metrics via libavfilter"
   homepage "https://bavc.org/preserve-media/preservation-tools"
-  url "https://github.com/bavc/qctools/archive/v0.9.tar.gz"
-  sha256 "19ef4be054ebfca70a07043afea20bcca241ba08d70a47acda837ead849aff03"
-  revision 1
+  url "https://github.com/bavc/qctools/archive/v1.0.tar.gz"
+  sha256 "4b687eb9aedf29a8262393079669d3870c04b510669b9df406021243b8ebd918"
   head "https://github.com/bavc/qctools.git"
 
   bottle do
     cellar :any
-    sha256 "85c4d9c01c16fb9a23a1e673c5738a153c1c1ecccaf2329d07fe99352cb5ae57" => :high_sierra
-    sha256 "4e57855a7745eeefe34ce80e3bfcf01c861b15c51d79c5c58817fc65ff6ebb02" => :sierra
-    sha256 "67a2fefb5891000c32e01c3e161762a905afc18e22b36c7cc0e7f4b5b4bb3440" => :el_capitan
+    sha256 "ff59d63feaa9096773228c1e4dd866da2e5bd5812c38645669c80c31be3c7bc8" => :mojave
+    sha256 "d726ff0f06c9e604a95d36d0eae58ca886c6b2024cefe4d77adc92598dd8d56d" => :high_sierra
+    sha256 "837745fe83f29aa3d83de03bd7ed22785248eb9328a5f18bda8a04e151af3c62" => :sierra
   end
 
   depends_on "pkg-config" => :build
-  depends_on "qwt"
-  depends_on "qt"
   depends_on "ffmpeg"
+  depends_on "qt"
+  depends_on "qwt"
 
   def install
     ENV["QCTOOLS_USE_BREW"]="true"

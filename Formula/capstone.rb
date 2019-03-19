@@ -1,39 +1,26 @@
 class Capstone < Formula
   desc "Multi-platform, multi-architecture disassembly framework"
-  homepage "http://capstone-engine.org"
-  url "http://capstone-engine.org/download/3.0.4/capstone-3.0.4.tgz"
-  sha256 "3e88abdf6899d11897f2e064619edcc731cc8e97e9d4db86495702551bb3ae7f"
+  homepage "https://www.capstone-engine.org/"
+  url "https://github.com/aquynh/capstone/archive/4.0.1.tar.gz"
+  sha256 "79bbea8dbe466bd7d051e037db5961fdb34f67c9fac5c3471dd105cfb1e05dc7"
   head "https://github.com/aquynh/capstone.git"
 
   bottle do
     cellar :any
-    sha256 "82e40e06f3a41633326d3ceb7f268945441dcb7a0ae1caa88e06fc0504c73cc0" => :high_sierra
-    sha256 "7d0f04a49d42bd9c953a5ea6cb85159f72f8e948d6aea4d7c64b3e82a12459f1" => :sierra
-    sha256 "3aa8d8b679cc5261a3fbf44b191c61480cdb34576f71b769e63d68c5e27c19b1" => :el_capitan
-    sha256 "5bbd8f7d9e0ae0d3b23c7d478fdb02476e8cee847577576d543bf98649985975" => :yosemite
-    sha256 "0cfd7478b21360ffea1aac61ec64eeae612bce247a681b0205ffd14790f8f7dc" => :mavericks
-    sha256 "585042b1452fbeda9efd07da4b8400d56d166afd5e5f1120da20975e41001e88" => :mountain_lion
+    sha256 "e792acf6f3c23be1853f8658f35766c87dc35f165b6d6728aca61596bc9de230" => :mojave
+    sha256 "2a8a4842ad2660dad079216a12efe8b6d6394b548c6e056f250aa6d6cdf3802d" => :high_sierra
+    sha256 "561639bc13e269d61af352e106b3d039a4c9b5fdadd45b04bcf9f8c9f99a53c6" => :sierra
   end
 
   def install
-    # Capstone's Make script ignores the prefix env and was installing
-    # in /usr/local directly. So just inreplace the prefix for less pain.
-    # https://github.com/aquynh/capstone/issues/228
-    inreplace "make.sh", "export PREFIX=/usr/local", "export PREFIX=#{prefix}"
-
     ENV["HOMEBREW_CAPSTONE"] = "1"
+    ENV["PREFIX"] = prefix
     system "./make.sh"
     system "./make.sh", "install"
-
-    # As per the above inreplace, the pkgconfig file needs fixing as well.
-    inreplace lib/"pkgconfig/capstone.pc" do |s|
-      s.gsub! "/usr/lib", lib
-      s.gsub! "/usr/include/capstone", "#{include}/capstone"
-    end
   end
 
   test do
-    # code comes from http://www.capstone-engine.org/lang_c.html
+    # code comes from https://www.capstone-engine.org/lang_c.html
     (testpath/"test.c").write <<~EOS
       #include <stdio.h>
       #include <inttypes.h>

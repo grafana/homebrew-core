@@ -1,21 +1,18 @@
 class Mitie < Formula
   desc "Library and tools for information extraction"
   homepage "https://github.com/mit-nlp/MITIE/"
-  url "https://github.com/mit-nlp/MITIE/archive/v0.5.tar.gz"
-  sha256 "324b7bddedea13cebab0bc0fe9f8d5cfb7bfaf26eac5aa3aae1e74afa909aa12"
-
+  url "https://github.com/mit-nlp/MITIE/archive/v0.7.tar.gz"
+  sha256 "0830955e64c2a4cceab803884355f090cf8e9086e68ac5df43058f05c34697e8"
   head "https://github.com/mit-nlp/MITIE.git"
 
   bottle do
     cellar :any
-    sha256 "d73f3db219902d12a9321273adb0be485156d870e43cbf0106db550cef210cbe" => :high_sierra
-    sha256 "e3776d82c4712cd1532a2a54456e61c67f08b23b90ef946d475952dc4cb0f308" => :sierra
-    sha256 "de7e18c61774eff595acafeeaa22733c13269face211a179f3a46c0b6aa7dc60" => :el_capitan
+    sha256 "4f9709ea893f329be8b0097668770177aa37873f97e5f83b9c61a1ee7755d44b" => :mojave
+    sha256 "097989a1217a73c777f37d6232c5bee07055335570548375086aa38525c6c21b" => :high_sierra
+    sha256 "243d4557bc8f89638bcc45a1cdfe4402d820d3d5d56a0ffb6db3b9a748ca47e5" => :sierra
   end
 
-  option "without-models", "Don't download the v0.2 models (~415MB)"
-
-  depends_on :python if MacOS.version <= :snow_leopard
+  depends_on "python"
 
   resource "models-english" do
     url "https://downloads.sourceforge.net/project/mitie/binaries/MITIE-models-v0.2.tar.bz2"
@@ -23,9 +20,7 @@ class Mitie < Formula
   end
 
   def install
-    if build.with? "models"
-      (share/"MITIE-models").install resource("models-english")
-    end
+    (share/"MITIE-models").install resource("models-english")
 
     inreplace "mitielib/makefile", "libmitie.so", "libmitie.dylib"
     system "make", "mitielib"
@@ -33,9 +28,12 @@ class Mitie < Formula
 
     include.install Dir["mitielib/include/*"]
     lib.install "mitielib/libmitie.dylib", "mitielib/libmitie.a"
-    (lib/"python2.7/site-packages").install "mitielib/mitie.py"
+
+    xy = Language::Python.major_minor_version "python3"
+    (lib/"python#{xy}/site-packages").install "mitielib/mitie.py"
     pkgshare.install "examples", "sample_text.txt",
-      "sample_text.reference-output", "sample_text.reference-output-relations"
+                     "sample_text.reference-output",
+                     "sample_text.reference-output-relations"
     bin.install "ner_example", "ner_stream", "relation_extraction_example"
   end
 

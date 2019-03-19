@@ -1,18 +1,24 @@
 class Libtensorflow < Formula
   desc "C interface for Google's OS library for Machine Intelligence"
   homepage "https://www.tensorflow.org/"
-  url "https://github.com/tensorflow/tensorflow/archive/v1.4.0.tar.gz"
-  sha256 "8a0ad8d61f8f6c0282c548661994a5ab83ac531bac496c3041dedc1ab021107b"
+  url "https://github.com/tensorflow/tensorflow/archive/v1.13.1.tar.gz"
+  sha256 "7cd19978e6bc7edc2c847bce19f95515a742b34ea5e28e4389dade35348f58ed"
 
   bottle do
     cellar :any
-    sha256 "50f1861dc615e054e401fe35b3c9a50717655b944fdbc76cf191d3f361b18d8d" => :high_sierra
-    sha256 "d22d894255ffcb516a159ffa8bf8bd13afbd0869d1809e497bc2275fbd46d7fd" => :sierra
-    sha256 "5ddf8a66038eac0d5bc5b7144c1f991e70359dbb6a4286b3259925668ccacb37" => :el_capitan
+    sha256 "2df4c37601b1533a183473808acbf01444abcad0775ad2f5a699f6a3c0eba494" => :mojave
+    sha256 "5a9d0ea0a8e3496388dd2892a144a2c627b445e356e0c8a2b7722b2ae54c6887" => :high_sierra
+    sha256 "d9cc97a0c4b21dff9ccc3f511c90a820ff8ae857b82c06c812f1f2defe8b261b" => :sierra
   end
 
   depends_on "bazel" => :build
   depends_on :java => ["1.8", :build]
+
+  # Allow libtensorflow to be built on bazel 0.22.0
+  patch do
+    url "https://github.com/tensorflow/tensorflow/commit/91da898cb6f6b0e751e15ceb813a37cdfe18a035.patch?full_index=1"
+    sha256 "648295170a4d4226a76f916e61bf052dcd4b13e1c0517386a0e59963285cdc9b"
+  end
 
   def install
     cmd = Language::Java.java_home_cmd("1.8")
@@ -32,9 +38,14 @@ class Libtensorflow < Formula
     ENV["TF_NEED_MPI"] = "0"
     ENV["TF_NEED_S3"] = "1"
     ENV["TF_NEED_GDR"] = "0"
+    ENV["TF_NEED_KAFKA"] = "0"
+    ENV["TF_NEED_OPENCL_SYCL"] = "0"
+    ENV["TF_NEED_ROCM"] = "0"
+    ENV["TF_DOWNLOAD_CLANG"] = "0"
+    ENV["TF_SET_ANDROID_WORKSPACE"] = "0"
     system "./configure"
 
-    system "bazel", "build", "--compilation_mode=opt", "--copt=-march=native", "tensorflow:libtensorflow.so"
+    system "bazel", "build", "--jobs", ENV.make_jobs, "--compilation_mode=opt", "--copt=-march=native", "tensorflow:libtensorflow.so"
     lib.install Dir["bazel-bin/tensorflow/*.so"]
     (include/"tensorflow/c").install "tensorflow/c/c_api.h"
     (lib/"pkgconfig/tensorflow.pc").write <<~EOS

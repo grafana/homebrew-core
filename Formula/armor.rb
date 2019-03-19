@@ -1,21 +1,21 @@
 class Armor < Formula
-  desc "Uncomplicated HTTP server, supports HTTP/2 and auto TLS"
+  desc "Uncomplicated, modern HTTP server"
   homepage "https://github.com/labstack/armor"
-  url "https://github.com/labstack/armor/archive/v0.3.3.tar.gz"
-  sha256 "9aae852ba96dddcc55d279ae8dbb4de12d5598997b5d5d277de415effce5da8d"
+  url "https://github.com/labstack/armor/archive/v0.4.13.tar.gz"
+  sha256 "1e80b70c2fa245800594f3ef7b6bb14d2af4fda2a8622d3c8a0a28f9ef6c4629"
   head "https://github.com/labstack/armor.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "99098de421235ad7bd858d17b513d1d749e55f95de45aae7b2881a01e0686d15" => :high_sierra
-    sha256 "220a596d95078e185c9f8535654d102b7c9de0075949acf1308ba06043176ac4" => :sierra
-    sha256 "6b27b59057496d4bf8d652e4d81ec6eb9a5fc21b9bf86cf9744c34754d1f3156" => :el_capitan
-    sha256 "f2a826f6dc9ce37a5c9c0a561150a367aa774b4dda75ef925c2de09df5e24f78" => :yosemite
+    sha256 "06688ea6376d5442935ae75c719f63e1f6302384b1197d790cf01feb35dfc645" => :mojave
+    sha256 "4aa066a1dc4f908c31168cb9a3ace4372d41b00f6b7f653fb957625f4e2c4145" => :high_sierra
+    sha256 "aeb2fda18ebb214da91feefd22f4476197ae81abbf6a766bd2c53ab8706d9d47" => :sierra
   end
 
   depends_on "go" => :build
 
   def install
+    ENV["GO111MODULE"] = "on"
     ENV["GOPATH"] = buildpath
     armorpath = buildpath/"src/github.com/labstack/armor"
     armorpath.install buildpath.children
@@ -33,7 +33,7 @@ class Armor < Formula
       end
       sleep 1
       output = shell_output("curl -sI http://localhost:8080")
-      assert_match /200 OK/m, output
+      assert_match(/200 OK/m, output)
     ensure
       Process.kill("HUP", pid)
     end

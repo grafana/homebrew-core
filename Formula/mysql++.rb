@@ -3,24 +3,25 @@ class Mysqlxx < Formula
   homepage "https://tangentsoft.com/mysqlpp/home"
   url "https://tangentsoft.com/mysqlpp/releases/mysql++-3.2.3.tar.gz"
   sha256 "c804c38fe229caab62a48a6d0a5cb279460da319562f41a16ad2f0a0f55b6941"
+  revision 2
 
   bottle do
     cellar :any
-    sha256 "e896760f31b977fce886b2f9eb67ee70fa93491752ac48744458bfa74b5c1f35" => :high_sierra
-    sha256 "44549b6b92ecf8288923b6111a67c3dcf16f5ba0a0ca47f4fd38a31b99545452" => :sierra
-    sha256 "1f0e3bc7e6e25924bb95113ee0cbd7c99402dc51744682258b3548c756431239" => :el_capitan
-    sha256 "f9837534007c15fdf73e607ddc58c1d5c0d1d20ff2de7e2d1dea20716b823cc9" => :yosemite
+    sha256 "952e55ad3380258c28787916ff48c6be7d368fe84ef4d5ac2a897be0c9691bab" => :mojave
+    sha256 "3190a4350b89e6bcea9b80809409ae668b00aebbb6dda08cf260621a65324c42" => :high_sierra
+    sha256 "a2333339d10b355368bf28a5d19c3b9a131f0ca62c0e874d718d998c6b474c34" => :sierra
+    sha256 "a4bfd205239996eda7467fbb714834f529ced547babeaf467c678adb1cc73025" => :el_capitan
   end
 
-  depends_on :mysql
+  depends_on "mysql-client"
 
   def install
-    mysql_include_dir = Utils.popen_read("mysql_config --variable=pkgincludedir")
+    mysql = Formula["mysql-client"]
     system "./configure", "--disable-dependency-tracking",
                           "--prefix=#{prefix}",
                           "--with-field-limit=40",
-                          "--with-mysql-lib=#{HOMEBREW_PREFIX}/lib",
-                          "--with-mysql-include=#{mysql_include_dir}"
+                          "--with-mysql-lib=#{mysql.opt_lib}",
+                          "--with-mysql-include=#{mysql.opt_include}/mysql"
     system "make", "install"
   end
 
@@ -35,7 +36,7 @@ class Mysqlxx < Formula
         return 0;
       }
     EOS
-    system ENV.cxx, "test.cpp", Utils.popen_read("mysql_config --include").chomp,
+    system ENV.cxx, "test.cpp", "-I#{Formula["mysql-client"].opt_include}/mysql",
                     "-L#{lib}", "-lmysqlpp", "-o", "test"
     system "./test", "-u", "foo", "-p", "bar"
   end

@@ -1,15 +1,14 @@
 class Mlkit < Formula
   desc "Compiler for the Standard ML programming language"
   homepage "https://melsman.github.io/mlkit"
-  url "https://github.com/melsman/mlkit/archive/mlkit-4.3.9.tar.gz"
-  sha256 "3c6adbeb9a85f7b3586d0961fd3b170ff31e09fa0ff12889b76b9ceb459059c4"
+  url "https://github.com/melsman/mlkit/archive/mlkit-4.4.2.tar.gz"
+  sha256 "193a8cb590d8b28a3d850de29999f2d121aeebfef919c4c70e83ea8f47855af9"
   head "https://github.com/melsman/mlkit.git"
 
   bottle do
-    rebuild 1
-    sha256 "506bb73d7421593ea3bd76f8958ce61d161c9a7e724c525b1b32bedae61fa8dd" => :high_sierra
-    sha256 "2f6e573272e385556c38437c83017ce3ffb9279b091bdd3f6d815d6ef401940b" => :sierra
-    sha256 "3b1eeb563a56a67b8335bcfe94359482b068d12b9a34b033158ee642a2536056" => :el_capitan
+    sha256 "a4853a5e64ca0d9d5aafb4d5fc1caa42b2d066ad53a51e3658469cd209a91d05" => :mojave
+    sha256 "474a28eb9f02a2736d35ee330a4459256ac5bb1a64482a3e1e8ab12849a0a678" => :high_sierra
+    sha256 "ecd39ba0355d3b52bcc5ee380d6fa8fadcaa36258f2ec835f2d07ab21b5ddd65" => :sierra
   end
 
   depends_on "autoconf" => :build
@@ -30,8 +29,7 @@ class Mlkit < Formula
     # invocation. Thus, on a 32-bit machine, both the mlton-compiled
     # binary (the mlkit compiler) and the 32-bit native code generated
     # by the mlkit compiler will be running 32-bit code.
-
-    ENV.permit_arch_flags if MacOS.prefer_64_bit?
+    ENV.permit_arch_flags
     system "make", "mlkit"
     system "make", "mlkit_libs"
     system "make", "install"

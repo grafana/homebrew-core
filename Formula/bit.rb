@@ -3,14 +3,14 @@ require "language/node"
 class Bit < Formula
   desc "Distributed Code Component Manager"
   homepage "https://www.bitsrc.io"
-  url "https://registry.npmjs.org/bit-bin/-/bit-bin-0.11.0.tgz"
-  sha256 "2af6a433f43f874ac87e55641fc45228e44ebc9ef0967292813d0e096d4fa4a7"
+  url "https://registry.npmjs.org/bit-bin/-/bit-bin-14.0.2.tgz"
+  sha256 "fd7c3b444da1888d3113a8e087409c9e0b946d1fea54b2ea9fe3a4914ce51d5b"
   head "https://github.com/teambit/bit.git"
 
   bottle do
-    sha256 "5203f2bb3ec825f140741c43802178328bbe1cdac52842d4dfe42891b2c0d10e" => :high_sierra
-    sha256 "78dee314349a867117c9ebec759172b4604e9f074df22558205f66f01297c572" => :sierra
-    sha256 "b3545bbe297ae46ab0e3a5ed19de52bcd9e16ce9d4d1d1b47e83a17a9dba0d48" => :el_capitan
+    sha256 "a3a4f4c0768532dfa79b0520332778d791f7533f851f018e9aa5d76dc9447e5f" => :mojave
+    sha256 "07eac8096322205b9def0465c6deb1d570815a6f9daed7508047e2f499dbd4c1" => :high_sierra
+    sha256 "a4bd93e273518f45b189767d10ca85f7621ac3c4065e20b63ec06b16bab61e9e" => :sierra
   end
 
   depends_on "node"
@@ -21,7 +21,10 @@ class Bit < Formula
   end
 
   test do
-    assert_equal "successfully initialized an empty bit scope.\n",
-                 shell_output("#{bin}/bit init --skip-update")
+    (testpath/"Library/Caches/Bit/config/config.json").write <<~EOS
+      { "analytics_reporting": false, "error_reporting": false }
+    EOS
+    output = shell_output("#{bin}/bit init --skip-update")
+    assert_match "successfully initialized", output
   end
 end

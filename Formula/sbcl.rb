@@ -1,31 +1,19 @@
 class Sbcl < Formula
   desc "Steel Bank Common Lisp system"
   homepage "http://www.sbcl.org/"
-  url "https://downloads.sourceforge.net/project/sbcl/sbcl/1.4.1/sbcl-1.4.1-source.tar.bz2"
-  sha256 "e8c7c6068241b13941d357a0a1f5a04ba04c7c83a52b00f0fbe296770872aae1"
-  head "https://git.code.sf.net/p/sbcl/sbcl.git"
+  url "https://downloads.sourceforge.net/project/sbcl/sbcl/1.5.0/sbcl-1.5.0-source.tar.bz2"
+  sha256 "1ff98f17f6ba40c0d987efc907161f729cc9bd8516fe1f28e124626c16418ca8"
 
   bottle do
-    sha256 "8beddafe8e18eccdc4af51807589258c82df7c353869d99b658a81ec609712bd" => :high_sierra
-    sha256 "086b2d4671df4ba2306af1f480dd175bf266015b171650137dd51068b9620f10" => :sierra
-    sha256 "8f2f049d7dd86c2b68b27f7de7ea3e0454b6eea708b2a2b216f43c3e559c59a8" => :el_capitan
+    sha256 "7a8ae3dbed9595ae14b4008abd1fc78e5edb319f8030f8c7de14a2bb37c01cbb" => :mojave
+    sha256 "fcd581866af74e6e6f1241ebf2145570e6e490cd14b49c093736840d6cade3a6" => :high_sierra
+    sha256 "4d94d79ee3d651c9b77201adc765061d4c62df6552540421a283bc672afd1e35" => :sierra
   end
-
-  option "with-internal-xref", "Include XREF information for SBCL internals (increases core size by 5-6MB)"
-  option "without-ldb", "Don't include low-level debugger"
-  option "without-sources", "Don't install SBCL sources"
-  option "without-core-compression", "Build SBCL without support for compressed cores and without a dependency on zlib"
-  option "without-threads", "Build SBCL without support for native threads"
 
   # Current binary versions are listed at https://sbcl.sourceforge.io/platform-table.html
   resource "bootstrap64" do
     url "https://downloads.sourceforge.net/project/sbcl/sbcl/1.2.11/sbcl-1.2.11-x86-64-darwin-binary.tar.bz2"
     sha256 "057d3a1c033fb53deee994c0135110636a04f92d2f88919679864214f77d0452"
-  end
-
-  resource "bootstrap32" do
-    url "https://downloads.sourceforge.net/project/sbcl/sbcl/1.1.6/sbcl-1.1.6-x86-darwin-binary.tar.bz2"
-    sha256 "5801c60e2a875d263fccde446308b613c0253a84a61ab63569be62eb086718b3"
   end
 
   patch :p0 do
@@ -42,11 +30,8 @@ class Sbcl < Formula
       ascii_val =~ /[\x80-\xff]/n
     end
 
-    (buildpath/"version.lisp-expr").write('"1.0.99.999"') if build.head?
-
-    bootstrap = MacOS.prefer_64_bit? ? "bootstrap64" : "bootstrap32"
     tmpdir = Pathname.new(Dir.mktmpdir)
-    tmpdir.install resource(bootstrap)
+    tmpdir.install resource("bootstrap64")
 
     command = "#{tmpdir}/src/runtime/sbcl"
     core = "#{tmpdir}/output/sbcl.core"
@@ -55,27 +40,25 @@ class Sbcl < Formula
     args = [
       "--prefix=#{prefix}",
       "--xc-host=#{xc_cmdline}",
+      "--with-sb-core-compression",
+      "--with-sb-ldb",
+      "--with-sb-thread",
     ]
-    args << "--with-sb-core-compression" if build.with? "core-compression"
-    args << "--with-sb-ldb" if build.with? "ldb"
-    args << "--with-sb-thread" if build.with? "threads"
-    args << "--with-sb-xref-internal" if build.with? "internal-xref"
 
+    ENV["SBCL_MACOSX_VERSION_MIN"] = MacOS.version
     system "./make.sh", *args
 
     ENV["INSTALL_ROOT"] = prefix
     system "sh", "install.sh"
 
-    if build.with? "sources"
-      bin.env_script_all_files(libexec/"bin", :SBCL_SOURCE_ROOT => pkgshare/"src")
-      pkgshare.install %w[contrib src]
-
-      (lib/"sbcl/sbclrc").write <<~EOS
-        (setf (logical-pathname-translations "SYS")
-          '(("SYS:SRC;**;*.*.*" #p"#{pkgshare}/src/**/*.*")
-            ("SYS:CONTRIB;**;*.*.*" #p"#{pkgshare}/contrib/**/*.*")))
-        EOS
-    end
+    # Install sources
+    bin.env_script_all_files(libexec/"bin", :SBCL_SOURCE_ROOT => pkgshare/"src")
+    pkgshare.install %w[contrib src]
+    (lib/"sbcl/sbclrc").write <<~EOS
+      (setf (logical-pathname-translations "SYS")
+        '(("SYS:SRC;**;*.*.*" #p"#{pkgshare}/src/**/*.*")
+          ("SYS:CONTRIB;**;*.*.*" #p"#{pkgshare}/contrib/**/*.*")))
+    EOS
   end
 
   test do

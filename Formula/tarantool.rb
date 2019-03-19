@@ -1,15 +1,16 @@
 class Tarantool < Formula
   desc "In-memory database and Lua application server"
   homepage "https://tarantool.org/"
-  url "https://download.tarantool.org/tarantool/1.7/src/tarantool-1.7.5.184.tar.gz"
-  sha256 "3c95948b90ef17ec772b09532aaaef7a71c75d2b13cbe192e6dd1796069afd01"
-
-  head "https://github.com/tarantool/tarantool.git", :branch => "1.8", :shallow => false
+  url "https://download.tarantool.org/tarantool/1.10/src/tarantool-1.10.2.1.tar.gz"
+  sha256 "2d077978a65e785349883ef3c98c46d35af26bcc10dae58eabfca27cfbcc6c6b"
+  revision 2
+  head "https://github.com/tarantool/tarantool.git", :branch => "2.1", :shallow => false
 
   bottle do
-    sha256 "09462a735f9f8e1ca8f4a121e5d226d72832f05fd64b8cc55e99235ce7e70f08" => :high_sierra
-    sha256 "b8de6b1d4ad7acaef9c80c6ae68cab15eaad984e2905e3d8f3045c0b7510687e" => :sierra
-    sha256 "aaa307ec10e11975e8d473e5488623f7c0871e75922d5e7ff2c8eb8b5603220b" => :el_capitan
+    cellar :any
+    sha256 "43c4b7bf9ca4c6f0a4d3f7c04a2080d416cfea4c06f90743bc8429776425c256" => :mojave
+    sha256 "ae13eb556d4805cac33578221daa3684d6e099cc219f1508a86cd635193f5b36" => :high_sierra
+    sha256 "226f292eff0874e0431a07c7ba6a367622ca11f0b10382384b986e1d6ea4a062" => :sierra
   end
 
   depends_on "cmake" => :build
@@ -18,15 +19,19 @@ class Tarantool < Formula
   depends_on "readline"
 
   def install
-    args = std_cmake_args
+    sdk = MacOS::CLT.installed? ? "" : MacOS.sdk_path
 
+    # Necessary for luajit to build on macOS Mojave (see luajit formula)
+    ENV["MACOSX_DEPLOYMENT_TARGET"] = MacOS.version
+
+    args = std_cmake_args
     args << "-DCMAKE_INSTALL_MANDIR=#{doc}"
     args << "-DCMAKE_INSTALL_SYSCONFDIR=#{etc}"
     args << "-DCMAKE_INSTALL_LOCALSTATEDIR=#{var}"
     args << "-DENABLE_DIST=ON"
     args << "-DOPENSSL_ROOT_DIR=#{Formula["openssl"].opt_prefix}"
     args << "-DREADLINE_ROOT=#{Formula["readline"].opt_prefix}"
-    args << "-DCURL_INCLUDE_DIR=#{MacOS.sdk_path}/usr/include"
+    args << "-DCURL_INCLUDE_DIR=#{sdk}/usr/include"
     args << "-DCURL_LIBRARY=/usr/lib/libcurl.dylib"
 
     system "cmake", ".", *args

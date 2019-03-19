@@ -7,19 +7,19 @@ class Makefile2graph < Formula
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "5b5cb69a698628af41b3de70146580bbcb2e88a8b6d87d7fe9b4f58a2f2fdfb2" => :mojave
     sha256 "51231ed0ef44fd31a10f4ea0a7500570181332786ddd5a8a9a886958ad1b1408" => :high_sierra
     sha256 "274ee025c45df9757d608249d64105b9314c8e59fc52a81ad6906f807498b67c" => :sierra
     sha256 "ed1939b1b0fd106f3e328e310a887cf454b81481f78fdf57ce75c0480a922d7d" => :el_capitan
     sha256 "37aebae489e0f341f80417ec711e5c2817f5b8097c3493dcc11bc754bdd1b1cf" => :yosemite
     sha256 "0de3d4a2492797c3259798493e287ac2403f02254c6cfcf74948a16bcc4bcd0d" => :mavericks
-    sha256 "52dea69b4d18c1c6fa451ab834a43e1ca57ba64d9efb4c63972126a387682040" => :mountain_lion
   end
 
-  depends_on "graphviz" => :recommended
+  depends_on "graphviz"
 
   def install
     system "make"
-    system "make", "test" if build.with? "graphviz"
+    system "make", "test"
     bin.install "make2graph", "makefile2graph"
     man1.install "make2graph.1", "makefile2graph.1"
     doc.install "LICENSE", "README.md", "screenshot.png"

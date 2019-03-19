@@ -1,21 +1,21 @@
 class Babl < Formula
   desc "Dynamic, any-to-any, pixel format translation library"
-  homepage "http://www.gegl.org/babl/"
-  url "https://download.gimp.org/pub/babl/0.1/babl-0.1.36.tar.bz2"
-  sha256 "97f0eb01eb6760cb20a4deca0096aceaa77c6d7a88a375c2b872ca1ef3ae29ef"
+  homepage "https://www.gegl.org/babl/"
+  url "https://download.gimp.org/pub/babl/0.1/babl-0.1.62.tar.bz2"
+  sha256 "dc279f174edbcb08821cf37e4ab0bc02e6949369b00b150c759a6c24bfd3f510"
 
   bottle do
-    sha256 "66997f2a167fe9594ab9141d70984910cb1dd187dee918cc9621c4f902658593" => :high_sierra
-    sha256 "6de97dad3dd478fb8d1ad7a676cdd2ea366472dd534b82938868bbaf9fe0663f" => :sierra
-    sha256 "40016d19840d222124fa86700b29572cbb39ec276eb09b85ebf2d1cfc75ac753" => :el_capitan
+    sha256 "fbf1c53fbd31c3a87831f475432c1f4bc3877ae1e99fc52429e149cfe5d3a30a" => :mojave
+    sha256 "3ff90de90576f944a3db0cb6d85ad11dbf3bb8ea719e96e09fad95bf57a5d390" => :high_sierra
+    sha256 "bc3595575986794340bc7d772cce69f91a419b868ea46f8a59593dd565e2e92b" => :sierra
   end
 
   head do
     # Use Github instead of GNOME's git. The latter is unreliable.
     url "https://github.com/GNOME/babl.git"
 
-    depends_on "automake" => :build
     depends_on "autoconf" => :build
+    depends_on "automake" => :build
     depends_on "libtool" => :build
   end
 

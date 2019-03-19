@@ -1,21 +1,20 @@
 class Openttd < Formula
   desc "Simulation game based upon Transport Tycoon Deluxe"
   homepage "https://www.openttd.org/"
-  url "https://binaries.openttd.org/releases/1.7.1/openttd-1.7.1-source.tar.xz"
-  sha256 "61190952a98d494d3fd62e395dd6c359609914d0ba8fe80eaeb585b7d62a1b36"
-
+  url "https://binaries.openttd.org/releases/1.8.0/openttd-1.8.0-source.tar.xz"
+  sha256 "c2d32d9d736d27202a020027a3729ae763f5432ae6f424891e57a4095eeb087f"
   head "https://git.openttd.org/openttd/trunk.git"
 
   bottle do
-    rebuild 1
-    sha256 "aa8a324b0400fab12eb52c8980d613d4630aa722314483742be46be5969e8285" => :high_sierra
-    sha256 "3878a83345e59f8dc1994bd11c48d7e9b3307b9ef1c6228d0de3884ad5532ef5" => :sierra
-    sha256 "51addb9fbdde6f2c6c76d80c13526626e501dfffdcdc97f3997773e8f55c12a8" => :el_capitan
+    sha256 "5525bc99e1a325df855a27cc443b2a7ac92e618ae713be9392f52903d92530e0" => :mojave
+    sha256 "e5d194e126ec516ca84a4f9187e8415953cf64e319dfe31dedd1bdaa2a4e2339" => :high_sierra
+    sha256 "5d74a4c682236213f06a7cdeae2f62f462d59f445a66719fe86e82a872ff112e" => :sierra
+    sha256 "b2b8d6cf06c840acbf425d4b89daf146541d46f19cd3aa7f09a622d7897b3a9f" => :el_capitan
   end
 
+  depends_on "pkg-config" => :build
   depends_on "lzo"
   depends_on "xz"
-  depends_on "pkg-config" => :build
 
   resource "opengfx" do
     url "https://bundles.openttdcoop.org/opengfx/releases/0.5.4/opengfx-0.5.4.zip"
@@ -30,13 +29,6 @@ class Openttd < Formula
   resource "openmsx" do
     url "https://bundles.openttdcoop.org/openmsx/releases/0.3.1/openmsx-0.3.1.zip"
     sha256 "92e293ae89f13ad679f43185e83fb81fb8cad47fe63f4af3d3d9f955130460f5"
-  end
-
-  # Fix pre-existing bug triggering Xcode 9 build error
-  # Upstream commit, remove when 1.8 is released
-  patch do
-    url "https://git.openttd.org/?p=trunk.git;a=commitdiff_plain;h=2f7ac7c41f46dfc0d16d963ea5c6de2f8d144971"
-    sha256 "a2681e6ac7ccb2be2d591090198f343d1744484d7093e1e9866325cceecc8748"
   end
 
   def install

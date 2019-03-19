@@ -1,16 +1,14 @@
 class Webp < Formula
   desc "Image format providing lossless and lossy compression for web images"
   homepage "https://developers.google.com/speed/webp/"
-  url "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-0.6.0.tar.gz"
-  sha256 "c928119229d4f8f35e20113ffb61f281eda267634a8dc2285af4b0ee27cf2b40"
-  revision 2
+  url "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.0.2.tar.gz"
+  sha256 "3d47b48c40ed6476e8047b2ddb81d93835e0ca1b8d3e8c679afbb3004dd564b1"
 
   bottle do
     cellar :any
-    sha256 "49c01027710cb03d9facc99a6e68f0da43a36f729cad5616df2321bd0306c056" => :high_sierra
-    sha256 "f8cadfa3f0ee1b8c95d6a31c85e6ebf8de7fe973788a97aab07172d566183a57" => :sierra
-    sha256 "55497d556d3df56d05c37c4459734c5708dead14a62569f4efc5e31307e2f4e7" => :el_capitan
-    sha256 "c812d355a21c4bc42a4ecd56781eff5ce5d2ca6d48089b8bbcb83f67814339e0" => :yosemite
+    sha256 "e481c511582d5e23078c6a19fb224afe625422a457eaaeea8183c229947a9ced" => :mojave
+    sha256 "d045f6c3963381fb509c8f752e89a5d48c623d6622bff8c68c8f4327924796ff" => :high_sierra
+    sha256 "95e05535e7701de8ced6c4a98ecc9af78e87c06a0c69c4bcdb00fdc9c566d531" => :sierra
   end
 
   head do
@@ -20,23 +18,18 @@ class Webp < Formula
     depends_on "libtool" => :build
   end
 
+  depends_on "jpeg"
   depends_on "libpng"
-  depends_on "jpeg" => :recommended
-  depends_on "libtiff" => :optional
-  depends_on "giflib" => :optional
 
   def install
-    args = [
-      "--disable-dependency-tracking",
-      "--disable-gl",
-      "--enable-libwebpmux",
-      "--enable-libwebpdemux",
-      "--enable-libwebpdecoder",
-      "--prefix=#{prefix}",
-    ]
-    args << "--disable-gif" if build.without? "giflib"
     system "./autogen.sh" if build.head?
-    system "./configure", *args
+    system "./configure", "--prefix=#{prefix}",
+                          "--disable-dependency-tracking",
+                          "--disable-gif",
+                          "--disable-gl",
+                          "--enable-libwebpdecoder",
+                          "--enable-libwebpdemux",
+                          "--enable-libwebpmux"
     system "make", "install"
   end
 

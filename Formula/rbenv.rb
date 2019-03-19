@@ -7,13 +7,13 @@ class Rbenv < Formula
 
   bottle do
     cellar :any
-    sha256 "ffafe9cbf0f10545e0c7db8a5ea0ed3056226441391911d2992b2373de94afe3" => :high_sierra
-    sha256 "a99c9b4ba77938ce03b8e06e0e4d7670c611214b07b78d2b5e1bc9a7571f9186" => :sierra
-    sha256 "9d1a7da30fb133b43b243e562167ffdde6c125f054c3fde7a866a0b15173f269" => :el_capitan
-    sha256 "e3e0e0b32a1bb337178d915a91ac7f552153cbf351973f9ef1692d9644824f61" => :yosemite
+    rebuild 2
+    sha256 "67f0becc3ef010f3b4f489d9ff852ff28988b18b968281c73a84892c7e26ec8f" => :mojave
+    sha256 "faaede99c2b74417be708883586777c4b0747cdfc691aec10776682e31585083" => :high_sierra
+    sha256 "39825fd08255d27551e9154d16691477cfecb3be52acf627d29986b4c8c0b87f" => :sierra
   end
 
-  depends_on "ruby-build" => :recommended
+  depends_on "ruby-build"
 
   def install
     inreplace "libexec/rbenv" do |s|

@@ -21,18 +21,13 @@ class Parrot < Formula
   end
 
   bottle do
+    sha256 "91a463baca8872dbd12183a61326c78c8ac0e05a01bd1a0421578cb0f6e58427" => :mojave
     sha256 "c3ce1d1fe24e6f5172629cd092cc03db16b957649865af052ee6a72d75fa10e6" => :high_sierra
     sha256 "e8c50fee6a2111412b5f6ac31292f3ff7d3e4dd2be9a02cc94a890026588ae63" => :sierra
     sha256 "3b78be029276ca642cb2bc705888ed0cd7745c0398cf90bf67031190191c76a8" => :el_capitan
     sha256 "37a9ad2396bcf355d6d7ae2d432489e316d3290528947a6f1a30e753fed59902" => :yosemite
     sha256 "ff4125f633f43c19134e2520c0964025f4ea14efd5ce826d0cd905c550fbb24a" => :mavericks
   end
-
-  depends_on "gmp" => :optional
-  depends_on "icu4c" => :optional
-  depends_on "pcre" => :optional
-  depends_on "readline" => :optional
-  depends_on "libffi" => :optional
 
   conflicts_with "rakudo-star"
 

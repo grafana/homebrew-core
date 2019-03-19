@@ -1,19 +1,19 @@
 class Jabba < Formula
   desc "Cross-platform Java Version Manager"
   homepage "https://github.com/shyiko/jabba"
-  url "https://github.com/shyiko/jabba/archive/0.9.1.tar.gz"
-  sha256 "5e00ceec91afdea5ef2f2b5ffc764e552bb9837c1d69d7e1375136da46b15abd"
+  url "https://github.com/shyiko/jabba/archive/0.11.2.tar.gz"
+  sha256 "33874c81387f03fe1a27c64cb6fb585a458c1a2c1548b4b86694da5f81164355"
   head "https://github.com/shyiko/jabba.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "c73fba5030ff7426aab097addcea3266c66dcecfa602b223a4bacce87e262fc7" => :high_sierra
-    sha256 "0335af2f2b4cf66b2478e7dccaaed8bba2e8b19c86d9910190fdee40b816e2e8" => :sierra
-    sha256 "4b8814d66993e5d454c71f5370a4a2de5758b7d08e5f5a85eea68c10f4762b5e" => :el_capitan
+    sha256 "4214658f6ce8d3e2f364ba5859278e6f32ed1dee5afe9f692103dd0d430e3205" => :mojave
+    sha256 "fa50cc2c872c5e8241c986f1ee0237e549a51340d3896901076e5baee77ae6b7" => :high_sierra
+    sha256 "65736798d127fbad2f048dada9e46399454e784bc009e266be55a328ea526010" => :sierra
   end
 
-  depends_on "go" => :build
   depends_on "glide" => :build
+  depends_on "go" => :build
 
   def install
     ENV["GOPATH"] = buildpath
@@ -30,9 +30,9 @@ class Jabba < Formula
 
   test do
     ENV["JABBA_HOME"] = testpath/"jabba_home"
-    system bin/"jabba", "install", "1.9.0"
-    jdk_path = Utils.popen_read("#{bin}/jabba which 1.9.0").strip
-    assert_match 'java version "9.0.1"',
+    system bin/"jabba", "install", "1.11.0"
+    jdk_path = Utils.popen_read("#{bin}/jabba which 1.11.0").strip
+    assert_match 'java version "11.0',
                  shell_output("#{jdk_path}/Contents/Home/bin/java -version 2>&1")
   end
 end

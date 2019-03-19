@@ -1,24 +1,20 @@
 class Cppcms < Formula
   desc "Free High Performance Web Development Framework"
   homepage "http://cppcms.com/wikipp/en/page/main"
-  url "https://downloads.sourceforge.net/project/cppcms/cppcms/1.0.5/cppcms-1.0.5.tar.bz2"
-  sha256 "84b685977bca97c3e997497f227bd5906adb80555066d811a7046b01c2f51865"
+  url "https://downloads.sourceforge.net/project/cppcms/cppcms/1.2.1/cppcms-1.2.1.tar.bz2"
+  sha256 "10fec7710409c949a229b9019ea065e25ff5687103037551b6f05716bf6cac52"
 
   bottle do
     cellar :any
-    sha256 "08e61238e4c996d1a43f74e448948476e5a80fbde09b5e2e4a42602954d5f23d" => :high_sierra
-    sha256 "7d669ab4f36bd0bf880235fb5842a8ffbbe655ca8d9d6cd511e8c57a6764632a" => :sierra
-    sha256 "3715285e50f8fe247c3d3dd2e543f92e994366ff1578e250dbcca5d8b38851b1" => :el_capitan
-    sha256 "6fec4bca41a688f32b5a8b7cef4de2585b14d59ddedc5967a967917e8727dea0" => :yosemite
-    sha256 "fe7c1581986e533596f9d12e4f199ecb1af9a15438d80911829af6365f4d3d05" => :mavericks
-    sha256 "b129b55fa688f760864a0cfecbf67c112411518e70c77b6b2c88af0ea2035205" => :mountain_lion
+    sha256 "a8080faa8c88e67f769390bb4f2b7ea90f008551c35e8e9df8b926d32e8adb3a" => :mojave
+    sha256 "9bb4d1f81736af36f781083a13ca6a17525ef14f331d60c308370978275d878b" => :high_sierra
+    sha256 "ad90e817edf7dbec0cf35fecd3b8422bda8ceafc790a61f3c33d30f4e843d419" => :sierra
+    sha256 "c42e2ea6f03634f436ae3bd3fb816ef3e0de10e86421fafa63b93f0d2005f957" => :el_capitan
   end
 
   depends_on "cmake" => :build
-  depends_on "pcre"
   depends_on "openssl"
-
-  needs :cxx11
+  depends_on "pcre"
 
   def install
     ENV.cxx11

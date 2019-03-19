@@ -2,14 +2,16 @@ class SimpleObfs < Formula
   desc "Simple obfusacting plugin of shadowsocks-libev"
   homepage "https://github.com/shadowsocks/simple-obfs"
   url "https://github.com/shadowsocks/simple-obfs.git",
-      :tag => "v0.0.4",
-      :revision => "917411a3ab0cbe8d136ae4bbd8461f3775c182b8"
+      :tag      => "v0.0.5",
+      :revision => "a9c43588e4cb038e6ac02f050e4cab81f8228dff"
+  revision 1
 
   bottle do
     cellar :any
-    sha256 "07ba824abdfcb695b68b7c6d53a366d38db3bb9f331f1eda8a9c734bb0009ced" => :high_sierra
-    sha256 "1dd5c23375157be7614c83107630ad9ea0c17de500783f4bdc76194dbf3a2954" => :sierra
-    sha256 "44e0ff7c8fa5bbc12d2f92e9db87d7e7d2ee74b984d74e9d55f8963855c3df23" => :el_capitan
+    sha256 "7d00695065a2e780f6a93d98d3d2a96ebe4c02fe48e52e30cea4fefe353100e8" => :mojave
+    sha256 "08024887dc9fba3f56425181dd34dba1ecf185dad688b85d20a7b70ec07afbae" => :high_sierra
+    sha256 "831de4a180d61c801397ead63a0130d8d2eb102afb526ef81bcecb2f9d1d029b" => :sierra
+    sha256 "eccfcd8d4016297999d730fd185624b42e903f7dfac43bd6227c337c2b3aafea" => :el_capitan
   end
 
   depends_on "asciidoc" => :build
@@ -17,7 +19,6 @@ class SimpleObfs < Formula
   depends_on "automake" => :build
   depends_on "libtool" => :build
   depends_on "xmlto" => :build
-  depends_on "c-ares"
   depends_on "libev"
 
   def install

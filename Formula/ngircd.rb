@@ -1,45 +1,26 @@
 class Ngircd < Formula
-  desc "Next generation IRC daemon"
+  desc "Lightweight Internet Relay Chat server"
   homepage "https://ngircd.barton.de/"
-  url "https://ngircd.barton.de/pub/ngircd/ngircd-24.tar.gz"
-  mirror "https://ngircd.mirror.3rz.org/pub/ngircd/ngircd-24.tar.gz"
-  sha256 "3e00a7da52c81fc1e02bb996a27bf43da905ba7037bf8c6bb3bd13321e0c85ab"
+  url "https://ngircd.barton.de/pub/ngircd/ngircd-25.tar.gz"
+  mirror "https://ngircd.sourceforge.io/pub/ngircd/ngircd-25.tar.gz"
+  sha256 "51915780519bae43da3798807e3bed60d887e4eaa728354aa6bb61cdbcda49ba"
 
   bottle do
-    sha256 "6832dfa5480e2f089c32468c14eaa0a4d2ef3a1945eb53b1544068c2957fecd2" => :high_sierra
-    sha256 "a5303a11814a311d639f585645808f9378b660982c5e40f4c8d025353d35001b" => :sierra
-    sha256 "761f7fdf0da86e1926cfe17ed298610cd1eb20607232ea1b75cc4f14c1966ae0" => :el_capitan
-    sha256 "678de9420c8bd5661ec0a6c9418539684a874298c1b35a99684368aac365d2e2" => :yosemite
+    sha256 "d73567d2f8a5282f0043b9ae86bc3742f3a31769c6659b05f5e689648f9f7c53" => :mojave
+    sha256 "74c6d973c3a1ace3f1337732099cec0969731796f5e4f2edeb53cd216b3243c8" => :high_sierra
+    sha256 "c7e2df47d407ffae865897036c0cb825d6b0105b0a85ded05c0deafbeade3d28" => :sierra
   end
 
-  option "with-iconv", "Enable character conversion using libiconv."
-  option "with-pam", "Enable user authentication using PAM."
-  option "with-sniffer", "Enable IRC traffic sniffer (also enables additional debug output)."
-  option "with-debug", "Enable additional debug output."
-
-  # Older Formula used the next option by default, so keep it unless
-  # deactivated by the user:
-  option "without-ident", "Disable 'IDENT' ('AUTH') protocol support."
-
-  depends_on "libident" if build.with? "ident"
+  depends_on "libident"
   depends_on "openssl"
 
   def install
-    args = %W[
-      --disable-dependency-tracking
-      --prefix=#{prefix}
-      --sysconfdir=#{HOMEBREW_PREFIX}/etc
-      --enable-ipv6
-      --with-openssl
-    ]
-
-    args << "--with-iconv" if build.with? "iconv"
-    args << "--with-ident" if build.with? "ident"
-    args << "--with-pam" if build.with? "pam"
-    args << "--enable-debug" if build.with? "debug"
-    args << "--enable-sniffer" if build.with? "sniffer"
-
-    system "./configure", *args
+    system "./configure", "--disable-dependency-tracking",
+                          "--prefix=#{prefix}",
+                          "--sysconfdir=#{HOMEBREW_PREFIX}/etc",
+                          "--enable-ipv6",
+                          "--with-ident",
+                          "--with-openssl"
     system "make", "install"
 
     prefix.install "contrib/MacOSX/de.barton.ngircd.plist.tmpl" => "de.barton.ngircd.plist"

@@ -1,38 +1,39 @@
 class Urh < Formula
   desc "Universal Radio Hacker"
   homepage "https://github.com/jopohl/urh"
-  url "https://files.pythonhosted.org/packages/03/c5/56296de882bb3b270843a069521eff61a50247796717c11b4410da36d88f/urh-1.8.10.tar.gz"
-  sha256 "b826900304e8af3d8c76bba4311789fe946f0c698b0a25e74dcd20d90f104ec9"
+  url "https://files.pythonhosted.org/packages/81/29/8ffecf5a0d99bef5a4463fd9dbea537e119562737aaac10b1997da135d5d/urh-2.2.3.tar.gz"
+  sha256 "9867398e94b1c05a227fa2a5765cfbf7fda6327600a2e50f612988063d05ee1d"
+  revision 3
   head "https://github.com/jopohl/urh.git"
 
   bottle do
-    sha256 "2a545b2a1d92bab5dd92d55595399cbcac06280c7ce01cd11b5ca778fe1cd0c4" => :high_sierra
-    sha256 "f552666acbdee50a2ad6b46ac9107bd64b1f2dfab191e491426cc5186ebea6dd" => :sierra
-    sha256 "2d4b0e08b219c11506f09335ae7d0827924165623a41efca09aa0f6b8321f998" => :el_capitan
+    cellar :any
+    rebuild 1
+    sha256 "6c3adad798551c02d0f032bb4aa605ee9aa5fe6e3bc1545b66d2314f34645712" => :mojave
+    sha256 "02b56d2752c2e3f972c24cf08ef6d516ffd5f82b191834e27be1e61f369b6f32" => :high_sierra
+    sha256 "26a380a8bc363c10c56ce1aaf7662c876f67700b80c02b64390ed84c1d6565fe" => :sierra
   end
 
-  option "with-hackrf", "Build with libhackrf support"
-
   depends_on "pkg-config" => :build
-
-  depends_on :python3
+  depends_on "hackrf"
+  depends_on "numpy"
   depends_on "pyqt"
+  depends_on "python"
+  depends_on "zeromq"
 
-  depends_on "hackrf" => :optional
-
-  resource "numpy" do
-    url "https://files.pythonhosted.org/packages/bf/2d/005e45738ab07a26e621c9c12dc97381f372e06678adf7dc3356a69b5960/numpy-1.13.3.zip"
-    sha256 "36ee86d5adbabc4fa2643a073f93d5504bdfed37a149a3a49f4dde259f35a750"
+  resource "Cython" do
+    url "https://files.pythonhosted.org/packages/d2/12/8ef44cede251b93322e8503fd6e1b25a0249fa498bebec191a5a06adbe51/Cython-0.28.4.tar.gz"
+    sha256 "76ac2b08d3d956d77b574bb43cbf1d37bd58b9d50c04ba281303e695854ebc46"
   end
 
   resource "psutil" do
-    url "https://files.pythonhosted.org/packages/8d/96/1fc6468be91521192861966c40bd73fdf8b065eae6d82dd0f870b9825a65/psutil-5.4.0.tar.gz"
-    sha256 "8e6397ec24a2ec09751447d9f169486b68b37ac7a8d794dca003ace4efaafc6a"
+    url "https://files.pythonhosted.org/packages/51/9e/0f8f5423ce28c9109807024f7bdde776ed0b1161de20b408875de7e030c3/psutil-5.4.6.tar.gz"
+    sha256 "686e5a35fe4c0acc25f3466c32e716f2d498aaae7b7edc03e2305b682226bcf6"
   end
 
   resource "pyzmq" do
-    url "https://files.pythonhosted.org/packages/af/37/8e0bf3800823bc247c36715a52e924e8f8fd5d1432f04b44b8cd7a5d7e55/pyzmq-16.0.2.tar.gz"
-    sha256 "0322543fff5ab6f87d11a8a099c4c07dd8a1719040084b6ce9162bcdf5c45c9d"
+    url "https://files.pythonhosted.org/packages/aa/fd/f2e65a05558ff8b58b71404efc79c2b03cef922667260e1d703896597b93/pyzmq-17.1.0.tar.gz"
+    sha256 "2199f753a230e26aec5238b0518b036780708a4c887d4944519681a920b9dee4"
   end
 
   def install
@@ -44,16 +45,25 @@ class Urh < Formula
     xy = Language::Python.major_minor_version "python3"
     ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python#{xy}/site-packages"
     resources.each do |r|
+      next if r.name == "Cython"
+
       r.stage do
         system "python3", *Language::Python.setup_install_args(libexec/"vendor")
       end
     end
 
     ENV.prepend_create_path "PYTHONPATH", libexec/"lib/python#{xy}/site-packages"
+    saved_python_path = ENV["PYTHONPATH"]
+    ENV.prepend_create_path "PYTHONPATH", buildpath/"cython/lib/python#{xy}/site-packages"
+
+    resource("Cython").stage do
+      system "python3", *Language::Python.setup_install_args(buildpath/"cython")
+    end
+
     system "python3", *Language::Python.setup_install_args(libexec)
 
     bin.install Dir[libexec/"bin/*"]
-    bin.env_script_all_files(libexec/"bin", :PYTHONPATH => ENV["PYTHONPATH"])
+    bin.env_script_all_files(libexec/"bin", :PYTHONPATH => saved_python_path)
   end
 
   test do
@@ -62,8 +72,8 @@ class Urh < Formula
     (testpath/"test.py").write <<~EOS
       from urh.util.GenericCRC import GenericCRC;
       c = GenericCRC();
-      expected = [1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1]
-      assert(expected == c.crc([1, 2, 3]).tolist())
+      expected = [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0]
+      assert(expected == c.crc([0, 1, 0, 1, 1, 0, 1, 0]).tolist())
     EOS
     system "python3", "test.py"
   end

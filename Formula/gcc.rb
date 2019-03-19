@@ -1,32 +1,16 @@
 class Gcc < Formula
   desc "GNU compiler collection"
   homepage "https://gcc.gnu.org/"
-
-  head "svn://gcc.gnu.org/svn/gcc/trunk"
-
-  stable do
-    url "https://ftp.gnu.org/gnu/gcc/gcc-7.2.0/gcc-7.2.0.tar.xz"
-    mirror "https://ftpmirror.gnu.org/gcc/gcc-7.2.0/gcc-7.2.0.tar.xz"
-    sha256 "1cf7adf8ff4b5aa49041c8734bbcf1ad18cc4c94d0029aae0f4e48841088479a"
-  end
+  url "https://ftp.gnu.org/gnu/gcc/gcc-8.3.0/gcc-8.3.0.tar.xz"
+  mirror "https://ftpmirror.gnu.org/gcc/gcc-8.3.0/gcc-8.3.0.tar.xz"
+  sha256 "64baadfe6cc0f4947a84cb12d7f0dfaf45bb58b7e92461639596c21e02d97d2c"
+  head "https://gcc.gnu.org/git/gcc.git"
 
   bottle do
-    sha256 "3b7606d2b98cf9ca5c25d2620d2c9d6c146a910f6063c071ac4bf5abdeb73faa" => :high_sierra
-    sha256 "bc96bddd0e9f7c074eab7c4036973bc60d5d5ef4489e65db64018363d63d248d" => :sierra
-    sha256 "755ed27d3aa9b60523aead68f36d17f6396b9f4b622a0972c05eae3302922d5c" => :el_capitan
-    sha256 "eecedf7c9233bd1553d3e22027f415f15a9d1a7ad11e486855bf3a8f7d36ed23" => :yosemite
+    sha256 "1b11086a7e1732cb6077a2e96889ab847226308a76cb5acfaacec98a5c76567f" => :mojave
+    sha256 "c0695cd4808438b1eb3c98ed2c96f8f8806c920fce739ac4acf42789c9aede67" => :high_sierra
+    sha256 "49843c479e2ac3464d9022c916d109a7c0f89e7a5a6046f934c0b18e25aa54e4" => :sierra
   end
-
-  option "with-jit", "Build just-in-time compiler"
-  option "with-nls", "Build with native language support (localization)"
-
-  depends_on "gmp"
-  depends_on "libmpc"
-  depends_on "mpfr"
-  depends_on "isl"
-
-  # GCC bootstraps itself, so it is OK to have an incompatible C++ stdlib
-  cxxstdlib_check :skip
 
   # The bottles are built on systems with the CLT installed, and do not work
   # out of the box on Xcode-only systems due to an incorrect sysroot.
@@ -35,38 +19,19 @@ class Gcc < Formula
     satisfy { MacOS::CLT.installed? }
   end
 
+  depends_on "gmp"
+  depends_on "isl"
+  depends_on "libmpc"
+  depends_on "mpfr"
+
+  # GCC bootstraps itself, so it is OK to have an incompatible C++ stdlib
+  cxxstdlib_check :skip
+
   def version_suffix
     if build.head?
-      (stable.version.to_s.slice(/\d/).to_i + 1).to_s
+      "HEAD"
     else
       version.to_s.slice(/\d/)
-    end
-  end
-
-  # Fix for libgccjit.so linkage on Darwin
-  # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=64089
-  # https://github.com/Homebrew/homebrew-core/issues/1872#issuecomment-225625332
-  # https://github.com/Homebrew/homebrew-core/issues/1872#issuecomment-225626490
-  patch do
-    url "https://raw.githubusercontent.com/Homebrew/formula-patches/e9e0ee09389a54cc4c8fe1c24ebca3cd765ed0ba/gcc/6.1.0-jit.patch"
-    sha256 "863957f90a934ee8f89707980473769cff47ca0663c3906992da6afb242fb220"
-  end
-
-  # Use -headerpad_max_install_names in the build,
-  # otherwise lto1 load commands cannot be edited on El Capitan
-  if MacOS.version == :el_capitan
-    patch do
-      url "https://raw.githubusercontent.com/Homebrew/formula-patches/32cf103/gcc/7.1.0-headerpad.patch"
-      sha256 "dd884134e49ae552b51085116e437eafa63460b57ce84252bfe7a69df8401640"
-    end
-  end
-
-  # Fix parallel build on APFS filesystem
-  # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81797
-  if MacOS.version >= :high_sierra
-    patch do
-      url "https://raw.githubusercontent.com/Homebrew/formula-patches/df0465c02a/gcc/apfs.patch"
-      sha256 "f7772a6ba73f44a6b378e4fe3548e0284f48ae2d02c701df1be93780c1607074"
     end
   end
 
@@ -80,45 +45,50 @@ class Gcc < Formula
     #  - BRIG
     languages = %w[c c++ objc obj-c++ fortran]
 
-    # JIT compiler is off by default, enabling it has performance cost
-    languages << "jit" if build.with? "jit"
-
     osmajor = `uname -r`.chomp
+    pkgversion = "Homebrew GCC #{pkg_version} #{build.used_options*" "}".strip
 
-    args = [
-      "--build=x86_64-apple-darwin#{osmajor}",
-      "--prefix=#{prefix}",
-      "--libdir=#{lib}/gcc/#{version_suffix}",
-      "--enable-languages=#{languages.join(",")}",
-      # Make most executables versioned to avoid conflicts.
-      "--program-suffix=-#{version_suffix}",
-      "--with-gmp=#{Formula["gmp"].opt_prefix}",
-      "--with-mpfr=#{Formula["mpfr"].opt_prefix}",
-      "--with-mpc=#{Formula["libmpc"].opt_prefix}",
-      "--with-isl=#{Formula["isl"].opt_prefix}",
-      "--with-system-zlib",
-      "--enable-checking=release",
-      "--with-pkgversion=Homebrew GCC #{pkg_version} #{build.used_options*" "}".strip,
-      "--with-bugurl=https://github.com/Homebrew/homebrew-core/issues",
+    args = %W[
+      --build=x86_64-apple-darwin#{osmajor}
+      --prefix=#{prefix}
+      --libdir=#{lib}/gcc/#{version_suffix}
+      --disable-nls
+      --enable-checking=release
+      --enable-languages=#{languages.join(",")}
+      --program-suffix=-#{version_suffix}
+      --with-gmp=#{Formula["gmp"].opt_prefix}
+      --with-mpfr=#{Formula["mpfr"].opt_prefix}
+      --with-mpc=#{Formula["libmpc"].opt_prefix}
+      --with-isl=#{Formula["isl"].opt_prefix}
+      --with-system-zlib
+      --with-pkgversion=#{pkgversion}
+      --with-bugurl=https://github.com/Homebrew/homebrew-core/issues
     ]
 
-    args << "--disable-nls" if build.without? "nls"
-    args << "--enable-host-shared" if build.with?("jit")
+    # Xcode 10 dropped 32-bit support
+    args << "--disable-multilib" if DevelopmentTools.clang_build_version >= 1000
 
     # Ensure correct install names when linking against libgcc_s;
-    # see discussion in https://github.com/Homebrew/homebrew/pull/34303
+    # see discussion in https://github.com/Homebrew/legacy-homebrew/pull/34303
     inreplace "libgcc/config/t-slibgcc-darwin", "@shlib_slibdir@", "#{HOMEBREW_PREFIX}/lib/gcc/#{version_suffix}"
 
     mkdir "build" do
-      unless MacOS::CLT.installed?
-        # For Xcode-only systems, we need to tell the sysroot path.
-        # "native-system-headers" will be appended
+      if !MacOS::CLT.installed?
+        # For Xcode-only systems, we need to tell the sysroot path
         args << "--with-native-system-header-dir=/usr/include"
         args << "--with-sysroot=#{MacOS.sdk_path}"
+      elsif MacOS.version >= :mojave
+        # System headers are no longer located in /usr/include
+        args << "--with-native-system-header-dir=/usr/include"
+        args << "--with-sysroot=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
       end
 
       system "../configure", *args
-      system "make"
+
+      # Use -headerpad_max_install_names in the build,
+      # otherwise updated load commands won't fit in the Mach-O header.
+      # This is needed because `gcc` avoids the superenv shim.
+      system "make", "BOOT_LDFLAGS=-Wl,-headerpad_max_install_names"
       system "make", "install"
 
       bin.install_symlink bin/"gfortran-#{version_suffix}" => "gfortran"

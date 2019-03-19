@@ -3,18 +3,18 @@ class ReconNg < Formula
 
   desc "Web Reconnaissance Framework"
   homepage "https://bitbucket.org/LaNMaSteR53/recon-ng"
-  url "https://bitbucket.org/LaNMaSteR53/recon-ng/get/v4.9.2.tar.gz"
-  sha256 "1c10f155067c74f37734fb4c9e3e6fb651b3c075ca06aa7d9cc5b069dcaa3c1b"
+  url "https://bitbucket.org/LaNMaSteR53/recon-ng/get/v4.9.4.tar.gz"
+  sha256 "f443616351fb9dd119a870b637bdf7be0fb3a9fac6eb5a640b9d5414a63d2160"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "66bb7b2a43e1546a53c7504ec2bd854abe8466e79a2f4fc092b826c13dc7e1f0" => :high_sierra
-    sha256 "e4764cefc113d0ba91a0f07430bcfa58e5cdcf16a6c44ecd61f402d25d93d289" => :sierra
-    sha256 "3904633fd2cc25d089c56a887bc1249461a90b3c74556c6287d1d0a610bb743b" => :el_capitan
-    sha256 "86792cac092b8eb68a2585de3ed515027dde139b1565f0336824983789279ebd" => :yosemite
+    sha256 "18b3feb82b8eea90e49856c098ca66ea10f957eaaeae1ff7813eccbeb1265996" => :mojave
+    sha256 "d23885588e18d5b47d7175f37d03de1aaef5818fb548d42c00e922339602b182" => :high_sierra
+    sha256 "9cc593ac5d73a9b995a419bf37632ff375f206aab63a6415409f18ce151c36b9" => :sierra
   end
 
-  depends_on :python if MacOS.version <= :snow_leopard
+  # Dependency "mechanize" only support Python 2
+  depends_on "python@2" # does not support Python 3
 
   ### setup_requires dependencies
   resource "dicttoxml" do
@@ -27,29 +27,29 @@ class ReconNg < Formula
     sha256 "40f563e1f7a7b80dc5a4e76ad75c23da53d62f1e15e6e517293b04e1f84ead7c"
   end
 
-  resource "flask" do
-    url "https://files.pythonhosted.org/packages/eb/12/1c7bd06fcbd08ba544f25bf2c6612e305a70ea51ca0eda8007344ec3f123/Flask-0.12.2.tar.gz"
-    sha256 "49f44461237b69ecd901cc7ce66feea0319b9158743dd27a2899962ab214dac1"
+  resource "Flask" do
+    url "https://files.pythonhosted.org/packages/4b/12/c1fbf4971fda0e4de05565694c9f0c92646223cff53f15b6eb248a310a62/Flask-1.0.2.tar.gz"
+    sha256 "2271c0070dbcb5275fad4a82e29f23ab92682dc45f9dfbc22c02ba9b9322ce48"
   end
 
   resource "jsonrpclib" do
-    url "https://files.pythonhosted.org/packages/4f/84/d07e0a8e0ff14388e864a3e5fa1e0c03766c754d480d84f875604dc8c379/jsonrpclib-0.1.3.tar.gz"
-    sha256 "a594e702c35408ae5540086ab5bdea284fb27d09520898c381c5bbdbfceffbba"
+    url "https://files.pythonhosted.org/packages/a9/0a/69b6b794d7b086793683743df2f6d0a4fcf97613a95a39cfc74b78f2adb7/jsonrpclib-0.1.7.tar.gz"
+    sha256 "7f50239d53b5e95b94455d5e1adae70592b5b71f0e960d3bbbfbb125788e6f0b"
   end
 
   resource "lxml" do
-    url "https://files.pythonhosted.org/packages/20/b3/9f245de14b7696e2d2a386c0b09032a2ff6625270761d6543827e667d8de/lxml-3.8.0.tar.gz"
-    sha256 "736f72be15caad8116891eb6aa4a078b590d231fdc63818c40c21624ac71db96"
+    url "https://files.pythonhosted.org/packages/4b/20/ddf5eb3bd5c57582d2b4652b4bbcf8da301bdfe5d805cb94e805f4d7464d/lxml-4.2.5.tar.gz"
+    sha256 "36720698c29e7a9626a0dc802ef8885f8f0239bfd1689628ecd459a061f2807f"
   end
 
   resource "mechanize" do
-    url "https://files.pythonhosted.org/packages/2e/cd/a7a1d00de588b1bdce5da6f914533c67b8d9fb9eb882a1fbe7f3fc0af433/mechanize-0.3.5.tar.gz"
-    sha256 "d4f999b5a3028c900cb0e6ad3c996c73e3c69a664e6575493258104fa84d7166"
+    url "https://files.pythonhosted.org/packages/ef/be/4c433dfa7703c0fa81ca3a88afe74b2b9e2b23e664479a4913ecefe7f8ca/mechanize-0.3.7.tar.gz"
+    sha256 "ee66e1a6af790898894dd0318914ced413d94f46a54f881eb337081ff9702cd2"
   end
 
   resource "olefile" do
-    url "https://files.pythonhosted.org/packages/35/17/c15d41d5a8f8b98cc3df25eb00c5cee76193114c78e5674df6ef4ac92647/olefile-0.44.zip"
-    sha256 "61f2ca0cd0aa77279eb943c07f607438edf374096b66332fae1ee64a6f0f73ad"
+    url "https://files.pythonhosted.org/packages/34/81/e1ac43c6b45b4c5f8d9352396a14144bba52c8fec72a80f425f6a4d653ad/olefile-0.46.zip"
+    sha256 "133b031eaf8fd2c9399b78b8bc5b8fcbe4c31e85295749bb17a87cba8f3c3964"
   end
 
   resource "PyPDF2" do
@@ -68,11 +68,14 @@ class ReconNg < Formula
   end
 
   resource "XlsxWriter" do
-    url "https://files.pythonhosted.org/packages/1c/1a/350a5fbee0ab3f54006004fe1b86d1f7df3556203417125435b7c6e57bf2/XlsxWriter-0.9.8.tar.gz"
-    sha256 "1bba62325b7efc97b0bf9d8864cc7e31506263994d93404b94b0997fb47e1570"
+    url "https://files.pythonhosted.org/packages/0c/08/69581af3c4807d2b8bac47251c80343161b9f315a7f91fb703aa865302d9/XlsxWriter-1.1.2.tar.gz"
+    sha256 "ae22658a0fc5b9e875fa97c213d1ffd617d86dc49bf08be99ebdac814db7bf36"
   end
 
   def install
+    # Fix "ld: file not found: /usr/lib/system/libsystem_darwin.dylib" for lxml
+    ENV["SDKROOT"] = MacOS.sdk_path if MacOS.version == :sierra
+
     libexec.install Dir["*"]
     venv = virtualenv_create(libexec)
     venv.pip_install resources

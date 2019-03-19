@@ -1,36 +1,25 @@
 class Tracebox < Formula
   desc "Middlebox detection tool"
-  homepage "http://www.tracebox.org/"
+  homepage "https://www.tracebox.org/"
+  url "https://github.com/tracebox/tracebox.git",
+      :tag      => "v0.4.4",
+      :revision => "4fc12b2e330e52d340ecd64b3a33dbc34c160390"
+  revision 1
   head "https://github.com/tracebox/tracebox.git"
-
-  stable do
-    url "https://github.com/tracebox/tracebox.git",
-        :tag => "v0.4.2",
-        :revision => "2e3326500ddf084bf761e83516909538d26240da"
-
-    # Remove for > 0.4.2
-    # Upstream commit from 2 Oct 2017 "Remove [--dirty] from the displayed
-    # version string"
-    patch do
-      url "https://github.com/tracebox/tracebox/commit/5ee627c.patch?full_index=1"
-      sha256 "af6fda9484e1188acf35c0fb5f871cebc608c8122e5ad1d94569fe30321549cc"
-    end
-  end
 
   bottle do
     cellar :any
-    sha256 "0ec57d1c7ba9701a394fda6f9e87c328673833fab0f72060e297716f55c7c67e" => :high_sierra
-    sha256 "9b42586adbd0b639e3722c9dd43f67d350b36cbab148aca454dfd57bc01c457f" => :sierra
-    sha256 "dfc1dd387e7b947007439897e55b2ab2c77270be143894dd90d8fb6d540019d2" => :el_capitan
+    sha256 "0e22b5bc6204f1c344f83d8ec69a95bd61b7ab6365c619dfa5dcb53df04c576a" => :mojave
+    sha256 "e3e8333e7674ff8829df657bd759353fecc45c6d982afbc33cf35774a6ec23ec" => :high_sierra
+    sha256 "52a3ff0ecd8903cee1be17802dfe0624dc89858088354132496a241ea4207561" => :sierra
+    sha256 "2c0b3b4bb42d38aafdb702f3b7a5e514588ce75dd5dc459368d40273332b3a7d" => :el_capitan
   end
-
-  needs :cxx11
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "lua"
   depends_on "json-c"
+  depends_on "lua"
 
   def install
     ENV.libcxx
@@ -48,7 +37,7 @@ class Tracebox < Formula
 
     You should be certain that you trust any software you are executing with
     elevated privileges.
-    EOS
+  EOS
   end
 
   test do

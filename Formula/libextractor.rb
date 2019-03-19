@@ -1,19 +1,18 @@
 class Libextractor < Formula
   desc "Library to extract meta data from files"
   homepage "https://www.gnu.org/software/libextractor/"
-  url "https://ftp.gnu.org/gnu/libextractor/libextractor-1.6.tar.gz"
-  mirror "https://ftpmirror.gnu.org/libextractor/libextractor-1.6.tar.gz"
-  sha256 "26d4adca2e381d2a0c8b3037ec85e094ac5d40485623794466cfc176f5bbf69d"
+  url "https://ftp.gnu.org/gnu/libextractor/libextractor-1.9.tar.gz"
+  mirror "https://ftpmirror.gnu.org/libextractor/libextractor-1.9.tar.gz"
+  sha256 "f08f257d26c5e9b503f068d6753c8e55cb76f47f73a81da6ed2bba3de3fee2ff"
 
   bottle do
-    sha256 "d547400beebeae3290adfa6d63add9b9c722d4dd65533e77a4be0b8bf315b8c5" => :high_sierra
-    sha256 "af73939dbc95fb9f2ed2bfcbf8217cff2b07a9f0716cfedbaaa57c03321f3d16" => :sierra
-    sha256 "10267b6dd613e42a5335b2ed4b06f47319cfbfcee2a4455f32fe216d9cbd630d" => :el_capitan
+    sha256 "7e0ed720f6c76d148affdccfdffd70285114e03063ef10711ab207ba52d753f7" => :mojave
+    sha256 "3feba61ae58271eb373e0f215e5e857e1709b7ae6cfeb222d7be8bf302b8a219" => :high_sierra
+    sha256 "5ae5f5a6335e1bc2f2c9d5a9d6206cadd99de6da11594eb87e52ca148bedd1b0" => :sierra
   end
 
   depends_on "pkg-config" => :build
-  depends_on "libtool" => :run
-  depends_on "iso-codes" => :optional
+  depends_on "libtool"
 
   conflicts_with "pkcrack", :because => "both install `extract` binaries"
 

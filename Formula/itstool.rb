@@ -1,31 +1,28 @@
 class Itstool < Formula
   desc "Make XML documents translatable through PO files"
   homepage "http://itstool.org/"
-  url "http://files.itstool.org/itstool/itstool-2.0.4.tar.bz2"
-  sha256 "97c208b51da33e0b553e830b92655f8deb9132f8fbe9a646771f95c33226eb60"
+  url "https://github.com/itstool/itstool/archive/2.0.5.tar.gz"
+  sha256 "97f98e1a5f8f49239e4256570ecfe12caf88b7cfdb4fcb40f4b761ce7ea2a8c3"
+  head "https://github.com/itstool/itstool.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "4d9aec732db3d58433a777f5922a5f24e963e8875f7cc1cb9f7781573d5277ea" => :high_sierra
-    sha256 "4d9aec732db3d58433a777f5922a5f24e963e8875f7cc1cb9f7781573d5277ea" => :sierra
-    sha256 "4d9aec732db3d58433a777f5922a5f24e963e8875f7cc1cb9f7781573d5277ea" => :el_capitan
+    sha256 "efedec3984116c3e50e6bf3c7a30b6ccb392e0223934cd1e4081056191c619f5" => :mojave
+    sha256 "7dc6c74dcdeb516071721537ec8b19ab3be9c44c6c77e86d6d841388a9dc95d1" => :high_sierra
+    sha256 "7dc6c74dcdeb516071721537ec8b19ab3be9c44c6c77e86d6d841388a9dc95d1" => :sierra
   end
 
-  head do
-    url "https://github.com/itstool/itstool.git"
-
-    depends_on "autoconf" => :build
-    depends_on "automake" => :build
-  end
-
-  depends_on :python if MacOS.version <= :snow_leopard
+  depends_on "autoconf" => :build
+  depends_on "automake" => :build
   depends_on "libxml2"
+  depends_on "python"
 
   def install
-    ENV.append_path "PYTHONPATH", "#{Formula["libxml2"].opt_lib}/python2.7/site-packages"
+    xy = Language::Python.major_minor_version "python3"
+    ENV.append_path "PYTHONPATH", "#{Formula["libxml2"].opt_lib}/python#{xy}/site-packages"
 
-    system "./autogen.sh" if build.head?
-    system "./configure", "--prefix=#{libexec}"
+    system "./autogen.sh", "--prefix=#{libexec}",
+                           "PYTHON=#{Formula["python"].opt_bin}/python3"
     system "make", "install"
 
     bin.install Dir["#{libexec}/bin/*"]

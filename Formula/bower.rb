@@ -3,14 +3,15 @@ require "language/node"
 class Bower < Formula
   desc "Package manager for the web"
   homepage "https://bower.io/"
-  url "https://registry.npmjs.org/bower/-/bower-1.8.2.tgz"
-  sha256 "6bcf10e9c192fdbd6e89f98e431e095764c8571f66bcd6dd08fbcbd52e8dd722"
+  # Use Github tarball to avoid bowers npm 4+ incompatible bundled dep usage
+  url "https://github.com/bower/bower/archive/v1.8.8.tar.gz"
+  sha256 "3faf6c6ba0f96a8ee7ca7329911e683131198cbdd9a25ee4976b46f90357d481"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "359ec9939072dd0feed1a6e7409e2d4e37412753c63cc6b04ef85c536b89c0a7" => :high_sierra
-    sha256 "9620d23985975efe543f6d6fcdcbb13bc2f1d439184f9ef05104437425714665" => :sierra
-    sha256 "19d149753affff318a3923ee83c93589d887140d51e667d6a11ddeeaa3f19c5f" => :el_capitan
+    sha256 "82494967ba46ded634fb761e4fb166ab1d27605ba7514c4248ada0a00b1ce0cd" => :mojave
+    sha256 "077291dbebb25e070a3387fb9e38f3400a35d1551fbf97936643061be4d522b3" => :high_sierra
+    sha256 "2a5689573d8841a0ce8be340aea74f0585c3537340f9d53746fefd21cada43f5" => :sierra
   end
 
   depends_on "node"

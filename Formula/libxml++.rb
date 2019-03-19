@@ -1,11 +1,12 @@
 class Libxmlxx < Formula
   desc "C++ wrapper for libxml"
-  homepage "https://libxmlplusplus.sourceforge.io"
+  homepage "https://libxmlplusplus.sourceforge.io/"
   url "https://download.gnome.org/sources/libxml++/2.40/libxml++-2.40.1.tar.xz"
   sha256 "4ad4abdd3258874f61c2e2a41d08e9930677976d303653cd1670d3e9f35463e9"
 
   bottle do
     cellar :any
+    sha256 "578406147ea2c4b1e5d6c76b01be8b4652f0477df9d09dacd8219927c9027806" => :mojave
     sha256 "fe685746299e61bd0c20760f3f8ddeb8fb48de99211dc3fde96946620a1e77b6" => :high_sierra
     sha256 "bb44b6bae21b4c6a0b2edfd675582a570e4ed63b71e6e08252a0dcd57b65834c" => :sierra
     sha256 "9bcaa205d33dbb8d44851e5f6c41ab95b322125cfd56215c55ce3abd0ac0b00e" => :el_capitan
@@ -15,8 +16,6 @@ class Libxmlxx < Formula
 
   depends_on "pkg-config" => :build
   depends_on "glibmm"
-
-  needs :cxx11
 
   def install
     ENV.cxx11
@@ -31,7 +30,7 @@ class Libxmlxx < Formula
       int main(int argc, char *argv[])
       {
          xmlpp::Document document;
-         document.set_internal_subset("homebrew", "", "http://www.brew.sh/xml/test.dtd");
+         document.set_internal_subset("homebrew", "", "https://www.brew.sh/xml/test.dtd");
          xmlpp::Element *rootnode = document.create_root_node("homebrew");
          return 0;
       }

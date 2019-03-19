@@ -3,20 +3,21 @@ class Osc < Formula
 
   desc "The command-line interface to work with an Open Build Service"
   homepage "https://github.com/openSUSE/osc"
-  url "https://github.com/openSUSE/osc/archive/0.161.1.tar.gz"
-  sha256 "3502ce932027d3d455db4fbf0546c81505a5a3f850e069810bd43e2bd60bea01"
+  url "https://github.com/openSUSE/osc/archive/0.163.0.tar.gz"
+  sha256 "3d994350fe55f00c1819c669f11ab633b19df22a4bd55c3e5ef08364e600823d"
   head "https://github.com/openSUSE/osc.git"
 
   bottle do
     cellar :any
-    sha256 "5842948a3726bb8e75d328e60a934b1c09048ee9eb78e023dc1fadba3f7cefcd" => :high_sierra
-    sha256 "3145ac6585e4adb19f2695bda991a53552866ecdfd1238735ccd250603b5c13b" => :sierra
-    sha256 "3e651aa25b0234cdd0c2fbe80d17a19f18534192d4d12caf0ad295198ea2a4c8" => :el_capitan
+    rebuild 1
+    sha256 "88449403387fb548cb64c1f1c5c10e7ba1b241f1b65f97aad22254dab4454fc9" => :mojave
+    sha256 "66accc3b1b095b51ac09cea6f07a0fc74908afc664085c1905dae3617c22313b" => :high_sierra
+    sha256 "0c71a651c136e1e6ec9763e453c2c7a841062269de67cc985df119ca9eb1ead7" => :sierra
   end
 
-  depends_on :python if MacOS.version <= :snow_leopard
   depends_on "swig" => :build
   depends_on "openssl" # For M2Crypto
+  depends_on "python@2"
 
   resource "pycurl" do
     url "https://files.pythonhosted.org/packages/12/3f/557356b60d8e59a1cce62ffc07ecc03e4f8a202c86adae34d895826281fb/pycurl-7.43.0.tar.gz"
@@ -41,6 +42,8 @@ class Osc < Formula
   def install
     # avoid pycurl error about compile-time and link-time curl version mismatch
     ENV.delete "SDKROOT"
+
+    ENV["SWIG_FEATURES"]="-I#{Formula["openssl"].opt_include}"
 
     venv = virtualenv_create(libexec)
     venv.pip_install resources.reject { |r| r.name == "M2Crypto" || r.name == "pycurl" }

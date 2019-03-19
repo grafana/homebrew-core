@@ -1,19 +1,19 @@
 class Nco < Formula
   desc "Command-line operators for netCDF and HDF files"
   homepage "https://nco.sourceforge.io/"
-  url "https://downloads.sourceforge.net/project/nco/nco-4.7.0.tar.gz"
-  sha256 "5ba930f00a0e9775f85748d145acecfe142f917c180de538b2f8994788446cf8"
-  revision 1
+  url "https://downloads.sourceforge.net/project/nco/nco-4.7.6.tar.gz"
+  sha256 "c7926163b204573b7bf7b6e3c9bcfa15b2cc04c0f494dbc0c6829ee8c2f015b3"
+  revision 3
 
   bottle do
     cellar :any
-    sha256 "024db8523af982e803a574a21a34815db43906123dd96ce75510af0f752b8fd8" => :high_sierra
-    sha256 "e92464c812022beb37ec3da70ea695162e8d8bdf0c35a3499ab7e1969566c4e6" => :sierra
-    sha256 "c8251ca5372d933a1f1e14086d403838583722f546aae26850ad0ca4c9ac030a" => :el_capitan
+    sha256 "32ed25d57c795ffb7a56eac923c4b2e908e80cc72cab884524ba242474443be8" => :mojave
+    sha256 "dbc34488e46c857ff3ee4e8a805a085b82fb331aa6f502d1c69303a07525307c" => :high_sierra
+    sha256 "7e6e460c005e785a0673fe910d455518010d0ae72ead58ff1bf6d972d2887b65" => :sierra
   end
 
   head do
-    url "https://github.com/czender/nco.git"
+    url "https://github.com/nco/nco.git"
     depends_on "autoconf" => :build
     depends_on "automake" => :build
   end
@@ -24,18 +24,13 @@ class Nco < Formula
   depends_on "texinfo"
   depends_on "udunits"
 
-  resource("example_nc") do
+  resource "example_nc" do
     url "https://www.unidata.ucar.edu/software/netcdf/examples/WMI_Lear.nc"
     sha256 "e37527146376716ef335d01d68efc8d0142bdebf8d9d7f4e8cbe6f880807bdef"
   end
 
   def install
     system "./autogen.sh" if build.head?
-
-    inreplace "configure" do |s|
-      # The Antlr 2.x program installed by Homebrew is called antlr2
-      s.gsub! "for ac_prog in runantlr antlr", "for ac_prog in runantlr antlr2"
-    end
 
     system "./configure", "--disable-dependency-tracking",
                           "--prefix=#{prefix}",

@@ -8,10 +8,11 @@ class Rlvm < Formula
 
   bottle do
     cellar :any
-    rebuild 1
-    sha256 "0ee75acc54741e32de071f7851695593cd1c38aaff23622627888f929f90352b" => :sierra
-    sha256 "6aa9116364d15a5020b245533cdfacc1bfb5a0bf978d215a5b777ef626295ced" => :el_capitan
-    sha256 "dfe74b16984b8a5230a0288d6ea5c9dfbe7481ec98cbd56cc532a1e0e5ab8df5" => :yosemite
+    rebuild 2
+    sha256 "b24e490e6c84a78799ebf623ceef5905180a614ec87ad2a4ced072021a366d25" => :mojave
+    sha256 "ffbe5c1893759c495572d8338f4b7d18bb37a8fb8a88e4d0ef11e1f552e591e8" => :high_sierra
+    sha256 "bf5a864796942f72edf91b4ca86696050e694edd718418b01c23227f23c5fe33" => :sierra
+    sha256 "d6d62997e9ca3378380e96fc7f1f633b755b88956d009195b3e91832b8466c64" => :el_capitan
   end
 
   depends_on "pkg-config" => :build
@@ -49,7 +50,7 @@ class Rlvm < Formula
         '\1("pkg-config --libs sdl SDL_image SDL_mixer SDL_ttf freetype2").Append(FRAMEWORKS=["OpenGL"])'
       s.gsub! /(full_static_build) = True/, '\1 = False'
     end
-    scons "--release"
+    system "scons", "--release"
     prefix.install "build/rlvm.app"
     bin.write_exec_script "#{prefix}/rlvm.app/Contents/MacOS/rlvm"
   end

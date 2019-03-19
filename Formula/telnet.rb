@@ -1,20 +1,20 @@
 class Telnet < Formula
   desc "User interface to the TELNET protocol (built from macOS Sierra sources)"
   homepage "https://opensource.apple.com/"
-  url "https://opensource.apple.com/tarballs/remote_cmds/remote_cmds-54.50.1.tar.gz"
-  sha256 "156ddec946c81af1cbbad5cc6e601135245f7300d134a239cda45ff5efd75930"
+  url "https://opensource.apple.com/tarballs/remote_cmds/remote_cmds-60.tar.gz"
+  sha256 "9d27417d5032113e93edebc37f82a060536bc557b119544e59c46aeb1be92820"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "7197673f6d77b6ca1e6c493cdef5f8625cc63f8fd831c0b2a633fcde4ee5a2c6" => :high_sierra
-    sha256 "64fa2138be873d53d055bcb1d31ec2583cab0956d98ed32b365414e4f08ecb1c" => :sierra
-    sha256 "915b9a554df5714d85ff831b0721fc471533970b6d7fe6ab2d0ccc7e441d99d0" => :el_capitan
-    sha256 "69ff324ea8f0bcc1478c31a3e5b99e183a947e312cf180027dfecc260c478500" => :yosemite
+    sha256 "d63cb3bdfa4f1dce67cf0956b2fa36d15b0a429a71a6e5538df1a9f517b76589" => :mojave
+    sha256 "31ab0f184327fd51fa3273df44bb3f4f2fd78049c15998795fea7e7ee72439d8" => :high_sierra
+    sha256 "fd42af8e2c7670c2554ee11c6443f701f6045b9a89c40d3a8463232a8a9a7f90" => :sierra
+    sha256 "048572040593f5674d28136d7de979e03b276f96e1063c930709b22527b963e2" => :el_capitan
   end
 
-  keg_only :provided_pre_high_sierra
-
   depends_on :xcode => :build
+
+  conflicts_with "inetutils", :because => "both install 'telnet' binaries"
 
   resource "libtelnet" do
     url "https://opensource.apple.com/tarballs/libtelnet/libtelnet-13.tar.gz"
@@ -23,24 +23,28 @@ class Telnet < Formula
 
   def install
     resource("libtelnet").stage do
-      xcodebuild "SYMROOT=build"
+      ENV["SDKROOT"] = MacOS.sdk_path
+      ENV["MACOSX_DEPLOYMENT_TARGET"] = MacOS.version
+
+      # Force 64 bit-only build, otherwise it fails on Mojave
+      xcodebuild "SYMROOT=build", "-arch", "x86_64"
 
       libtelnet_dst = buildpath/"telnet.tproj/build/Products"
       libtelnet_dst.install "build/Release/libtelnet.a"
       libtelnet_dst.install "build/Release/usr/local/include/libtelnet/"
     end
 
-    system "make",
-      "-C", "telnet.tproj",
-      "OBJROOT=build/Intermediates",
-      "SYMROOT=build/Products",
-      "DSTROOT=build/Archive",
-      "CFLAGS=$(CC_Flags) -isystembuild/Products/",
-      "LDFLAGS=$(LD_Flags) -Lbuild/Products/",
-      "install"
+    system "make", "-C", "telnet.tproj",
+                   "OBJROOT=build/Intermediates",
+                   "SYMROOT=build/Products",
+                   "DSTROOT=build/Archive",
+                   "CFLAGS=$(CC_Flags) -isystembuild/Products/",
+                   "LDFLAGS=$(LD_Flags) -Lbuild/Products/",
+                   "RC_ARCHS=x86_64", # Force 64-bit build for Mojave
+                   "install"
 
-    bin.install "telnet.tproj/build/Archive/usr/bin/telnet"
-    man.install "telnet.tproj/build/Archive/usr/share/man/man1/"
+    bin.install "telnet.tproj/build/Archive/usr/local/bin/telnet"
+    man1.install "telnet.tproj/telnet.1"
   end
 
   test do

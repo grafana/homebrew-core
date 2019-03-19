@@ -6,12 +6,12 @@ class Libmusicbrainz < Formula
 
   bottle do
     cellar :any
+    sha256 "420d6867aa3d20d9148d4546a154e7059467cc4ca8d861dfb173c9ea35f10dab" => :mojave
     sha256 "99b598b941ac0ce3747d8821943a1e730f3673b721421d9c0428b70259e789c0" => :high_sierra
     sha256 "8fe055e1f987e23a569f915082031e172a5c3d0aef6f86de78ce9c8258f53cd2" => :sierra
     sha256 "6a63410ca9eae84b263d7165d05701801f4e05de26a9e95a7396f95a602cedd7" => :el_capitan
     sha256 "0851c7889df9dc2971b60fe9fd8ad891afd8d5dae08877393e2f69e3cc33f589" => :yosemite
     sha256 "44fa04315d5bbda3e6b9e6ce20a6140c93d535d8c58e8816c574a7e6d4b90429" => :mavericks
-    sha256 "e187188a465f4464c2d294cf10e3058c4e3fdbe76c49a346b996f3c108e68ead" => :mountain_lion
   end
 
   depends_on "cmake" => :build

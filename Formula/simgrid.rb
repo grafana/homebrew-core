@@ -1,21 +1,22 @@
 class Simgrid < Formula
   desc "Studies behavior of large-scale distributed systems"
   homepage "http://simgrid.gforge.inria.fr"
-  url "https://gforge.inria.fr/frs/download.php/file/37148/SimGrid-3.17.tar.gz"
-  sha256 "f5e44f41983e83f65261598ab0de1909d3a8a3feb77f28e37d38f04631dbb908"
+  url "https://gforge.inria.fr/frs/download.php/file/37602/SimGrid-3.20.tar.gz"
+  sha256 "4d4757eb45d87cf18d990d589c31d223b0ea8cf6fcd8c94fca4d38162193cef6"
 
   bottle do
-    sha256 "25156b23d0a2779e9d8207266d621c4328d83f1089005969991733e5007bb1d0" => :high_sierra
-    sha256 "5b383b0c5f6c6191a4843f7e419ca4739254d96d3c33bcba7cc19e05efd8b537" => :sierra
-    sha256 "a9a7b7d60cb9b7f586767d1225bd2a0ca10708285c2fb41ee84d8233b531d288" => :el_capitan
+    sha256 "a9c5cb5da50ab2b224e5d1882834d1e7c4428393e05bec3731823597a2da30e9" => :mojave
+    sha256 "75ce382a395f963425946d7f53361fa1143a2b6ca9292c63193e76139bcef91e" => :high_sierra
+    sha256 "58895cb0aed9235972377d2460a18c8bc03203212ae8246450c429e837a01bcf" => :sierra
+    sha256 "c0a6cf0fba37da1c281cac508bdde38aa4145fe7c50bcc9f466f5521cf95d722" => :el_capitan
   end
 
   depends_on "cmake" => :build
   depends_on "doxygen" => :build
   depends_on "boost"
-  depends_on "pcre"
-  depends_on :python3
   depends_on "graphviz"
+  depends_on "pcre"
+  depends_on "python"
 
   def install
     system "cmake", ".",
@@ -37,7 +38,8 @@ class Simgrid < Formula
       }
     EOS
 
-    system ENV.cc, "test.c", "-lsimgrid", "-o", "test"
+    system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-lsimgrid",
+                   "-o", "test"
     system "./test"
   end
 end

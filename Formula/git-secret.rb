@@ -1,20 +1,22 @@
 class GitSecret < Formula
   desc "Bash-tool to store the private data inside a git repo"
   homepage "https://sobolevn.github.io/git-secret/"
-  url "https://github.com/sobolevn/git-secret/archive/v0.2.2.tar.gz"
-  sha256 "a4672c2d5eca7b5c3b27388060609307b851edc7f7b653e1d21e3e0b328f43f4"
   head "https://github.com/sobolevn/git-secret.git"
+
+  stable do
+    url "https://github.com/sobolevn/git-secret/archive/v0.2.5.tar.gz"
+    sha256 "02224b360ef560d1a41ae758d16ef2f2657af8424711d52443ca7ac01367ad29"
+  end
 
   bottle do
     cellar :any_skip_relocation
-    rebuild 1
-    sha256 "ba66a3517a2b7a8e6384c852e67ac8c5cd250baa3dbfa6685be203f27b87b1d3" => :high_sierra
-    sha256 "835b7d59e90d17230c9038c2024aa9199feb63a35c45eb50bbe5e2d2730a486c" => :sierra
-    sha256 "a6df88bc4820b9796721fa0bbf5d12e9618fdc2084a4618811458462c4ee2b23" => :el_capitan
-    sha256 "a6df88bc4820b9796721fa0bbf5d12e9618fdc2084a4618811458462c4ee2b23" => :yosemite
+    sha256 "ea1d3546a8aa4d927ea720bb2b955212f9ea2e00e6053afbb4a5e6c6a347eddd" => :mojave
+    sha256 "5407eb99a39779cfea3de63d64099576fb4f9e72d21dbf7f987b4f705a0508b6" => :high_sierra
+    sha256 "5407eb99a39779cfea3de63d64099576fb4f9e72d21dbf7f987b4f705a0508b6" => :sierra
   end
 
-  depends_on :gpg => :recommended
+  depends_on "gawk"
+  depends_on "gnupg"
 
   def install
     system "make", "build"
@@ -40,7 +42,7 @@ class GitSecret < Formula
       system "git", "secret", "init"
       assert_match "testing@foo.bar added", shell_output("git secret tell -m")
       (testpath/"shh.txt").write "Top Secret"
-      (testpath/".gitignore").write "shh.txt"
+      (testpath/".gitignore").append_lines "shh.txt"
       system "git", "secret", "add", "shh.txt"
       system "git", "secret", "hide"
       assert_predicate testpath/"shh.txt.secret", :exist?

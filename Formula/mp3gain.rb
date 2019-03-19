@@ -1,21 +1,26 @@
 class Mp3gain < Formula
   desc "Lossless mp3 normalizer with statistical analysis"
   homepage "https://mp3gain.sourceforge.io"
-  url "https://downloads.sourceforge.net/project/mp3gain/mp3gain/1.5.2/mp3gain-1_5_2_r2-src.zip"
-  version "1.5.2"
-  sha256 "3378d32c8333c14f57622802f6a92b725f36ee45a6b181657b595b1b5d64260f"
+  url "https://downloads.sourceforge.net/project/mp3gain/mp3gain/1.6.2/mp3gain-1_6_2-src.zip"
+  version "1.6.2"
+  sha256 "5cc04732ef32850d5878b28fbd8b85798d979a025990654aceeaa379bcc9596d"
 
   bottle do
-    cellar :any_skip_relocation
-    sha256 "4c4fb949ec3332597b67bca10b87add64e0e2fd987dc4e3f1573ff21ad35358e" => :high_sierra
-    sha256 "a9548ef1c648c0aaa4d203726431a5425518a7a2f54df0b6d5e8c92715404e3d" => :sierra
-    sha256 "27506d45e11a7da5c9555cb17318cf99802d5a8749ad17ed66b7a4b1465790cd" => :el_capitan
-    sha256 "f14681110117c1762ef909dc0b282bb4c23f298c92eefe20d77fab0199cadbaa" => :yosemite
-    sha256 "17abc15792bc75fa186c6748f1cb666814334b2cfec11d708bb9431846746809" => :mavericks
+    cellar :any
+    sha256 "6db408b86b074e8713476fa60ea252ad3f4213dbf63cdca3342ffe989bd372d5" => :mojave
+    sha256 "5aa37ac4ab2013f5365da14969494111500337cae3c6d7614b72dfb9e94352f2" => :high_sierra
+    sha256 "66684a469ee1de432a00f1264c89b3921d3558854fa736b24a3942e351617c47" => :sierra
+    sha256 "4c97894216600ba8ac03094a45fe68a7d107f69adbcd638d40c967ad10e95480" => :el_capitan
   end
+
+  depends_on "mpg123"
 
   def install
     system "make"
     bin.install "mp3gain"
+  end
+
+  test do
+    system "#{bin}/mp3gain", "-v"
   end
 end

@@ -1,5 +1,3 @@
-require "language/go"
-
 # Please don't update this formula until the release is official via
 # mailing list or blog post. There's a history of GitHub tags moving around.
 # https://github.com/hashicorp/vault/issues/1051
@@ -7,30 +5,19 @@ class Vault < Formula
   desc "Secures, stores, and tightly controls access to secrets"
   homepage "https://vaultproject.io/"
   url "https://github.com/hashicorp/vault.git",
-      :tag => "v0.8.3",
-      :revision => "6b29fb2b7f70ed538ee2b3c057335d706b6d4e36"
+      :tag      => "v1.0.3",
+      :revision => "85909e3373aa743c34a6a0ab59131f61fd9e8e43"
   head "https://github.com/hashicorp/vault.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "6196d78591bdef75b8f6a2e0991fdbe5ad6e151c5d77010f4ddcbf98baa3b9ad" => :high_sierra
-    sha256 "47792e638228a4263b1538aaa666713883dc284c707d01f4837f93170d9e8d78" => :sierra
-    sha256 "30f74f6e235c80aa30da4b4f746c187ef7ba73feae0b2ef3b8a40b8ba8bce6a4" => :el_capitan
+    sha256 "86ed3fa4e12a3a6fef990157c1bc60264c79c1c0a39ffaf4c3eae82856f9ac32" => :mojave
+    sha256 "984e67cb1e2382b21b6c8174d3528b5612659e80793789a5c7c1ca4050cef4d7" => :high_sierra
+    sha256 "97695935d05af03528a09ee83e884c3f65d86192b4b3dda9a29d282ac1dfec14" => :sierra
   end
-
-  option "with-dynamic", "Build dynamic binary with CGO_ENABLED=1"
 
   depends_on "go" => :build
-
-  go_resource "github.com/mitchellh/iochan" do
-    url "https://github.com/mitchellh/iochan.git",
-        :revision => "87b45ffd0e9581375c491fef3d32130bb15c5bd7"
-  end
-
-  go_resource "github.com/mitchellh/gox" do
-    url "https://github.com/mitchellh/gox.git",
-        :revision => "c9740af9c6574448fd48eb30a71f964014c7a837"
-  end
+  depends_on "gox" => :build
 
   def install
     ENV["GOPATH"] = buildpath
@@ -38,17 +25,10 @@ class Vault < Formula
     contents = buildpath.children - [buildpath/".brew_home"]
     (buildpath/"src/github.com/hashicorp/vault").install contents
 
-    ENV.prepend_create_path "PATH", buildpath/"bin"
-
-    Language::Go.stage_deps resources, buildpath/"src"
-
-    cd "src/github.com/mitchellh/gox" do
-      system "go", "install"
-    end
+    (buildpath/"bin").mkpath
 
     cd "src/github.com/hashicorp/vault" do
-      target = build.with?("dynamic") ? "dev-dynamic" : "dev"
-      system "make", target
+      system "make", "dev"
       bin.install "bin/vault"
       prefix.install_metafiles
     end

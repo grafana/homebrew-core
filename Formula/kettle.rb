@@ -1,8 +1,8 @@
 class Kettle < Formula
   desc "Pentaho Data Integration software"
-  homepage "https://community.hds.com/docs/DOC-1009855"
-  url "https://downloads.sourceforge.net/project/pentaho/Data%20Integration/6.1/pdi-ce-6.1.0.1-196.zip"
-  sha256 "ef5076c09e8481d1ab4cfc5f7d4701437f80f2b97a3bf19dfa74821de9524495"
+  homepage "https://community.hitachivantara.com/docs/DOC-1009931-downloads"
+  url "https://downloads.sourceforge.net/project/pentaho/Pentaho%208.2/client-tools/pdi-ce-8.2.0.0-342.zip"
+  sha256 "9189d6303088c17b803dda6585c4ce9862c04494797182815c79734f3fa640ca"
 
   bottle :unneeded
 
@@ -52,7 +52,7 @@ class Kettle < Formula
         <true/>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

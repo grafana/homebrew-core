@@ -1,41 +1,26 @@
-require "language/go"
-
 class Megacmd < Formula
   desc "Command-line client for mega.co.nz storage service"
   homepage "https://github.com/t3rm1n4l/megacmd"
-  url "https://github.com/t3rm1n4l/megacmd/archive/0.013.tar.gz"
-  sha256 "f76e14678f2da8547545c2702406e27983e0a72263ef629b3ee4db226b94f6ae"
+  url "https://github.com/t3rm1n4l/megacmd/archive/0.015.tar.gz"
+  sha256 "7c8e7ea1732351a044f4c6568629f3bb91ca40cd4937736dc53b074495b1a7f5"
   head "https://github.com/t3rm1n4l/megacmd.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "12ce5caa7064f8bb5ede1e1663794fa73b6622ec7d6c4b01124a6ff14330a6bf" => :high_sierra
-    sha256 "ae598a728f664da115a979123e2a0d1ba05fd0b96766f63c65c5dd1f210baace" => :sierra
-    sha256 "c100c1ca95dbe63a3cf23353517163328b2178fff1bbe4bdfc947c1ba0776884" => :el_capitan
+    sha256 "a0e79f8dac4fdd9501fe421db7062fa0079a97cd2772a55a64ac5539b1b64d17" => :mojave
+    sha256 "ced96a75c37a3f1676ddff1ed47b66c4d76e9200c656e18585ab83d0b3c9ef57" => :high_sierra
+    sha256 "88cc0a307b4e6dc9ead44158859c647d3459f39cf841571f88c251a77ec57d10" => :sierra
   end
 
   depends_on "go" => :build
 
-  go_resource "github.com/t3rm1n4l/go-humanize" do
-    url "https://github.com/t3rm1n4l/go-humanize.git",
-        :revision => "e7ed15be05eb554fbaa83ac9b335556d6390fb9f"
-  end
-
-  go_resource "github.com/t3rm1n4l/go-mega" do
-    url "https://github.com/t3rm1n4l/go-mega.git",
-        :revision => "551abb8f1c87053be3f24282d198a6614c0ca14f"
-  end
-
-  go_resource "github.com/t3rm1n4l/megacmd" do
-    url "https://github.com/t3rm1n4l/megacmd.git",
-        :revision => "d7f3f3a2427cc52b71cad90b26889e2a33fc3565"
-  end
-
   def install
     ENV["GOPATH"] = buildpath
-    Language::Go.stage_deps resources, buildpath/"src"
-
-    system "go", "build", "-o", bin/"megacmd"
+    (buildpath/"src/github.com/t3rm1n4l/megacmd").install buildpath.children
+    cd "src/github.com/t3rm1n4l/megacmd" do
+      system "go", "build", "-o", bin/"megacmd"
+      prefix.install_metafiles
+    end
   end
 
   test do

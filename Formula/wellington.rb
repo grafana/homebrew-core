@@ -15,8 +15,6 @@ class Wellington < Formula
     sha256 "224a5a7d40b14cbd89e6cec80c73fd775aaf660c94fba53d651b70aab56524e9" => :yosemite
   end
 
-  needs :cxx11
-
   depends_on "go" => :build
   depends_on "pkg-config" => :build
 
@@ -26,8 +24,6 @@ class Wellington < Formula
   end
 
   def install
-    ENV.cxx11 if MacOS.version < :mavericks
-
     ENV["GOPATH"] = buildpath
 
     dir = buildpath/"src/github.com/wellington/wellington"

@@ -1,37 +1,21 @@
 class Perl < Formula
   desc "Highly capable, feature-rich programming language"
   homepage "https://www.perl.org/"
-  url "https://www.cpan.org/src/5.0/perl-5.26.1.tar.xz"
-  sha256 "fe8208133e73e47afc3251c08d2c21c5a60160165a8ab8b669c43a420e4ec680"
+  url "https://www.cpan.org/src/5.0/perl-5.28.1.tar.gz"
+  sha256 "3ebf85fe65df2ee165b22596540b7d5d42f84d4b72d84834f74e2e0b8956c347"
   head "https://perl5.git.perl.org/perl.git", :branch => "blead"
 
   bottle do
-    rebuild 1
-    sha256 "ff03e9042330bb182ef42b33522cbeedb226b5444e13d3979ca48c643c6a7486" => :high_sierra
-    sha256 "692aa67df67df2919f4847941076ed48ff01d4c72fdaf4481b2352e60ab272e7" => :sierra
-    sha256 "c9be82944446ef4972d7c258163c41dfa01ab16aedb5a149577033bcd4a158bc" => :el_capitan
+    rebuild 2
+    sha256 "6f9c6519a6c95eb3212abde423688fa01d3d56be0c424f9e6e8bed7b59dfe014" => :mojave
+    sha256 "b04e2b8a5158c6405558e8408d901c7c1899eda8950202f1dfddd6efd7cfa043" => :high_sierra
+    sha256 "8099f37b2521864a095eb06dc5cde02805421a78ddda95fafe3fc538a3ef3553" => :sierra
   end
-
-  option "with-dtrace", "Build with DTrace probes"
-  option "without-test", "Skip running the build test suite"
 
   # Prevent site_perl directories from being removed
   skip_clean "lib/perl5/site_perl"
 
   def install
-    if MacOS.version == :el_capitan && MacOS::Xcode.installed? && MacOS::Xcode.version >= "8.0"
-      %w[cpan/IPC-Cmd/lib/IPC/Cmd.pm dist/Time-HiRes/Changes
-         dist/Time-HiRes/HiRes.pm dist/Time-HiRes/HiRes.xs
-         dist/Time-HiRes/Makefile.PL dist/Time-HiRes/fallback/const-c.inc
-         dist/Time-HiRes/t/clock.t pod/perl588delta.pod
-         pod/perlperf.pod].each do |f|
-        inreplace f do |s|
-          s.gsub! "clock_gettime", "perl_clock_gettime"
-          s.gsub! "clock_getres", "perl_clock_getres", false
-        end
-      end
-    end
-
     args = %W[
       -des
       -Dprefix=#{prefix}
@@ -47,19 +31,23 @@ class Perl < Formula
       -Dusethreads
     ]
 
-    args << "-Dusedtrace" if build.with? "dtrace"
     args << "-Dusedevel" if build.head?
 
     system "./Configure", *args
-    system "make"
 
-    # OS X El Capitan's SIP feature prevents DYLD_LIBRARY_PATH from being
-    # passed to child processes, which causes the make test step to fail.
+    # macOS's SIP feature prevents DYLD_LIBRARY_PATH from being passed to child
+    # processes, which causes the `make test` step to fail.
     # https://rt.perl.org/Ticket/Display.html?id=126706
     # https://github.com/Homebrew/legacy-homebrew/issues/41716
-    if MacOS.version < :el_capitan
-      system "make", "test" if build.with? "test"
-    end
+    # As of perl 5.28.0 `make` fails, too, so work around it with a symlink.
+    # Reported 25 Jun 2018 https://rt.perl.org/Ticket/Display.html?id=133306
+    (lib/"perl5/#{version}/darwin-thread-multi-2level/CORE").install_symlink buildpath/"libperl.dylib"
+
+    system "make"
+    system "make", "test"
+
+    # Remove the symlink so the library actually gets installed.
+    rm lib/"perl5/#{version}/darwin-thread-multi-2level/CORE/libperl.dylib"
 
     system "make", "install"
   end
@@ -70,8 +58,8 @@ class Perl < Formula
 
     You can set that up like this:
       PERL_MM_OPT="INSTALL_BASE=$HOME/perl5" cpan local::lib
-      echo 'eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"' >> #{shell_profile}
-    EOS
+      echo 'eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib=$HOME/perl5)"' >> #{shell_profile}
+  EOS
   end
 
   test do

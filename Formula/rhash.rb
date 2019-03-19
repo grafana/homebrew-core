@@ -1,23 +1,23 @@
 class Rhash < Formula
   desc "Utility for computing and verifying hash sums of files"
   homepage "https://sourceforge.net/projects/rhash/"
-  url "https://downloads.sourceforge.net/project/rhash/rhash/1.3.5/rhash-1.3.5-src.tar.gz"
-  sha256 "98e0688acae29e68c298ffbcdbb0f838864105f9b2bd8857980664435b1f1f2e"
+  url "https://downloads.sourceforge.net/project/rhash/rhash/1.3.8/rhash-1.3.8-src.tar.gz"
+  sha256 "be536a56acfefc87dbc8b1db30fc639020e41edf05518185ea98630e3df7c04c"
   head "https://github.com/rhash/RHash.git"
 
   bottle do
     cellar :any
-    sha256 "f088eebd9e263f0550a48711ce857a59766cd85414f7902e3a750289c8a0559d" => :high_sierra
-    sha256 "e86d5f2ffe1c5f7192264fc308f14b417ff1f09793adb0e9365e8a00c4f1520a" => :sierra
-    sha256 "10643c17507d1dcb081d4287d49a6291bcdaec5ba633285f0e54e121c217d83f" => :el_capitan
-    sha256 "01e895a04facb08fe288db3bfcb9968d4c0b19db4964329eeb2b02d5ca08cdf7" => :yosemite
+    sha256 "9f6df5cd4fee135caa1613628ce968427060b9dfb172bba44addce925e2cb708" => :mojave
+    sha256 "8223b53ffd021ed95585eec80952660ca6cf6c900b662cb6a48a592fa10809f4" => :high_sierra
+    sha256 "cea83b4b066e02ca0b4e3f2a0d9e77e8ba503e9388a3a9675bf2146dd5142413" => :sierra
   end
 
   def install
-    system "make", "install-lib-static", "install", "PREFIX=",
-           "DESTDIR=#{prefix}", "CC=#{ENV.cc}"
-    system "make", "-C", "librhash", "dylib"
-    lib.install Dir["librhash/*.dylib"]
+    system "./configure", "--prefix=#{prefix}"
+    system "make"
+    system "make", "install"
+    lib.install "librhash/librhash.dylib"
+    system "make", "-C", "librhash", "install-lib-headers"
   end
 
   test do

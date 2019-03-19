@@ -1,30 +1,23 @@
 class Libewf < Formula
   desc "Library for support of the Expert Witness Compression Format"
   homepage "https://github.com/libyal/libewf"
-  url "https://mirrors.ocf.berkeley.edu/debian/pool/main/libe/libewf/libewf_20140608.orig.tar.gz"
-  mirror "https://mirrors.kernel.org/debian/pool/main/libe/libewf/libewf_20140608.orig.tar.gz"
+  url "https://deb.debian.org/debian/pool/main/libe/libewf/libewf_20140608.orig.tar.gz"
   version "20140608"
   sha256 "d14030ce6122727935fbd676d0876808da1e112721f3cb108564a4d9bf73da71"
-  revision 1
+  revision 2
 
   bottle do
     cellar :any
-    rebuild 2
-    sha256 "c362a1ee13cd7a9208d6d742acf4136a61e71d9de1451140ffae4b82ca108ab4" => :high_sierra
-    sha256 "5abcb4aaa80ac85b86b3b5d3bc4dce613fe4692d29edff5e48a8e871d2e89225" => :sierra
-    sha256 "4d0d3cb0aa198dc0ca569b04d748b3d4f92cdb9e0580c70b9ab6a25dc44ca2f9" => :el_capitan
-    sha256 "71af7ed8bbc39e690ef8b22adf5a8e0399fec4d6661323dfdda4581f55ca7dbd" => :yosemite
-  end
-
-  devel do
-    url "https://github.com/libyal/libewf/releases/download/20170703/libewf-experimental-20170703.tar.gz"
-    sha256 "84fe12389abacf63dea2d921b636220bb7fda3262d1c467f6d445a5e31f53ade"
+    rebuild 1
+    sha256 "7fe79d5c0cbbc77727528df3effaeb9e6cb85f041f3183aed7e288c572142bd4" => :mojave
+    sha256 "a8598eb679b9a0abfb4ced4845cc21835101bcb47f909c0bf217a7211dc8d67a" => :high_sierra
+    sha256 "9070532ca601a8d020a1de5ccca0e7613788afb696b4ffd7efcad652c7b77d7c" => :sierra
   end
 
   head do
     url "https://github.com/libyal/libewf.git"
-    depends_on "automake" => :build
     depends_on "autoconf" => :build
+    depends_on "automake" => :build
     depends_on "gettext" => :build
     depends_on "libtool" => :build
   end
@@ -37,9 +30,15 @@ class Libewf < Formula
       system "./synclibs.sh"
       system "./autogen.sh"
     end
-    system "./configure", "--disable-dependency-tracking",
-                          "--disable-silent-rules",
-                          "--prefix=#{prefix}"
+
+    args = %W[
+      --disable-dependency-tracking
+      --disable-silent-rules
+      --prefix=#{prefix}
+      --with-libfuse=no
+    ]
+
+    system "./configure", *args
     system "make", "install"
   end
 

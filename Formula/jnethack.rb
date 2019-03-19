@@ -11,6 +11,7 @@ class Jnethack < Formula
   sha256 "bb39c3d2a9ee2df4a0c8fdde708fbc63740853a7608d2f4c560b488124866fe4"
 
   bottle do
+    sha256 "54890df9ae6c932ed1ec36deb7892e5ddd28857e3740dd0c36f9d20f231caf3d" => :mojave
     sha256 "7422717258f234810d99d330df0a0e99b90da7328db9324a92d39a63869e008b" => :high_sierra
     sha256 "89c2fed343614d39084a8c59908032fe929e78c1572e92f50b9eafa4aca3860d" => :sierra
     sha256 "c11837932635f89762360ad449e189c44e8213cb74f981ccb7908671a0e3ad4b" => :el_capitan
@@ -24,7 +25,8 @@ class Jnethack < Formula
   skip_clean "libexec/save"
 
   patch do
-    url "http://iij.dl.sourceforge.jp/jnethack/58545/jnethack-3.4.3-0.11.diff.gz"
+    # Canonical: https://osdn.net/dl/jnethack/jnethack-3.4.3-0.11.diff.gz
+    url "https://dotsrc.dl.osdn.net/osdn/jnethack/58545/jnethack-3.4.3-0.11.diff.gz"
     sha256 "fbc071f6b33c53d89e8f13319ced952e605499a21d2086077296c631caff7389"
   end
 

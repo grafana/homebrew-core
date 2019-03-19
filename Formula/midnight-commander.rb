@@ -1,25 +1,21 @@
 class MidnightCommander < Formula
   desc "Terminal-based visual file manager"
   homepage "https://www.midnight-commander.org/"
-  url "https://www.midnight-commander.org/downloads/mc-4.8.19.tar.xz"
-  mirror "https://fossies.org/linux/misc/mc-4.8.19.tar.xz"
-  sha256 "eb9e56bbb5b2893601d100d0e0293983049b302c5ab61bfb544ad0ee2cc1f2df"
+  url "https://www.midnight-commander.org/downloads/mc-4.8.22.tar.xz"
+  sha256 "ee7868d7ba0498cf2cccefe107d7efee7f2571098806bba2aed5a159db801318"
   head "https://github.com/MidnightCommander/mc.git"
 
   bottle do
-    sha256 "f439aa7d34c79e6424944521a2937aee4128bce6fea2cfcebdd50b65111cee42" => :high_sierra
-    sha256 "f1e01d6ae2d51af1958e327cbd6a0ab18a8e501737359c8e7ff47857de44427a" => :sierra
-    sha256 "b3f82008e40f490866be7a57c754cd66f8130c97885c8a919af0e6606d4ec370" => :el_capitan
-    sha256 "1486ddf0792621dbbf7b914e02c60b0248098e43046f8a106014e34d3c1f7181" => :yosemite
+    sha256 "752b14547cba6c6165e15e1e39cbc1d643482ba84640948be02d1e7f7a7388e2" => :mojave
+    sha256 "7c715413595dee9cb2338a492f2ab467bdcba48d240c8b4773d7c967508d0e4a" => :high_sierra
+    sha256 "d6ffb05221808b6d37b59793cb4829755faeaca0697f335bf4699423760842b6" => :sierra
   end
-
-  option "without-nls", "Build without Native Language Support"
 
   depends_on "pkg-config" => :build
   depends_on "glib"
+  depends_on "libssh2"
   depends_on "openssl"
   depends_on "s-lang"
-  depends_on "libssh2"
 
   conflicts_with "minio-mc", :because => "Both install a `mc` binary"
 
@@ -37,8 +33,6 @@ class MidnightCommander < Formula
     # Fix compilation bug on macOS 10.13 by pretending we don't have utimensat()
     # https://github.com/MidnightCommander/mc/pull/130
     ENV["ac_cv_func_utimensat"] = "no" if MacOS.version >= :high_sierra
-
-    args << "--disable-nls" if build.without? "nls"
 
     system "./configure", *args
     system "make", "install"

@@ -1,7 +1,7 @@
 class W3m < Formula
   desc "Pager/text based browser"
   homepage "https://w3m.sourceforge.io/"
-  revision 1
+  revision 6
   head "https://github.com/tats/w3m.git"
 
   stable do
@@ -9,31 +9,29 @@ class W3m < Formula
     sha256 "e994d263f2fd2c22febfbe45103526e00145a7674a0fda79c822b97c2770a9e3"
 
     # Upstream is effectively Debian https://github.com/tats/w3m at this point.
-    # The patches fix a pile of CVEs and provides openssl@1.1 compatibility.
+    # The patches fix a pile of CVEs
     patch do
-      url "https://mirrors.ocf.berkeley.edu/debian/pool/main/w/w3m/w3m_0.5.3-34.debian.tar.xz"
-      mirror "https://mirrorservice.org/sites/ftp.debian.org/debian/pool/main/w/w3m/w3m_0.5.3-34.debian.tar.xz"
-      sha256 "bed288bdc1ba4b8560724fd5dc77d7c95bcabd545ec330c42491cae3e3b09b7e"
+      url "https://deb.debian.org/debian/pool/main/w/w3m/w3m_0.5.3-37.debian.tar.xz"
+      sha256 "625f5b0cb71bf29b67ad3bb9c316420922877473a6e94e6c7bcc337cb22ce1eb"
       apply "patches/010_upstream.patch",
             "patches/020_debian.patch"
     end
   end
 
   bottle do
-    sha256 "0ff3bbd8ad62d9200fc1f84c67207d4d3e0ce0dc95c2745fca49f8ffa0dd4a1c" => :high_sierra
-    sha256 "4a77150a0c9b436b32bbb3516595ee392095776d1e0a0492fd49b72c7a0dc9b8" => :sierra
-    sha256 "f5d96bb0f0309d4cf28f17b08e572631a9286b30937af0dfacb360825e0de28c" => :el_capitan
-    sha256 "799596712549113267edfbffd1ba3c0bf3a0be18face730a8b90cacd1e9653dc" => :yosemite
+    sha256 "571d0562f50fb42eab8fc7efd03e7d3be1418ffdcbe378d2501ba3f53593e650" => :mojave
+    sha256 "74830829e5e3de7ac58b7486a2a8371ba2ea340d657d46693fc16e9db8c7ee34" => :high_sierra
+    sha256 "2d71608f1489de2eea58f1246d54f9cda56ddb94b7f1cd6652af3527823d64de" => :sierra
   end
 
   depends_on "pkg-config" => :build
   depends_on "bdw-gc"
-  depends_on "openssl@1.1"
+  depends_on "openssl"
 
   def install
     system "./configure", "--prefix=#{prefix}",
                           "--disable-image",
-                          "--with-ssl=#{Formula["openssl@1.1"].opt_prefix}"
+                          "--with-ssl=#{Formula["openssl"].opt_prefix}"
     system "make", "install"
   end
 

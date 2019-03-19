@@ -3,22 +3,21 @@ class Eralchemy < Formula
 
   desc "Simple entity relation (ER) diagrams generation"
   homepage "https://github.com/Alexis-benoist/eralchemy"
-  url "https://files.pythonhosted.org/packages/f8/84/a7e4b73a427425e8d2d0446b6e94320e7ab4c44abe29c66150a7ee14f981/ERAlchemy-1.1.0.tar.gz"
-  sha256 "29ed9d0b865196e428955a3e9f1e1ce4a8e2ce2855aa58f6aaab97991e8407ba"
+  url "https://files.pythonhosted.org/packages/87/40/07b58c29406ad9cc8747e567e3e37dd74c0a8756130ad8fd3a4d71c796e3/ERAlchemy-1.2.10.tar.gz"
+  sha256 "be992624878278195c3240b90523acb35d97453f1a350c44b4311d4333940f0d"
+  revision 1
 
   bottle do
     cellar :any
-    sha256 "fec3c64abf16687569a65989cabf5b679b304bed6e3d4500e7473018eb48b463" => :high_sierra
-    sha256 "d6f58baabdf8db3224ff90ded790a18d805571e31d4a82c323d6b2b7a5af654c" => :sierra
-    sha256 "35b67ce15da8c1189760249239518bcf56332674bf7def6113adcd57b68eb503" => :el_capitan
-    sha256 "2b1556bf861cbc976d5eaa6f7cf4282bebf34b9f387dbaa29a7d7e1527a9d344" => :yosemite
+    sha256 "320e7effb4ad462af7bf6a0e2d64268a0b4b70fde13a790acba135f9c5d84cb6" => :mojave
+    sha256 "621719b08e3abedd44a67d7b95b3ea4bab6640d5fb0ca8c00cf6df0cf3e09d39" => :high_sierra
+    sha256 "fa18d8b468d21350b688e44afd453a0af15d62eeb763009ea31c0b0473ac75e8" => :sierra
   end
 
-  depends_on :python if MacOS.version <= :snow_leopard
   depends_on "pkg-config" => :build
   depends_on "graphviz"
   depends_on "openssl"
-  depends_on :postgresql => :optional
+  depends_on "python"
 
   resource "pygraphviz" do
     url "https://files.pythonhosted.org/packages/98/bb/a32e33f7665b921c926209305dde66fe41003a4ad934b10efb7c1211a419/pygraphviz-1.3.1.tar.gz"
@@ -26,13 +25,8 @@ class Eralchemy < Formula
   end
 
   resource "SQLAlchemy" do
-    url "https://files.pythonhosted.org/packages/24/de/66d96cbad7a91443af1399469e9aa0aec8a41669ba6d0faae8b8411ddb27/SQLAlchemy-1.1.6.tar.gz"
-    sha256 "815924e3218d878ddd195d2f9f5bf3d2bb39fabaddb1ea27dace6ac27d9865e4"
-  end
-
-  resource "psycopg2" do
-    url "https://files.pythonhosted.org/packages/62/ca/0a479c9664526e86c2913a7ad593586eeb86b428b7e629e7c7b6b69e3cb7/psycopg2-2.7.tar.gz"
-    sha256 "ceadecf660ad4f7a31ea5baef30a7351add8626f9fd3daaafabb9a9e549f3f9a"
+    url "https://files.pythonhosted.org/packages/f3/b7/d8725042f105cc6b71c7bae0ffd46e49f762e5a08f421f1eddd855a1f723/SQLAlchemy-1.2.4.tar.gz"
+    sha256 "6997507af46b10630e13b605ac278b78885fd683d038896dbee0e7ec41d809d2"
   end
 
   resource "er_example" do
@@ -41,15 +35,13 @@ class Eralchemy < Formula
   end
 
   def install
-    venv = virtualenv_create(libexec)
+    venv = virtualenv_create(libexec, "python3")
 
-    res = resources.map(&:name).to_set - ["er_example", "psycopg2"]
+    res = resources.map(&:name).to_set - ["er_example"]
 
     res.each do |r|
       venv.pip_install resource(r)
     end
-
-    venv.pip_install resource("psycopg2") if build.with? "postgresql"
 
     venv.pip_install_and_link buildpath
   end

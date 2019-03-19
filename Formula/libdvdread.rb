@@ -1,17 +1,14 @@
 class Libdvdread < Formula
   desc "C library for reading DVD-video images"
-  homepage "https://dvdnav.mplayerhq.hu/"
-  url "https://download.videolan.org/pub/videolan/libdvdread/5.0.3/libdvdread-5.0.3.tar.bz2"
-  sha256 "321cdf2dbdc83c96572bc583cd27d8c660ddb540ff16672ecb28607d018ed82b"
+  homepage "https://www.videolan.org/developers/libdvdnav.html"
+  url "https://download.videolan.org/pub/videolan/libdvdread/6.0.1/libdvdread-6.0.1.tar.bz2"
+  sha256 "28ce4f0063883ca4d37dfd40a2f6685503d679bca7d88d58e04ee8112382d5bd"
 
   bottle do
     cellar :any
-    rebuild 1
-    sha256 "df09ae7b2e9919423316037c551e7ba4505be5315b6c22137361889c4bde6cea" => :high_sierra
-    sha256 "9a6674198c5624c82f7abe163c606f0f372a02a42a49a3f259f1d74d0c1e2f46" => :sierra
-    sha256 "9de98e88e99fbcc899a299786575472c93d442b06838f16bb757e09d4ba92593" => :el_capitan
-    sha256 "75006f367876e6ccce744d782f1204ea99d73b55a856ce0afaae2c194eac336c" => :yosemite
-    sha256 "79b919acd8c54956680272a32b106882f90027ce148e54eb937b367564b51e87" => :mavericks
+    sha256 "3919d408e59a7b7b50a22e088d347d78e0e5c1a2cf4c9d557210954a0aba9311" => :mojave
+    sha256 "71d7adc722864315fcf72d6011b7932e5a038562585ec92ac1adcd7c22bfbcf2" => :high_sierra
+    sha256 "e061208a45c20034ca9ef9a49f6b49881dc178e426bb65134c9b61eb285abc71" => :sierra
   end
 
   head do

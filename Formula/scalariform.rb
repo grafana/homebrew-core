@@ -1,8 +1,8 @@
 class Scalariform < Formula
   desc "Scala source code formatter"
   homepage "https://github.com/scala-ide/scalariform"
-  url "https://github.com/scala-ide/scalariform/releases/download/0.2.3/scalariform.jar"
-  sha256 "0c39c00d8789ce277944933452ce708b993afd24952b43a714d672ba04bd60d7"
+  url "https://github.com/scala-ide/scalariform/releases/download/0.2.7/scalariform.jar"
+  sha256 "b1d9177619424df561cc25b718c02923a2fd9bbdde94fb50583a49fd449b6808"
 
   head do
     url "https://github.com/scala-ide/scalariform.git"

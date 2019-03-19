@@ -1,27 +1,31 @@
 class FluidSynth < Formula
   desc "Real-time software synthesizer based on the SoundFont 2 specs"
   homepage "http://www.fluidsynth.org"
-  url "https://github.com/FluidSynth/fluidsynth/archive/v1.1.8.tar.gz"
-  sha256 "318df5aebde8e7353c8878f5c9cb3ba8ed578c2607978b6fbfc5f1cb2ad9d799"
+  url "https://github.com/FluidSynth/fluidsynth/archive/v2.0.4.tar.gz"
+  sha256 "2c065de87e9c9ba0311ebf2f4828a4fd76f1f5cc7d1d93dd80d7a048d7d2a76c"
+  head "https://github.com/FluidSynth/fluidsynth.git"
 
   bottle do
     cellar :any
-    sha256 "b723c0e4895e284361142a3f9ee871a1519a230ab5eac4d2e816a651ec1953b4" => :high_sierra
-    sha256 "1ae6a117a7850abd29df4d47c740eb2734a057bee5e5708da76eb21ea1770e3b" => :sierra
-    sha256 "442615894ba807164a8f80387d2d0e193ec2466b82f5f4b55afd567448edb32a" => :el_capitan
+    sha256 "41d1a846cf43c9bd44c12916f90a54e1a54c647c5826f584e2abbf8f6f09682f" => :mojave
+    sha256 "1108f6f219cb1fbd80b4a2d917fbe2b36325cb93163de01fd157fe47a64ce0aa" => :high_sierra
+    sha256 "d76812fb21a4956ba0272f2d39a643c30b220c8e89bbce038a493cebca2cc0bc" => :sierra
   end
 
-  depends_on "pkg-config" => :build
   depends_on "cmake" => :build
+  depends_on "pkg-config" => :build
   depends_on "glib"
-  depends_on "libsndfile" => :optional
-  depends_on "portaudio" => :optional
+  depends_on "libsndfile"
+  depends_on "portaudio"
 
   def install
-    args = std_cmake_args
-    args << "-Denable-framework=OFF" << "-DLIB_SUFFIX="
-    args << "-Denable-portaudio=ON" if build.with? "portaudio"
-    args << "-Denable-libsndfile=OFF" if build.without? "libsndfile"
+    args = std_cmake_args + %w[
+      -Denable-framework=OFF
+      -Denable-portaudio=ON
+      -DLIB_SUFFIX=
+      -Denable-dbus=OFF
+      -Denable-sdl2=OFF
+    ]
 
     mkdir "build" do
       system "cmake", "..", *args

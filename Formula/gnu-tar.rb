@@ -1,26 +1,23 @@
 class GnuTar < Formula
   desc "GNU version of the tar archiving utility"
   homepage "https://www.gnu.org/software/tar/"
-  url "https://ftp.gnu.org/gnu/tar/tar-1.29.tar.gz"
-  mirror "https://ftpmirror.gnu.org/tar/tar-1.29.tar.gz"
-  sha256 "cae466e6e58c7292355e7080248f244db3a4cf755f33f4fa25ca7f9a7ed09af0"
-  revision 1
+  url "https://ftp.gnu.org/gnu/tar/tar-1.32.tar.gz"
+  mirror "https://ftpmirror.gnu.org/tar/tar-1.32.tar.gz"
+  sha256 "b59549594d91d84ee00c99cf2541a3330fed3a42c440503326dab767f2fbb96c"
 
   bottle do
-    sha256 "20f2d3cad911cb885ac3760daa283d5fd709e570f8a97486e91a6f41a49183c8" => :high_sierra
-    sha256 "d87139778146e9fe39f5db5dcf020c51a5a8ed7528987e31ecd2a2a36ab239e2" => :sierra
-    sha256 "ba2d4a54ae4abf2520b816d19373ed0a8bd0bb0e894b271d98ee1c7eba51af16" => :el_capitan
-    sha256 "cb0a9258bfeb0530540af1748b37a4fe79cf07ec5848e7bce48c47d51289bdb7" => :yosemite
+    cellar :any_skip_relocation
+    sha256 "62ef2c92bf090b1ada1b8434034be21ac4534e9ab81388516191b7cecd6c095a" => :mojave
+    sha256 "440e9a400c184e76bff84b0b634b1a103231409735c4f7885404d9619ca96c43" => :high_sierra
+    sha256 "d245b143eae5179554fca39cdaf37e928e85df8956087d43c5ec0ac968f6c0e8" => :sierra
   end
 
-  option "with-default-names", "Do not prepend 'g' to the binary"
+  head do
+    url "https://git.savannah.gnu.org/git/tar.git"
 
-  # CVE-2016-6321
-  # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=842339
-  # https://sintonen.fi/advisories/tar-extract-pathname-bypass.txt
-  patch do
-    url "https://sources.debian.net/data/main/t/tar/1.29b-1.1/debian/patches/When-extracting-skip-.-members.patch"
-    sha256 "6b1371b9abd391e1654f7d730aae9c4dee703a867276b1e8a9ef97a2a906b7cf"
+    depends_on "autoconf" => :build
+    depends_on "automake" => :build
+    depends_on "gettext" => :build
   end
 
   def install
@@ -32,41 +29,37 @@ class GnuTar < Formula
     # https://lists.gnu.org/archive/html/bug-tar/2015-10/msg00017.html
     ENV["gl_cv_func_getcwd_abort_bug"] = "no" if MacOS.version == :el_capitan
 
-    args = ["--prefix=#{prefix}", "--mandir=#{man}"]
-    args << "--program-prefix=g" if build.without? "default-names"
+    args = %W[
+      --prefix=#{prefix}
+      --mandir=#{man}
+      --program-prefix=g
+    ]
 
+    system "./bootstrap" if build.head?
     system "./configure", *args
     system "make", "install"
 
     # Symlink the executable into libexec/gnubin as "tar"
-    if build.without? "default-names"
-      (libexec/"gnubin").install_symlink bin/"gtar" =>"tar"
-      (libexec/"gnuman/man1").install_symlink man1/"gtar.1" => "tar.1"
-    end
+    (libexec/"gnubin").install_symlink bin/"gtar" =>"tar"
+    (libexec/"gnuman/man1").install_symlink man1/"gtar.1" => "tar.1"
+
+    libexec.install_symlink "gnuman" => "man"
   end
 
-  def caveats
-    if build.without? "default-names" then <<~EOS
-      gnu-tar has been installed as "gtar".
+  def caveats; <<~EOS
+    GNU "tar" has been installed as "gtar".
+    If you need to use it as "tar", you can add a "gnubin" directory
+    to your PATH from your bashrc like:
 
-      If you really need to use it as "tar", you can add a "gnubin" directory
-      to your PATH from your bashrc like:
-
-          PATH="#{opt_libexec}/gnubin:$PATH"
-
-      Additionally, you can access their man pages with normal names if you add
-      the "gnuman" directory to your MANPATH from your bashrc as well:
-
-          MANPATH="#{opt_libexec}/gnuman:$MANPATH"
-
-      EOS
-    end
+        PATH="#{opt_libexec}/gnubin:$PATH"
+  EOS
   end
 
   test do
-    tar = build.with?("default-names") ? bin/"tar" : bin/"gtar"
     (testpath/"test").write("test")
-    system tar, "-czvf", "test.tar.gz", "test"
-    assert_match /test/, shell_output("#{tar} -xOzf test.tar.gz")
+    system bin/"gtar", "-czvf", "test.tar.gz", "test"
+    assert_match /test/, shell_output("#{bin}/gtar -xOzf test.tar.gz")
+
+    assert_match /test/, shell_output("#{opt_libexec}/gnubin/tar -xOzf test.tar.gz")
   end
 end

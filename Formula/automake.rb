@@ -1,21 +1,27 @@
 class Automake < Formula
   desc "Tool for generating GNU Standards-compliant Makefiles"
   homepage "https://www.gnu.org/software/automake/"
-  url "https://ftp.gnu.org/gnu/automake/automake-1.15.1.tar.xz"
-  mirror "https://ftpmirror.gnu.org/automake/automake-1.15.1.tar.xz"
-  sha256 "af6ba39142220687c500f79b4aa2f181d9b24e4f8d8ec497cea4ba26c64bedaf"
+  url "https://ftp.gnu.org/gnu/automake/automake-1.16.1.tar.xz"
+  mirror "https://ftpmirror.gnu.org/automake/automake-1.16.1.tar.xz"
+  sha256 "5d05bb38a23fd3312b10aea93840feec685bdf4a41146e78882848165d3ae921"
+  revision 1
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "8dd10fd54af6157796f66037f8f4ab81546824909d17dfcdfa61d42b8433d3f9" => :high_sierra
-    sha256 "d2b27ce7782a966eb7c8570f7855c8c659bbefc97491a1fb54b66e7b58d26c63" => :sierra
-    sha256 "0b25b38f9df72b7869783514811b7ccd17284a240a7ee5950da501811b9942ff" => :el_capitan
-    sha256 "0b25b38f9df72b7869783514811b7ccd17284a240a7ee5950da501811b9942ff" => :yosemite
+    sha256 "0a359c2385d0673ce1ab3cdaf39dd22af191f7b74732105ca5751e08a334e061" => :mojave
+    sha256 "fb32c065aaf91661380af32ed301edcf209ba453635c79ca945353b67e54af10" => :high_sierra
+    sha256 "fb32c065aaf91661380af32ed301edcf209ba453635c79ca945353b67e54af10" => :sierra
+    sha256 "d552844779f0dc4062f27203f7facfbd74c9d1780724ac76a86791e401aa73bd" => :el_capitan
   end
 
-  keg_only :provided_until_xcode43
+  depends_on "autoconf"
 
-  depends_on "autoconf" => :run
+  # https://lists.gnu.org/archive/html/bug-automake/2018-04/msg00002.html
+  # Remove this when applying any future 1.16.2 update.
+  patch do
+    url "https://git.savannah.gnu.org/cgit/automake.git/patch/?id=a348d830659fffd2cfc42994524783b07e69b4b5"
+    sha256 "7a57ca2b91f7f3c0b168cf5ffbc8a1b2168f3886bcadcc15412281472dace3ce"
+  end
 
   def install
     ENV["PERL"] = "/usr/bin/perl"

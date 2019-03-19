@@ -1,15 +1,14 @@
 class Czmq < Formula
   desc "High-level C binding for ZeroMQ"
   homepage "http://czmq.zeromq.org/"
-  url "https://github.com/zeromq/czmq/releases/download/v4.0.2/czmq-4.0.2.tar.gz"
-  sha256 "808c7a2262ca733d7a2c362e0a00fdbe5ec517d90fa017ba405b7cdb4f81eb89"
+  url "https://github.com/zeromq/czmq/releases/download/v4.2.0/czmq-4.2.0.tar.gz"
+  sha256 "cfab29c2b3cc8a845749758a51e1dd5f5160c1ef57e2a41ea96e4c2dcc8feceb"
 
   bottle do
     cellar :any
-    sha256 "6ae4500d7fc4941770348a07cfd5144b102dba6ff714411e406c9accd45490e4" => :high_sierra
-    sha256 "5e7c9ba51cf01d6bd653b727a50ffef388e17aa7a6732f769cbc33e64a8bde69" => :sierra
-    sha256 "52a626dc63cbb469a726230389ad5388fe218399380a7868a46429d6392bb38c" => :el_capitan
-    sha256 "e68078e86128bb2aba85c7bbc765f962fc5e506b1886712a255064af2fa4a844" => :yosemite
+    sha256 "19b9f2b1d8d73f7314d0534f22bacd8bc02b39b2a985a07fc8e40365583fc45e" => :mojave
+    sha256 "a1afab02e1ff88b48e2bd92900a701745e18fb05ca700d5c2635fa4c986010f8" => :high_sierra
+    sha256 "d64960ca3558f8a571a51095b9c0e41b1eb8c535e2efc0882ea20c44a41b5563" => :sierra
   end
 
   head do
@@ -20,8 +19,6 @@ class Czmq < Formula
     depends_on "libtool" => :build
   end
 
-  option "with-drafts", "Build and install draft classes and methods"
-
   depends_on "asciidoc" => :build
   depends_on "pkg-config" => :build
   depends_on "xmlto" => :build
@@ -30,11 +27,8 @@ class Czmq < Formula
   def install
     ENV["XML_CATALOG_FILES"] = "#{etc}/xml/catalog"
 
-    args = ["--disable-dependency-tracking", "--prefix=#{prefix}"]
-    args << "--enable-drafts" if build.with? "drafts"
-
     system "./autogen.sh" if build.head?
-    system "./configure", *args
+    system "./configure", "--disable-dependency-tracking", "--prefix=#{prefix}"
     system "make"
     system "make", "ZSYS_INTERFACE=lo0", "check-verbose"
     system "make", "install"

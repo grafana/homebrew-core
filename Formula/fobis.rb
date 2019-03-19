@@ -3,22 +3,20 @@ class Fobis < Formula
 
   desc "KISS build tool for automaticaly building modern Fortran projects"
   homepage "https://github.com/szaghi/FoBiS"
-  url "https://files.pythonhosted.org/packages/6e/c3/217ba20c53a39e68f7bef139a47f5c820230d1d672529de44c9bd961a023/FoBiS.py-2.2.7.tar.gz"
-  sha256 "ed5054fc3887159ae7cafa32f16859761216ab678390ccc328b624ac5e960c63"
+  url "https://files.pythonhosted.org/packages/2f/7e/dd1bf258ea12f28b38f7416fec75792307bb624a939e255eec261e01fa89/FoBiS.py-2.9.3.tar.gz"
+  sha256 "ea3d064039fb08f690e86b66dbb12616a41304eaaf6caa2fa9f84b71bb27bdbf"
+  revision 1
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "c712bc45ba7f821ab648adef31a172a70fc636e3008da53a244a92c9568467a5" => :high_sierra
-    sha256 "a442b70f322b7a21aa3c80fe501a0ad9d72b441f4265ad66322a1e2182a609d9" => :sierra
-    sha256 "e61dd9c83fa76a888fb484442875cb2c919a1662d73e8752a7517f68feba64eb" => :el_capitan
-    sha256 "549280c74f577a2aedd2627b7b4d082645ce3aa368d52f35b3c48f0e666b8413" => :yosemite
+    sha256 "a2c2ad4f9320ea0017b34356fc36d23a2b3f87d39e5fd44e0c9918b152144d89" => :mojave
+    sha256 "34f1802723d27f435fd2ed72fceb75fbda38d350efc227753d05a53f2c876b7a" => :high_sierra
+    sha256 "38cda93369dddfd8f52f43271f4d0eea5b78506a4b74265a16ec5e09c60ca532" => :sierra
   end
 
-  option "without-pygooglechart", "Disable support for coverage charts generated with pygooglechart"
-
-  depends_on :python if MacOS.version <= :snow_leopard
-  depends_on :fortran
-  depends_on "graphviz" => :recommended
+  depends_on "gcc" # for gfortran
+  depends_on "graphviz"
+  depends_on "python"
 
   resource "pygooglechart" do
     url "https://files.pythonhosted.org/packages/95/88/54f91552de1e1b0085c02b96671acfba6e351915de3a12a398533fc82e20/pygooglechart-0.4.0.tar.gz"
@@ -26,19 +24,18 @@ class Fobis < Formula
   end
 
   resource "graphviz" do
-    url "https://files.pythonhosted.org/packages/da/84/0e997520323d6b01124eb01c68d5c101814d0aab53083cd62bd75a90f70b/graphviz-0.8.zip"
-    sha256 "889c720d9955b804d56a8e842621558cbb5cbbdd93cbdf55862371311646e344"
+    url "https://files.pythonhosted.org/packages/fa/d1/63b62dee9e55368f60b5ea445e6afb361bb47e692fc27553f3672e16efb8/graphviz-0.8.2.zip"
+    sha256 "606741c028acc54b1a065b33045f8c89ee0927ea77273ec409ac988f2c3d1091"
   end
 
   def install
-    venv = virtualenv_create(libexec)
-    venv.pip_install "pygooglechart" if build.with? "pygooglechart"
-    venv.pip_install "graphviz" if build.with? "graphviz"
+    venv = virtualenv_create(libexec, "python3")
+    venv.pip_install "pygooglechart"
+    venv.pip_install "graphviz"
     venv.pip_install_and_link buildpath
   end
 
   test do
-    ENV.fortran
     (testpath/"test-mod.f90").write <<~EOS
       module fobis_test_m
         implicit none

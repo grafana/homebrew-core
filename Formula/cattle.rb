@@ -1,28 +1,29 @@
 class Cattle < Formula
   desc "Brainfuck language toolkit"
   homepage "https://github.com/andreabolognani/cattle"
-  url "https://kiyuko.org/software/cattle/releases/1.2.2/source"
+  url "https://kiyuko.org/software/cattle/releases/cattle-1.2.2.tar.gz"
   sha256 "e8e9baba41c4b25a1fdac552c5b03ad62a4dbb782e9866df3c3463baf6411826"
+  revision 1
 
   bottle do
-    sha256 "bf68a1bc30056789724407aff1a9edbea6671494fd766277ecea8fa14aa8f628" => :high_sierra
-    sha256 "9155787316cc502e87a4f2f9fc96d0e68da0de47a125af4dd47dff0e409c9737" => :sierra
-    sha256 "4db6aba09bf4b3fa6f59423b8d34f108e6a5d63d0338672e1bdcc305b8fdac67" => :el_capitan
-    sha256 "0cd99db357d824c250d115146959c710ddd52a6fbb165308867d2b29c65c5c42" => :yosemite
+    sha256 "9fe38957085b82d4f32b8301a4541b7f66400d27677b38852f81f7e0b7dbc497" => :mojave
+    sha256 "957d2f936937bd3682063bc0e7386b22ade2ee3398ad8ad29700bf395f2bc4f4" => :high_sierra
+    sha256 "6387555e1f0f6804d9d9d967af83c370129d3fc7b4f8644b41b50a6d7b10baf9" => :sierra
+    sha256 "42652ee8648cb83d278d274b149c644f9785a13c281edcd8d9dab9baf293da33" => :el_capitan
   end
 
   head do
     url "https://github.com/andreabolognani/cattle.git"
 
-    depends_on "gtk-doc" => :build
     depends_on "autoconf" => :build
     depends_on "automake" => :build
+    depends_on "gtk-doc" => :build
     depends_on "libtool" => :build
   end
 
+  depends_on "gobject-introspection" => :build
   depends_on "pkg-config" => :build
   depends_on "glib"
-  depends_on "gobject-introspection"
 
   def install
     pkgshare.mkpath

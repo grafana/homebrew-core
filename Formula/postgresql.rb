@@ -1,39 +1,23 @@
 class Postgresql < Formula
   desc "Object-relational database system"
   homepage "https://www.postgresql.org/"
-  url "https://ftp.postgresql.org/pub/source/v10.1/postgresql-10.1.tar.bz2"
-  sha256 "3ccb4e25fe7a7ea6308dea103cac202963e6b746697366d72ec2900449a5e713"
+  url "https://ftp.postgresql.org/pub/source/v11.2/postgresql-11.2.tar.bz2"
+  sha256 "2676b9ce09c21978032070b6794696e0aa5a476e3d21d60afc036dc0a9c09405"
   head "https://github.com/postgres/postgres.git"
 
   bottle do
-    sha256 "b7db813c239ee1c5406641c6923a174d31ca2b71bc375409376f78e6c1d5383d" => :high_sierra
-    sha256 "03c99f58e2d394ae965053f7441a8bd708454a1059c611914b476a9dee9bb56f" => :sierra
-    sha256 "b3929f1c9b438f035fd2685b4a3bb9a2a7ee9fc72136493f784d390e6ad7bd2d" => :el_capitan
+    sha256 "8fd1cacd7b9aa9325c9ddcc1c3fabbc0f76d70898cb45aa476ef53ffef7983b5" => :mojave
+    sha256 "08d79f786ec1cee0d836101040e544b52e33527ed0612ca3283237e11455fa15" => :high_sierra
+    sha256 "3941b3241eec502036ad48abec93b6bc5cfce831ab354a5db9f358e41422b95b" => :sierra
   end
 
-  option "without-perl", "Build without Perl support"
-  option "without-tcl", "Build without Tcl support"
-  option "with-dtrace", "Build with DTrace support"
-  option "with-python", "Enable PL/Python2"
-  option "with-python3", "Enable PL/Python3 (incompatible with --with-python)"
-
-  deprecated_option "no-perl" => "without-perl"
-  deprecated_option "no-tcl" => "without-tcl"
-  deprecated_option "enable-dtrace" => "with-dtrace"
-
+  depends_on "pkg-config" => :build
+  depends_on "icu4c"
   depends_on "openssl"
   depends_on "readline"
 
-  depends_on :python => :optional
-  depends_on :python3 => :optional
-
   conflicts_with "postgres-xc",
     :because => "postgresql and postgres-xc install the same binaries."
-
-  fails_with :clang do
-    build 211
-    cause "Miscompilation resulting in segfault on queries"
-  end
 
   def install
     # avoid adding the SDK library directory to the linker search path
@@ -52,36 +36,22 @@ class Postgresql < Formula
       --enable-thread-safety
       --with-bonjour
       --with-gssapi
+      --with-icu
       --with-ldap
-      --with-openssl
-      --with-pam
       --with-libxml
       --with-libxslt
+      --with-openssl
+      --with-pam
+      --with-perl
+      --with-uuid=e2fs
     ]
-
-    args << "--with-perl" if build.with? "perl"
-
-    which_python = nil
-    if build.with?("python") && build.with?("python3")
-      odie "Cannot provide both --with-python and --with-python3"
-    elsif build.with?("python") || build.with?("python3")
-      args << "--with-python"
-      which_python = which(build.with?("python") ? "python" : "python3")
-    end
-    ENV["PYTHON"] = which_python
 
     # The CLT is required to build Tcl support on 10.7 and 10.8 because
     # tclConfig.sh is not part of the SDK
-    if build.with?("tcl") && (MacOS.version >= :mavericks || MacOS::CLT.installed?)
-      args << "--with-tcl"
-
-      if File.exist?("#{MacOS.sdk_path}/System/Library/Frameworks/Tcl.framework/tclConfig.sh")
-        args << "--with-tclconfig=#{MacOS.sdk_path}/System/Library/Frameworks/Tcl.framework"
-      end
+    args << "--with-tcl"
+    if File.exist?("#{MacOS.sdk_path}/System/Library/Frameworks/Tcl.framework/tclConfig.sh")
+      args << "--with-tclconfig=#{MacOS.sdk_path}/System/Library/Frameworks/Tcl.framework"
     end
-
-    args << "--enable-dtrace" if build.with? "dtrace"
-    args << "--with-uuid=e2fs"
 
     system "./configure", *args
     system "make"
@@ -99,14 +69,9 @@ class Postgresql < Formula
   end
 
   def caveats; <<~EOS
-    To migrate existing data from a previous major version of PostgreSQL, see:
-      https://www.postgresql.org/docs/10/static/upgrading.html
-
-      You will need your previous PostgreSQL installation from brew to perform
-      `pg_upgrade` or `pg_dumpall` depending on your upgrade method.
-
-      Do not run `brew cleanup postgresql` until you have performed the migration.
-    EOS
+    To migrate existing data from a previous major version of PostgreSQL run:
+      brew postgresql-upgrade-database
+  EOS
   end
 
   plist_options :manual => "pg_ctl -D #{HOMEBREW_PREFIX}/var/postgres start"
@@ -130,11 +95,13 @@ class Postgresql < Formula
       <true/>
       <key>WorkingDirectory</key>
       <string>#{HOMEBREW_PREFIX}</string>
+      <key>StandardOutPath</key>
+      <string>#{var}/log/postgres.log</string>
       <key>StandardErrorPath</key>
       <string>#{var}/log/postgres.log</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

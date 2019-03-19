@@ -3,24 +3,25 @@ class S6 < Formula
   homepage "https://skarnet.org/software/s6/"
 
   stable do
-    url "https://skarnet.org/software/s6/s6-2.6.1.1.tar.gz"
-    sha256 "0172b7293d4d5607ca3ca77382fee9b87c10bd58680720b29625cf35afc75c5c"
+    url "https://skarnet.org/software/s6/s6-2.7.2.0.tar.gz"
+    sha256 "af54fcbae7028a90bd12c7ee71a8f3954a74c6a4de376a427cc664587fb68a09"
 
     resource "skalibs" do
-      url "https://skarnet.org/software/skalibs/skalibs-2.6.0.1.tar.gz"
-      sha256 "b11f515d29768497d648c7ae87e26f7441395a056ebbe3fe89596fe6454a557a"
+      url "https://skarnet.org/software/skalibs/skalibs-2.7.0.0.tar.gz"
+      sha256 "96494d76669d2f8622511d5d616b6367801a42683c0bb11a8855114e5ccbd756"
     end
 
     resource "execline" do
-      url "https://skarnet.org/software/execline/execline-2.3.0.3.tar.gz"
-      sha256 "1a698425740a410a38be770f98b8faf94c633e29a74ba1d25adddbb294e979f5"
+      url "https://skarnet.org/software/execline/execline-2.5.0.1.tar.gz"
+      sha256 "8d07d14e9e9abb1301e08be271313c4ffa5ddf7248fd262dda19588e78e31049"
     end
   end
 
   bottle do
-    sha256 "78248e3e2f69a44f4ebaa1623461d8419ea0c43de77281c5ac9937b1805d7555" => :high_sierra
-    sha256 "ee608b2efe9a0115734a9ef93557b5b154b61b5c92af84e09594f93c9ce5c109" => :sierra
-    sha256 "735449f95a1b7ad5812a456bb0916ad19527133cca0c6573df2372796b906a4c" => :el_capitan
+    sha256 "de84ce2daa762ee81c1ba5580030e912072ec3659ff3ba876c4da11c27e146ed" => :mojave
+    sha256 "fea087bab9413a1c548c6f9219d901e825be1cf1de5a46e1fd9ac0a3017a1b92" => :high_sierra
+    sha256 "764172107342cea76c6a35b37ff830f5481efaa30410d89bd2b41ed1eda291e5" => :sierra
+    sha256 "760b7806a4f4f9d7e78369406033fca48821933d3f7bdca70298efce5469471f" => :el_capitan
   end
 
   head do
@@ -74,18 +75,18 @@ class S6 < Formula
   end
 
   test do
-    # Test execline
-    test_script = testpath/"test.eb"
-    test_script.write <<~EOS
-      import PATH
-      if { [ ! -z ${PATH} ] }
-        true
+    (testpath/"test.eb").write <<~EOS
+      foreground
+      {
+        sleep 1
+      }
+      "echo"
+      "Homebrew"
     EOS
-    system "#{bin}/execlineb", test_script
+    assert_match "Homebrew", shell_output("#{bin}/execlineb test.eb")
 
-    # Test s6
     (testpath/"log").mkpath
-    pipe_output("#{bin}/s6-log #{testpath}/log", "Test input\n")
+    pipe_output("#{bin}/s6-log #{testpath}/log", "Test input\n", 0)
     assert_equal "Test input\n", File.read(testpath/"log/current")
   end
 end

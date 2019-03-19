@@ -1,18 +1,18 @@
 class Googler < Formula
   desc "Google Search and News from the command-line"
   homepage "https://github.com/jarun/googler"
-  url "https://github.com/jarun/googler/archive/v3.4.tar.gz"
-  sha256 "187d9369ed0d7d2db118a0144ccbc54f18a1b8e7ef24921571b80dbaaad726aa"
+  url "https://github.com/jarun/googler/archive/v3.7.1.tar.gz"
+  sha256 "1ceadab40fea49a113f46807a5c7297fcf145eeaa8128e33d53aadb275377f37"
   head "https://github.com/jarun/googler.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "bf8468d63558338aff15cba95770d788976468e4fbdf2cc2e71d04f826d7b142" => :high_sierra
-    sha256 "bf8468d63558338aff15cba95770d788976468e4fbdf2cc2e71d04f826d7b142" => :sierra
-    sha256 "bf8468d63558338aff15cba95770d788976468e4fbdf2cc2e71d04f826d7b142" => :el_capitan
+    sha256 "6165de5e7b9adfd53e7575723e3d817acff8ce56b1c067a9d7dbdb836dc72491" => :mojave
+    sha256 "d44b89bb684a81fcb8a81cabec5f1761747acfa4b11a0be34cd8f22151499240" => :high_sierra
+    sha256 "d44b89bb684a81fcb8a81cabec5f1761747acfa4b11a0be34cd8f22151499240" => :sierra
   end
 
-  depends_on :python3
+  depends_on "python"
 
   def install
     system "make", "disable-self-upgrade"

@@ -1,29 +1,23 @@
 class Saldl < Formula
   desc "CLI downloader optimized for speed and early preview"
   homepage "https://saldl.github.io/"
-  url "https://github.com/saldl/saldl/archive/v37.tar.gz"
-  sha256 "9e8f91d3c82366dd6a72b24ab4ceecd4328df8eb3bb3347cc1fde26bcda04aa8"
-
+  url "https://github.com/saldl/saldl/archive/v40.tar.gz"
+  sha256 "1cb7950848517fb82ec39561bf36c8cbc0a0caf8fa85355a5b76cac0281346ce"
   head "https://github.com/saldl/saldl.git", :shallow => false
 
   bottle do
     cellar :any
-    sha256 "6c7151634d74ed35a6dff9c9b9c01e0099fa16ad823434805301cd51e2a3104c" => :high_sierra
-    sha256 "e2b43d46455a439dc0a944b0dce104f37de07f46d2d92bca09cd39c90d880397" => :sierra
-    sha256 "3aea3af9027e04dbd003a9e959d94cc347b334c6ff654b0fcd840b5733fc999b" => :el_capitan
+    sha256 "1ee6fb03ae4d6f8268cbf63452d56657b3801bf98318d8d2877740401ce85707" => :mojave
+    sha256 "334bdb4450ab3325ad0b4d308a1b59ca452312335caee4f4a96a7258e523f266" => :high_sierra
+    sha256 "abfa30ca15849b2cc4a4ad592acef5123a736a0589f74a0719a0f61d4bcc9b85" => :sierra
+    sha256 "92835135c56b58d1902bc181e678d75e7175969894957ad67bdedcbf1b3059cc" => :el_capitan
   end
 
-  depends_on "pkg-config" => :build
   depends_on "asciidoc" => :build
   depends_on "docbook-xsl" => :build
+  depends_on "pkg-config" => :build
+  depends_on "curl" # curl >= 7.55 is required
   depends_on "libevent"
-
-  if MacOS.version <= :mavericks
-    # curl >= 7.42 is required
-    depends_on "curl"
-  else
-    depends_on "curl" => :optional
-  end
 
   def install
     ENV.refurbish_args

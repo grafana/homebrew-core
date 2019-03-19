@@ -1,25 +1,23 @@
 class Opensaml < Formula
   desc "Library for Security Assertion Markup Language"
   homepage "https://wiki.shibboleth.net/confluence/display/OpenSAML/Home"
-  url "https://shibboleth.net/downloads/c++-opensaml/2.6.0/opensaml-2.6.0.tar.gz"
-  sha256 "8c8e7d1d7b045cda330dd49ea1972a3306ebefbf42cc65b8f612d66828352179"
-  revision 1
+  url "https://shibboleth.net/downloads/c++-opensaml/3.0.0/opensaml-3.0.0.tar.bz2"
+  sha256 "a9cb72e41cc9d1af08a3d7c7843410eb41d4e97d88d516db7f0e2da1243e296e"
 
   bottle do
     cellar :any
-    sha256 "53a7172d8fbfeea4b1acfcde23f32ad59c295bd796eb4c5e452c60bd6397b3f1" => :high_sierra
-    sha256 "147bad128c934be0b779bacb53a50fa46c1979436b9f22c0511f90048121e6ab" => :sierra
-    sha256 "c36e08e7dd5ad30c3bd75e7eca30615274d21c9339c7ab62853037dc2e1d9f02" => :el_capitan
+    sha256 "14d2c6a9825c4bb74b9708fee49cfe4466537918bbd913d795b4f66256721996" => :mojave
+    sha256 "a243122e77ac69b74e01e69201b8bcaab5499b9b6859bfa11f7dd5e6e5bd5da9" => :high_sierra
+    sha256 "5287589b2ee6abc84823ea9e39fff2352b790876df6a4cea1251358926738476" => :sierra
+    sha256 "2134b9b9be0a181807065f905a874639d2fb780e50628cb6c365e889e65faf32" => :el_capitan
   end
 
   depends_on "pkg-config" => :build
   depends_on "log4shib"
+  depends_on "openssl"
   depends_on "xerces-c"
   depends_on "xml-security-c"
   depends_on "xml-tooling-c"
-  depends_on "openssl"
-
-  needs :cxx11
 
   def install
     ENV.cxx11

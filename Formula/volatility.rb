@@ -10,17 +10,17 @@ class Volatility < Formula
 
   bottle do
     cellar :any
-    rebuild 1
-    sha256 "45afc584a2c272a157adf218b31609e350025080bfc6bcdf6dde916e1a2dcad4" => :high_sierra
-    sha256 "c6a71814aa288cb111544a727f333b7f3f82c77a07c980f16038275f375835b6" => :sierra
-    sha256 "a0613ac4dd0a9b06ac6a9dabbc86c77faabe585af2e884d44d264cdaddac2308" => :el_capitan
-    sha256 "e14faea2003aada9ede7d52c09497ea8eb90b5153853ecfe86c3416a043dc70a" => :yosemite
+    rebuild 2
+    sha256 "1f6c687d09dd2aac886fa9a2e529b1fd37ebccaaf9d68f85cbb771d4d22d5e3d" => :mojave
+    sha256 "276c6c0d85b6dc3132007ec5289f1be160c654dfbb4d9e8fbf30b2031d0ed7c8" => :high_sierra
+    sha256 "23d74d545277d9724884472d9762175294f3c789908bd5ce47072f481fcdfd16" => :sierra
+    sha256 "31481a560abecead5deaa382da5cb5689c7d37d9fe7e1074a971bb849b2ee415" => :el_capitan
   end
 
-  depends_on :python if MacOS.version <= :snow_leopard
-  depends_on "yara"
-  depends_on "jpeg"
   depends_on "freetype"
+  depends_on "jpeg"
+  depends_on "python@2" # does not support Python 3
+  depends_on "yara"
 
   resource "distorm3" do
     url "https://files.pythonhosted.org/packages/28/f9/8ff25a8f3edb581b5bc0efbed6382dcca22e5e7eff39464346c629105739/distorm3-3.3.4.zip"
@@ -152,17 +152,23 @@ class Volatility < Formula
 
     resource("Pillow").stage do
       inreplace "setup.py" do |s|
-        sdkprefix = MacOS::CLT.installed? ? "" : MacOS.sdk_path
+        sdkprefix = MacOS.sdk_path_if_needed ? MacOS.sdk_path : ""
         s.gsub! "openjpeg.h", "probably_not_a_header_called_this_eh.h"
         s.gsub! "ZLIB_ROOT = None", "ZLIB_ROOT = ('#{sdkprefix}/usr/lib', '#{sdkprefix}/usr/include')"
-        s.gsub! "JPEG_ROOT = None", "JPEG_ROOT = ('#{Formula["jpeg"].opt_prefix}/lib', '#{Formula["jpeg"].opt_prefix}/include')"
-        s.gsub! "FREETYPE_ROOT = None", "FREETYPE_ROOT = ('#{Formula["freetype"].opt_prefix}/lib', '#{Formula["freetype"].opt_prefix}/include')"
+        s.gsub! "JPEG_ROOT = None",
+                "JPEG_ROOT = ('#{Formula["jpeg"].opt_prefix}/lib', " \
+                             "'#{Formula["jpeg"].opt_prefix}/include')"
+        s.gsub! "FREETYPE_ROOT = None",
+                "FREETYPE_ROOT = ('#{Formula["freetype"].opt_prefix}/lib', " \
+                                 "'#{Formula["freetype"].opt_prefix}/include')"
       end
 
       begin
         # avoid triggering "helpful" distutils code that doesn't recognize Xcode 7 .tbd stubs
         deleted = ENV.delete "SDKROOT"
-        ENV.append "CFLAGS", "-I#{MacOS.sdk_path}/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers" unless MacOS::CLT.installed?
+        unless MacOS::CLT.installed?
+          ENV.append "CFLAGS", "-I#{MacOS.sdk_path}/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers"
+        end
         venv.pip_install Pathname.pwd
       ensure
         ENV["SDKROOT"] = deleted

@@ -1,22 +1,25 @@
 class SwaggerCodegen < Formula
-  desc "Generation of client and server from Swagger definition"
+  desc "Generate clients, server stubs, and docs from an OpenAPI spec"
   homepage "https://swagger.io/swagger-codegen/"
-  url "https://github.com/swagger-api/swagger-codegen/archive/v2.2.3.tar.gz"
-  sha256 "baed7f68add38f625cfa9baa3c5fb454de87cca4e790ccc3c449cf15681380c7"
+  url "https://github.com/swagger-api/swagger-codegen/archive/v3.0.5.tar.gz"
+  sha256 "e68acc1c06fb60efc36f500ad12b66c8edfeab88c32f11d329591f730d43dd08"
   head "https://github.com/swagger-api/swagger-codegen.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "26df240a880ea990c83fe1e866b73c6f59584efa9066952a8953e7b6438c69d1" => :high_sierra
-    sha256 "704953dac764a141b07ba5cf72c4bc07d7a7ffe7fbb0dbfb25b785563266a232" => :sierra
-    sha256 "179c1b14bacfb4b80649475072d0db5e7bed928835fcd3f15465d2cba3bbb90e" => :el_capitan
-    sha256 "1fc02905cba6c5e8a02c6936db0dfbcc430b9ff10b1a3961a0cabe7e17ce4814" => :yosemite
+    sha256 "5db8d2b191a853e2d5c8be1d5ef65544e34de889517b7f3fe729d961dfdef462" => :mojave
+    sha256 "c27fe2bb5df62dd42b3b7110561722a73486e814019610a1d3ac1e5c45d03fa8" => :high_sierra
+    sha256 "1434cf70711c7805bb5ecb5ac7e0b4d05b92b5feaeab654cdd3d441334dab0aa" => :sierra
   end
 
-  depends_on :java => "1.7+"
   depends_on "maven" => :build
+  depends_on :java => "1.8"
 
   def install
+    # Need to set JAVA_HOME manually since maven overrides 1.8 with 1.7+
+    cmd = Language::Java.java_home_cmd("1.8")
+    ENV["JAVA_HOME"] = Utils.popen_read(cmd).chomp
+
     system "mvn", "clean", "package"
     libexec.install "modules/swagger-codegen-cli/target/swagger-codegen-cli.jar"
     bin.write_jar_script libexec/"swagger-codegen-cli.jar", "swagger-codegen"
@@ -25,7 +28,7 @@ class SwaggerCodegen < Formula
   test do
     (testpath/"minimal.yaml").write <<~EOS
       ---
-      swagger: '2.0'
+      openapi: 3.0.0
       info:
         version: 0.0.0
         title: Simple API
@@ -36,6 +39,7 @@ class SwaggerCodegen < Formula
               200:
                 description: OK
     EOS
-    system "#{bin}/swagger-codegen", "generate", "-i", "minimal.yaml", "-l", "swagger"
+    system "#{bin}/swagger-codegen", "generate", "-i", "minimal.yaml", "-l", "html"
+    assert_includes File.read(testpath/"index.html"), "<h1>Simple API</h1>"
   end
 end

@@ -1,16 +1,16 @@
 class Dwdiff < Formula
   desc "Diff that operates at the word level"
-  homepage "http://os.ghalkes.nl/dwdiff.html"
-  url "http://os.ghalkes.nl/dist/dwdiff-2.1.1.tar.bz2"
-  sha256 "9745860faad6cb58744c7c45d16c0c7e222896c80d0cd7208dd36126d1a98c8b"
+  homepage "https://os.ghalkes.nl/dwdiff.html"
+  url "https://os.ghalkes.nl/dist/dwdiff-2.1.2.tar.bz2"
+  sha256 "3201fd459164ebbb538a0b21ce17d955f2fa3babe37367b2e92f7f912cfac692"
 
   bottle do
-    sha256 "f75d5b26c89f16cc92cc0b250c1da358c71a3035849ac13f7d4b27049724feef" => :high_sierra
-    sha256 "449c8fd4f1f38a910668f52d0b42a6e0c9b79c5cce132eab7ecc2975b25fc187" => :sierra
-    sha256 "94c05331212b60c13a546372946eaa7df175980e7cddd0032840b6fdf93343a4" => :el_capitan
-    sha256 "67467f9d757399ba5d014cabd2702f9b2841c04fe8df33dde86555a52927203a" => :yosemite
+    sha256 "b18c0419890e99dae4b811ac2ebc95741371d128c939a31609a076808bdca7d9" => :mojave
+    sha256 "6642674172cc93236f1550924c6ef94f14f346fec3d2a40a94ca65cab830a9aa" => :high_sierra
+    sha256 "1c39f29ef1f2015d1203b3fa56ac2399b46fc0477150c129e947008018be3267" => :sierra
   end
 
+  depends_on "pkg-config" => :build
   depends_on "gettext"
   depends_on "icu4c"
 

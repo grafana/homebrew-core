@@ -1,8 +1,8 @@
 class Rabbitmq < Formula
   desc "Messaging broker"
   homepage "https://www.rabbitmq.com"
-  url "https://dl.bintray.com/rabbitmq/binaries/rabbitmq-server-generic-unix-3.6.14.tar.xz"
-  sha256 "eb19226067949df1708ecd6c54942e1c77a32820bbed11cc92ba3c09245b57a1"
+  url "https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.7.12/rabbitmq-server-generic-unix-3.7.12.tar.xz"
+  sha256 "71238df9215d399e6e16bad05b19667bd9c9413526370b8e2e7606c923e14a60"
 
   bottle :unneeded
 
@@ -34,7 +34,7 @@ class Rabbitmq < Formula
     rabbitmq_env_conf = etc/"rabbitmq/rabbitmq-env.conf"
     rabbitmq_env_conf.write rabbitmq_env unless rabbitmq_env_conf.exist?
 
-    # Enable plugins - management web UI and visualiser; STOMP, MQTT, AMQP 1.0 protocols
+    # Enable plugins - management web UI; STOMP, MQTT, AMQP 1.0 protocols
     enabled_plugins_path = etc/"rabbitmq/enabled_plugins"
     enabled_plugins_path.write "[rabbitmq_management,rabbitmq_stomp,rabbitmq_amqp1_0,rabbitmq_mqtt]." unless enabled_plugins_path.exist?
 
@@ -51,14 +51,15 @@ class Rabbitmq < Formula
 
   def caveats; <<~EOS
     Management Plugin enabled by default at http://localhost:15672
-    EOS
+  EOS
   end
 
   def rabbitmq_env; <<~EOS
     CONFIG_FILE=#{etc}/rabbitmq/rabbitmq
     NODE_IP_ADDRESS=127.0.0.1
     NODENAME=rabbit@localhost
-    EOS
+    RABBITMQ_LOG_BASE=#{var}/log/rabbitmq
+  EOS
   end
 
   plist_options :manual => "rabbitmq-server"
@@ -84,9 +85,13 @@ class Rabbitmq < Formula
           <key>CONF_ENV_FILE</key>
           <string>#{etc}/rabbitmq/rabbitmq-env.conf</string>
         </dict>
+        <key>StandardErrorPath</key>
+        <string>#{var}/log/rabbitmq/std_error.log</string>
+        <key>StandardOutPath</key>
+        <string>#{var}/log/rabbitmq/std_out.log</string>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

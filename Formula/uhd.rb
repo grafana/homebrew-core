@@ -1,24 +1,21 @@
 class Uhd < Formula
   desc "Hardware driver for all USRP devices"
   homepage "https://files.ettus.com/manual/"
-  url "https://github.com/EttusResearch/uhd/archive/release_003_010_002_000.tar.gz"
-  sha256 "7f96d00ed8a1458b31add31291fae66afc1fed47e1dffd886dffa71a8281fabe"
-  revision 1
+  url "https://github.com/EttusResearch/uhd/archive/v3.13.1.0.tar.gz"
+  sha256 "16fb265b9611ff51ea229058824661c04db935cf88fde17af9cb66a8b9299bd5"
   head "https://github.com/EttusResearch/uhd.git"
 
   bottle do
-    sha256 "aa08fa06aebb4e3bf05a17d20af2e3cce53e7f31a746a5e89428fd1f0febf83d" => :high_sierra
-    sha256 "eaa1134c0ec3f29780e8f391233dc6e147a5fc90848bce46b8f82326fc832728" => :sierra
-    sha256 "9896625583be332fe6ba6a8b898d027e8b42e533308eb88e1a361ed48c14120e" => :el_capitan
-    sha256 "362332407e28fef3bb1e53b358d1d011d1ef4e9ba81681dd70bef91bba7752b0" => :yosemite
+    sha256 "cdbb577e04715cc175c83397dbb03964870935a97fd4579e1f2a6f9b45a76a0c" => :mojave
+    sha256 "71f5cd72db8ecce7c9d7220cf63b92612f43df12dccc4a33d49778cffd295252" => :high_sierra
+    sha256 "4503cccbb9709d64efcbc3674c4ae3e777979d56a74d32057c477a569b8271ba" => :sierra
   end
 
   depends_on "cmake" => :build
+  depends_on "doxygen" => :build
   depends_on "boost"
   depends_on "libusb"
-  depends_on :python if MacOS.version <= :snow_leopard
-  depends_on "doxygen" => [:build, :optional]
-  depends_on "gpsd" => :optional
+  depends_on "python"
 
   resource "Mako" do
     url "https://files.pythonhosted.org/packages/eb/f3/67579bb486517c0d49547f9697e36582cd19dafb5df9e687ed8e22de57fa/Mako-1.0.7.tar.gz"
@@ -26,14 +23,15 @@ class Uhd < Formula
   end
 
   def install
-    ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python2.7/site-packages"
+    xy = Language::Python.major_minor_version "python3"
+    ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python#{xy}/site-packages"
 
     resource("Mako").stage do
-      system "python", *Language::Python.setup_install_args(libexec/"vendor")
+      system "python3", *Language::Python.setup_install_args(libexec/"vendor")
     end
 
     mkdir "host/build" do
-      system "cmake", "..", *std_cmake_args
+      system "cmake", "..", *std_cmake_args, "-DENABLE_PYTHON3=ON"
       system "make"
       system "make", "test"
       system "make", "install"
@@ -41,6 +39,6 @@ class Uhd < Formula
   end
 
   test do
-    assert_match version.to_s, shell_output("#{bin}/uhd_find_devices --help", 1).chomp
+    assert_match version.to_s, shell_output("#{bin}/uhd_config_info --version")
   end
 end

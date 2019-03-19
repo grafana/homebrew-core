@@ -1,14 +1,15 @@
 class Pioneer < Formula
   desc "Game of lonely space adventure"
   homepage "https://pioneerspacesim.net/"
-  url "https://github.com/pioneerspacesim/pioneer/archive/20171001.tar.gz"
-  sha256 "154118bd3dac2f9b8ea43a837bcb967abcc8c3a8ee5ab61d35183bae85e8b0db"
+  url "https://github.com/pioneerspacesim/pioneer/archive/20180203.tar.gz"
+  sha256 "19aa89e8ec0221b937b9279e0d4897b3016e0ce80858d03600d3e80cd7daa907"
   head "https://github.com/pioneerspacesim/pioneer.git"
 
   bottle do
-    sha256 "8a6ba36e5a1a04c72fee3ef5921762108a6a7be7ba7b31c9dade6faa220f8c78" => :high_sierra
-    sha256 "01e84d6dd7be3f2444df347ecfdf8bf34a02b7ac6627b7d18b2fe4e3b258f214" => :sierra
-    sha256 "76430af8d72959d5f2ae2224c85456d57e397028bd48181a1f1de0d62bf60748" => :el_capitan
+    sha256 "2166f735db89aa995b06055b23e94592a00a634d9791524ddd2560d5ebc4bad9" => :mojave
+    sha256 "fe7123f2a61de3bc5a367fbad1f1a61d554c59e3526e7d79e319fefb46d977d3" => :high_sierra
+    sha256 "24482bf17e5d4294e760a121e93949aa8c2bf6930629995f8693d23a549f13ca" => :sierra
+    sha256 "eb188ce5b4aff9025a664e4276f64fba3521b581eb1f13df610b83ae924ddf5d" => :el_capitan
   end
 
   depends_on "autoconf" => :build
@@ -16,14 +17,11 @@ class Pioneer < Formula
   depends_on "pkg-config" => :build
   depends_on "assimp"
   depends_on "freetype"
-  depends_on "sdl2"
-  depends_on "sdl2_image"
+  depends_on "libpng"
   depends_on "libsigc++"
   depends_on "libvorbis"
-  depends_on "libpng"
-  depends_on "lua"
-
-  needs :cxx11
+  depends_on "sdl2"
+  depends_on "sdl2_image"
 
   def install
     ENV.cxx11
@@ -33,8 +31,7 @@ class Pioneer < Formula
     system "./configure", "--disable-dependency-tracking",
                           "--disable-silent-rules",
                           "--prefix=#{prefix}",
-                          "--with-version=#{version}",
-                          "--with-external-liblua"
+                          "--with-version=#{version}"
     system "make", "install"
   end
 

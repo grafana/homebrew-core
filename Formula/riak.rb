@@ -1,8 +1,8 @@
 class Riak < Formula
   desc "Distributed database"
-  homepage "http://basho.com/products/riak-kv/"
+  homepage "https://riak.com/products/riak-kv/"
   url "https://github.com/basho/riak.git",
-      :tag => "riak-2.2.3",
+      :tag      => "riak-2.2.3",
       :revision => "d96b67eeb5f934c673ee8e5c75c00a3861f388aa"
 
   bottle do
@@ -12,7 +12,6 @@ class Riak < Formula
     sha256 "803da1ba13fca2ff1c5ed1d341c064218a03697d8114e40c325553a430920653" => :yosemite
   end
 
-  depends_on :macos => :mountain_lion
   depends_on :arch => :x86_64
   depends_on "erlang@17"
 
@@ -25,14 +24,14 @@ class Riak < Formula
   resource "hyper" do
     url "https://github.com/basho/hyper.git",
         :revision => "f6ed834cd8799623ec00faaedc9ef2a55876d5d8"
-  end
 
-  # Avoid build failure "type gb_tree/0 is deprecated and will be removed in OTP
-  # 18.0; use use gb_trees:tree/0 or preferably gb_trees:tree/2"
-  # Upstream PR from 4 Oct 2016 "namespaced types for erlang 17+"
-  resource "hyper-patch" do
-    url "https://github.com/basho/hyper/pull/6.patch?full_index=1"
-    sha256 "e70b9b281a8b75387b7213be8df066b89f3fdfa37f7a4786df1b572024072591"
+    # Avoid build failure "type gb_tree/0 is deprecated and will be removed in OTP
+    # 18.0; use use gb_trees:tree/0 or preferably gb_trees:tree/2"
+    # Upstream PR from 4 Oct 2016 "namespaced types for erlang 17+"
+    patch do
+      url "https://github.com/basho/hyper/pull/6.patch?full_index=1"
+      sha256 "e70b9b281a8b75387b7213be8df066b89f3fdfa37f7a4786df1b572024072591"
+    end
   end
 
   resource "solr" do
@@ -55,9 +54,7 @@ class Riak < Formula
       (buildpath/"deps/#{r}").install resource(r)
     end
 
-    buildpath.install resource("hyper-patch"), resource("solr")
-
-    system "patch", "-p1", "-i", buildpath/"6.patch", "-d", "deps/hyper"
+    buildpath.install resource("solr")
 
     # So that rebar uses the solr resource rather than trying to redownload it
     inreplace "deps/yokozuna/tools/grab-solr.sh",

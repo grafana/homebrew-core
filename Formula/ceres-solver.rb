@@ -1,19 +1,20 @@
 class CeresSolver < Formula
   desc "C++ library for large-scale optimization"
   homepage "http://ceres-solver.org/"
-  url "http://ceres-solver.org/ceres-solver-1.13.0.tar.gz"
-  sha256 "1df490a197634d3aab0a65687decd362912869c85a61090ff66f073c967a7dcd"
+  url "http://ceres-solver.org/ceres-solver-1.14.0.tar.gz"
+  sha256 "4744005fc3b902fed886ea418df70690caa8e2ff6b5a90f3dd88a3d291ef8e8e"
+  revision 4
   head "https://ceres-solver.googlesource.com/ceres-solver.git"
 
   bottle do
     cellar :any
-    sha256 "6b502c59b96b625ef764f347acf66d589b5c53c96a6b7cff980ddf0b5fefbd5b" => :high_sierra
-    sha256 "1c9a74db5edc2ae3e3e5af16ef0f71bd4c85256d228b15f17a87065504ff1a04" => :sierra
-    sha256 "cab73e79ec9fda737c2bbaa359e5230a6aa698ff96a78ec3e5cd064b1f38393e" => :el_capitan
-    sha256 "2586ed1c09a20180c32f4ff5bee7ab0114b6473791f5bfb440c611f0fb998dc5" => :yosemite
+    rebuild 1
+    sha256 "22d9bd11518a6b65a17b67938d7b50620627a688ccdd4e5f7d6b8d1fd1e4b6b1" => :mojave
+    sha256 "a52c961c30acd20982a89b13ee2d0d7a03950a559deba9393eed13eaaefdf2d3" => :high_sierra
+    sha256 "726c9034dca2514b2bce5d5545c028782b0c535c822ae376fb03a26c38820a8d" => :sierra
   end
 
-  depends_on "cmake" => :run
+  depends_on "cmake"
   depends_on "eigen"
   depends_on "gflags"
   depends_on "glog"
@@ -24,7 +25,10 @@ class CeresSolver < Formula
     system "cmake", ".", *std_cmake_args,
                     "-DBUILD_SHARED_LIBS=ON",
                     "-DEIGEN_INCLUDE_DIR=#{Formula["eigen"].opt_include}/eigen3",
-                    "-DMETIS_LIBRARY=#{Formula["metis"].opt_lib}/libmetis.dylib"
+                    "-DMETIS_LIBRARY=#{Formula["metis"].opt_lib}/libmetis.dylib",
+                    "-DGLOG_INCLUDE_DIR_HINTS=#{Formula["glog"].opt_include}",
+                    "-DGLOG_LIBRARY_DIR_HINTS=#{Formula["glog"].opt_lib}",
+                    "-DTBB=OFF"
     system "make"
     system "make", "install"
     pkgshare.install "examples", "data"
@@ -44,6 +48,6 @@ class CeresSolver < Formula
 
     system "cmake", "-DCeres_DIR=#{share}/Ceres", "."
     system "make"
-    assert_match "CONVERGENCE", shell_output("./helloworld", 0)
+    assert_match "CONVERGENCE", shell_output("./helloworld")
   end
 end

@@ -1,18 +1,19 @@
 class Libconfig < Formula
   desc "Configuration file processing library"
   homepage "https://hyperrealm.github.io/libconfig/"
-  url "https://github.com/hyperrealm/libconfig/archive/v1.7.tar.gz"
-  sha256 "6f7ce87ecfe11327ec7f9f3a016c5007286b327eee1adf5145ff70238b379304"
+  url "https://github.com/hyperrealm/libconfig/archive/v1.7.2.tar.gz"
+  sha256 "f67ac44099916ae260a6c9e290a90809e7d782d96cdd462cac656ebc5b685726"
   head "https://github.com/hyperrealm/libconfig.git"
 
   bottle do
-    sha256 "b9b5c4811c278a7ea7e193685a5b352e80121d28defb23715df4b66e98e33af2" => :high_sierra
-    sha256 "31ed172343eb35e862fe8e8eb1d4850845ea376b8857a1e44239ba8873e9e4e3" => :sierra
-    sha256 "ac4deedc89f0c4712ffde498f1eae572c34a5ef1b804a18a1d087fda0f5b43d9" => :el_capitan
+    sha256 "3c58e866a172c66ff5b212b6905109ac020f7506e3452e7afc2dbcc5c6822a93" => :mojave
+    sha256 "0f77666e9a1e8bd6290a70df039aa97cec52ac79485de268a589ee46e82f4ce3" => :high_sierra
+    sha256 "8370ecedcfd9a2709efcbf822f6dd1497b9d11efe5a109d5ec05b0f7f3e850d4" => :sierra
+    sha256 "a7b8640a4f169cf82eb6e9aa79e01b59ed1d2914f373abcd2602241b5a21c518" => :el_capitan
   end
 
-  depends_on "automake" => :build
   depends_on "autoconf" => :build
+  depends_on "automake" => :build
   depends_on "libtool" => :build
 
   def install

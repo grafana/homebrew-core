@@ -1,24 +1,22 @@
 class Libzip < Formula
   desc "C library for reading, creating, and modifying zip archives"
-  homepage "https://www.nih.at/libzip/"
-  url "https://www.nih.at/libzip/libzip-1.3.0.tar.xz"
-  sha256 "aa936efe34911be7acac2ab07fb5c8efa53ed9bb4d44ad1fe8bff19630e0d373"
+  homepage "https://libzip.org/"
+  url "https://libzip.org/download/libzip-1.5.1.tar.gz"
+  sha256 "47eaa45faa448c72bd6906e5a096846c469a185f293cafd8456abb165841b3f2"
 
   bottle do
-    cellar :any
-    sha256 "0688a0cf6f6f88fd4b7aa563057e261922888f58f267f0899034c683e1d526ad" => :high_sierra
-    sha256 "4851da6bbf50facbf02119cce0f3dfabd0947f44f95a1479652c4e79121e3670" => :sierra
-    sha256 "22ecf2b59e06347de384adf7b635dd3dd3d7b0ac07328bf652eb7a12e74ac674" => :el_capitan
-    sha256 "132e57785f7973dfd451c8f44794a93e38f9f2040c0779b9eff6ba5a1f81711d" => :yosemite
+    sha256 "c3527d9364aaca72f5bbd0486962639b421efcbd7ba7209b8a14a7900e52607b" => :mojave
+    sha256 "4ffb9ac04f1fc2c98e5ba902999ed6f4bc5d7d9133d22fc183fd8fa13b7fd9be" => :high_sierra
+    sha256 "a6d0dbd2370c97597948976414a48f544dc8a8e3e674e7faacef1bdc942d3161" => :sierra
+    sha256 "312f87c8f28237b69080b511d696ba72027e774655eacdd159159001c7941c0d" => :el_capitan
   end
+
+  depends_on "cmake" => :build
 
   conflicts_with "libtcod", :because => "both install `zip.h` header"
 
   def install
-    system "./configure", "--prefix=#{prefix}",
-                          "--mandir=#{man}",
-                          "CXX=#{ENV.cxx}",
-                          "CXXFLAGS=#{ENV.cflags}"
+    system "cmake", ".", *std_cmake_args
     system "make", "install"
   end
 

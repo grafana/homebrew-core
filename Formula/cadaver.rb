@@ -1,22 +1,23 @@
 class Cadaver < Formula
   desc "Command-line client for DAV"
-  homepage "http://www.webdav.org/cadaver/"
-  url "http://www.webdav.org/cadaver/cadaver-0.23.3.tar.gz"
+  homepage "https://directory.fsf.org/wiki/Cadaver"
+  url "https://mirrorservice.org/sites/download.salixos.org/i486/extra-14.2/source/network/cadaver/cadaver-0.23.3.tar.gz"
+  mirror "https://src.fedoraproject.org/repo/pkgs/cadaver/cadaver-0.23.3.tar.gz/502ecd601e467f8b16056d2acca39a6f/cadaver-0.23.3.tar.gz"
+  mirror "https://web.archive.org/web/20170629224036/www.webdav.org/cadaver/cadaver-0.23.3.tar.gz"
   sha256 "fd4ce68a3230ba459a92bcb747fc6afa91e46d803c1d5ffe964b661793c13fca"
-  revision 2
+  revision 3
 
   bottle do
-    sha256 "25a0e28cd5861306d85971db60a3f0e3141cf8506aa8def86fbdb5b2f5bc073a" => :high_sierra
-    sha256 "a67a574144407776beb82dbe6ddafc74f426e2c159e144d1bddb9b30c0719892" => :sierra
-    sha256 "33ea3e322fb91ce080693dfc11fc631eb4103a20c8b3b5eaa06dcc02d61a44bf" => :el_capitan
-    sha256 "cbfcae8d96f1c55f58220c319cf75fb953abfc765c3eb76d3dfb3973fff8d343" => :yosemite
+    sha256 "28600e03c84fd8ae48660f43721fd441024da60d77424af8240340261b8234c7" => :mojave
+    sha256 "a45c291f627fa518cea46c157eb6db1ba110a9c5acc37f3d4c2f1704e1bffde0" => :high_sierra
+    sha256 "dfe6afc42e2949f64ae2985a02ec68f37e70908b8095aaf25e4fd553af3fa984" => :sierra
   end
 
   depends_on "pkg-config" => :build
   depends_on "gettext"
-  depends_on "readline"
   depends_on "neon"
   depends_on "openssl"
+  depends_on "readline"
 
   # enable build with the latest neon
   patch :DATA
@@ -28,6 +29,10 @@ class Cadaver < Formula
                           "--with-neon=#{Formula["neon"].opt_prefix}"
     system "make", "-C", "lib/intl"
     system "make", "install"
+  end
+
+  test do
+    assert_match "cadaver #{version}", shell_output("#{bin}/cadaver -V", 255)
   end
 end
 

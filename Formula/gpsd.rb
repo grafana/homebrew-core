@@ -6,30 +6,30 @@ class Gpsd < Formula
 
   bottle do
     cellar :any
-    sha256 "89237ff11349f301e4a41a9f1d0ad7948f9a257d91a95be6ec6b4c9e26187f72" => :high_sierra
-    sha256 "1a7912b32f3cc2d59d5d7b615ec3e8e2d14399d0256f2768b91be029f64e2438" => :sierra
-    sha256 "6fb615b0aba85f6692cf6f8ac529ee8a2777d300bba6a9d8ff8abe90784d0fa5" => :el_capitan
+    rebuild 1
+    sha256 "000a6985fc4a8f295c2729a04cf0662f68370401afb573c62b051a1b2495da7f" => :mojave
+    sha256 "8259d06ad29227d59f70b9c4d84d20c764486fd7e6217bbf023fd003d3afe897" => :high_sierra
+    sha256 "a1840e937a0abdcd847abb9a3c9d735650fcb77088c97189c72abb2470dacdad" => :sierra
   end
 
   depends_on "scons" => :build
-  depends_on "libusb" => :optional
 
   def install
-    scons "chrpath=False", "python=False", "strip=False", "prefix=#{prefix}/"
-    scons "install"
+    system "scons", "chrpath=False", "python=False", "strip=False", "prefix=#{prefix}/"
+    system "scons", "install"
   end
 
-  def caveats; <<-EOS.undent
+  def caveats; <<~EOS
     gpsd does not automatically detect GPS device addresses. Once started, you
     need to force it to connect to your GPS:
 
       GPSD_SOCKET="#{var}/gpsd.sock" #{sbin}/gpsdctl add /dev/tty.usbserial-XYZ
-    EOS
+  EOS
   end
 
   plist_options :manual => "#{HOMEBREW_PREFIX}/sbin/gpsd -N -F #{HOMEBREW_PREFIX}/var/gpsd.sock /dev/tty.usbserial-XYZ"
 
-  def plist; <<-EOS.undent
+  def plist; <<~EOS
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
     <plist version="1.0">
@@ -55,7 +55,7 @@ class Gpsd < Formula
       <string>#{var}/log/gpsd.log</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

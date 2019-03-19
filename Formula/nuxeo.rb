@@ -1,19 +1,17 @@
 class Nuxeo < Formula
   desc "Enterprise Content Management"
   homepage "https://nuxeo.github.io/"
-  url "https://cdn.nuxeo.com/nuxeo-9.2/nuxeo-server-9.2-tomcat.zip"
-  sha256 "714fdecf96dc19d7587ee6ff57f8d563661327a367a90216b0c7af19b5ea227e"
+  url "https://cdn.nuxeo.com/nuxeo-10.10/nuxeo-server-10.10-tomcat.zip"
+  sha256 "93a923a6e654d216a57fc91767a428e8c22cf5a879f264474f8976016e34ca6f"
 
   bottle :unneeded
 
-  depends_on "poppler" => :recommended
-  depends_on "pdftohtml" => :optional
-  depends_on "imagemagick"
-  depends_on "ghostscript"
-  depends_on "ufraw"
-  depends_on "libwpd"
   depends_on "exiftool"
-  depends_on "ffmpeg" => :optional
+  depends_on "ghostscript"
+  depends_on "imagemagick"
+  depends_on "libwpd"
+  depends_on "poppler"
+  depends_on "ufraw"
 
   def install
     libexec.install Dir["#{buildpath}/*"]
@@ -42,7 +40,7 @@ class Nuxeo < Formula
     You need to edit #{etc}/nuxeo.conf file to configure manually the server.
     Also, in case of upgrade, run 'nuxeoctl mp-upgrade' to ensure all
     downloaded addons are up to date.
-    EOS
+  EOS
   end
 
   test do

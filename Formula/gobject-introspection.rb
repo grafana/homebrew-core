@@ -1,19 +1,20 @@
 class GobjectIntrospection < Formula
   desc "Generate introspection data for GObject libraries"
-  homepage "https://live.gnome.org/GObjectIntrospection"
-  url "https://download.gnome.org/sources/gobject-introspection/1.54/gobject-introspection-1.54.1.tar.xz"
-  sha256 "b88ded5e5f064ab58a93aadecd6d58db2ec9d970648534c63807d4f9a7bb877e"
+  homepage "https://wiki.gnome.org/Projects/GObjectIntrospection"
+  url "https://download.gnome.org/sources/gobject-introspection/1.60/gobject-introspection-1.60.0.tar.xz"
+  sha256 "9efe4090cb59717126701e97062e784773f800b8d47af14c4d278ebf194df35d"
 
   bottle do
-    sha256 "af8872721600cf3b5c033bad125fcef08a59e3ddfde4093fe6bc6bce5331e004" => :high_sierra
-    sha256 "4f07bc2e12b9015a670a999744d8201c575ea9d49421ec617507aa01407d841e" => :sierra
-    sha256 "88736baecfbab3cf709cb6b09de85f9e4a4382ac1d1c59f33af22c522dab81a4" => :el_capitan
+    sha256 "ea7bc2f4589f6aa40d1063428e7d4e85bb6108c478b1df403eb2a6d2b6269858" => :mojave
+    sha256 "e1ec2088d85415f11e4ddea309f41c51cb6cf2b343f38b039d05d81c4e8cc8cc" => :high_sierra
+    sha256 "5bfcef20b0f999c3428d86e93ae30e7acb954bafb8a0f025e27831144cc1a231" => :sierra
   end
 
-  depends_on "pkg-config" => :run
-  depends_on "glib"
   depends_on "cairo"
+  depends_on "glib"
   depends_on "libffi"
+  depends_on "pkg-config"
+  depends_on "python"
 
   resource "tutorial" do
     url "https://gist.github.com/7a0023656ccfe309337a.git",
@@ -27,7 +28,9 @@ class GobjectIntrospection < Formula
       s.change_make_var! "GOBJECT_INTROSPECTION_LIBDIR", "#{HOMEBREW_PREFIX}/lib"
     end
 
-    system "./configure", "--disable-dependency-tracking", "--prefix=#{prefix}", "PYTHON=python"
+    system "./configure", "--disable-dependency-tracking",
+                          "--prefix=#{prefix}",
+                          "--with-python=#{Formula["python"].opt_bin}/python3"
     system "make"
     system "make", "install"
   end

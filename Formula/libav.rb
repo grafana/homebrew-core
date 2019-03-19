@@ -1,61 +1,35 @@
 class Libav < Formula
   desc "Audio and video processing tools"
   homepage "https://libav.org/"
-  url "https://libav.org/releases/libav-12.2.tar.xz"
-  sha256 "7b5620261fb3e372bf3992736862f598967988502f7804c39c5246b62348c53b"
-
+  url "https://libav.org/releases/libav-12.3.tar.xz"
+  sha256 "6893cdbd7bc4b62f5d8fd6593c8e0a62babb53e323fbc7124db3658d04ab443b"
+  revision 2
   head "https://git.libav.org/libav.git"
 
   bottle do
-    sha256 "f5e07daaf273dfd195589bcad8c5b5ac76a2d2a5303f5049982d8571229e5588" => :high_sierra
-    sha256 "eebcb1c507573e727c3c0fdaf71c7eacd3e812dd2291d9d810e351ba51d44a3d" => :sierra
-    sha256 "2e1471577657408ca11733bab5324f6dcd8ee62db06fa8a0e1d28dc05498981b" => :el_capitan
+    cellar :any
+    rebuild 1
+    sha256 "7cdb84c6fc90873040d71b19dbe1eb618d0f8dcec9a886500f983b7faaa163d0" => :mojave
+    sha256 "a366d17a48d20315e20dc391357f4936c9f5ec80c3dba94da417b64d8d7e7d0d" => :high_sierra
+    sha256 "7625aeaf88043a02112a90c26a0813fc3e3104aa29862fddb2e52caadf97046b" => :sierra
   end
 
-  option "without-faac", "Disable AAC encoder via faac"
-  option "without-lame", "Disable MP3 encoder via libmp3lame"
-  option "without-libvorbis", "Disable Vorbis encoding via libvorbis"
-  option "without-libvpx", "Disable VP8 de/encoding via libvpx"
-  option "without-x264", "Disable H.264 encoder via x264"
-  option "without-xvid", "Disable Xvid MPEG-4 video encoder via xvid"
-
-  option "with-opencore-amr", "Enable AMR-NB de/encoding and AMR-WB decoding " \
-    "via libopencore-amrnb and libopencore-amrwb"
-  option "with-openssl", "Enable SSL support"
-  option "with-rtmpdump", "Enable RTMP protocol support"
-  option "with-schroedinger", "Enable Dirac video format"
-  option "with-sdl", "Enable avplay"
-  option "with-speex", "Enable Speex de/encoding via libspeex"
-  option "with-theora", "Enable Theora encoding via libtheora"
-  option "with-libvo-aacenc", "Enable VisualOn AAC encoder"
-
   depends_on "pkg-config" => :build
+  # manpages won't be built without texi2html
+  depends_on "texi2html" => :build
   depends_on "yasm" => :build
 
-  # manpages won't be built without texi2html
-  depends_on "texi2html" => :build if MacOS.version >= :mountain_lion
-
-  depends_on "faac" => :recommended
-  depends_on "fdk-aac" => :recommended
-  depends_on "freetype" => :recommended
-  depends_on "lame" => :recommended
-  depends_on "libvorbis" => :recommended
-  depends_on "libvpx" => :recommended
-  depends_on "opus" => :recommended
-  depends_on "x264" => :recommended
-  depends_on "xvid" => :recommended
-
-  depends_on "fontconfig" => :optional
-  depends_on "frei0r" => :optional
-  depends_on "gnutls" => :optional
-  depends_on "libvo-aacenc" => :optional
-  depends_on "opencore-amr" => :optional
-  depends_on "openssl" => :optional
-  depends_on "rtmpdump" => :optional
-  depends_on "schroedinger" => :optional
-  depends_on "sdl" => :optional
-  depends_on "speex" => :optional
-  depends_on "theora" => :optional
+  depends_on "faac"
+  depends_on "fdk-aac"
+  depends_on "freetype"
+  depends_on "lame"
+  depends_on "libvorbis"
+  depends_on "libvpx"
+  depends_on "opus"
+  depends_on "sdl"
+  depends_on "theora"
+  depends_on "x264"
+  depends_on "xvid"
 
   # https://bugzilla.libav.org/show_bug.cgi?id=1033
   patch do
@@ -63,52 +37,48 @@ class Libav < Formula
     sha256 "986d748ba2c7c83319a59d76fbb0dca22dcd51f0252b3d1f3b80dbda2cf79742"
   end
 
+  # Upstream patch for x264 version >= 153, should be included in libav > 12.3
+  patch do
+    url "https://github.com/libav/libav/commit/c6558e8840fbb2386bf8742e4d68dd6e067d262e.patch?full_index=1"
+    sha256 "0fcfe69274cccbca33825414f526300a1fbbf0c464ac32577e1cc137b8618820"
+  end
+
+  # Upstream patch to fix building with fdk-aac 2
+  patch do
+    url "https://github.com/libav/libav/commit/141c960e21d2860e354f9b90df136184dd00a9a8.patch?full_index=1"
+    sha256 "7081183fed875f71d53cce1e71f6b58fb5d5eee9f30462d35f9367ec2210507b"
+  end
+
   def install
-    args = [
-      "--disable-debug",
-      "--disable-shared",
-      "--disable-indev=jack",
-      "--prefix=#{prefix}",
-      "--enable-gpl",
-      "--enable-nonfree",
-      "--enable-version3",
-      "--enable-vda",
-      "--cc=#{ENV.cc}",
-      "--host-cflags=#{ENV.cflags}",
-      "--host-ldflags=#{ENV.ldflags}",
+    args = %W[
+      --disable-debug
+      --disable-shared
+      --disable-indev=jack
+      --prefix=#{prefix}
+      --cc=#{ENV.cc}
+      --host-cflags=#{ENV.cflags}
+      --host-ldflags=#{ENV.ldflags}
+      --enable-gpl
+      --enable-libfaac
+      --enable-libfdk-aac
+      --enable-libfreetype
+      --enable-libmp3lame
+      --enable-libopus
+      --enable-libvorbis
+      --enable-libvpx
+      --enable-libx264
+      --enable-libxvid
+      --enable-nonfree
+      --enable-vda
+      --enable-version3
+      --enable-libtheora
     ]
 
-    args << "--enable-frei0r" if build.with? "frei0r"
-    args << "--enable-gnutls" if build.with? "gnutls"
-    args << "--enable-libfaac" if build.with? "faac"
-    args << "--enable-libfdk-aac" if build.with? "fdk-aac"
-    args << "--enable-libfontconfig" if build.with? "fontconfig"
-    args << "--enable-libfreetype" if build.with? "freetype"
-    args << "--enable-libmp3lame" if build.with? "lame"
-    args << "--enable-libopencore-amrnb" if build.with? "opencore-amr"
-    args << "--enable-libopencore-amrwb" if build.with? "opencore-amr"
-    args << "--enable-libopus" if build.with? "opus"
-    args << "--enable-librtmp" if build.with? "rtmpdump"
-    args << "--enable-libschroedinger" if build.with? "schroedinger"
-    args << "--enable-libspeex" if build.with? "speex"
-    args << "--enable-libtheora" if build.with? "theora"
-    args << "--enable-libvo-aacenc" if build.with? "libvo-aacenc"
-    args << "--enable-libvorbis" if build.with? "libvorbis"
-    args << "--enable-libvpx" if build.with? "libvpx"
-    args << "--enable-libx264" if build.with? "x264"
-    args << "--enable-libxvid" if build.with? "xvid"
-    args << "--enable-openssl" if build.with? "openssl"
-
     system "./configure", *args
-
     system "make"
 
-    bin.install "avconv", "avprobe"
-    man1.install "doc/avconv.1", "doc/avprobe.1"
-    if build.with? "sdl"
-      bin.install "avplay"
-      man1.install "doc/avplay.1"
-    end
+    bin.install "avconv", "avprobe", "avplay"
+    man1.install "doc/avconv.1", "doc/avprobe.1", "doc/avplay.1"
   end
 
   test do

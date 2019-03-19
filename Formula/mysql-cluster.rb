@@ -5,37 +5,22 @@ class MysqlCluster < Formula
   sha256 "c40551603a9aacc4db96416be7f15700af6039a2247b83c2dce637c793cb10d8"
 
   bottle do
+    sha256 "2cebf38ab91fdd6caf24a7f30effea193d4d5a0596adf78172f5971dce8f3cec" => :mojave
     sha256 "a45135631bc0a4af03386ff3d812b1375dcd6f1cfc609b19bbdcf67dd676396a" => :high_sierra
     sha256 "91bf3e3613e86df1f8fec9785d236a9ecffe72bc0e8fbe81e1c5961f77052f48" => :sierra
     sha256 "84a754a7f71e34ee076774027930bbd7667961e2ecf82724a56d3b73b5eeac76" => :el_capitan
     sha256 "29692861b897e6b013d01396bd0cea9541b109a7d691007ddb67a64de91d0a44" => :yosemite
   end
 
-  option "with-test", "Build with unit tests"
-  option "with-embedded", "Build the embedded server"
-  option "with-libedit", "Compile with editline wrapper instead of readline"
-  option "with-archive-storage-engine", "Compile with the ARCHIVE storage engine enabled"
-  option "with-blackhole-storage-engine", "Compile with the BLACKHOLE storage engine enabled"
-  option "with-local-infile", "Build with local infile loading support"
-  option "with-debug", "Build with debug support"
-
-  deprecated_option "with-tests" => "with-test"
-  deprecated_option "enable-local-infile" => "with-local-infile"
-  deprecated_option "enable-debug" => "with-debug"
-
-  depends_on :java => "1.7+"
   depends_on "cmake" => :build
-  depends_on "pidof" unless MacOS.version >= :mountain_lion
+  depends_on :java => "1.8"
   depends_on "openssl"
 
   conflicts_with "memcached", :because => "both install `bin/memcached`"
   conflicts_with "mysql", "mariadb", "percona-server",
     :because => "mysql, mariadb, and percona install the same binaries."
-
-  fails_with :clang do
-    build 500
-    cause "https://article.gmane.org/gmane.comp.db.mysql.cluster/2085"
-  end
+  conflicts_with "mysql-connector-c",
+    :because => "both install `bin/my_print_defaults`"
 
   resource "boost" do
     url "https://downloads.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.bz2"
@@ -47,7 +32,7 @@ class MysqlCluster < Formula
     (var/"mysql-cluster").mkpath
 
     # dyld: lazy symbol binding failed: Symbol not found: _clock_gettime
-    if MacOS.version == "10.11" && MacOS::Xcode.installed? && MacOS::Xcode.version >= "8.0"
+    if MacOS.version == "10.11" && MacOS::Xcode.version >= "8.0"
       inreplace "configure.cmake", "(clock_gettime", "(everything_is_terrible"
     end
 
@@ -62,38 +47,15 @@ class MysqlCluster < Formula
             "-DWITH_SSL=yes",
             "-DDEFAULT_CHARSET=utf8",
             "-DDEFAULT_COLLATION=utf8_general_ci",
-            "-DSYSCONFDIR=#{etc}"]
+            "-DSYSCONFDIR=#{etc}",
+            "-DWITH_UNIT_TESTS=OFF",
+            "-DWITH_READLINE=yes"]
 
     # mysql-cluster >5.7.x mandates Boost as a requirement to build & has a
     # strict version check in place to ensure it only builds against expected
     # release.
     (buildpath/"boost_1_59_0").install resource("boost")
     args << "-DWITH_BOOST=#{buildpath}/boost_1_59_0"
-
-    # To enable unit testing at build, we need to download the unit testing suite
-    if build.with? "test"
-      args << "-DENABLE_DOWNLOADS=ON"
-    else
-      args << "-DWITH_UNIT_TESTS=OFF"
-    end
-
-    # Build the embedded server
-    args << "-DWITH_EMBEDDED_SERVER=ON" if build.with? "embedded"
-
-    # Compile with readline unless libedit is explicitly chosen
-    args << "-DWITH_READLINE=yes" if build.without? "libedit"
-
-    # Compile with ARCHIVE engine enabled if chosen
-    args << "-DWITH_ARCHIVE_STORAGE_ENGINE=1" if build.with? "archive-storage-engine"
-
-    # Compile with BLACKHOLE engine enabled if chosen
-    args << "-DWITH_BLACKHOLE_STORAGE_ENGINE=1" if build.with? "blackhole-storage-engine"
-
-    # Build with local infile loading support
-    args << "-DENABLED_LOCAL_INFILE=1" if build.with? "local-infile"
-
-    # Build with debug support
-    args << "-DWITH_DEBUG=1" if build.with? "debug"
 
     system "cmake", *args
     system "make"
@@ -169,7 +131,7 @@ class MysqlCluster < Formula
 
       mysqladmin -u root -p shutdown
       ndb_mgm -e shutdown
-    EOS
+  EOS
   end
 
   def my_cnf; <<~EOS
@@ -180,7 +142,7 @@ class MysqlCluster < Formula
     port=5000
     # Only allow connections from localhost
     bind-address = 127.0.0.1
-    EOS
+  EOS
   end
 
   def config_ini; <<~EOS
@@ -203,7 +165,7 @@ class MysqlCluster < Formula
 
     [mysqld]
     NodeId=50
-    EOS
+  EOS
   end
 
   # Override Formula#plist_name
@@ -238,7 +200,7 @@ class MysqlCluster < Formula
       <string>#{var}</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   def ndb_mgmd_startup_plist(name); <<~EOS
@@ -267,7 +229,7 @@ class MysqlCluster < Formula
       <string>#{var}/mysql-cluster/#{name}.log</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   def ndbd_startup_plist(name); <<~EOS
@@ -294,7 +256,7 @@ class MysqlCluster < Formula
       <string>#{var}/mysql-cluster/#{name}.log</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

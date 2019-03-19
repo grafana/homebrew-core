@@ -1,24 +1,32 @@
 class Doitlive < Formula
   desc "Replay stored shell commands for live presentations"
   homepage "https://doitlive.readthedocs.io/en/latest/"
-  url "https://files.pythonhosted.org/packages/b1/5d/4a5784409ff94900898ff671df2a32bf19469114eb8006286fda3fc7e8d5/doitlive-3.0.3.tar.gz"
-  sha256 "d219d4d198acd74fab066e466b2c402a491afdddbeeb40d51b2b9781143321a6"
+  url "https://files.pythonhosted.org/packages/2b/8d/e1cabf1075b44ab3708314b2abdfec660116cd8d5680ad5f9c88709eec7a/doitlive-4.2.1.tar.gz"
+  sha256 "46149d44c3327010f35f7957813c3f7be6c7048f609b57d5a5b94100d1c9ce69"
+  revision 3
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "eff7506bb16d20d86cbf59f2148eb2b462dcbbeacb882b21aa4dae9823bdb16d" => :high_sierra
-    sha256 "20330ac92368bca03cc9b13732599ae1e81de2120aff978a1f5d1045caea91b6" => :sierra
-    sha256 "574b15c2cbdbaaefe888871397fc3954601f8a1992f4321921e93965bebaad2a" => :el_capitan
+    sha256 "ce2dfad4d9a18daa5144de9b9463fec2ba258971f55b4bc019702f00886beab1" => :mojave
+    sha256 "a1972aab087a2ce19517b1d2f359af56f5e8ff28b9febba56bfa6c3843c070aa" => :high_sierra
+    sha256 "aa7a2349ebf41826a3fc89ad663e3586a94c4691b734d3b56510c24290337014" => :sierra
   end
 
-  depends_on :python if MacOS.version <= :snow_leopard
+  depends_on "python"
 
   def install
-    ENV.prepend_create_path "PYTHONPATH", libexec+"lib/python2.7/site-packages"
-    system "python", "setup.py", "install", "--prefix=#{libexec}"
+    xy = Language::Python.major_minor_version "python3"
+    ENV.prepend_create_path "PYTHONPATH", libexec/"lib/python#{xy}/site-packages"
+    system "python3", "setup.py", "install", "--prefix=#{libexec}"
 
     bin.install Dir[libexec/"bin/*"]
-    bin.env_script_all_files(libexec+"bin", :PYTHONPATH => ENV["PYTHONPATH"])
+    bin.env_script_all_files(libexec/"bin", :PYTHONPATH => ENV["PYTHONPATH"])
+
+    output = Utils.popen_read("SHELL=bash #{libexec}/bin/doitlive completion")
+    (bash_completion/"doitlive").write output
+
+    output = Utils.popen_read("SHELL=zsh #{libexec}/bin/doitlive completion")
+    (zsh_completion/"_doitlive").write output
   end
 
   test do

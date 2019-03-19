@@ -1,19 +1,19 @@
 class CucumberCpp < Formula
   desc "Support for writing Cucumber step definitions in C++"
   homepage "https://cucumber.io"
-  url "https://github.com/cucumber/cucumber-cpp/archive/v0.4.tar.gz"
-  sha256 "57391dfade3639e5c219463cecae2ee066c620aa29fbb89e834a7067f9b8e0c8"
-  revision 3
+  url "https://github.com/cucumber/cucumber-cpp/archive/v0.5.tar.gz"
+  sha256 "9e1b5546187290b265e43f47f67d4ce7bf817ae86ee2bc5fb338115b533f8438"
+  revision 1
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "75027c787492808d86f1c0855f4f46e8c4fe6fe50bde934877b894ccd8192a73" => :high_sierra
-    sha256 "f6bb37716c95ccf157e934037fe3d8a8bcb5757d85ebbdfc7c3e2b057f2bac43" => :sierra
-    sha256 "d06585a0d493796e50c66ff38d794391cab7d66c6eb93c42cc6e2467f321767e" => :el_capitan
-    sha256 "bd1a3eff22dffabfaf55e17c7b32e9116068f253a051eeca52840eb4d747d555" => :yosemite
+    sha256 "827eac837946e4fc99ca98ee2525db95adbc24451e4a413212965ad154ce57ee" => :mojave
+    sha256 "21a25abb3df833d589d2ca423ac2cd4f29cb26c7022a9c1411469082e9e387ff" => :high_sierra
+    sha256 "ce44809b64223f96c9af2d7b36f2f7b2715801b2538265af801e87f413fc7546" => :sierra
   end
 
   depends_on "cmake" => :build
+  depends_on "ruby" => :test if MacOS.version <= :sierra
   depends_on "boost"
 
   def install
@@ -24,14 +24,13 @@ class CucumberCpp < Formula
     args << "-DCUKE_DISABLE_BOOST_TEST=on"
     system "cmake", ".", *args
     system "cmake", "--build", "."
-    include.install "include/cucumber-cpp"
-    lib.install Dir["src/*.a"]
+    system "make", "install"
   end
 
   test do
     ENV["GEM_HOME"] = testpath
     ENV["BUNDLE_PATH"] = testpath
-    system "gem", "install", "cucumber"
+    system "gem", "install", "cucumber", "-v", "3.0.0"
 
     (testpath/"features/test.feature").write <<~EOS
       Feature: Test
@@ -56,7 +55,7 @@ class CucumberCpp < Formula
     system ENV.cxx, "test.cpp", "-o", "test", "-I#{include}", "-L#{lib}",
            "-lcucumber-cpp", "-I#{Formula["boost"].opt_include}",
            "-L#{Formula["boost"].opt_lib}", "-lboost_regex", "-lboost_system",
-           "-lboost_program_options", "-lboost_filesystem"
+           "-lboost_program_options", "-lboost_filesystem", "-lboost_chrono"
     begin
       pid = fork { exec "./test" }
       expected = <<~EOS

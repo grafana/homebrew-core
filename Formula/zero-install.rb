@@ -1,26 +1,23 @@
 class ZeroInstall < Formula
   desc "Zero Install is a decentralised software installation system"
-  homepage "http://0install.net/"
-  url "https://github.com/0install/0install/archive/v2.12-1.tar.gz"
-  version "2.12-1"
-  sha256 "317ac6ac680d021cb475962b7f6c2bcee9c35ce7cf04ae00d72bba8113f13559"
-  revision 1
+  homepage "https://0install.net/"
+  url "https://downloads.sourceforge.net/project/zero-install/0install/2.13/0install-2.13.tar.bz2"
+  sha256 "10726e05ac262c7c5dd1ae109deddf9aa61a146db8fc75c997dd4efc3a4d35ca"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "d9e36284d013ef7da8b42ff9c2552433518e527d77c041a9db22aebc49d3b078" => :high_sierra
-    sha256 "bf4bb4e75194ac7f85969298f592fa460c459fe5363aaca290c16055cbb6be91" => :sierra
-    sha256 "fc20a07f9e2f81feeeb0b755838b5e6f327206f9a95c00f13b7fcea851c00199" => :el_capitan
-    sha256 "173371c177694ff72038f504c81bde55777960d14678bf1d0b942487aff444ef" => :yosemite
+    sha256 "12d16e6e7c193b0525bf783a931e178a43cb2357a6821de8628d5b1945e5b8c0" => :mojave
+    sha256 "29434cfb80b552cb133e47b6a0a8e4d9929656de096c6fb383ab53dae9d6af5a" => :high_sierra
+    sha256 "5e6a18d83dc1503a71545506b25de4b0c97efbdf0a4ce6632a30369bc96e0cc2" => :sierra
+    sha256 "0fa494c5e2852f8ebcadadc9c441302145444da6f580efce516263f9c1b33e4f" => :el_capitan
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "camlp4" => :build
   depends_on "ocaml" => :build
   depends_on "ocamlbuild" => :build
   depends_on "opam" => :build
-  depends_on "camlp4" => :build
-  depends_on :gpg => :run
-  depends_on "gtk+" => :optional
+  depends_on "pkg-config" => :build
+  depends_on "gnupg"
 
   def install
     ENV["OCAMLPARAM"] = "safe-string=0,_" # OCaml 4.06.0 compat
@@ -30,13 +27,27 @@ class ZeroInstall < Formula
     ENV["OPAMROOT"] = opamroot
     ENV["OPAMYES"] = "1"
     system "opam", "init", "--no-setup"
-    modules = %w[yojson xmlm ounit react ppx_tools lwt<3 extlib ocurl sha]
-    modules << "lablgtk" if build.with? "gtk+"
+    modules = %w[
+      cppo
+      yojson
+      xmlm
+      ounit
+      lwt_react
+      ocurl
+      obus
+      sha
+      cppo_ocamlbuild
+    ]
     system "opam", "config", "exec", "opam", "install", *modules
 
-    system "opam", "config", "exec", "make"
-    inreplace "dist/install.sh", '"/usr/local"', prefix
-    inreplace "dist/install.sh", '"${PREFIX}/man"', man
+    # mkdir: <buildpath>/build: File exists.
+    # https://github.com/0install/0install/issues/87
+    ENV.deparallelize { system "opam", "config", "exec", "make" }
+
+    inreplace "dist/install.sh" do |s|
+      s.gsub! '"/usr/local"', prefix
+      s.gsub! '"${PREFIX}/man"', man
+    end
     system "make", "install"
   end
 

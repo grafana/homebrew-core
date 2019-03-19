@@ -1,25 +1,26 @@
 class GitFtp < Formula
   desc "Git-powered FTP client"
-  homepage "https://git-ftp.github.io/git-ftp"
-  url "https://github.com/git-ftp/git-ftp/archive/1.4.0.tar.gz"
-  sha256 "080e9385a9470d70a5a2a569c6e7db814902ffed873a77bec9d0084bcbc3e054"
-  revision 2
+  homepage "https://git-ftp.github.io/"
+  url "https://github.com/git-ftp/git-ftp/archive/1.5.1.tar.gz"
+  sha256 "8cca25e1f718b987ea22ec05c7d72522f21cacedd00a8a0e827f87cd68e101f0"
+  revision 3
   head "https://github.com/git-ftp/git-ftp.git", :branch => "develop"
 
   bottle do
     cellar :any
-    sha256 "fa0d16d4139471f5a1351aea7a6bf800217577e22d2e473ce3cb5808c9c41840" => :high_sierra
-    sha256 "fe60f7ee5a11a90af9bb5535f4c7c264366084df7d5de42c5107e5f1b5277329" => :sierra
-    sha256 "01af63718ea283e7bf5bf3b951bad6d2739e71441f7b58bb80918be99a25dcf3" => :el_capitan
+    rebuild 1
+    sha256 "05d8eaa07ce02ca49b84b11452e0532e75ce32d7b8925ab25e942dedf22ca417" => :mojave
+    sha256 "dec17745a52217c32716095cae029e9bfdc33767f05244d6376c1e31a0e3206f" => :high_sierra
+    sha256 "68a9a026483d20a5dd9bf9e17200e4e9b91fdf1349618217fb43ee59648d5be6" => :sierra
   end
 
   depends_on "pandoc" => :build
   depends_on "libssh2"
 
   resource "curl" do
-    url "https://curl.haxx.se/download/curl-7.56.1.tar.bz2"
-    mirror "http://curl.askapache.com/download/curl-7.56.1.tar.bz2"
-    sha256 "2594670367875e7d87b0f129b5e4690150780884d90244ba0fe3e74a778b5f90"
+    url "https://curl.haxx.se/download/curl-7.62.0.tar.bz2"
+    mirror "https://curl.askapache.com/download/curl-7.62.0.tar.bz2"
+    sha256 "7802c54076500be500b171fde786258579d60547a3a35b8c5a23d8c88e8f9620"
   end
 
   def install
@@ -28,14 +29,15 @@ class GitFtp < Formula
                             "--disable-dependency-tracking",
                             "--disable-silent-rules",
                             "--prefix=#{libexec}",
+                            "--disable-ares",
                             "--with-darwinssl",
+                            "--with-libssh2",
+                            "--without-brotli",
                             "--without-ca-bundle",
                             "--without-ca-path",
-                            "--with-libssh2",
-                            "--without-libmetalink",
                             "--without-gssapi",
-                            "--without-librtmp",
-                            "--disable-ares"
+                            "--without-libmetalink",
+                            "--without-librtmp"
       system "make", "install"
     end
 

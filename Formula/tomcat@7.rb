@@ -1,21 +1,15 @@
 class TomcatAT7 < Formula
   desc "Implementation of Java Servlet and JavaServer Pages"
   homepage "https://tomcat.apache.org/"
-  url "https://www.apache.org/dyn/closer.cgi?path=tomcat/tomcat-7/v7.0.82/bin/apache-tomcat-7.0.82.tar.gz"
-  sha256 "2f19ca3fd578b8d04e72a7fd20b43beddbcece2c49eb3472265465506261676d"
+  url "https://www.apache.org/dyn/closer.cgi?path=tomcat/tomcat-7/v7.0.93/bin/apache-tomcat-7.0.93.tar.gz"
+  mirror "https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.93/bin/apache-tomcat-7.0.93.tar.gz"
+  sha256 "72026b62f9bf8f83413b3e1275646e4cc5e6fc559fce4c5637557c1d9a47154c"
 
   bottle :unneeded
 
   keg_only :versioned_formula
 
-  option "with-fulldocs", "Install full documentation locally"
-
   depends_on :java
-
-  resource "fulldocs" do
-    url "https://www.apache.org/dyn/closer.cgi?path=/tomcat/tomcat-7/v7.0.82/bin/apache-tomcat-7.0.82-fulldocs.tar.gz"
-    sha256 "58ef01d1a320fd98416d9b5e83b61c1cddc3fbecc7b6e2bfaee84b14c04b7528"
-  end
 
   # Keep log folders
   skip_clean "libexec"
@@ -28,8 +22,29 @@ class TomcatAT7 < Formula
     prefix.install %w[NOTICE LICENSE RELEASE-NOTES RUNNING.txt]
     libexec.install Dir["*"]
     bin.install_symlink "#{libexec}/bin/catalina.sh" => "catalina"
+  end
 
-    (pkgshare/"fulldocs").install resource("fulldocs") if build.with? "fulldocs"
+  plist_options :manual => "catalina run"
+
+  def plist; <<~EOS
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+      <dict>
+        <key>Disabled</key>
+        <false/>
+        <key>Label</key>
+        <string>#{plist_name}</string>
+        <key>ProgramArguments</key>
+        <array>
+          <string>#{opt_bin}/catalina</string>
+          <string>run</string>
+        </array>
+        <key>KeepAlive</key>
+        <true/>
+      </dict>
+    </plist>
+  EOS
   end
 
   test do

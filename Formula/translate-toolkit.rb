@@ -2,20 +2,19 @@ class TranslateToolkit < Formula
   include Language::Python::Virtualenv
 
   desc "Toolkit for localization engineers"
-  homepage "http://toolkit.translatehouse.org/"
-  url "https://github.com/translate/translate/releases/download/2.2.5/translate-toolkit-2.2.5.tar.gz"
-  sha256 "acaadb70c386795b3ea15605ddf57da6e29fae58a026b18988c04f44e2f58415"
+  homepage "https://toolkit.translatehouse.org/"
+  url "https://github.com/translate/translate/archive/2.3.1.tar.gz"
+  sha256 "0b2d79f0023ce545c6240829624ce1e1ce54ea7bc7913428880345ff423fd999"
   head "https://github.com/translate/translate.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "10df6ce11fc2925233611579f82f596ede2ad46460e587a197627f6507d7f68a" => :high_sierra
-    sha256 "ffcfae1743967fbd7815d6b772f6330889115f8121f36e019fd2c5e920312150" => :sierra
-    sha256 "e3387cc0175996b1a065352707d65506e8e613580d1b33f5a43db0b1eaf1672e" => :el_capitan
-    sha256 "0906c4e2cda5f89cb8c4b0caf6e70ace27a62611be39ad01611e1b8637a2c121" => :yosemite
+    sha256 "655232d6bfccf14a3be633b36f89f3cc29bc804c788436124c8c9e11214d5b75" => :mojave
+    sha256 "c54103dd3a9194ddaa950425a5788fee88980eb108802f4bf84c8f8ef17b6d20" => :high_sierra
+    sha256 "f03d495e61d79fae702eaa31e1043b23ba00ed9845438de6705b2cc3a2336c92" => :sierra
   end
 
-  depends_on :python if MacOS.version <= :snow_leopard
+  depends_on "python"
 
   resource "argparse" do
     url "https://files.pythonhosted.org/packages/18/dd/e617cfc3f6210ae183374cd9f6a26b20514bbb5a792af97949c5aacddf0f/argparse-1.4.0.tar.gz"
@@ -28,8 +27,8 @@ class TranslateToolkit < Formula
   end
 
   resource "six" do
-    url "https://files.pythonhosted.org/packages/b3/b2/238e2590826bfdd113244a40d9d3eb26918bd798fc187e2360a8367068db/six-1.10.0.tar.gz"
-    sha256 "105f8d68616f8248e24bf0e9372ef04d3cc10104f1980f54d57b2ce73a5ad56a"
+    url "https://files.pythonhosted.org/packages/16/d8/bc6316cf98419719bd59c91742194c111b6f2e85abac88e496adefaf7afe/six-1.11.0.tar.gz"
+    sha256 "70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9"
   end
 
   def install

@@ -1,23 +1,23 @@
 class Binutils < Formula
-  desc "FSF/GNU ld, ar, readelf, etc. for native development"
+  desc "GNU binary tools for native development"
   homepage "https://www.gnu.org/software/binutils/binutils.html"
-  url "https://ftp.gnu.org/gnu/binutils/binutils-2.29.1.tar.gz"
-  mirror "https://ftpmirror.gnu.org/binutils/binutils-2.29.1.tar.gz"
-  sha256 "0d9d2bbf71e17903f26a676e7fba7c200e581c84b8f2f43e72d875d0e638771c"
+  url "https://ftp.gnu.org/gnu/binutils/binutils-2.32.tar.gz"
+  mirror "https://ftpmirror.gnu.org/binutils/binutils-2.32.tar.gz"
+  sha256 "9b0d97b3d30df184d302bced12f976aa1e5fbf4b0be696cdebc6cca30411a46e"
 
   bottle do
-    sha256 "8b09492986a9dc598763dacd168c6e30508e39fb6c61864e78e9bf8368d77563" => :high_sierra
-    sha256 "274240a3aa74644d55054f45e26bc4242197cb514ae4817c128f194dc7b97901" => :sierra
-    sha256 "e7e5167576c31a03bdc517ba46f28e8a0dc49531b004c96dd1598418f4dce8aa" => :el_capitan
+    sha256 "101c47b5ba0dd14c33ae6252f0f732f2c9e3db9bb5bf03c880533b62e9f18dc2" => :mojave
+    sha256 "b82cf83f50a4822652022612c4f51052a56741e281ee509c8f18e1485b29cdaa" => :high_sierra
+    sha256 "7fabb9b6e95bbc156469a765189e153917adb9b8fbdc24a7662f42b4995ba825" => :sierra
   end
 
-  # No --default-names option as it interferes with Homebrew builds.
+  keg_only :provided_by_macos,
+           "because Apple provides the same tools and binutils is poorly supported on macOS"
 
   def install
     system "./configure", "--disable-debug",
                           "--disable-dependency-tracking",
                           "--enable-deterministic-archives",
-                          "--program-prefix=g",
                           "--prefix=#{prefix}",
                           "--infodir=#{info}",
                           "--mandir=#{man}",
@@ -28,9 +28,12 @@ class Binutils < Formula
                           "--enable-targets=all"
     system "make"
     system "make", "install"
+    Dir["#{bin}/*"].each do |f|
+      bin.install_symlink f => "g" + File.basename(f)
+    end
   end
 
   test do
-    assert_match "main", shell_output("#{bin}/gnm #{bin}/gnm")
+    assert_match "Usage:", shell_output("#{bin}/strings #{bin}/strings")
   end
 end

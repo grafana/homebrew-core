@@ -1,31 +1,26 @@
 class Libplist < Formula
   desc "Library for Apple Binary- and XML-Property Lists"
-  homepage "http://www.libimobiledevice.org/"
-  url "http://www.libimobiledevice.org/downloads/libplist-2.0.0.tar.bz2"
+  homepage "https://www.libimobiledevice.org/"
+  url "https://www.libimobiledevice.org/downloads/libplist-2.0.0.tar.bz2"
   sha256 "3a7e9694c2d9a85174ba1fa92417cfabaea7f6d19631e544948dc7e17e82f602"
+  revision 1
 
   bottle do
     cellar :any
-    sha256 "af4e7e2fe8cc73190aecccdfb918db0aed2c4e2397b8d6d86a7e5dbec1fcf767" => :high_sierra
-    sha256 "da5d4dedb8a981298f8c67bf116b92dd178ed834208f6fb7a0a55987ff8cfc95" => :sierra
-    sha256 "34e757ae78d7a84a8fdee4fe158409f9ebd690c477400eb836fc2ed88c1353e9" => :el_capitan
-    sha256 "8279838cdf74669ce421a35ccd416f5fb6c2a33dc24515ef160086b15a88b883" => :yosemite
+    sha256 "dc0f0c66bcc89a91e635364158077b303d259ba5ac485726072d6abaae7219b3" => :mojave
+    sha256 "2139142c8404729b61bf4c97d479abbf4f5bca5a6d34c188a393ff871831afb7" => :high_sierra
+    sha256 "4edadbe0762df848bca097da6f8aa147471b6bca80da86a740cede8241e84030" => :sierra
   end
 
   head do
     url "https://git.sukimashita.com/libplist.git"
 
-    depends_on "automake" => :build
     depends_on "autoconf" => :build
+    depends_on "automake" => :build
     depends_on "libtool" => :build
   end
 
-  option "without-cython", "Skip building Cython Python bindings"
-
-  deprecated_option "with-python" => "without-cython"
-
   depends_on "pkg-config" => :build
-  depends_on "cython" => [:build, :recommended]
 
   def install
     ENV.deparallelize
@@ -34,8 +29,8 @@ class Libplist < Formula
       --disable-dependency-tracking
       --disable-silent-rules
       --prefix=#{prefix}
+      --without-cython
     ]
-    args << "--without-cython" if build.without? "cython"
 
     system "./autogen.sh" if build.head?
     system "./configure", *args

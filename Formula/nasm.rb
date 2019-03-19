@@ -1,21 +1,20 @@
 class Nasm < Formula
   desc "Netwide Assembler (NASM) is an 80x86 assembler"
-  homepage "http://www.nasm.us/"
-  url "http://www.nasm.us/pub/nasm/releasebuilds/2.13.01/nasm-2.13.01.tar.xz"
-  sha256 "aa0213008f0433ecbe07bb628506a5c4be8079be20fc3532a5031fd639db9a5e"
+  homepage "https://www.nasm.us/"
+  url "https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/nasm-2.14.02.tar.xz"
+  sha256 "e24ade3e928f7253aa8c14aa44726d1edf3f98643f87c9d72ec1df44b26be8f5"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "bb072a7cb278fa0c89c4aa2c2ffbe501fdca499075f2b1e4ff90c62d25ad79ae" => :high_sierra
-    sha256 "3bf967e428595a156fe97185a07d82bba91c3b2003b08f329bf94fb87136f463" => :sierra
-    sha256 "138c9fd695681960f7eecb1ce352723bbb313afb1fdd4a7966427c4b5199e22b" => :el_capitan
-    sha256 "821356bf15a266e2c3d45ef019c237422ced030696ca5f0b0f69a6974e7bd8fa" => :yosemite
+    sha256 "77a183895137e0f95d897d33399235a58f1f23c99bac7f041d58baeb6f32e3b9" => :mojave
+    sha256 "b8d720e9008f58bbeddee14a8fa4841a8913c3d61d46872b37f7736d03a06218" => :high_sierra
+    sha256 "1d5283c366d958a1b7efdc22983fe313e0bd2a26268e585ced9f284f50ed270b" => :sierra
   end
 
   head do
-    url "git://repo.or.cz/nasm.git"
-    depends_on "autoconf" => :build
+    url "https://repo.or.cz/nasm.git"
     depends_on "asciidoc" => :build
+    depends_on "autoconf" => :build
     depends_on "xmlto" => :build
   end
 
@@ -28,7 +27,7 @@ class Nasm < Formula
   end
 
   test do
-    (testpath/"foo.s").write <<-EOS
+    (testpath/"foo.s").write <<~EOS
       mov eax, 0
       mov ebx, 0
       int 0x80

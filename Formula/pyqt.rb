@@ -1,31 +1,34 @@
 class Pyqt < Formula
   desc "Python bindings for v5 of Qt"
   homepage "https://www.riverbankcomputing.com/software/pyqt/download5"
-  url "https://downloads.sourceforge.net/project/pyqt/PyQt5/PyQt-5.9.1/PyQt5_gpl-5.9.1.tar.gz"
-  sha256 "5fc009448ea78c8fd48eb7083a7b93734dbd61290a9a21dab674096a7762b4ca"
+  url "https://dl.bintray.com/homebrew/mirror/pyqt-5.10.1.tar.gz"
+  mirror "https://downloads.sourceforge.net/project/pyqt/PyQt5/PyQt-5.10.1/PyQt5_gpl-5.10.1.tar.gz"
+  sha256 "9932e971e825ece4ea08f84ad95017837fa8f3f29c6b0496985fa1093661e9ef"
+  revision 1
 
   bottle do
-    sha256 "d5ba0557b5e149aa91c3ca34fdfcb059372043c74b9181ce7ffc8841e07dc77c" => :high_sierra
-    sha256 "2b11d3f51db55fd462f3db1924d4996629233533b14d33170cada601c089bd66" => :sierra
-    sha256 "3e1a7f6d3ae58e97655604296df625eaa475245a8ac3c0d0b3d1ef4463b5cca9" => :el_capitan
+    cellar :any
+    rebuild 2
+    sha256 "c941b19b803f11da31ec2cd93550a7b70b1ef919868890abf37b8d6d8e9dc089" => :mojave
+    sha256 "cdbf71cc3b3c6b372787dc402f3c5ce48e17167d69349af7f8fd7fbd08b5286b" => :high_sierra
+    sha256 "7f300676f7d52223129dc4e5080db09aa639ab5b92ca27a3424655ca438a0bf4" => :sierra
   end
 
-  option "with-debug", "Build with debug symbols"
-  option "with-docs", "Install HTML documentation and python examples"
-
-  deprecated_option "enable-debug" => "with-debug"
-
+  depends_on "python"
+  depends_on "python@2"
   depends_on "qt"
   depends_on "sip"
-  depends_on :python => :recommended
-  depends_on :python3 => :recommended
+
+  # Patch from openSUSE for compatibility with Qt 5.11.0
+  # https://build.opensuse.org/package/show/home:cgiboudeaux:branches:KDE:Qt5/python-qt5
+  patch do
+    url "https://raw.githubusercontent.com/Homebrew/formula-patches/4f563668/pyqt/qt-5.11.diff"
+    sha256 "34bba97f87615ea072312bfc03c4d3fb0a1cf7a4cd9d6907857c1dca6cc89200"
+  end
 
   def install
-    if build.without?("python3") && build.without?("python")
-      odie "pyqt: --with-python3 must be specified when using --without-python"
-    end
-
-    Language::Python.each_python(build) do |python, version|
+    ["python2", "python3"].each do |python|
+      version = Language::Python.major_minor_version python
       args = ["--confirm-license",
               "--bindir=#{bin}",
               "--destdir=#{lib}/python#{version}/site-packages",
@@ -38,20 +41,19 @@ class Pyqt < Formula
               "QMAKE_MACOSX_DEPLOYMENT_TARGET=#{MacOS.version}",
               "--qml-plugindir=#{pkgshare}/plugins",
               "--verbose"]
-      args << "--debug" if build.with? "debug"
 
       system python, "configure.py", *args
       system "make"
       system "make", "install"
       system "make", "clean"
     end
-    doc.install "doc/html", "examples" if build.with? "docs"
   end
 
   test do
     system "#{bin}/pyuic5", "--version"
     system "#{bin}/pylupdate5", "-version"
-    Language::Python.each_python(build) do |python, _version|
+
+    ["python2", "python3"].each do |python|
       system python, "-c", "import PyQt5"
       %w[
         Gui

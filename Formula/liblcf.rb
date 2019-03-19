@@ -1,23 +1,24 @@
 class Liblcf < Formula
   desc "Library for RPG Maker 2000/2003 games data"
   homepage "https://easyrpg.org/"
-  url "https://github.com/EasyRPG/liblcf/archive/0.5.3.tar.gz"
-  sha256 "4d2784ab927e2f61595b8efeb61664bcc64b3f746d12c893e302645dda3acddc"
+  url "https://github.com/EasyRPG/liblcf/archive/0.5.4.tar.gz"
+  sha256 "fb31eebfa0e9a06cae9bfdc77c295f5deeaf44ab4d688da4a78777c77df125e6"
+  revision 1
   head "https://github.com/EasyRPG/liblcf.git"
 
   bottle do
     cellar :any
-    sha256 "aba0528a3bb0c2a7fd7e9d0a4ac69fe761cfba96e8264bc0aa475459def0c31e" => :high_sierra
-    sha256 "0eac25355db71df9fefb9965ee85ab701a768f93fa0b7dfcdddf50aee1c05169" => :sierra
-    sha256 "004f49f2a08e895bf81d038d8280545037ac516740b38237360517d11887d3d9" => :el_capitan
+    sha256 "64e45bb16139a691703e45d0168fe414721ee8176ee6b2bd447f046f2a5f083f" => :mojave
+    sha256 "38b3412f91bfb0797ca9c3b56427cb005f5c70141d9fa20e1091125cb01f2d6e" => :high_sierra
+    sha256 "e97e3658d62c84b15bb039b8c054bc632cc86d541f1985f969022dae6a4580a5" => :sierra
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
   depends_on "pkg-config" => :build
-  depends_on "icu4c"
   depends_on "expat"
+  depends_on "icu4c"
 
   def install
     system "autoreconf", "-i"

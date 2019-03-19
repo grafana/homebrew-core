@@ -3,16 +3,17 @@ class Jags < Formula
   homepage "https://mcmc-jags.sourceforge.io"
   url "https://downloads.sourceforge.net/project/mcmc-jags/JAGS/4.x/Source/JAGS-4.3.0.tar.gz"
   sha256 "8ac5dd57982bfd7d5f0ee384499d62f3e0bb35b5f1660feb368545f1186371fc"
+  revision 2
 
   bottle do
     cellar :any
-    sha256 "1d4d987b95d6bfd9cb58429d3554e3c94bb54928a70efd8479365f19d9aea161" => :high_sierra
-    sha256 "1b91f63724f9027e8948f5d6391900a8def1bebd7983008c50cd8759f3210ceb" => :sierra
-    sha256 "1b8494215c7abf398693ba827f3c43bdc7054be58ef8c593a802384c995f8518" => :el_capitan
-    sha256 "2a1b02acc3e361549d64d10cee6581d598f78539c91cd715678c810eb6c31fe4" => :yosemite
+    sha256 "73dd05de303d75d9a252fd9cf40242036d6227d20ff0e40bdad8a9b4fb5ac093" => :mojave
+    sha256 "6f3e40e482b03deb728487e3b9c7089d900f1aa518c74de0859a2877833b16b0" => :high_sierra
+    sha256 "0651db81905348bb0c48c20529c5bab0d4eb735da50fcc9ec26aef38672cf26f" => :sierra
+    sha256 "6c82f61d6cacec46e7863f9b9cb92f33eac63339822fd196e6a029a75dfb01f7" => :el_capitan
   end
 
-  depends_on :fortran
+  depends_on "gcc" # for gfortran
 
   def install
     system "./configure", "--disable-dependency-tracking",

@@ -1,25 +1,26 @@
 class Pazpar2 < Formula
   desc "Metasearching middleware webservice"
   homepage "https://www.indexdata.com/pazpar2"
-  url "http://ftp.indexdata.dk/pub/pazpar2/pazpar2-1.12.13.tar.gz"
-  sha256 "02a97773ba27a2481744fc2323a9488a64661f7d1da09e5e61443c9b6a10cbed"
+  url "http://ftp.indexdata.dk/pub/pazpar2/pazpar2-1.13.1.tar.gz"
+  sha256 "d3cdeff52914a82c4d815e4570f6aab0e14586754377b5d2b9cffdcbcb1ccc29"
+  revision 1
 
   bottle do
     cellar :any
-    sha256 "875009e895fa9307a7303045fbd9dd544e7d531d0c4447ef29dd6c0cbf2dc2b4" => :high_sierra
-    sha256 "627a9d0910b8eed46e52a935e76a340dfc43e13337cb9d659482d31cf9d47237" => :sierra
-    sha256 "fb1d1b13500300e78ae7157566f2e0d4cbf0576d621ba03a3afba510b273cbff" => :el_capitan
+    sha256 "53937090561ad043932b1da6d141ea769396cc6bb4f5cdd49a2a20ecce39d436" => :mojave
+    sha256 "9ba978deab4a3910cfd7382711d582151c9aa190b7f27a6c005f1ed35358c73d" => :high_sierra
+    sha256 "8cd5847dd58310b8883e5a60b08c5da0b098f64fa2ca2e46aed24aad3129277c" => :sierra
   end
 
   head do
     url "https://github.com/indexdata/pazpar2.git"
-    depends_on "automake" => :build
     depends_on "autoconf" => :build
+    depends_on "automake" => :build
     depends_on "libtool" => :build
   end
 
   depends_on "pkg-config" => :build
-  depends_on "icu4c" => :recommended
+  depends_on "icu4c"
   depends_on "yaz"
 
   def install

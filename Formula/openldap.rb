@@ -1,22 +1,17 @@
 class Openldap < Formula
   desc "Open source suite of directory software"
   homepage "https://www.openldap.org/software/"
-  url "https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.4.45.tgz"
-  mirror "https://gpl.savoirfairelinux.net/pub/mirrors/openldap/openldap-release/openldap-2.4.45.tgz"
-  sha256 "cdd6cffdebcd95161a73305ec13fc7a78e9707b46ca9f84fb897cd5626df3824"
+  url "https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.4.47.tgz"
+  sha256 "f54c5877865233d9ada77c60c0f69b3e0bfd8b1b55889504c650047cc305520b"
 
   bottle do
-    sha256 "de441b2b17c16c76cc8883b4d3222f79985dc60013729a679a6917ce857a2682" => :high_sierra
-    sha256 "809a58277010241b76cb9474b303d55540ae71c59ef401ece495f6b5ab57949c" => :sierra
-    sha256 "645727db7cc901fa3493c66c06e55ecce778846961874deff6b1a4687aa04b35" => :el_capitan
-    sha256 "ea5d0a84b570b85c6711a5c99dd12f2ba6811c7b3515ddd1b1d1761490a8fa81" => :yosemite
+    sha256 "07e1f0e3ec1a02340a82259e1ace713cfb362126404575032713174935f4140e" => :mojave
+    sha256 "8901626fc45d76940dec5e516b23d81c9970f4a4a94650bdad60228d604c1b4a" => :high_sierra
+    sha256 "6dc84ff9e088116201a47adc5c3a2aab28ffd10dbab9d677d49ad7eef1ccc349" => :sierra
   end
 
-  keg_only :provided_by_osx
+  keg_only :provided_by_macos
 
-  option "with-sssvlv", "Enable server side sorting and virtual list view"
-
-  depends_on "berkeley-db@4" => :optional
   depends_on "openssl"
 
   def install
@@ -27,11 +22,13 @@ class Openldap < Formula
       --localstatedir=#{var}
       --enable-accesslog
       --enable-auditlog
+      --enable-bdb=no
       --enable-constraint
       --enable-dds
       --enable-deref
       --enable-dyngroup
       --enable-dynlist
+      --enable-hdb=no
       --enable-memberof
       --enable-ppolicy
       --enable-proxycache
@@ -43,12 +40,9 @@ class Openldap < Formula
       --enable-valsort
     ]
 
-    args << "--enable-bdb=no" << "--enable-hdb=no" if build.without? "berkeley-db@4"
-    args << "--enable-sssvlv=yes" if build.with? "sssvlv"
-
     system "./configure", *args
     system "make", "install"
-    (var+"run").mkpath
+    (var/"run").mkpath
 
     # https://github.com/Homebrew/homebrew-dupes/pull/452
     chmod 0755, Dir[etc/"openldap/*"]

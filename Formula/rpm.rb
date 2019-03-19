@@ -1,30 +1,36 @@
 class Rpm < Formula
   desc "Standard unix software packaging tool"
-  homepage "http://www.rpm.org/"
-  url "http://ftp.rpm.org/releases/rpm-4.14.x/rpm-4.14.0.tar.bz2"
-  sha256 "06a0ad54600d3c42e42e02701697a8857dc4b639f6476edefffa714d9f496314"
+  homepage "https://rpm.org/"
+  url "http://ftp.rpm.org/releases/rpm-4.14.x/rpm-4.14.2.1.tar.bz2"
+  sha256 "1139c24b7372f89c0a697096bf9809be70ba55e006c23ff47305c1849d98acda"
   version_scheme 1
 
   bottle do
-    sha256 "f5c3c8ad9671d3154b5060e653c727fe3343bbc06f3662fbf83d1b8ed6e2b6d9" => :high_sierra
-    sha256 "ce8601ed957f0d5519f1942b15d19ffabe24a8238d6bc261927d8bc9b82d1f7c" => :sierra
-    sha256 "785b424592fc99a6818d407ed35395a4cd13435f8d701a1cf92b13e4ef9767b4" => :el_capitan
+    sha256 "b1e3f6fbb8babb6105789236727be4e0e08c25a77f87f458a032235d72986675" => :mojave
+    sha256 "c8b3cf5d5c0de09cf18617c8c096f07354a7a6ac5db6c17a887e09272d5ec08f" => :high_sierra
+    sha256 "8d023b2d929fafbf627ebc906fb68e88a494b67887063cacb7fa30cddf6bbc5d" => :sierra
   end
 
-  depends_on "pkg-config" => :run
   depends_on "berkeley-db"
   depends_on "gettext"
   depends_on "libarchive"
   depends_on "libmagic"
-  depends_on "lua"
-  depends_on "openssl@1.1"
+  depends_on "lua@5.1"
+  depends_on "openssl"
+  depends_on "pkg-config"
   depends_on "popt"
   depends_on "xz"
   depends_on "zstd"
 
   def install
+    ENV.prepend_path "PKG_CONFIG_PATH", Formula["lua@5.1"].opt_libexec/"lib/pkgconfig"
+
     # only rpm should go into HOMEBREW_CELLAR, not rpms built
     inreplace ["macros.in", "platform.in"], "@prefix@", HOMEBREW_PREFIX
+
+    # ensure that pkg-config binary is found for dep generators
+    inreplace "scripts/pkgconfigdeps.sh",
+              "/usr/bin/pkg-config", Formula["pkg-config"].opt_bin/"pkg-config"
 
     system "./configure", "--disable-dependency-tracking",
                           "--disable-silent-rules",
@@ -46,8 +52,7 @@ class Rpm < Formula
     (var/"lib/rpm").mkpath
 
     # Attempt to fix expected location of GPG to a sane default.
-    gnupg = Gpg.executable || HOMEBREW_PREFIX/"bin/gpg"
-    inreplace lib/"rpm/macros", "/usr/bin/gpg2", gnupg
+    inreplace lib/"rpm/macros", "/usr/bin/gpg2", HOMEBREW_PREFIX/"bin/gpg"
   end
 
   def test_spec

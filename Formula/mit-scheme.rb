@@ -8,6 +8,7 @@ class MitScheme < Formula
 
   bottle do
     rebuild 2
+    sha256 "482da1493fa7dc5d4e1b5aebf3a53ea95cdd080066aa8a4fcab2051d5ab50d86" => :mojave
     sha256 "715a8d56b6b6b0debe6aac7e968c369555b210863da6f7514999307c9df348a8" => :high_sierra
     sha256 "6b7a6ecec12a5a856b795ce634c0ceb8e87714f9cdd272a912e312c3bc5cb9d4" => :sierra
     sha256 "23df7103a75311ba33fed035413892b73f1e724e1df5b63bd677709d29bfdb92" => :el_capitan
@@ -19,7 +20,6 @@ class MitScheme < Formula
   # https://github.com/Homebrew/homebrew-x11/issues/103#issuecomment-125014423
   depends_on :xcode => :build
   depends_on "openssl"
-  depends_on :x11 => :optional
 
   def install
     # Setting -march=native, which is what --build-from-source does, can fail
@@ -60,12 +60,10 @@ class MitScheme < Formula
       s.gsub! /SDK=MacOSX\${MACOSX}$/, "SDK=MacOSX#{MacOS.sdk.version}"
     end
 
-    if build.without? "x11"
-      inreplace "etc/make-liarc.sh" do |s|
-        # Allows us to build without X11
-        # https://savannah.gnu.org/bugs/?47887
-        s.gsub! "run_configure", "run_configure --without-x"
-      end
+    inreplace "etc/make-liarc.sh" do |s|
+      # Allows us to build without X11
+      # https://savannah.gnu.org/bugs/?47887
+      s.gsub! "run_configure", "run_configure --without-x"
     end
 
     system "etc/make-liarc.sh", "--prefix=#{prefix}", "--mandir=#{man}"
@@ -73,7 +71,7 @@ class MitScheme < Formula
   end
 
   test do
-    # ftp://ftp.cs.indiana.edu/pub/scheme-repository/code/num/primes.scm
+    # https://www.cs.indiana.edu/pub/scheme-repository/code/num/primes.scm
     (testpath/"primes.scm").write <<~EOS
       ;
       ; primes

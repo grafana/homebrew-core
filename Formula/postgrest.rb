@@ -5,28 +5,28 @@ class Postgrest < Formula
   include Language::Haskell::Cabal
 
   desc "Serves a fully RESTful API from any existing PostgreSQL database"
-  homepage "https://github.com/begriffs/postgrest"
-  url "https://github.com/begriffs/postgrest/archive/v0.4.3.0.tar.gz"
-  sha256 "64644b38295b46fa0b50172cfcf348fd88a567a24ac1d793f5257f1faa697570"
-  head "https://github.com/begriffs/postgrest.git"
+  homepage "https://github.com/PostgREST/postgrest"
+  url "https://github.com/PostgREST/postgrest/archive/v0.5.0.0.tar.gz"
+  sha256 "cfc9a6477d0f087051f654a0a7070804db388ed3c97e4e68d7d286e82d5be4b8"
+  head "https://github.com/PostgREST/postgrest.git"
 
   bottle do
     cellar :any
-    sha256 "5bd9f1127627baeb7bf3cac278103cb6b63256af39fd7bdcc5a7550e64161aaf" => :high_sierra
-    sha256 "42fdf57147e9a959beaab758900462739e9470351b5a11055af00bbe18e03609" => :sierra
-    sha256 "d82e9e4ae9aeebfd7960596ad9ccd4bc3bc4547f57f0473aa3110f9dd52d2df0" => :el_capitan
-    sha256 "8a209377bc643030baded9368b7004238f5ce22fd4f75e69546ce611eb1c9873" => :yosemite
+    sha256 "ea1508ab22eaffe64955cbdd76647854e289d9ed3b6172e0fdd1a220fe2e6815" => :high_sierra
+    sha256 "fba956125442f3db5548fce364269c98b599ed5c762992941c4461c9c60ca693" => :sierra
+    sha256 "bfea24b8036f2bd5a81271cada5248f96ff0bc8ecf88492b4240cf77187b99e2" => :el_capitan
   end
 
   depends_on "cabal-install" => :build
-  depends_on "ghc" => :build
+  depends_on "ghc@8.2" => :build
   depends_on "postgresql"
 
-  # Fix build failure "src/PostgREST/Auth.hs:54:9: error: Variable not in scope"
-  # Upstream PR from 7 Sep 2017 "Constrain jose to < 0.6"
+  # Fix build failure with protolude 0.2.2 and hasql-transaction 0.6
+  # Upstream PR 14 May 2018 "postgrest.cabal: fix constraints on protolude and
+  # hasql-transaction"
   patch do
-    url "https://github.com/begriffs/postgrest/pull/967.patch?full_index=1"
-    sha256 "ceac606dd91d91daabb53f76e33a147883e79efade9f76345bd96743a6d40877"
+    url "https://github.com/PostgREST/postgrest/pull/1111.patch?full_index=1"
+    sha256 "c740da96fb0dfb4a920d9f5091ec34fafcf9d8fe53b4eadda3cbdc80b02d09cd"
   end
 
   def install

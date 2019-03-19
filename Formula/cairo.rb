@@ -1,55 +1,44 @@
 class Cairo < Formula
   desc "Vector graphics library with cross-device output support"
   homepage "https://cairographics.org/"
-  url "https://cairographics.org/releases/cairo-1.14.10.tar.xz"
-  mirror "https://www.mirrorservice.org/sites/ftp.netbsd.org/pub/pkgsrc/distfiles/cairo-1.14.10.tar.xz"
-  sha256 "7e87878658f2c9951a14fc64114d4958c0e65ac47530b8ac3078b2ce41b66a09"
+  url "https://cairographics.org/releases/cairo-1.16.0.tar.xz"
+  sha256 "5e7b29b3f113ef870d1e3ecf8adf21f923396401604bda16d44be45e66052331"
 
   bottle do
-    sha256 "4ebf6543caa37a89405ac74de54d85151abf63bb13b48fb8dcdab98e483984a5" => :high_sierra
-    sha256 "0cf7f50b38512fd676b6b14f5b22961ababa3958c448f6485055bdad3a04b439" => :sierra
-    sha256 "65c3e0c132f1fc0747881b5057cdc6e77a2859d061bbe88406aff1e22e42971b" => :el_capitan
-    sha256 "034818691b65af1ec4d5601affc791061bf269f8e1092c57b891cdea6f47cc2d" => :yosemite
+    sha256 "204d0a3df9ebebef6f553b4a583351f14b84ca8682537941f2c04ba971999444" => :mojave
+    sha256 "f518c9e6cd207647eedff70720fc99a85eaf143da866f4e679ffb0b6c6c50098" => :high_sierra
+    sha256 "1b0421e0159c06862b742e7868dbef23985afc2f1e282c4d985ff13725995a6d" => :sierra
   end
 
   head do
     url "https://anongit.freedesktop.org/git/cairo", :using => :git
-    depends_on "automake" => :build
     depends_on "autoconf" => :build
+    depends_on "automake" => :build
     depends_on "libtool" => :build
   end
 
-  keg_only :provided_pre_mountain_lion
-
   depends_on "pkg-config" => :build
-  depends_on :x11 => :optional
-  depends_on "freetype"
   depends_on "fontconfig"
+  depends_on "freetype"
+  depends_on "glib"
   depends_on "libpng"
   depends_on "pixman"
-  depends_on "glib"
 
   def install
-    args = %W[
-      --disable-dependency-tracking
-      --prefix=#{prefix}
-      --enable-gobject=yes
-      --enable-svg=yes
-      --enable-tee=yes
-      --enable-quartz-image
-    ]
-
-    if build.with? "x11"
-      args << "--enable-xcb=yes" << "--enable-xlib=yes" << "--enable-xlib-xrender=yes"
-    else
-      args << "--enable-xcb=no" << "--enable-xlib=no" << "--enable-xlib-xrender=no"
-    end
-
     if build.head?
-      system "./autogen.sh", *args
-    else
-      system "./configure", *args
+      ENV["NOCONFIGURE"] = "1"
+      system "./autogen.sh"
     end
+
+    system "./configure", "--disable-dependency-tracking",
+                          "--prefix=#{prefix}",
+                          "--enable-gobject=yes",
+                          "--enable-svg=yes",
+                          "--enable-tee=yes",
+                          "--enable-quartz-image",
+                          "--enable-xcb=no",
+                          "--enable-xlib=no",
+                          "--enable-xlib-xrender=no"
     system "make", "install"
   end
 

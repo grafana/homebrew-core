@@ -3,18 +3,17 @@ class Supervisor < Formula
 
   desc "Process Control System"
   homepage "http://supervisord.org/"
-  url "https://github.com/Supervisor/supervisor/archive/3.3.3.tar.gz"
-  sha256 "cb835ee21a755d32396f5ccb40daa4ce8bb4a24d92f8bf3f25d3a76ba2fb0bc3"
+  url "https://github.com/Supervisor/supervisor/archive/3.3.5.tar.gz"
+  sha256 "151001bd249f7556aa1baf3ce4c8fcf3a2bf39a58d6581ac1a7ea1c398b75f5a"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "f6f7aff7531170eb3fcf54066dfd485a2e0e4fe13323a881fa21193a74db9277" => :high_sierra
-    sha256 "ca6e0a9584230313a3e9080600b3dcb60b669a1122619c14096dd65308b5fec4" => :sierra
-    sha256 "67c6110abfcc4b9a53a4143bad1fe12259a41c7fee96400e15e231c4cfd21aa3" => :el_capitan
-    sha256 "4070b89b70cbdb2c9a68214fb4bc03f8b8363e33c9f7fde8b782f6f057d87e57" => :yosemite
+    sha256 "a3ed3071d994b9b2d196fc578efa73df0f718b1987625d51dc557d2ab1ed13a1" => :mojave
+    sha256 "3eaf8b83c15a57a21ad897c98c7aca0b585bb17da659ce9e49d221a1f2c23f09" => :high_sierra
+    sha256 "980435fca59e5310dfda4e5d10892dab22fa9e11504428031c7f632be65aead2" => :sierra
   end
 
-  depends_on :python if MacOS.version <= :snow_leopard
+  depends_on "python@2" # does not support Python 3
 
   resource "meld3" do
     url "https://files.pythonhosted.org/packages/45/a0/317c6422b26c12fe0161e936fc35f36552069ba8e6f7ecbd99bbffe32a5f/meld3-1.0.2.tar.gz"
@@ -33,6 +32,11 @@ class Supervisor < Formula
     virtualenv_install_with_resources
 
     etc.install buildpath/"supervisor/skel/sample.conf" => "supervisord.ini"
+  end
+
+  def post_install
+    (var/"run").mkpath
+    (var/"log").mkpath
   end
 
   plist_options :manual => "supervisord -c #{HOMEBREW_PREFIX}/etc/supervisord.ini"
@@ -60,11 +64,6 @@ class Supervisor < Formula
         </dict>
       </plist>
     EOS
-  end
-
-  def post_install
-    (var/"run").mkpath
-    (var/"log").mkpath
   end
 
   test do

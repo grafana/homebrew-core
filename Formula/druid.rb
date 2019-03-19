@@ -1,19 +1,18 @@
 class Druid < Formula
   desc "High-performance, column-oriented, distributed data store"
   homepage "http://druid.io"
-  url "http://static.druid.io/artifacts/releases/druid-0.10.1-bin.tar.gz"
-  sha256 "3a32395305cc95c0cc351f2aa14de2f60ddd206ceb63e59a2b36bc96b98c421f"
+  url "http://static.druid.io/artifacts/releases/druid-0.12.2-bin.tar.gz"
+  sha256 "951fffe2026cb2c7e219add5f4be15c993f34347f8af0873d19c72ccbb606f77"
+  revision 1
 
   bottle :unneeded
 
-  option "with-mysql", "Build with mysql-metadata-storage plugin"
-
+  depends_on :java => "1.8"
   depends_on "zookeeper"
-  depends_on :java => "1.8+"
 
   resource "mysql-metadata-storage" do
-    url "http://static.druid.io/artifacts/releases/mysql-metadata-storage-0.10.1.tar.gz"
-    sha256 "b6b3e18a2bdfc8d08c0c4dd09f0cdd95ce44bfcdb9e453ddfcd1af276fdd148d"
+    url "http://static.druid.io/artifacts/releases/mysql-metadata-storage-0.12.2.tar.gz"
+    sha256 "b1122c037929633f89903948f8e11d19b8e1c1cb2949e93acc8dee2bcb2046b0"
   end
 
   def install
@@ -30,24 +29,22 @@ class Druid < Formula
     end
 
     inreplace libexec/"bin/node.sh" do |s|
-      s.gsub! "nohup java", "nohup java -Ddruid.extensions.directory=\"#{libexec}/extensions\""
+      s.gsub! "nohup $JAVA", "nohup $JAVA -Ddruid.extensions.directory=\"#{libexec}/extensions\""
       s.gsub! ":=lib", ":=#{libexec}/lib"
       s.gsub! ":=conf/druid", ":=#{libexec}/conf/druid"
       s.gsub! ":=log", ":=#{var}/druid/log"
       s.gsub! ":=var/druid/pids", ":=#{var}/druid/pids"
     end
 
-    if build.with? "mysql"
-      resource("mysql-metadata-storage").stage do
-        (libexec/"extensions/mysql-metadata-storage").install Dir["*"]
-      end
-    else
-      inreplace libexec/"conf/druid/_common/common.runtime.properties",
-                ", \"mysql-metadata-storage\"", ""
+    resource("mysql-metadata-storage").stage do
+      (libexec/"extensions/mysql-metadata-storage").install Dir["*"]
     end
 
-    Pathname.glob("#{libexec}/bin/*.sh") do |file|
-      bin.install_symlink file => "druid-#{file.basename}"
+    bin.install Dir["#{libexec}/bin/*.sh"]
+    bin.env_script_all_files(libexec/"bin", Language::Java.java_home_env("1.8"))
+
+    Pathname.glob("#{bin}/*.sh") do |file|
+      mv file, bin/"druid-#{file.basename}"
     end
   end
 

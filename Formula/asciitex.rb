@@ -6,12 +6,12 @@ class Asciitex < Formula
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "d5f864f9e6722d36da2e0412d4523a4977599c1229e3fb122bf4a0b29421c082" => :mojave
     sha256 "28a1327d58e05b74df8382ce37595d8d80decaf5cdbac4739995bc53d9f30ef7" => :high_sierra
     sha256 "9828783530514218f99ea7eabfad2031caeac979fac90cc9e049de4b4622fb80" => :sierra
     sha256 "0ae267d7ffcf17769da97275af047dc2a4ba9e5086acdb53dd11ca41f3d40ddb" => :el_capitan
     sha256 "e9eadc960e449db67f305c3e1cc8d4f025288967bb8b6a37f5ba4bf5ad58493d" => :yosemite
     sha256 "31518a63d9b06f8e47ff57c5d6d22ca838abc2c1366d59db2bb8967971134d52" => :mavericks
-    sha256 "cfcef4a17d2194a111da39891f06694d2056082915858d3cf938d3659b2d1a64" => :mountain_lion
   end
 
   def install

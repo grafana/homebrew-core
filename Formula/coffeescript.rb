@@ -2,16 +2,17 @@ require "language/node"
 
 class Coffeescript < Formula
   desc "Unfancy JavaScript"
-  homepage "http://coffeescript.org"
-  url "https://registry.npmjs.org/coffeescript/-/coffeescript-2.0.2.tgz"
-  sha256 "9e05f914f881b2b37ff2f7baa210a070f79e2b56c79f2ca3029f1a5e25f9612c"
+  homepage "https://coffeescript.org/"
+  url "https://registry.npmjs.org/coffeescript/-/coffeescript-2.3.2.tgz"
+  sha256 "c74eb245cbd411eefc34d44bc2570b470682c434e029afac9ece0175db9faa5a"
   head "https://github.com/jashkenas/coffeescript.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "1473d7045a5adb7e08ab8e7b4d67be86357b3c225752d924f988887412fe4626" => :high_sierra
-    sha256 "62c452c8b907278cdcf12d36be2c3ff1c3de3d5647eb2447acc3fee2f50b2669" => :sierra
-    sha256 "94bb7cc930371190cec01501f6a28471022f00fccc7d378d88e0a3b6d0635f5f" => :el_capitan
+    sha256 "9a34ee70f2b0806edf10c621a777bcab5b674b6a2c3babb21a62637175b79052" => :mojave
+    sha256 "49da6599ee49ee6644fbb8cef4da0f333a36e5169b49882e151ea95c3e0288c5" => :high_sierra
+    sha256 "bbb0b28041b6aa10e4730d1cafa2e682438fb7384165651cf4b6ab72386fd669" => :sierra
+    sha256 "750778791fbd6e5896a10bacc345ca18bbb28e29abd270227f4bbfc73d7426c1" => :el_capitan
   end
 
   depends_on "node"

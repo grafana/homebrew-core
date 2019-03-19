@@ -1,10 +1,12 @@
 class GitRecent < Formula
   desc "See your latest local git branches, formatted real fancy"
   homepage "https://github.com/paulirish/git-recent"
-  url "https://github.com/paulirish/git-recent/archive/v1.0.3.tar.gz"
-  sha256 "2ea954f3c1cc3917ad1a0ff5cd361dff7c3f82410bd464a9f5decb0a539155ff"
+  url "https://github.com/paulirish/git-recent/archive/v1.1.0.tar.gz"
+  sha256 "71c9b28a5d6e24803e1e6252390265739cfe583d224723da1f067b6d1cc2416b"
 
   bottle :unneeded
+
+  depends_on :macos => :sierra
 
   def install
     bin.install "git-recent"

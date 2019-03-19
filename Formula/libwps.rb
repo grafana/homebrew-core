@@ -1,21 +1,21 @@
 class Libwps < Formula
   desc "Library to import files in MS Works format"
   homepage "https://libwps.sourceforge.io"
-  url "https://downloads.sourceforge.net/project/libwps/libwps/libwps-0.4.7/libwps-0.4.7.tar.xz"
-  sha256 "2f2cab630bceace24f9dbb7d187cd6cd1f4c9f8a7b682c5f7e49c1e2cb58b217"
+  url "https://downloads.sourceforge.net/project/libwps/libwps/libwps-0.4.10/libwps-0.4.10.tar.xz"
+  sha256 "1421e034286a9f96d3168a1c54ea570ee7aa008ca07b89de005ad5ce49fb29ca"
 
   bottle do
     cellar :any
-    sha256 "af5523256d90cdb6df16716899309e4733d9b21973d50b224d1f4503bc8cbc4a" => :high_sierra
-    sha256 "85c11a7406bd2a53e63239f3455c5f205d780d1c487c52779e89507de4c86c72" => :sierra
-    sha256 "d9e3474b8f97fb56a76fe0068a075dad95f0905636ff18aa37e4dc77a1019687" => :el_capitan
-    sha256 "57cc0b3b1205f97f2af3f38799e160d5eae6bab3dac8bd528f7ebfd4e0a8723c" => :yosemite
+    sha256 "15e190d218f3592f8d1114fdb868b271ae5f8fa01ba515d8ee67b4f8926c407b" => :mojave
+    sha256 "921f446b2b4fcc0cc52fa9bb66ac8fa64793b1e9c91c65d26e99a0cbe9f823f4" => :high_sierra
+    sha256 "40a087dcf1b621edecd982a8f5977f4726176088e761f750a04bced83d414d11" => :sierra
+    sha256 "92c01fd9e274ed52cc2c761c85c40ea38f07e7b83deeb988be0968b18c5c9be4" => :el_capitan
   end
 
-  depends_on "pkg-config" => :build
   depends_on "boost" => :build
-  depends_on "libwpd"
+  depends_on "pkg-config" => :build
   depends_on "librevenge"
+  depends_on "libwpd"
 
   def install
     system "./configure", "--disable-debug", "--disable-dependency-tracking",

@@ -3,28 +3,23 @@ class DockerCompose < Formula
 
   desc "Isolated development environments using Docker"
   homepage "https://docs.docker.com/compose/"
-  url "https://github.com/docker/compose/archive/1.17.1.tar.gz"
-  sha256 "71f7b98af30c12bd4cf69421a09d16edecefb9d0b5e127934c5c832380ea78ba"
+  url "https://github.com/docker/compose/archive/1.23.2.tar.gz"
+  sha256 "18ff12f80e21011e76e04d2579745224316e232a5ca94c79a2865dac5c66eef6"
   head "https://github.com/docker/compose.git"
 
   bottle do
     cellar :any
-    sha256 "4d7730ec042eb50026d01b4da89e94e2a56d1f9cbdc5d1b9c1cadf72c2f7c412" => :high_sierra
-    sha256 "e30d566553106f0d73971cbdc4e7bcdb766ff1f4c44fc618a3ddcc70be8196b1" => :sierra
-    sha256 "52b769b83271942eaa8fbeb616258743afd2769462c203ef23389e8c4f1bb0c7" => :el_capitan
+    sha256 "97986c5efca02756115ff77623da2ac6209480dceb6f00b23a03e07bbd27acdb" => :mojave
+    sha256 "a2214e1996ad9441d7dce56da57f4760146318a3c99e1f1d19f34ca1025c6c5c" => :high_sierra
+    sha256 "586d6aa7e35b08410b94bbbfc5ed8e8c9c74d2bc8f2f51a92bf4376254548c60" => :sierra
   end
 
-  depends_on :python if MacOS.version <= :snow_leopard
   depends_on "libyaml"
-
-  # It's possible that the user wants to manually install Docker and Machine,
-  # for example, they want to compile Docker manually
-  depends_on "docker" => :recommended
-  depends_on "docker-machine" => :recommended
+  depends_on "python"
 
   def install
     system "./script/build/write-git-sha" if build.head?
-    venv = virtualenv_create(libexec)
+    venv = virtualenv_create(libexec, "python3")
     system libexec/"bin/pip", "install", "-v", "--no-binary", ":all:",
                               "--ignore-installed", buildpath
     system libexec/"bin/pip", "uninstall", "-y", "docker-compose"

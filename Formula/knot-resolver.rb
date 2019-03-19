@@ -1,30 +1,25 @@
 class KnotResolver < Formula
   desc "Minimalistic, caching, DNSSEC-validating DNS resolver"
   homepage "https://www.knot-resolver.cz"
-  url "https://secure.nic.cz/files/knot-resolver/knot-resolver-1.5.0.tar.xz"
-  sha256 "c032e63a6b922294746e1ab4002860346e7a6d92b8502965a13ba599088fcb42"
+  url "https://secure.nic.cz/files/knot-resolver/knot-resolver-3.2.1.tar.xz"
+  sha256 "d1396888ec3a63f19dccdf2b7dbcb0d16a5d8642766824b47f4c21be90ce362b"
   head "https://gitlab.labs.nic.cz/knot/knot-resolver.git"
 
   bottle do
-    sha256 "624b67c2820bf9b8cf30bbea754f4a0d55c928a48a0fad4e03c3270938a7232b" => :high_sierra
-    sha256 "644859b3c96adcace5c58db615b374c34cf239ce7eda77525da459015b66f8b1" => :sierra
-    sha256 "7190c74a290987e5eaf0b8c0d3a8fcb88c81ad39df6db431f07b095087de3f67" => :el_capitan
+    rebuild 1
+    sha256 "44db61bf058ba0af440c3ebe47fc54d78bde402ea4971d3c2176ce9c9587e910" => :mojave
+    sha256 "32368f405c27c1d738e5050662f2bf8e6f325f0ac474ad548839345d8462c41c" => :high_sierra
+    sha256 "97e6ad5aae70aa156046fdd0e55a19375cabc0f984031c125be6310381515e06" => :sierra
   end
-
-  option "without-nettle", "Compile without DNS cookies support"
-  option "with-hiredis", "Compile with Redis cache storage support"
-  option "with-libmemcached", "Compile with memcached cache storage support"
 
   depends_on "cmocka" => :build
   depends_on "pkg-config" => :build
   depends_on "gnutls"
   depends_on "knot"
-  depends_on "luajit"
   depends_on "libuv"
   depends_on "lmdb"
-  depends_on "nettle" => :recommended
-  depends_on "hiredis" => :optional
-  depends_on "libmemcached" => :optional
+  depends_on "luajit"
+  depends_on "nettle"
 
   def install
     # Since we don't run `make install` or `make etc-install`, we need to
@@ -42,6 +37,7 @@ class KnotResolver < Formula
     (etc/"kresd").install "config"
 
     (etc/"kresd").install "etc/root.hints"
+    (etc/"kresd").install "etc/icann-ca.pem"
 
     (buildpath/"root.keys").write(root_keys)
     (var/"kresd").install "root.keys"
@@ -49,9 +45,8 @@ class KnotResolver < Formula
 
   # DNSSEC root anchor published by IANA (https://www.iana.org/dnssec/files)
   def root_keys; <<~EOS
-    . IN DS 19036 8 2 49aac11d7b6f6446702e54a1607371607a1a41855200fd2ce1cdde32f24e8fb5
     . IN DS 20326 8 2 e06d44b80b8f1d39a95c0b0d7c65d08458e880409bbc683457104237c7f8ec8d
-    EOS
+  EOS
   end
 
   plist_options :startup => true
@@ -72,6 +67,8 @@ class KnotResolver < Formula
         <string>#{sbin}/kresd</string>
         <string>-c</string>
         <string>#{etc}/kresd/config</string>
+        <string>-f</string>
+        <string>1</string>
       </array>
       <key>StandardInPath</key>
       <string>/dev/null</string>
@@ -81,7 +78,7 @@ class KnotResolver < Formula
       <string>#{var}/log/kresd.log</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

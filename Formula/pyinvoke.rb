@@ -2,19 +2,20 @@ class Pyinvoke < Formula
   include Language::Python::Virtualenv
 
   desc "Pythonic task management & command execution"
-  homepage "http://pyinvoke.org/"
-  url "https://github.com/pyinvoke/invoke/archive/0.21.0.tar.gz"
-  sha256 "ca2fcc56e5abdb9e56c9c5222786356a825a2b552e0137dd06184c54ce9a1cde"
+  homepage "https://www.pyinvoke.org/"
+  url "https://github.com/pyinvoke/invoke/archive/1.2.0.tar.gz"
+  sha256 "266003d33a8b3a565268e33aa0f9767b9441cf1476a20258f929768ee5acd390"
+  revision 1
   head "https://github.com/pyinvoke/invoke.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "0c84ab7223729c95b9303512e08b0e7a2a06b6cc4d3039dbd222b5080af98dae" => :high_sierra
-    sha256 "d11aae306e1a7482f80ab57c8bb4f2a4c9f3e040e6fad835a2d171fb00ab7a14" => :sierra
-    sha256 "29ac1318559e47eb5d9b3e09237514bdb51d6e33ea43ea11e442e678de1c1a10" => :el_capitan
+    sha256 "381a13898c676f211ae0866eda70d51d4b500fa470e198c9cb32a57483f71b71" => :mojave
+    sha256 "6f242a9c102fbd1e02c86e7c5e26eb4053b5ef50c9d0530393158662998538e6" => :high_sierra
+    sha256 "e581b8aade463fae2f82209a2ef250cbaa5c346c6826b13770141b3551457d34" => :sierra
   end
 
-  depends_on :python if MacOS.version <= :snow_leopard
+  depends_on "python"
 
   def install
     virtualenv_install_with_resources

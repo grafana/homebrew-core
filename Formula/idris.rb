@@ -5,15 +5,14 @@ class Idris < Formula
 
   desc "Pure functional programming language with dependent types"
   homepage "https://www.idris-lang.org/"
-  url "https://github.com/idris-lang/Idris-dev/archive/v1.1.1.tar.gz"
-  sha256 "27fff953189739d18cb8aa01223d8bac0d3ad9ec29c5fcc752454711a30b43e8"
+  url "https://github.com/idris-lang/Idris-dev/archive/v1.3.1.tar.gz"
+  sha256 "c0de229736e920a87f5d6453a9673a3dd4562e1d529ed04ddd305c6a8b5c8941"
   head "https://github.com/idris-lang/Idris-dev.git"
 
   bottle do
-    sha256 "a3cb09de4df1065d058dbe1450b7049291554180c1d7f5e951ac094b1be7233f" => :high_sierra
-    sha256 "ebe09791a9d22982c3798a1dee303ebc2984194364186f235782d156160430db" => :sierra
-    sha256 "87b951e346e1abd5fb01237b3f88f19c1e31fc5fe15d84144b090acf22c83363" => :el_capitan
-    sha256 "324862f1b5b9077a1cc2623766f55026c9e6fc2613d57e2b0c65311afc665f7c" => :yosemite
+    sha256 "c7962cb3e053d2c7a076c1f2634ad3fc6fd2f81d48d2cca89271dddb962079f0" => :mojave
+    sha256 "9824714173014b0f72a7e6446277805db9b89ea6c404a895ab4ce6ff3477fad0" => :high_sierra
+    sha256 "dd3bfe19b49e43c06faad25eb55c233fadc5f16c73df137858c6f7dbd4dccbfc" => :sierra
   end
 
   depends_on "cabal-install" => :build
@@ -22,8 +21,8 @@ class Idris < Formula
   depends_on "libffi"
 
   def install
-    args = ["-f FFI"]
-    args << "-f release" if build.stable?
+    args = ["-f", "FFI"]
+    args << "-f" << "release" if build.stable?
     install_cabal_package *args
   end
 
@@ -37,17 +36,15 @@ class Idris < Formula
     system bin/"idris", "hello.idr", "-o", "hello"
     assert_equal "Hello, Homebrew!", shell_output("./hello").chomp
 
-    if build.with? "libffi"
-      (testpath/"ffi.idr").write <<~EOS
-        module Main
-        puts: String -> IO ()
-        puts x = foreign FFI_C "puts" (String -> IO ()) x
-        main : IO ()
-        main = puts "Hello, interpreter!"
-      EOS
+    (testpath/"ffi.idr").write <<~EOS
+      module Main
+      puts: String -> IO ()
+      puts x = foreign FFI_C "puts" (String -> IO ()) x
+      main : IO ()
+      main = puts "Hello, interpreter!"
+    EOS
 
-      system bin/"idris", "ffi.idr", "-o", "ffi"
-      assert_equal "Hello, interpreter!", shell_output("./ffi").chomp
-    end
+    system bin/"idris", "ffi.idr", "-o", "ffi"
+    assert_equal "Hello, interpreter!", shell_output("./ffi").chomp
   end
 end

@@ -1,17 +1,18 @@
 class Httpd < Formula
   desc "Apache HTTP server"
   homepage "https://httpd.apache.org/"
-  url "https://www.apache.org/dyn/closer.cgi?path=httpd/httpd-2.4.29.tar.bz2"
-  sha256 "777753a5a25568a2a27428b2214980564bc1c38c1abf9ccc7630b639991f7f00"
+  url "https://www.apache.org/dyn/closer.cgi?path=httpd/httpd-2.4.38.tar.bz2"
+  sha256 "7dc65857a994c98370dc4334b260101a7a04be60e6e74a5c57a6dee1bc8f394a"
 
   bottle do
-    sha256 "9607b2648d706175f8c8a7ee529bb6e57abdb7a60d47bcb4012e403721707d6d" => :high_sierra
-    sha256 "ca0fc3385ab31d3f44413e4b847785093b10e862b90dd3b61b9973f1cc6f3639" => :sierra
-    sha256 "5fa46264c518ec0c03b8f2b83f801220f704f5580a29002123554c9872fb9439" => :el_capitan
+    sha256 "dd630fc8d917c4f623f9d1141af574ae51f9b2a0c89611f5c31069bacecf8c7b" => :mojave
+    sha256 "ff5507ee926c69c828de1f281f221c1a90aa1645f56b2f86d6e25204b8dfd9b8" => :high_sierra
+    sha256 "9cdc6f8b1d45437c12f9006ab720a5b189b65f2e05018b6eb96a3a0e4752fd51" => :sierra
   end
 
   depends_on "apr"
   depends_on "apr-util"
+  depends_on "brotli"
   depends_on "nghttp2"
   depends_on "openssl"
   depends_on "pcre"
@@ -46,6 +47,8 @@ class Httpd < Formula
                           "--localstatedir=#{var}",
                           "--enable-mpms-shared=all",
                           "--enable-mods-shared=all",
+                          "--enable-authnz-fcgi",
+                          "--enable-cgi",
                           "--enable-pie",
                           "--enable-suexec",
                           "--with-suexec-bin=#{opt_bin}/suexec",
@@ -54,10 +57,16 @@ class Httpd < Formula
                           "--with-sslport=8443",
                           "--with-apr=#{Formula["apr"].opt_prefix}",
                           "--with-apr-util=#{Formula["apr-util"].opt_prefix}",
+                          "--with-brotli=#{Formula["brotli"].opt_prefix}",
+                          "--with-libxml2=#{MacOS.sdk_path_if_needed}/usr",
                           "--with-mpm=prefork",
                           "--with-nghttp2=#{Formula["nghttp2"].opt_prefix}",
                           "--with-ssl=#{Formula["openssl"].opt_prefix}",
-                          "--with-pcre=#{Formula["pcre"].opt_prefix}"
+                          "--with-pcre=#{Formula["pcre"].opt_prefix}",
+                          "--with-z=#{MacOS.sdk_path_if_needed}/usr",
+                          "--disable-lua",
+                          "--disable-luajit"
+    system "make"
     system "make", "install"
 
     # suexec does not install without root
@@ -94,6 +103,11 @@ class Httpd < Formula
     end
   end
 
+  def post_install
+    (var/"cache/httpd").mkpath
+    (var/"www").mkpath
+  end
+
   def caveats
     <<~EOS
       DocumentRoot is #{var}/www.
@@ -101,11 +115,6 @@ class Httpd < Formula
       The default ports have been set in #{etc}/httpd/httpd.conf to 8080 and in
       #{etc}/httpd/extra/httpd-ssl.conf to 8443 so that httpd can run without sudo.
     EOS
-  end
-
-  def post_install
-    (var/"cache/httpd").mkpath
-    (var/"www").mkpath
   end
 
   plist_options :manual => "apachectl start"
@@ -127,17 +136,30 @@ class Httpd < Formula
       <true/>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do
+    # Ensure modules depending on zlib and xml2 have been compiled
+    assert_predicate lib/"httpd/modules/mod_deflate.so", :exist?
+    assert_predicate lib/"httpd/modules/mod_proxy_html.so", :exist?
+    assert_predicate lib/"httpd/modules/mod_xml2enc.so", :exist?
+
     begin
+      require "socket"
+
+      server = TCPServer.new(0)
+      port = server.addr[1]
+      server.close
+
       expected_output = "Hello world!"
       (testpath/"index.html").write expected_output
       (testpath/"httpd.conf").write <<~EOS
-        Listen 8080
+        Listen #{port}
+        ServerName localhost:#{port}
         DocumentRoot "#{testpath}"
         ErrorLog "#{testpath}/httpd-error.log"
+        PidFile "#{testpath}/httpd.pid"
         LoadModule authz_core_module #{lib}/httpd/modules/mod_authz_core.so
         LoadModule unixd_module #{lib}/httpd/modules/mod_unixd.so
         LoadModule dir_module #{lib}/httpd/modules/mod_dir.so
@@ -149,7 +171,7 @@ class Httpd < Formula
       end
       sleep 3
 
-      assert_match expected_output, shell_output("curl -s 127.0.0.1:8080")
+      assert_match expected_output, shell_output("curl -s 127.0.0.1:#{port}")
     ensure
       Process.kill("TERM", pid)
       Process.wait(pid)

@@ -1,31 +1,23 @@
 class Wxmaxima < Formula
   desc "Cross platform GUI for Maxima"
-  homepage "https://andrejv.github.io/wxmaxima"
-  url "https://github.com/andrejv/wxmaxima/archive/Version-17.10.1.tar.gz"
-  sha256 "61276008be667779b4cde4d17b10c179c869d94a2eb2b4f273974fccc2609f62"
-  head "https://github.com/andrejv/wxmaxima.git"
+  homepage "https://wxmaxima-developers.github.io/wxmaxima/"
+  url "https://github.com/wxMaxima-developers/wxmaxima/archive/Version-19.01.0.tar.gz"
+  sha256 "f28dfc9a717e4a91446cddba0e010c4383a3e973a11889948bd65ea311df28fc"
+  head "https://github.com/wxMaxima-developers/wxmaxima.git"
 
   bottle do
     cellar :any
-    sha256 "8f80844c94e38e0e405a274aec094b7f9aea238762703639790de8e2de3280f2" => :high_sierra
-    sha256 "d4173dbf5d8d08e94b6ff9b39fc6eb88aaa57e309a1c6e8f93310a0ea9c09bae" => :sierra
-    sha256 "62be362ff5d80cd7334fdb00e4b71aa24e4cf65d560e54861e70196e1e9fdddb" => :el_capitan
+    sha256 "f5a15066c3fd57ca50ded8ffd4cfa12a3682b4b10ac91a662335db7393984b34" => :mojave
+    sha256 "18a9745082353eb1d965c6b8bf7d05933dda1003e9c0bd20271c6308e00d0ea0" => :high_sierra
+    sha256 "254b2260c87f83859b8f50469fa0ae657fbb310985382c2f0db708901620648f" => :sierra
   end
 
-  depends_on "autoconf" => :build
-  depends_on "automake" => :build
+  depends_on "cmake" => :build
   depends_on "gettext" => :build
   depends_on "wxmac"
 
   def install
-    system "./bootstrap"
-    system "./configure", "--disable-dependency-tracking",
-                          "--prefix=#{prefix}"
-    system "make"
-    cd "locales" do
-      system "make", "allmo"
-    end
-    system "make", "wxMaxima.app"
+    system "cmake", ".", *std_cmake_args
     system "make", "install"
     prefix.install "wxMaxima.app"
   end
@@ -38,7 +30,7 @@ class Wxmaxima < Formula
     in ~/.maxima/maxima-init.mac:
       gnuplot_command:"#{HOMEBREW_PREFIX}/bin/gnuplot"$
       draw_command:"#{HOMEBREW_PREFIX}/bin/gnuplot"$
-    EOS
+  EOS
   end
 
   test do

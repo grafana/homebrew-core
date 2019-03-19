@@ -1,11 +1,7 @@
 class Np2 < Formula
   desc "Neko Project 2: PC-9801 emulator"
-  homepage "http://www.yui.ne.jp/np2/"
-  if MacOS.version >= :sierra
-    url "https://amethyst.yui.ne.jp/svn/pc98/np2/tags/VER_0_86/", :using => :svn, :revision => "2606"
-  else
-    url "http://amethyst.yui.ne.jp/svn/pc98/np2/tags/VER_0_86/", :using => :svn, :revision => "2606"
-  end
+  homepage "https://www.yui.ne.jp/np2/"
+  url "https://amethyst.yui.ne.jp/svn/pc98/np2/tags/VER_0_86/", :using => :svn, :revision => "2606"
   head "https://amethyst.yui.ne.jp/svn/pc98/np2/trunk/", :using => :svn
 
   bottle do
@@ -29,7 +25,8 @@ class Np2 < Formula
       inreplace "np2sdl2.xcodeproj/project.pbxproj" do |s|
         s.gsub! "BAF84E4B195AA35E00183062", "//BAF84E4B195AA35E00183062"
         s.gsub! "HEADER_SEARCH_PATHS = (",
-          "LIBRARY_SEARCH_PATHS = (\"$(inherited)\", #{sdl2.lib}, #{sdl2_ttf.lib}); HEADER_SEARCH_PATHS = (#{sdl2.include}/SDL2, #{sdl2.include}, #{sdl2_ttf.include},"
+                "LIBRARY_SEARCH_PATHS = (\"$(inherited)\", #{sdl2.lib}, #{sdl2_ttf.lib}); " \
+                "HEADER_SEARCH_PATHS = (#{sdl2.include}/SDL2, #{sdl2.include}, #{sdl2_ttf.include},"
         s.gsub! "buildSettings = {", 'buildSettings ={ OTHER_LDFLAGS = "-lSDL2 -lSDL2_ttf";'
       end
       # Force to use Japanese TTF font
@@ -44,7 +41,7 @@ class Np2 < Formula
 
   def caveats; <<~EOS
     A Japanese TTF file named `default.ttf` should be in the working directory.
-    EOS
+  EOS
   end
 
   test do

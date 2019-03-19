@@ -4,18 +4,19 @@ class Vdirsyncer < Formula
   desc "Synchronize calendars and contacts"
   homepage "https://github.com/pimutils/vdirsyncer"
   url "https://github.com/pimutils/vdirsyncer.git",
-      :tag => "0.16.3",
-      :revision => "cca412e7a8ce862a196ed19ba801886cda936f99"
+      :tag      => "0.16.7",
+      :revision => "dcf5f701b7b5c21a8f4e8c80243db3e0baff1313"
   head "https://github.com/pimutils/vdirsyncer.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "a62abbf4541a598dfcef485ac339e68fc907e49ca49e0e3b571c5cec329d4418" => :high_sierra
-    sha256 "865ecd717342ff7a1737f5ea42851f42a9c7433d6874e9eff7582510cfd3e4be" => :sierra
-    sha256 "25804a2cc2c75257254e4f06c823ba992a0a225359cb381a8b23dd42bc59066f" => :el_capitan
+    sha256 "2c40f6ad53b8a558ed7503b5fe2413ae86850ea74f6ab41b560c3019185719fc" => :mojave
+    sha256 "89f7e1832a262681843b223527d96c5f6a587ded3b2884df9a87204c463f1911" => :high_sierra
+    sha256 "57510d02d159de632f3fdb98d7de88aba5ea01d375b4f096d6d367c976e355bc" => :sierra
+    sha256 "81eaa19b3cbc91007a0a5cfe9979cca1f207b2ac2a72b87aabca41ae019838f7" => :el_capitan
   end
 
-  depends_on :python3
+  depends_on "python"
 
   def install
     venv = virtualenv_create(libexec, "python3")

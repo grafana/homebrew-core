@@ -1,45 +1,36 @@
 class Unicorn < Formula
   desc "Lightweight multi-architecture CPU emulation framework"
-  homepage "http://www.unicorn-engine.org"
+  homepage "https://www.unicorn-engine.org/"
   url "https://github.com/unicorn-engine/unicorn/archive/1.0.1.tar.gz"
   sha256 "3a6a4f2b8c405ab009040ca43af8e4aa10ebe44d9c8b336aa36dc35df955017c"
   head "https://github.com/unicorn-engine/unicorn.git"
 
   bottle do
     cellar :any
-    sha256 "a12e18a0a334fa19a2dc54a43fc5d56861e31cf5a9ad352cb1150bb6ec61703c" => :high_sierra
-    sha256 "81d29e7f28335317dd40976d904636ccd7d0679b71747ad13530dc991f327122" => :sierra
-    sha256 "3519d8189333c5ae43eb618e18db7b6be4cf9cc288c6a45ca3b618964d62395c" => :el_capitan
-    sha256 "f8c7cb546985c5e34dddb2c2e338314d024e266085fcbdc3f7e52e0f426e4e29" => :yosemite
+    rebuild 1
+    sha256 "78a5143347e18c673a63dc4b171f610499eb728836f20626bd77bc886374b853" => :mojave
+    sha256 "c44cbb02b8073ca0e70f13cf16272964ab52a8b19a20da07dcfd76c6f15585dd" => :high_sierra
+    sha256 "8c134f4b88d63da3908d419dd29118d6ada4489091cd53e81cc9a72f28a9760b" => :sierra
   end
 
-  option "with-all", "Build with support for ARM64, Motorola 64k, PowerPC and "\
-    "SPARC"
-  option "with-debug", "Create a debug build"
-  option "with-test", "Test build"
-
   depends_on "pkg-config" => :build
-  depends_on "cmocka" => :build if build.with? "test"
 
   def install
-    archs  = %w[x86 x86_64 arm mips]
-    archs += %w[aarch64 m64k ppc sparc] if build.with?("all")
     ENV["PREFIX"] = prefix
-    ENV["UNICORN_ARCHS"] = archs.join " "
+    ENV["UNICORN_ARCHS"] = "x86 x86_64 arm mips aarch64 m64k ppc sparc"
     ENV["UNICORN_SHARED"] = "yes"
-    if build.with?("debug")
-      ENV["UNICORN_DEBUG"] = "yes"
-    else
-      ENV["UNICORN_DEBUG"] = "no"
-    end
+    ENV["UNICORN_DEBUG"] = "no"
     system "make"
-    system "make", "test" if build.with?("test")
     system "make", "install"
+
+    cd "bindings/python" do
+      system "python", *Language::Python.setup_install_args(prefix)
+    end
   end
 
   test do
-    (testpath/"test1.c").write <<-EOS
-      /* Adapted from http://www.unicorn-engine.org/docs/tutorial.html
+    (testpath/"test1.c").write <<~EOS
+      /* Adapted from https://www.unicorn-engine.org/docs/tutorial.html
        * shamelessly and without permission. This almost certainly needs
        * replacement, but for now it should be an OK placeholder
        * assertion that the libraries are intact and available.
@@ -84,5 +75,7 @@ class Unicorn < Formula
     system ENV.cc, "-o", testpath/"test1", testpath/"test1.c",
       "-lpthread", "-lm", "-L#{lib}", "-lunicorn"
     system testpath/"test1"
+
+    system "python", "-c", "import unicorn; print(unicorn.__version__)"
   end
 end

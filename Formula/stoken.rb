@@ -1,22 +1,17 @@
 class Stoken < Formula
   desc "Tokencode generator compatible with RSA SecurID 128-bit (AES)"
   homepage "https://stoken.sourceforge.io/"
-  url "https://downloads.sourceforge.net/project/stoken/stoken-0.91.tar.gz"
-  sha256 "419ed84000bc455ef77c78e3ebfd4c6fd2d932384563989f864becbafd51bcf4"
+  url "https://downloads.sourceforge.net/project/stoken/stoken-0.92.tar.gz"
+  sha256 "aa2b481b058e4caf068f7e747a2dcf5772bcbf278a4f89bc9efcbf82bcc9ef5a"
 
   bottle do
     cellar :any
     rebuild 1
-    sha256 "ee631ed7b16976bdb280c5538f9ff73de447cf98f88793284f4cf3952c634cc0" => :high_sierra
-    sha256 "b818f8cfd4afba73a8a123dfa2dc7dc7b2c066c9dce164ab853a5a5a8b5b31de" => :sierra
-    sha256 "a14908e16d1d104e46f9f606fd5a79514b08ad982a7cec5370ebad5072309b4a" => :el_capitan
+    sha256 "8b558486eeb55f39205d26201a1613eaaadc9b6615d1e5f24b3487749acfb89b" => :mojave
+    sha256 "2aeef625d9594a2fc26890500d1c8ff611e8c5c69df6f8ac905b6a72f179caf0" => :high_sierra
+    sha256 "0896359e6966f067248616b2393e5e0f24a05639c4059c7f6bbd025acb867714" => :sierra
   end
 
-  depends_on "gtk+3" => :optional
-  if build.with? "gtk+3"
-    depends_on "adwaita-icon-theme"
-    depends_on "hicolor-icon-theme"
-  end
   depends_on "pkg-config" => :build
   depends_on "nettle"
 

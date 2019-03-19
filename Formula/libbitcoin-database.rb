@@ -1,13 +1,14 @@
 class LibbitcoinDatabase < Formula
   desc "Bitcoin High Performance Blockchain Database"
   homepage "https://github.com/libbitcoin/libbitcoin-database"
-  url "https://github.com/libbitcoin/libbitcoin-database/archive/v3.3.0.tar.gz"
-  sha256 "b4d98199ac4629a9857c1eb8819fe8166525bf2dca9ed790a9bbe5dc9c9e9186"
+  url "https://github.com/libbitcoin/libbitcoin-database/archive/v3.5.0.tar.gz"
+  sha256 "376ab5abd8d7734a8b678030b9e997c4b1922e422f6e0a185d7daa3eb251db93"
+  revision 1
 
   bottle do
-    sha256 "bd6e177feda0ca98e4b2972edfa1048220ffdbfa3f98945af9bab69ab33e7883" => :high_sierra
-    sha256 "0115578ef6f9db710419ccc61f087b4db9a6e94693074f29d15309af97ef7625" => :sierra
-    sha256 "8987f774562b107685acc81bdb77114aeaf0630950ac0c784e85909f6c3e59e8" => :el_capitan
+    sha256 "221d9c819ac6eb3dd57333301e671571359c27803cc50ba2404e4f609e5a908d" => :mojave
+    sha256 "850cc7da7fd8e96486cd993fe1d6cacf99ae06179d23aafb87ada62ba4a0631e" => :high_sierra
+    sha256 "b11df12ca7349bc2de7f4999a65a71ea658b38107428e8758415871717838a9d" => :sierra
   end
 
   depends_on "autoconf" => :build
@@ -39,9 +40,10 @@ class LibbitcoinDatabase < Formula
         return 0;
       }
     EOS
-    system ENV.cxx, "-std=c++11", "test.cpp",
-                    "-lbitcoin", "-lbitcoin-database", "-lboost_system",
-                    "-o", "test"
+    system ENV.cxx, "-std=c++11", "test.cpp", "-o", "test",
+                    "-L#{Formula["libbitcoin"].opt_lib}", "-lbitcoin",
+                    "-L#{lib}", "-lbitcoin-database",
+                    "-L#{Formula["boost"].opt_lib}", "-lboost_system"
     system "./test"
   end
 end

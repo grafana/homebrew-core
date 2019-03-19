@@ -1,49 +1,36 @@
 class Liblwgeom < Formula
   desc "Allows SpatiaLite to support ST_MakeValid() like PostGIS"
-  homepage "https://postgis.net"
-  revision 3
-
-  stable do
-    url "http://download.osgeo.org/postgis/source/postgis-2.1.5.tar.gz"
-    sha256 "0d0e27f72f12b8dba456fbde25ed0f6913f42baf57332a7f1b9bbc6f29fddbf4"
-
-    # Strip all the PostgreSQL functions from PostGIS configure.ac, to allow
-    # building liblwgeom.dylib without needing PostgreSQL
-    # NOTE: this will need to be maintained per postgis version
-    # Somehow, this still works for 2.1.5, which is awesome!
-    patch do
-      url "https://gist.githubusercontent.com/dakcarto/7458788/raw/8df39204eef5a1e5671828ded7f377ad0f61d4e1/postgis-config_strip-pgsql.diff"
-      sha256 "0bccd1a9b42d8ef537a3851392e378ee252f813464a91ab8fe21ff7f7cae20c1"
-    end
-  end
+  homepage "https://postgis.net/"
+  url "https://download.osgeo.org/postgis/source/postgis-2.4.4.tar.gz"
+  sha256 "0663efb589210d5048d95c817e5cf29552ec8180e16d4c6ef56c94255faca8c2"
+  revision 1
+  head "https://svn.osgeo.org/postgis/trunk/"
 
   bottle do
     cellar :any
-    sha256 "a0f1de43d92642fb933e3a5365ad1985e79377f3f47e0f33bc547b73cdcd7267" => :high_sierra
-    sha256 "55bc93a06f6981f5aea43764ef2c228a0527187f6127c91c672cf2dd1617bf85" => :sierra
-    sha256 "d93db626f97638f2d267444e5fa85222b35673293245d576e0a3ab0020fb187b" => :el_capitan
-    sha256 "c793550ab04e4c40a3f3c2dfbb63476e2e1629182a52d6b9e404ca8ca52e5d64" => :yosemite
-  end
-
-  head do
-    url "https://svn.osgeo.org/postgis/trunk/"
-    depends_on "postgresql" => :build # don't maintain patches for HEAD
+    sha256 "9d6b721be4984a42861a14ba798dd15deb54f524d5a710c7ad78d2097d309503" => :mojave
+    sha256 "61f2cd87123236e471f469467319665664743837a35c5074e868c9908824843e" => :high_sierra
+    sha256 "49cff9c152a94004541516365c60decf5dd5107977e300ef9185d1e9bf8d6db6" => :sierra
+    sha256 "38054f5facd281c4acbe75597f67bed2133549efe33bef0f6200116dd47605d2" => :el_capitan
   end
 
   keg_only "conflicts with PostGIS, which also installs liblwgeom.dylib"
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
-  depends_on "libtool" => :build
   depends_on "gpp" => :build
+  depends_on "libtool" => :build
+  depends_on "pkg-config" => :build
 
-  depends_on "proj"
   depends_on "geos"
   depends_on "json-c"
+  depends_on "proj"
 
   def install
     # See postgis.rb for comments about these settings
     ENV.deparallelize
+
+    ENV["SDKROOT"] = MacOS.sdk_path if MacOS.version == :sierra
 
     args = [
       "--disable-dependency-tracking",
@@ -53,15 +40,12 @@ class Liblwgeom < Formula
       "--with-jsondir=#{Formula["json-c"].opt_prefix}",
 
       # Disable extraneous support
+      "--without-pgconfig",
       "--without-libiconv-prefix",
       "--without-libintl-prefix",
       "--without-raster", # this ensures gdal is not required
       "--without-topology",
     ]
-
-    if build.head?
-      args << "--with-pgconfig=#{Formula["postgresql"].opt_bin}/pg_config"
-    end
 
     system "./autogen.sh"
     system "./configure", *args
@@ -73,5 +57,20 @@ class Liblwgeom < Formula
 
     lib.install Dir["stage/**/lib/*"]
     include.install Dir["stage/**/include/*"]
+  end
+
+  test do
+    (testpath/"test.c").write <<~EOS
+      #include <liblwgeom.h>
+
+      int main(int argc, char* argv[])
+      {
+        printf("%s\\n", lwgeom_version());
+        return 0;
+      }
+    EOS
+    system ENV.cc, "test.c", "-I#{include}", "-I#{Formula["proj"].opt_include}",
+                   "-L#{lib}", "-llwgeom", "-o", "test"
+    system "./test"
   end
 end

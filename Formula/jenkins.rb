@@ -1,8 +1,8 @@
 class Jenkins < Formula
   desc "Extendable open source continuous integration server"
   homepage "https://jenkins.io/"
-  url "http://mirrors.jenkins.io/war/2.89/jenkins.war"
-  sha256 "e7551f166479b54135e2255f42decc2cce7a28150e3d345dd28c8e049486b71d"
+  url "http://mirrors.jenkins.io/war/2.167/jenkins.war"
+  sha256 "5218a0db16e5815eec7f286006b677d935bc4be7a3ea9fef8aba087041c8a37e"
 
   head do
     url "https://github.com/jenkinsci/jenkins.git"
@@ -11,7 +11,7 @@ class Jenkins < Formula
 
   bottle :unneeded
 
-  depends_on :java => "1.8+"
+  depends_on :java => "1.8"
 
   def install
     if build.head?
@@ -20,8 +20,8 @@ class Jenkins < Formula
       system "jar", "xvf", "jenkins.war"
     end
     libexec.install Dir["**/jenkins.war", "**/jenkins-cli.jar"]
-    bin.write_jar_script libexec/"jenkins.war", "jenkins"
-    bin.write_jar_script libexec/"jenkins-cli.jar", "jenkins-cli"
+    bin.write_jar_script libexec/"jenkins.war", "jenkins", :java_version => "1.8"
+    bin.write_jar_script libexec/"jenkins-cli.jar", "jenkins-cli", :java_version => "1.8"
   end
 
   def caveats; <<~EOS
@@ -40,7 +40,11 @@ class Jenkins < Formula
         <string>#{plist_name}</string>
         <key>ProgramArguments</key>
         <array>
-          <string>/usr/bin/java</string>
+          <string>/usr/libexec/java_home</string>
+          <string>-v</string>
+          <string>1.8</string>
+          <string>--exec</string>
+          <string>java</string>
           <string>-Dmail.smtp.starttls.enable=true</string>
           <string>-jar</string>
           <string>#{opt_libexec}/jenkins.war</string>

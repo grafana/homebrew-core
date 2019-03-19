@@ -3,18 +3,18 @@ class Sshconfigfs < Formula
   homepage "https://github.com/markhellewell/sshconfigfs"
   url "https://github.com/markhellewell/sshconfigfs/archive/0.3.tar.gz"
   sha256 "b52612b2211ca06642cee6a1abef41a53f0361ed16908372329fa464caedb74a"
+  revision 1
   head "https://github.com/markhellewell/sshconfigfs.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "8a6fe6649349ad9d1f14bcbe96d4bef0039aaab16bc8b320f052c053d468af70" => :high_sierra
-    sha256 "5e5f5ccfa8356cc53e19bf1a794b0152d6a2083cee84f0777c4e5b9d371e4dfc" => :sierra
-    sha256 "f84991229a6701f9483c79232c5e25f3e4577d2e6748c06b5f49808c0ee8354b" => :el_capitan
-    sha256 "f84991229a6701f9483c79232c5e25f3e4577d2e6748c06b5f49808c0ee8354b" => :yosemite
+    sha256 "df2bcba207e8f5b42a13ef9c0cde8d9608cf406de517c38ecc55afe71c8d00f7" => :mojave
+    sha256 "5cace9c241c7d1d79df449539edd9ef624efa99a1f00b4e71a052b6e0accd3ef" => :high_sierra
+    sha256 "5cace9c241c7d1d79df449539edd9ef624efa99a1f00b4e71a052b6e0accd3ef" => :sierra
   end
 
-  depends_on :python if MacOS.version <= :snow_leopard
   depends_on :osxfuse
+  depends_on "python"
 
   resource "fusepy" do
     url "https://github.com/terencehonles/fusepy/archive/v2.0.2.tar.gz"
@@ -22,10 +22,11 @@ class Sshconfigfs < Formula
   end
 
   def install
-    ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python2.7/site-packages"
+    xy = Language::Python.major_minor_version "python3"
+    ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python#{xy}/site-packages"
 
     resource("fusepy").stage do
-      system "python", *Language::Python.setup_install_args(libexec/"vendor")
+      system "python3", *Language::Python.setup_install_args(libexec/"vendor")
     end
 
     bin.install "sshconfigfs.py" => "sshconfigfs"

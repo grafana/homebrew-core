@@ -1,10 +1,11 @@
 class Nut < Formula
   desc "Network UPS Tools: Support for various power devices"
-  homepage "http://www.networkupstools.org"
-  url "http://www.networkupstools.org/source/2.7/nut-2.7.4.tar.gz"
+  homepage "https://networkupstools.org/"
+  url "https://networkupstools.org/source/2.7/nut-2.7.4.tar.gz"
   sha256 "980e82918c52d364605c0703a5dcf01f74ad2ef06e3d365949e43b7d406d25a7"
 
   bottle do
+    sha256 "3f5166d461e19f8e6eb838215ba1502fb6ec039a94cdab3d88a5ccdf62c675db" => :mojave
     sha256 "102d8b6e9635321a7585d79c8c3c95d0f973c91cbf031be4d6839cf10c06ad2d" => :high_sierra
     sha256 "45949916c354f6c3ba50df8ada5690f36d15ca1114185f1d92f66c4b08110f63" => :sierra
     sha256 "df1f1a4b7efa73d48ada9d97ec13983fd1ba674773a058f771044dcd841a4b79" => :el_capitan
@@ -20,25 +21,9 @@ class Nut < Formula
     depends_on "libtool" => :build
   end
 
-  option "without-serial", "Omits serial drivers"
-  option "without-libusb-compat", "Omits USB drivers"
-  option "with-dev", "Includes dev headers"
-  option "with-net-snmp", "Builds SNMP support"
-  option "with-neon", "Builds XML-HTTP support"
-  option "with-powerman", "Builds powerman PDU support"
-  option "with-freeipmi", "Builds IPMI PSU support"
-  option "with-cgi", "Builds CGI wrappers"
-  option "with-libltdl", "Adds dynamic loading support of plugins using libltdl"
-
   depends_on "pkg-config" => :build
-  depends_on "libusb-compat" => :recommended
-  depends_on "net-snmp" => :optional
-  depends_on "neon" => :optional
-  depends_on "powerman" => :optional
-  depends_on "freeipmi" => :optional
+  depends_on "libusb-compat"
   depends_on "openssl"
-  depends_on "libtool" => :build
-  depends_on "gd" if build.with? "cgi"
 
   conflicts_with "rhino", :because => "both install `rhino` binaries"
 
@@ -48,29 +33,24 @@ class Nut < Formula
       system "./autogen.sh"
     end
 
-    args = %W[
-      --disable-dependency-tracking
-      --prefix=#{prefix}
-      --localstatedir=#{var}
-      --without-doc
-      --without-avahi
-      --with-macosx_ups
-      --with-openssl
-      --without-nss
-      --without-wrap
-    ]
-    args << (build.with?("serial") ? "--with-serial" : "--without-serial")
-    args << (build.with?("libusb-compat") ? "--with-usb" : "--without-usb")
-    args << (build.with?("dev") ? "--with-dev" : "--without-dev")
-    args << (build.with?("net-snmp") ? "--with-snmp" : "--without-snmp")
-    args << (build.with?("neon") ? "--with-neon" : "--without-neon")
-    args << (build.with?("powerman") ? "--with-powerman" : "--without-powerman")
-    args << (build.with?("ipmi") ? "--with-ipmi" : "--without-ipmi")
-    args << "--with-freeipmi" if build.with? "ipmi"
-    args << (build.with?("libltdl") ? "--with-libltdl" : "--without-libltdl")
-    args << (build.with?("cgi") ? "--with-cgi" : "--without-cgi")
-
-    system "./configure", *args
+    system "./configure", "--disable-dependency-tracking",
+                          "--prefix=#{prefix}",
+                          "--localstatedir=#{var}",
+                          "--with-macosx_ups",
+                          "--with-openssl",
+                          "--with-serial",
+                          "--with-usb",
+                          "--without-avahi",
+                          "--without-cgi",
+                          "--without-dev",
+                          "--without-doc",
+                          "--without-ipmi",
+                          "--without-libltdl",
+                          "--without-neon",
+                          "--without-nss",
+                          "--without-powerman",
+                          "--without-snmp",
+                          "--without-wrap"
     system "make", "install"
   end
 

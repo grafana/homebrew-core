@@ -1,26 +1,22 @@
 class Libsecret < Formula
   desc "Library for storing/retrieving passwords and other secrets"
   homepage "https://wiki.gnome.org/Projects/Libsecret"
-  url "https://download.gnome.org/sources/libsecret/0.18/libsecret-0.18.5.tar.xz"
-  sha256 "9ce7bd8dd5831f2786c935d82638ac428fa085057cc6780aba0e39375887ccb3"
-  revision 1
+  url "https://download.gnome.org/sources/libsecret/0.18/libsecret-0.18.8.tar.xz"
+  sha256 "3bfa889d260e0dbabcf5b9967f2aae12edcd2ddc9adc365de7a5cc840c311d15"
 
   bottle do
-    sha256 "fe0fb636bf96c93bade82da91245ef92a5734dee84a8f2ed6294f0bd9e822806" => :high_sierra
-    sha256 "70dc8c53fe5e90878623f3d78dc31e23894429e5ffac816efaa17ac683d6e80d" => :sierra
-    sha256 "bc8741bca918709da77c0144e985918b720afcd27b6228963f117348994d680c" => :el_capitan
-    sha256 "9abd02a3cc9049c185321f691df43da2b150a2f55ca0463e346632b93a7a7900" => :yosemite
+    sha256 "2a7841ebb35b24339e28543b80f73113774dc297dac8e5b6c072cb0602eb3515" => :mojave
+    sha256 "6c761141ef146223b516a600c99fa75bb4863e60b09aa6b65da4bb19df3109c3" => :high_sierra
+    sha256 "a3c6bc66b02a4e4f4a554705e4dcc0e6fbc670f0fa71f485dbb2e6c9392b049f" => :sierra
   end
 
-  depends_on "pkg-config" => :build
-  depends_on "gnu-sed" => :build
-  depends_on "intltool" => :build
-  depends_on "gettext" => :build
   depends_on "docbook-xsl" => :build
+  depends_on "gettext" => :build
+  depends_on "gobject-introspection" => :build
+  depends_on "pkg-config" => :build
+  depends_on "vala" => :build
   depends_on "glib"
   depends_on "libgcrypt"
-  depends_on "gobject-introspection" => :recommended
-  depends_on "vala" => :optional
 
   def install
     ENV["XML_CATALOG_FILES"] = "#{etc}/xml/catalog"
@@ -30,16 +26,11 @@ class Libsecret < Formula
       --disable-dependency-tracking
       --disable-silent-rules
       --prefix=#{prefix}
+      --enable-introspection
+      --enable-vala
     ]
 
-    args << "--enable-introspection" if build.with? "gobject-introspection"
-    args << "--enable-vala" if build.with? "vala"
-
     system "./configure", *args
-
-    # https://bugzilla.gnome.org/show_bug.cgi?id=734630
-    inreplace "Makefile", "sed", "gsed"
-
     system "make", "install"
   end
 

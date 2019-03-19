@@ -1,15 +1,15 @@
 class Hfstospell < Formula
   desc "Helsinki Finite-State Technology ospell"
   homepage "https://hfst.github.io/"
-  url "https://github.com/hfst/hfst-ospell/releases/download/v0.4.5/hfstospell-0.4.5.tar.gz"
-  sha256 "cf10817d1d82f0a7268992ab6ccf475fae2d838e6b9fc59eb6db38e9c21a311e"
+  url "https://github.com/hfst/hfst-ospell/releases/download/v0.5.0/hfstospell-0.5.0.tar.gz"
+  sha256 "0fd2ad367f8a694c60742deaee9fcf1225e4921dd75549ef0aceca671ddfe1cd"
+  revision 3
 
   bottle do
     cellar :any
-    sha256 "4caf4783345654c7cdea9d47ffabc6cfb4b77f01d98de626e6b0e65c4e5cb7ac" => :high_sierra
-    sha256 "6d42bafd9ece439af37329183b65644973e8a64bf1b4a93a13fe543d8ecdbe38" => :sierra
-    sha256 "e6c21f06dc9a48e9106b26598db0fad40f4cf98310818e4ec1659ca5228614e9" => :el_capitan
-    sha256 "749db395f939581fbf9c7302caea13f7defab3d14d76e8829e0d2e50f7673558" => :yosemite
+    sha256 "83198b2c45b82d445d6acd6ddac8de7c6e2fab365c3d6adb7a7d6cd7c9938851" => :mojave
+    sha256 "69927247be97c86e0802dc26cbd5528ee1723c100aac2b4b864e2bf4abd0081e" => :high_sierra
+    sha256 "2dab570b4bc6ae2569e344843b2e8010138ebbe6930e85944d8a9a3d956d1451" => :sierra
   end
 
   depends_on "pkg-config" => :build
@@ -17,9 +17,18 @@ class Hfstospell < Formula
   depends_on "libarchive"
   depends_on "libxml++"
 
-  needs :cxx11
+  # Fix "error: no template named 'auto_ptr' in namespace 'std'"
+  # Upstream PR 20 Jun 2018 "C++14 (C++1y) should be the highest supported standard."
+  # See https://github.com/hfst/hfst-ospell/pull/41
+  patch do
+    url "https://raw.githubusercontent.com/Homebrew/formula-patches/674a62d/hfstospell/no-cxx17.diff"
+    sha256 "0a3146e871ac0e3c71248b8671d09f6d8a8a69713b6f4857eab7bdb684709083"
+  end
 
   def install
+    # icu4c 61.1 compatability
+    ENV.append "CPPFLAGS", "-DU_USING_ICU_NAMESPACE=1"
+
     ENV.cxx11
     system "./configure", "--disable-dependency-tracking",
                           "--disable-silent-rules",

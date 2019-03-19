@@ -1,23 +1,33 @@
 class Dropbear < Formula
   desc "Small SSH server/client for POSIX-based system"
   homepage "https://matt.ucc.asn.au/dropbear/dropbear.html"
-  url "https://matt.ucc.asn.au/dropbear/releases/dropbear-2017.75.tar.bz2"
-  mirror "https://dropbear.nl/mirror/dropbear-2017.75.tar.bz2"
-  sha256 "6cbc1dcb1c9709d226dff669e5604172a18cf5dbf9a201474d5618ae4465098c"
+  revision 1
+
+  stable do
+    url "https://matt.ucc.asn.au/dropbear/releases/dropbear-2018.76.tar.bz2"
+    sha256 "f2fb9167eca8cf93456a5fc1d4faf709902a3ab70dd44e352f3acbc3ffdaea65"
+
+    # Fixes CVE-2018-15599. Safe to remove on next release.
+    # https://lists.ucc.gu.uwa.edu.au/pipermail/dropbear/2018q3/002108.html
+    patch do
+      url "https://secure.ucc.asn.au/hg/dropbear/raw-rev/5d2d1021ca00"
+      sha256 "42b5720cf6c888638cfb84fdd862fc0d323b2e023cbe5f9ccdaa2e0c35b6873e"
+    end
+  end
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "5c69d621d5e75b5890f219f2d9b1f368b63b28a01974e2db1cb06d61fd3a27d6" => :high_sierra
-    sha256 "42f20b1d0ef40b052c31487e0127a259743787b43d593b8bdcbfe3eafb5b5f21" => :sierra
-    sha256 "4a55b7ea9de69871d141a34662bd3acfd3dd0db9151542ce165f12d0a74db597" => :el_capitan
-    sha256 "f6813d3b81b32e7534391f53d521cf3af9f87f3f40b45f63d9a9dd9723540683" => :yosemite
+    sha256 "3f63323d955182c40f86c6e0c681da9628780db8803f8812e422c72af5e6ddfd" => :mojave
+    sha256 "c2440ba5427b079dc3ca2a56f84c53fed4c1cff689df0fc53d2e0c6de1f983c7" => :high_sierra
+    sha256 "5764f9837f9a8a330cba257657b93b410d76b5e184dab8971b6772594ff5182c" => :sierra
+    sha256 "51840945255b14f841843c9061448542054589284d907632c0fbd41cd38be405" => :el_capitan
   end
 
   head do
     url "https://github.com/mkj/dropbear.git"
 
-    depends_on "automake" => :build
     depends_on "autoconf" => :build
+    depends_on "automake" => :build
   end
 
   def install
@@ -40,6 +50,6 @@ class Dropbear < Formula
     testfile = testpath/"testec521"
     system "#{bin}/dbclient", "-h"
     system "#{bin}/dropbearkey", "-t", "ecdsa", "-f", testfile, "-s", "521"
-    assert testfile.exist?
+    assert_predicate testfile, :exist?
   end
 end

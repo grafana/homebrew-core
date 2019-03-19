@@ -1,39 +1,29 @@
 class YamlCpp < Formula
   desc "C++ YAML parser and emitter for YAML 1.2 spec"
   homepage "https://github.com/jbeder/yaml-cpp"
-  url "https://github.com/jbeder/yaml-cpp/archive/release-0.5.3.tar.gz"
-  sha256 "3492d9c1f4319dfd5588f60caed7cec3f030f7984386c11ed4b39f8e3316d763"
+  url "https://github.com/jbeder/yaml-cpp/archive/yaml-cpp-0.6.2.tar.gz"
+  sha256 "e4d8560e163c3d875fd5d9e5542b5fd5bec810febdcba61481fe5fc4e6b1fd05"
+  revision 1
 
   bottle do
     cellar :any
-    sha256 "f4e9ed4651906c28464baf45d3a460502a24b42add49b35e969141818348680c" => :high_sierra
-    sha256 "fe1fca40afa3817fd44b1f3c4810dce9f4d20390522526e72d775b9336fc3c3a" => :sierra
-    sha256 "20b38c2f7c47550b458cb5b6f054795d90f4955d2525656e6d713cdbe7d451b1" => :el_capitan
-    sha256 "e0a51ff0b33568695412fe43cdc51b26642ae46dfb6dac56b813295057c91bb6" => :yosemite
-    sha256 "c779f86632b38472e022ad91f0f5ddb0f399fd547d36cbc5494a76c0f6becd48" => :mavericks
+    sha256 "0ce658deb59e0d2fc5268fbc4f02923770b5be7867ab10e2d2bba339d71bd593" => :mojave
+    sha256 "cbcedc236b8ec1dbd389de60327e59fc546cf116cccd5d7d5da786fe52a4e7c0" => :high_sierra
+    sha256 "b332f87fbdda1324e819dd9e4c4f388b58e9c19159b97afe92b2992a17add1b9" => :sierra
   end
-
-  option :cxx11
-  option "with-static-lib", "Build a static library"
 
   depends_on "cmake" => :build
 
-  if build.cxx11? && MacOS.version < :mavericks
-    depends_on "boost" => "c++11"
-  else
-    depends_on "boost"
+  # Upstream commit from Sep 3 2018 "Improvements to CMake buildsystem"
+  # which fixes the unexpected installation of Google Test.
+  # See https://github.com/jbeder/yaml-cpp/issues/539
+  patch do
+    url "https://github.com/jbeder/yaml-cpp/commit/5e79f5eed3d86125468681116e92814d2cf40067.patch?full_index=1"
+    sha256 "52da989f0dcaca68ae9ee6334155954639506e16cbe3b9bd007dace9e171e4bd"
   end
 
   def install
-    ENV.cxx11 if build.cxx11?
-    args = std_cmake_args
-    if build.with? "static-lib"
-      args << "-DBUILD_SHARED_LIBS=OFF"
-    else
-      args << "-DBUILD_SHARED_LIBS=ON"
-    end
-
-    system "cmake", ".", *args
+    system "cmake", ".", *std_cmake_args, "-DBUILD_SHARED_LIBS=ON"
     system "make", "install"
   end
 
@@ -46,7 +36,7 @@ class YamlCpp < Formula
         return 0;
       }
     EOS
-    system ENV.cxx, "test.cpp", "-L#{lib}", "-lyaml-cpp", "-o", "test"
+    system ENV.cxx, "test.cpp", "-std=c++11", "-L#{lib}", "-lyaml-cpp", "-o", "test"
     system "./test"
   end
 end

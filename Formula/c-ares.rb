@@ -1,23 +1,21 @@
 class CAres < Formula
   desc "Asynchronous DNS library"
   homepage "https://c-ares.haxx.se/"
-  url "https://c-ares.haxx.se/download/c-ares-1.13.0.tar.gz"
-  mirror "https://launchpad.net/ubuntu/+archive/primary/+files/c-ares_1.13.0.orig.tar.gz"
-  sha256 "03f708f1b14a26ab26c38abd51137640cb444d3ec72380b21b20f1a8d2861da7"
+  url "https://c-ares.haxx.se/download/c-ares-1.15.0.tar.gz"
+  sha256 "6cdb97871f2930530c97deb7cf5c8fa4be5a0b02c7cea6e7c7667672a39d6852"
 
   bottle do
     cellar :any
-    sha256 "f6778d973ae8c04a1e8abca2d77340b50e19a0448e90f5cdc110b515e62b05e9" => :high_sierra
-    sha256 "e543ffa2ee246cd28e1dc0bb2ba1e2952266500419be8ed3a54d910c274f24be" => :sierra
-    sha256 "5efb5340249ab0b5cd160632391e6e632fbaf8857742d66dbba9938df8ac9215" => :el_capitan
-    sha256 "28977de886a3ca0cf08fae79d2b1abfb2d1c198b7a28c345dd37566ccbf8d670" => :yosemite
+    sha256 "6c1782cd4a17e74f8f7b6258faa754ddcf9bf3a388cb862d6b5da8832668f9ef" => :mojave
+    sha256 "45fcb6953de6f43026bc28f3d8798ced5e5a0bbd28c18240fc0e9bc66174fc1e" => :high_sierra
+    sha256 "3d2c45de57a6c1e9fe867d67fa4509d2d42aae5fef8f5d5fc1ea34afff2ff22b" => :sierra
   end
 
   head do
     url "https://github.com/bagder/c-ares.git"
 
-    depends_on "automake" => :build
     depends_on "autoconf" => :build
+    depends_on "automake" => :build
     depends_on "libtool" => :build
   end
 

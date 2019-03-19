@@ -1,15 +1,15 @@
 class Lean < Formula
   desc "Theorem prover"
   homepage "https://leanprover.github.io/"
-  url "https://github.com/leanprover/lean/archive/v3.3.0.tar.gz"
-  sha256 "d974ec33c6ca4910388b4fc6c59f1bfc81b5f58640ed1b7450042a6ada50ba1d"
+  url "https://github.com/leanprover/lean/archive/v3.4.2.tar.gz"
+  sha256 "ec4488be8473577666f38dec81123d0f7b26476139d3caa2e175a571f6c00d87"
   head "https://github.com/leanprover/lean.git"
 
   bottle do
     cellar :any
-    sha256 "6bb7a327d8affe2685a07cb339abf8f49dbf9984b67ce28987d6ae37975470c4" => :high_sierra
-    sha256 "8a1979e0ce82b2672100412c3e9a81e89f281128eb820570a429bcada4664db0" => :sierra
-    sha256 "866478c27b8a39507fc9afa8aa4793e58e071f81acd45e3e90628a2f95d08e4b" => :el_capitan
+    sha256 "a4e42293767b2c39d46ededd68ccdbae0deddc8280a8d5a0004390091e91acd4" => :mojave
+    sha256 "31506dc58b1108625510415a551fea963739898ad675d8cb3023af6e3922e109" => :high_sierra
+    sha256 "a5df8afdccd0db40f4a9c8184d9197a8a66a47b2c2bbf7451e05976b13274025" => :sierra
   end
 
   depends_on "cmake" => :build

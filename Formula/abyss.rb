@@ -1,15 +1,14 @@
 class Abyss < Formula
   desc "Genome sequence assembler for short reads"
   homepage "http://www.bcgsc.ca/platform/bioinfo/software/abyss"
-  url "https://github.com/bcgsc/abyss/releases/download/2.0.2/abyss-2.0.2.tar.gz"
-  sha256 "d87b76edeac3a6fb48f24a1d63f243d8278a324c9a5eb29027b640f7089422df"
-  revision 1
+  url "https://github.com/bcgsc/abyss/releases/download/2.1.5/abyss-2.1.5.tar.gz"
+  sha256 "65bfc8241e6ff5adf7601ae4ae93a75e3db86d6bff5d593c75aaff7f0ef41757"
 
   bottle do
     cellar :any
-    sha256 "bb42b5757cde66dcde18e1731e0a081f5e7f9182966ea562f72b32cd4e5d9ca5" => :high_sierra
-    sha256 "8e9cd77ba6b8aba80b5914ef9a806ac2bc0ea9f6605331db06e1bf968c2e5528" => :sierra
-    sha256 "4d89dd6066d55b4252a0707216dabf4e60065bdb2ad72cdb3a4d87a0bd70be80" => :el_capitan
+    sha256 "9899d03cf2714ffc25adcac83e4b424c03022b6896c3112f49d01f585b0d3a7c" => :mojave
+    sha256 "3c358f580990e5edb642524dc83d7cf82cff1788649ef2584dd8e9113d9f7821" => :high_sierra
+    sha256 "56097dc4da0f6700dface6d4a36b5064b3401f2ba7b874cc61736f4a06047cdf" => :sierra
   end
 
   head do
@@ -20,11 +19,12 @@ class Abyss < Formula
     depends_on "multimarkdown" => :build
   end
 
-  needs :openmp
-
   depends_on "boost" => :build
   depends_on "google-sparsehash" => :build
-  depends_on :mpi => :cc
+  depends_on "gcc"
+  depends_on "open-mpi"
+
+  fails_with :clang # no OpenMP support
 
   resource("testdata") do
     url "http://www.bcgsc.ca/platform/bioinfo/software/abyss/releases/1.3.4/test-data.tar.gz"
@@ -33,10 +33,13 @@ class Abyss < Formula
 
   def install
     system "./autogen.sh" if build.head?
-    system "./configure", "--disable-dependency-tracking",
-                          "--disable-silent-rules",
+    system "./configure", "--enable-maxk=128",
                           "--prefix=#{prefix}",
-                          "--enable-maxk=128"
+                          "--with-boost=#{Formula["boost"].include}",
+                          "--with-mpi=#{Formula["open-mpi"].prefix}",
+                          "--with-sparsehash=#{Formula["google-sparsehash"].prefix}",
+                          "--disable-dependency-tracking",
+                          "--disable-silent-rules"
     system "make", "install"
   end
 

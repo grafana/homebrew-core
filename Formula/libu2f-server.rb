@@ -1,19 +1,21 @@
 class Libu2fServer < Formula
   desc "Server-side of the Universal 2nd Factor (U2F) protocol"
   homepage "https://developers.yubico.com/libu2f-server/"
-  url "https://developers.yubico.com/libu2f-server/Releases/libu2f-server-1.0.1.tar.xz"
-  sha256 "a618f59051209d6d70c24cf42d64c9b67bd7dd5946b6dbd2c649181d7e8f1f6e"
+  url "https://developers.yubico.com/libu2f-server/Releases/libu2f-server-1.1.0.tar.xz"
+  sha256 "8dcd3caeacebef6e36a42462039fd035e45fa85653dcb2013f45e15aad49a277"
+  revision 1
 
   bottle do
     cellar :any
-    sha256 "222f72a76779545285dcd280b9773cca284f617c58e38454c3f19fd514241648" => :high_sierra
-    sha256 "87859895f46a6e196deaa704cac54d0ebc003dfd6c6a0d47d5319dfc0f3b9e59" => :sierra
-    sha256 "9a5704c78fa45d5e72e6fdb55656cdc49cda37fe56fc6c3a3669390dd6ef883e" => :el_capitan
-    sha256 "b6e45ad28814759b052657a14884f5754e65decdcd8fa185fe59382ca30d5e75" => :yosemite
-    sha256 "53cf2a8cb039a27cc4b36605245b15aee85f8d1044f3ba49cb12868ccf0b0cdf" => :mavericks
+    sha256 "4171f31751c8bd489ff38e66de80340f1abff5442472dca02b2b2be5d6bd1b12" => :mojave
+    sha256 "8b2986796fde4c4af2ceea03780de6310932f5b26744118d56920694777e0738" => :high_sierra
+    sha256 "90ec17a1fccbb6d6ed4e8cd95d6828ef1b0fe80f173435e7124fab938d3af812" => :sierra
+    sha256 "566d3f52eef7dca1671f93f8f2b1f351e960b3c98a3737ed7f14843296d5a601" => :el_capitan
   end
 
   depends_on "check" => :build
+  depends_on "gengetopt" => :build
+  depends_on "help2man" => :build
   depends_on "pkg-config" => :build
   depends_on "json-c"
   depends_on "openssl"

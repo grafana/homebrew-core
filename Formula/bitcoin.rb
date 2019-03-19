@@ -1,41 +1,44 @@
 class Bitcoin < Formula
   desc "Decentralized, peer to peer payment network"
   homepage "https://bitcoin.org/"
-  url "https://github.com/bitcoin/bitcoin/archive/v0.15.0.1.tar.gz"
-  sha256 "a2d28632be6918ce23d2fd589f0aecbb2a90579c9345f47fdfe1e77ec31f023e"
-  head "https://github.com/bitcoin/bitcoin.git"
+  url "https://bitcoin.org/bin/bitcoin-core-0.17.1/bitcoin-0.17.1.tar.gz"
+  sha256 "3e564fb5cf832f39e930e19c83ea53e09cfe6f93a663294ed83a32e194bda42a"
 
   bottle do
     cellar :any
-    sha256 "c9f708c03d4096f1e95de9d25c513a0ebffe5f666f33eedc8c25a782d795e509" => :high_sierra
-    sha256 "f385af35e9c0ffb47d9ec7c0385b5bedff177912be756a130ef999773a371f80" => :sierra
-    sha256 "ccd2d67f6d7036cace0c3e44e14e969e388642dfc6caa63fb3f5efe89c3d4886" => :el_capitan
+    sha256 "9f31d9597cb82823d23baf05afbfa6a3e177a8a5ee043a4f618cb3b248515f8d" => :mojave
+    sha256 "dbdd16f4c04598c60c8a1b6835e42570582b8ee81a8ef509cd308b292658406c" => :high_sierra
+    sha256 "574444c09a0d32df7c4942daebc06946c7ce06b32a4ee8e044b2ddc51da8d0e3" => :sierra
   end
 
-  depends_on "autoconf" => :build
-  depends_on "automake" => :build
-  depends_on "libtool" => :build
+  head do
+    url "https://github.com/bitcoin/bitcoin.git"
+
+    depends_on "autoconf" => :build
+    depends_on "automake" => :build
+    depends_on "libtool" => :build
+  end
+
   depends_on "pkg-config" => :build
   depends_on "berkeley-db@4"
   depends_on "boost"
   depends_on "libevent"
   depends_on "miniupnpc"
   depends_on "openssl"
-
-  needs :cxx11
+  depends_on "zeromq"
 
   def install
-    if MacOS.version == :el_capitan && MacOS::Xcode.installed? &&
-       MacOS::Xcode.version >= "8.0"
+    if MacOS.version == :el_capitan && MacOS::Xcode.version >= "8.0"
       ENV.delete("SDKROOT")
     end
 
-    system "./autogen.sh"
+    system "./autogen.sh" if build.head?
     system "./configure", "--disable-dependency-tracking",
                           "--disable-silent-rules",
                           "--with-boost-libdir=#{Formula["boost"].opt_lib}",
                           "--prefix=#{prefix}"
     system "make", "install"
+    pkgshare.install "share/rpcauth"
   end
 
   plist_options :manual => "bitcoind"
@@ -55,7 +58,7 @@ class Bitcoin < Formula
       <true/>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

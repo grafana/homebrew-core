@@ -2,33 +2,37 @@ class Consul < Formula
   desc "Tool for service discovery, monitoring and configuration"
   homepage "https://www.consul.io"
   url "https://github.com/hashicorp/consul.git",
-      :tag => "v1.0.0",
-      :revision => "51ea240df8476e02215d53fbfad5838bf0d44d21"
-
+      :tag      => "v1.4.2",
+      :revision => "c97c712e96e0e53308054d5e1180289fe02dce38"
   head "https://github.com/hashicorp/consul.git",
        :shallow => false
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "babe5b2709c5e6cd60f0a2fab9682a488ef250dda9001b052054f45a578bbee7" => :high_sierra
-    sha256 "abdbbd11adf26408f477e829fcf32dc6e937c5793b989b269dad1bd8e01525e5" => :sierra
-    sha256 "9526896ed347c2a0a9fead692a1691b10b62a69c9625ea184f2e76546b229843" => :el_capitan
+    sha256 "be4070b81e97cb72ef9f330faf50038f88a9db7b7933ef031ff69d75db83f33d" => :mojave
+    sha256 "b3f6e8198d660cbca3e0df226fcefaf7e3997c2d76db346618f0628edb323897" => :high_sierra
+    sha256 "c09034d202dfb62957e2ee976cc8ffaeb832956c852dc7ae6c6eca293c4a63b3" => :sierra
   end
 
   depends_on "go" => :build
+  depends_on "gox" => :build
 
   def install
+    # Avoid running `go get`
+    inreplace "GNUmakefile", "go get -u -v $(GOTOOLS)", ""
+
+    ENV["XC_OS"] = "darwin"
+    ENV["XC_ARCH"] = "amd64"
+    ENV["GOPATH"] = buildpath
     contents = Dir["{*,.git,.gitignore}"]
-    gopath = buildpath/"gopath"
-    (gopath/"src/github.com/hashicorp/consul").install contents
+    (buildpath/"src/github.com/hashicorp/consul").install contents
 
-    ENV["GOPATH"] = gopath
-    ENV.prepend_create_path "PATH", gopath/"bin"
+    (buildpath/"bin").mkpath
 
-    cd gopath/"src/github.com/hashicorp/consul" do
+    cd "src/github.com/hashicorp/consul" do
       system "make"
       bin.install "bin/consul"
-      zsh_completion.install "contrib/zsh-completion/_consul"
+      prefix.install_metafiles
     end
   end
 
@@ -64,7 +68,7 @@ class Consul < Formula
         <string>#{var}/log/consul.log</string>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

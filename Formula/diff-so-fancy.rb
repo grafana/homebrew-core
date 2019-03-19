@@ -1,8 +1,8 @@
 class DiffSoFancy < Formula
   desc "Good-lookin' diffs with diff-highlight and more"
   homepage "https://github.com/so-fancy/diff-so-fancy"
-  url "https://github.com/so-fancy/diff-so-fancy/archive/v1.1.1.tar.gz"
-  sha256 "9505fa729e1e5a4e3ca9af22db3c07342e8544f5151c73ccf05c6b3b3f2e835f"
+  url "https://github.com/so-fancy/diff-so-fancy/archive/v1.2.5.tar.gz"
+  sha256 "4c13e59ef95b1e4a69f840d80e97d5bc4756add743b5a4cf50dadaa071eb088e"
   head "https://github.com/so-fancy/diff-so-fancy.git", :branch => "next"
 
   bottle :unneeded

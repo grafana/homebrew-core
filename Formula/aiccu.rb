@@ -1,14 +1,13 @@
 class Aiccu < Formula
   desc "Automatic IPv6 Connectivity Client Utility"
   homepage "https://www.sixxs.net/tools/aiccu/"
-  # Upstream 402s when passed a non-standard User-Agent such as Homebrew's
-  url "https://mirrors.ocf.berkeley.edu/debian/pool/main/a/aiccu/aiccu_20070115.orig.tar.gz"
-  mirror "https://mirrorservice.org/sites/ftp.debian.org/debian/pool/main/a/aiccu/aiccu_20070115.orig.tar.gz"
+  url "https://deb.debian.org/debian/pool/main/a/aiccu/aiccu_20070115.orig.tar.gz"
   version "20070115"
   sha256 "d23cf50a16fa842242c97683c3c1c1089a7a4964e3eaba97ad1f17110fdfe3cc"
 
   bottle do
     rebuild 1
+    sha256 "f6c90e2ecdcd0d676abe4fb32f98a8592d348ac3794de62fa64f403e5ecbbf17" => :mojave
     sha256 "9033bb99bd8fbaa3b74abb0fa850b2220c317628851af361180c0c764732d49c" => :high_sierra
     sha256 "ee19bef55805a8562bddb41a3af66e5bce9589b1e4d96b05348a37b5ada2c091" => :sierra
     sha256 "572e103e9de9c872eb202e18d5c4f352f0b9dc26d284d5979b83ff6fa3daa5b2" => :el_capitan
@@ -66,7 +65,7 @@ class Aiccu < Formula
       <true/>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

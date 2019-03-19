@@ -3,19 +3,25 @@ class Pius < Formula
 
   desc "PGP individual UID signer"
   homepage "https://www.phildev.net/pius/"
-  url "https://github.com/jaymzh/pius/archive/v2.2.4.tar.gz"
-  sha256 "876763c351ba8538d0c614c31f1873b5e821425927631139c83378532215516c"
+  url "https://github.com/jaymzh/pius/archive/v2.2.6.tar.gz"
+  sha256 "88727d2377db6d57e9832c0d923d42edd835ba1b14f1e455f90b024eba291921"
+  revision 1
   head "https://github.com/jaymzh/pius.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "40a07225e28d22b1860a9eaddd5dc4557172360125d9f172e87065daa1f8b195" => :high_sierra
-    sha256 "248f6562eaa6abca6500f5ec93488b0f983b7839c8d2060c4a208432783e5d66" => :sierra
-    sha256 "a55f1aa243dd35d5332fae94fc9604bb2306e534b00b1f11362b2fdd1188df0d" => :el_capitan
-    sha256 "15444762e1364bdbfc4fce49279c8c016f4a6060e4a7efb38fb5e8e26d56e69b" => :yosemite
+    sha256 "d879b8fa36572f39451238f0de4b83f243d74370e6cf5d0c908d1f758591adb8" => :mojave
+    sha256 "e113e0d49fd040b5c5a338e40dbbe541158f8d7fbd8de3d73a0d9f5b717969cc" => :high_sierra
+    sha256 "104cc7287e9a26087ac5060a79365cdf1a24cd69cd693e942bfa4a4d0b18e300" => :sierra
   end
 
-  depends_on :gpg => :run
+  depends_on "gnupg"
+  depends_on "python"
+
+  resource "six" do
+    url "https://files.pythonhosted.org/packages/16/d8/bc6316cf98419719bd59c91742194c111b6f2e85abac88e496adefaf7afe/six-1.11.0.tar.gz"
+    sha256 "70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9"
+  end
 
   def install
     # Replace hardcoded gpg path (WONTFIX)
@@ -27,7 +33,7 @@ class Pius < Formula
     The path to gpg is hardcoded in pius as `/usr/bin/env gpg`.
     You can specify a different path by editing ~/.pius:
       gpg-path=/path/to/gpg
-    EOS
+  EOS
   end
 
   test do

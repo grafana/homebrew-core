@@ -1,121 +1,77 @@
 class Wireshark < Formula
   desc "Graphical network analyzer and capture tool"
   homepage "https://www.wireshark.org"
-  url "https://www.wireshark.org/download/src/all-versions/wireshark-2.4.2.tar.xz"
-  mirror "https://1.eu.dl.wireshark.org/src/wireshark-2.4.2.tar.xz"
-  sha256 "d1acb24735fd35e18e9b7a0555ec58277c2b87da45a19ebeb8087c3dda55f47d"
+  url "https://www.wireshark.org/download/src/all-versions/wireshark-2.6.6.tar.xz"
+  mirror "https://1.eu.dl.wireshark.org/src/wireshark-2.6.6.tar.xz"
+  sha256 "487933ea075bdbb25d8df06017d9c4f49fc20eb7f6ec80af086718ed5550e863"
   head "https://code.wireshark.org/review/wireshark", :using => :git
 
   bottle do
-    sha256 "0ffb4497002822256aa74a5cd4d737dfc1ae5ed6924b48e32b1d629264ccb2b0" => :high_sierra
-    sha256 "384706ef1d33cb673047ee69b624b3e054d502bd90ab24e114019023c475cd63" => :sierra
-    sha256 "abfeb3a9802f2556a075124e2fbdfd7e2b6fe770501748ddbad1726bf3af6063" => :el_capitan
+    sha256 "aff7a3542fa872dce596fcd0032b5cca27250a2c9ac0afd8c2d54b8ca9d23436" => :mojave
+    sha256 "9d1299ffdb033a20f17803f550be144e19d6e3df29f6f4eb060bcabd1292f7f0" => :high_sierra
+    sha256 "b188a3081dcf5bd3b9dbf21d4bfe68d3e4815038a458a4bd4dcf4b14e24784bb" => :sierra
   end
-
-  deprecated_option "with-qt5" => "with-qt"
-
-  option "with-gtk+3", "Build the wireshark command with gtk+3"
-  option "with-gtk+", "Build the wireshark command with gtk+"
-  option "with-qt", "Build the wireshark command with Qt (can be used with or without either GTK option)"
-  option "with-headers", "Install Wireshark library headers for plug-in development"
-  option "with-nghttp2", "Enable HTTP/2 header dissection"
 
   depends_on "cmake" => :build
   depends_on "c-ares"
-  depends_on "geoip"
   depends_on "glib"
   depends_on "gnutls"
   depends_on "libgcrypt"
-  depends_on "lua"
-  depends_on "libsmi" => :optional
-  depends_on "libssh" => :optional
-  depends_on "nghttp2" => :optional
-  depends_on "portaudio" => :optional
-  depends_on "qt" => :optional
-  depends_on "gtk+3" => :optional
-  depends_on "gtk+" => :optional
-  depends_on "adwaita-icon-theme" if build.with? "gtk+3"
+  depends_on "libmaxminddb"
+  depends_on "libsmi"
+  depends_on "libssh"
+  depends_on "lua@5.1"
+  depends_on "nghttp2"
 
   def install
-    args = std_cmake_args + %w[
+    args = std_cmake_args + %W[
       -DENABLE_CARES=ON
-      -DENABLE_GEOIP=ON
       -DENABLE_GNUTLS=ON
+      -DENABLE_MAXMINDDB=ON
+      -DBUILD_wireshark_gtk=OFF
+      -DENABLE_PORTAUDIO=OFF
       -DENABLE_LUA=ON
+      -DLUA_INCLUDE_DIR=#{Formula["lua@5.1"].opt_include}/lua-5.1
+      -DLUA_LIBRARY=#{Formula["lua@5.1"].opt_lib}/liblua5.1.dylib
+      -DCARES_INCLUDE_DIR=#{Formula["c-ares"].opt_include}
+      -DGCRYPT_INCLUDE_DIR=#{Formula["libgcrypt"].opt_include}
+      -DGNUTLS_INCLUDE_DIR=#{Formula["gnutls"].opt_include}
+      -DMAXMINDDB_INCLUDE_DIR=#{Formula["libmaxminddb"].opt_include}
+      -DENABLE_SMI=ON
+      -DBUILD_sshdump=ON
+      -DBUILD_ciscodump=ON
+
+      -DENABLE_NGHTTP2=ON
+      -DBUILD_wireshark=OFF
+      -DENABLE_APPLICATION_BUNDLE=OFF
+      -DENABLE_QT5=OFF
     ]
 
-    if build.with? "qt"
-      args << "-DBUILD_wireshark=ON"
-      args << "-DENABLE_APPLICATION_BUNDLE=ON"
-      args << "-DENABLE_QT5=ON"
-    else
-      args << "-DBUILD_wireshark=OFF"
-      args << "-DENABLE_APPLICATION_BUNDLE=OFF"
-      args << "-DENABLE_QT5=OFF"
-    end
-
-    if build.with?("gtk+3") || build.with?("gtk+")
-      args << "-DBUILD_wireshark_gtk=ON"
-      args << "-DENABLE_GTK3=" + (build.with?("gtk+3") ? "ON" : "OFF")
-      args << "-DENABLE_PORTAUDIO=ON" if build.with? "portaudio"
-    else
-      args << "-DBUILD_wireshark_gtk=OFF"
-      args << "-DENABLE_PORTAUDIO=OFF"
-    end
-
-    if build.with? "libsmi"
-      args << "-DENABLE_SMI=ON"
-    else
-      args << "-DENABLE_SMI=OFF"
-    end
-
-    if build.with? "libssh"
-      args << "-DBUILD_sshdump=ON" << "-DBUILD_ciscodump=ON"
-    else
-      args << "-DBUILD_sshdump=OFF" << "-DBUILD_ciscodump=OFF"
-    end
-
-    if build.with? "nghttp2"
-      args << "-DENABLE_NGHTTP2=ON"
-    else
-      args << "-DENABLE_NGHTTP2=OFF"
-    end
-
-    system "cmake", *args
+    system "cmake", *args, "."
     system "make", "install"
 
-    if build.with? "qt"
-      prefix.install bin/"Wireshark.app"
-      bin.install_symlink prefix/"Wireshark.app/Contents/MacOS/Wireshark" => "wireshark"
-    end
-
-    if build.with? "headers"
-      (include/"wireshark").install Dir["*.h"]
-      (include/"wireshark/epan").install Dir["epan/*.h"]
-      (include/"wireshark/epan/crypt").install Dir["epan/crypt/*.h"]
-      (include/"wireshark/epan/dfilter").install Dir["epan/dfilter/*.h"]
-      (include/"wireshark/epan/dissectors").install Dir["epan/dissectors/*.h"]
-      (include/"wireshark/epan/ftypes").install Dir["epan/ftypes/*.h"]
-      (include/"wireshark/epan/wmem").install Dir["epan/wmem/*.h"]
-      (include/"wireshark/wiretap").install Dir["wiretap/*.h"]
-      (include/"wireshark/wsutil").install Dir["wsutil/*.h"]
-    end
+    # Install headers
+    (include/"wireshark").install Dir["*.h"]
+    (include/"wireshark/epan").install Dir["epan/*.h"]
+    (include/"wireshark/epan/crypt").install Dir["epan/crypt/*.h"]
+    (include/"wireshark/epan/dfilter").install Dir["epan/dfilter/*.h"]
+    (include/"wireshark/epan/dissectors").install Dir["epan/dissectors/*.h"]
+    (include/"wireshark/epan/ftypes").install Dir["epan/ftypes/*.h"]
+    (include/"wireshark/epan/wmem").install Dir["epan/wmem/*.h"]
+    (include/"wireshark/wiretap").install Dir["wiretap/*.h"]
+    (include/"wireshark/wsutil").install Dir["wsutil/*.h"]
   end
 
   def caveats; <<~EOS
     This formula only installs the command-line utilities by default.
 
-    Wireshark.app can be downloaded directly from the website:
-      https://www.wireshark.org/
-
-    Alternatively, install with Homebrew-Cask:
+    Install Wireshark.app with Homebrew Cask:
       brew cask install wireshark
 
     If your list of available capture interfaces is empty
     (default macOS behavior), install ChmodBPF:
-
       brew cask install wireshark-chmodbpf
-    EOS
+  EOS
   end
 
   test do

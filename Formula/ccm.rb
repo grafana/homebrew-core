@@ -1,18 +1,19 @@
 class Ccm < Formula
   desc "Create and destroy an Apache Cassandra cluster on localhost"
   homepage "https://github.com/pcmanus/ccm"
-  url "https://files.pythonhosted.org/packages/ed/c5/9ea6b1e5b8ff8874f73a9efdddb8873d801d0f88b5bb2b084e0de03c2760/ccm-3.1.0.tar.gz"
-  sha256 "4fe1c3c0ef0599ce7d98f61d9ca6c491c9ae29431b0fc1a26ead5e26e9ba85ca"
+  url "https://files.pythonhosted.org/packages/fc/ab/b51afd466cc4acf2192e230ddb6fd3adb56066f05c7be1852af7bd655068/ccm-3.1.4.tar.gz"
+  sha256 "a98268c2d8e5534d8d2d94267060e9ee9105b35e43d704bac0fa495a773acf7d"
+  revision 1
   head "https://github.com/pcmanus/ccm.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "3e6e86162facfffb7095fb69b8ed28b37757b3a42359ea60337b220c09864739" => :high_sierra
-    sha256 "b20396ffd7026668b819ed79bebce793e1d9e8abb5a6a5cc36292d6e253458c4" => :sierra
-    sha256 "4b2ca9280e88312401ba3c6af41d4f57583fd5b3ecca38563b1ed07cf8f49a11" => :el_capitan
+    sha256 "7459ea7995ce0dfe7289e55b0d4b78dca3a41909b2a067c908226da64df67051" => :mojave
+    sha256 "00bf2f352fc8ea1d34560c269db3d8674f7aacf73a691a26a959d3073127473c" => :high_sierra
+    sha256 "4888764eb18e9bb810507cce436275d9af23d81ed52d26b168ba23fd1d40c9a7" => :sierra
   end
 
-  depends_on :python if MacOS.version <= :snow_leopard
+  depends_on "python"
 
   resource "PyYAML" do
     url "https://files.pythonhosted.org/packages/4a/85/db5a2df477072b2902b0eb892feb37d88ac635d36245a72a6a69b23b383a/PyYAML-3.12.tar.gz"
@@ -24,16 +25,22 @@ class Ccm < Formula
     sha256 "70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9"
   end
 
+  resource "cassandra-driver" do
+    url "https://files.pythonhosted.org/packages/2d/77/2e344b58ffe8b11271735c1ee88fa668c897c5b72ed1913067dd86e1a966/cassandra-driver-3.13.0.tar.gz"
+    sha256 "61b670fb2ba95d51d91fa7b589aae3666df494713f5d1ed78bb5c510778d77f0"
+  end
+
   def install
-    ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python2.7/site-packages"
-    %w[PyYAML six].each do |r|
+    xy = Language::Python.major_minor_version "python3"
+    ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python#{xy}/site-packages"
+    %w[PyYAML six cassandra-driver].each do |r|
       resource(r).stage do
-        system "python", *Language::Python.setup_install_args(libexec/"vendor")
+        system "python3", *Language::Python.setup_install_args(libexec/"vendor")
       end
     end
 
-    ENV.prepend_create_path "PYTHONPATH", libexec/"lib/python2.7/site-packages"
-    system "python", *Language::Python.setup_install_args(libexec)
+    ENV.prepend_create_path "PYTHONPATH", libexec/"lib/python#{xy}/site-packages"
+    system "python3", *Language::Python.setup_install_args(libexec)
 
     bin.install Dir[libexec/"bin/*"]
     bin.env_script_all_files(libexec/"bin", :PYTHONPATH => ENV["PYTHONPATH"])

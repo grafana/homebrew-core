@@ -1,21 +1,17 @@
 class Kontena < Formula
   desc "Command-line client for Kontena container orchestration platform"
   homepage "https://kontena.io/"
+  revision 1
   head "https://github.com/kontena/kontena.git"
 
   stable do
     url "https://github.com/kontena/kontena.git",
-        :tag => "v1.4.0",
-        :revision => "b9428ffc718da5427d6356705e830b127269bc6c"
-
-    resource "addressable" do
-      url "https://rubygems.org/gems/addressable-2.5.2.gem"
-      sha256 "73771ea960b3900d96e6b3729bd203e66f387d0717df83304411bf37efd7386e"
-    end
+        :tag      => "v1.5.4",
+        :revision => "8d68c77012f4de770c9e14653d5db63c64fac83f"
 
     resource "clamp" do
-      url "https://rubygems.org/gems/clamp-1.1.2.gem"
-      sha256 "f338133cf34d9a2b8d51d5b545f29c1455e5a3c631b62a4c19504ad50eb9a250"
+      url "https://rubygems.org/gems/clamp-1.2.1.gem"
+      sha256 "cd041aaf6b4dfd2239cdcfe2c72084d0536b1e7630236353a1d00b0a2e15ca68"
     end
 
     resource "equatable" do
@@ -24,13 +20,13 @@ class Kontena < Formula
     end
 
     resource "excon" do
-      url "https://rubygems.org/gems/excon-0.49.0.gem"
-      sha256 "1fb00ffeae85bb1d81ea0b61a5d88df8593cec1643a5f32e637d5148097bad4a"
+      url "https://rubygems.org/gems/excon-0.60.0.gem"
+      sha256 "cc758304b98d5c1f1bef29d306870a1892bf8c3cf66d95e21a99e076b4a3bce7"
     end
 
     resource "hash_validator" do
-      url "https://rubygems.org/gems/hash_validator-0.7.1.gem"
-      sha256 "0e56f722a02cd0ef6f05ae89c83310a8042f063c80d69ef4a612e0043998145a"
+      url "https://rubygems.org/gems/hash_validator-0.8.0.gem"
+      sha256 "3e19efbfac9dd9842a3f4b6695bf74fcc7aa0681de733fda9d6bc1548ed04264"
     end
 
     resource "hitimes" do
@@ -41,11 +37,6 @@ class Kontena < Formula
     resource "kontena-websocket-client" do
       url "https://rubygems.org/gems/kontena-websocket-client-0.1.1.gem"
       sha256 "692804a448d4ac6474d5091c5b74278f5f2f0efd9b2616ebd9a415a18e0f3d96"
-    end
-
-    resource "launchy" do
-      url "https://rubygems.org/gems/launchy-2.4.3.gem"
-      sha256 "42f52ce12c6fe079bac8a804c66522a0eefe176b845a62df829defe0e37214a4"
     end
 
     resource "liquid" do
@@ -64,13 +55,8 @@ class Kontena < Formula
     end
 
     resource "pastel" do
-      url "https://rubygems.org/gems/pastel-0.7.1.gem"
-      sha256 "6d7eefec10f7a36e625d304c9263f053ebc491d23942566e319a40e53469d955"
-    end
-
-    resource "public_suffix" do
-      url "https://rubygems.org/gems/public_suffix-3.0.0.gem"
-      sha256 "ae48d8122866e342c09f1f643c2b88e3547562fd6df85d83926445d75f90ca6a"
+      url "https://rubygems.org/gems/pastel-0.7.2.gem"
+      sha256 "e1d21dd8fb965e5052d1b16164a777fc450c6e187bf199f833a9de3f5303c3f9"
     end
 
     resource "retriable" do
@@ -84,8 +70,8 @@ class Kontena < Formula
     end
 
     resource "semantic" do
-      url "https://rubygems.org/gems/semantic-1.6.0.gem"
-      sha256 "6ad9e301a564537f18ed01d0d346ab8ef54a908c0f7176937be940c34982804a"
+      url "https://rubygems.org/gems/semantic-1.6.1.gem"
+      sha256 "3cdbb48f59198ebb782a3fdfb87b559e0822a311610db153bae22777a7d0c163"
     end
 
     resource "timers" do
@@ -104,18 +90,23 @@ class Kontena < Formula
     end
 
     resource "tty-prompt" do
-      url "https://rubygems.org/gems/tty-prompt-0.13.1.gem"
-      sha256 "fae0612a140f3d6300ebbcbd445582c621755d4673c0029553e7f9a465bbae81"
+      url "https://rubygems.org/gems/tty-prompt-0.14.0.gem"
+      sha256 "be924c6dd8bd30cc50cfab131eb724e1b4adbda2fb3087af6d6f5539d4a3a032"
+    end
+
+    resource "tty-reader" do
+      url "https://rubygems.org/gems/tty-reader-0.2.0.gem"
+      sha256 "895d35b6c1e0a2fa8711b48968ae78a4023a770875960060f31055a3af9b57fd"
     end
 
     resource "tty-screen" do
-      url "https://rubygems.org/gems/tty-screen-0.5.0.gem"
-      sha256 "c33a2d1d0b857cd37515a6db6fd5c6dd05e04f017b92753d3f31e54013bdb900"
+      url "https://rubygems.org/gems/tty-screen-0.6.4.gem"
+      sha256 "7b190d049dfc723ab4c69a2d2e494a4d1478694001587fb20575499cef0038a6"
     end
 
     resource "tty-table" do
-      url "https://rubygems.org/gems/tty-table-0.8.0.gem"
-      sha256 "87d81d2d1780de5beb8c25848b027ddcdec7fb407d766aafde0c4f032ccf36c8"
+      url "https://rubygems.org/gems/tty-table-0.9.0.gem"
+      sha256 "03fd0edaf04395d124a58ae0c876a1a2d3ce1aec53e0763a581695cbde5477ee"
     end
 
     resource "unicode-display_width" do
@@ -139,29 +130,23 @@ class Kontena < Formula
     end
 
     resource "websocket-extensions" do
-      url "https://rubygems.org/gems/websocket-extensions-0.1.2.gem"
-      sha256 "7919c0310edda55ce4026d3f160e612160493c048276cabe500308439dd2161f"
+      url "https://rubygems.org/gems/websocket-extensions-0.1.3.gem"
+      sha256 "e0886634e49a5d0a790b43d49286af0f47b86636257843cb539e8ce64e6e9a0c"
     end
 
     resource "wisper" do
       url "https://rubygems.org/gems/wisper-2.0.0.gem"
       sha256 "6d8623c76943612e8db81862af7eb20f5a8ad631fe1857d9f7ced97e87e5222b"
     end
-
-    resource "kontena-plugin-cloud" do
-      url "https://rubygems.org/gems/kontena-plugin-cloud-1.1.0.gem"
-      sha256 "87e88329c17c6aa6c49069fd6fa5f6577c451f73bb2bf264051b858af8ea57f1"
-    end
   end
 
   bottle do
-    cellar :any
-    sha256 "b24b6c27bd25f03a425a29b692534fc7c81b4144fa1c6b1fd1f8fbbf2b0b9c63" => :high_sierra
-    sha256 "529128d8ff36c0afcb33b7499d0b01cef550701c24c71db6115e92cb4d75b94f" => :sierra
-    sha256 "f0f44fde8847a0e94e9a3238d9cd8af92b2cf3a171401830ff569406b753789f" => :el_capitan
+    sha256 "170a42416de88a77d260b3dd2b9d7cfb1820fc52b1d51de6ea21d130a617eb55" => :mojave
+    sha256 "40a456f4b501756fa04f59ffa5ff789fb34e2cef04e56ac7b068e9fc25663e3b" => :high_sierra
+    sha256 "f4fc71532c035c564bbbfdddef58ff75f601bf4d34fefcb6ff5a166cb4c2a550" => :sierra
   end
 
-  depends_on :ruby => "2.1"
+  depends_on "ruby" if MacOS.version <= :sierra
 
   def install
     ENV["GEM_HOME"] = libexec
@@ -202,10 +187,11 @@ class Kontena < Formula
   test do
     assert_match "+homebrew", shell_output("#{bin}/kontena --version")
     assert_match "login", shell_output("#{bin}/kontena complete kontena master")
-    output = shell_output("#{bin}/kontena plugin search digitalocean")
-    assert_match "Kontena DigitalOcean plugin", output
-    output = shell_output("#{bin}/kontena stack reg show kontena/hello-world")
-    assert_match "description: Sample stack to test Kontena", output
+    test_yaml = "stack: test/test\nversion: 0.1.0\nservices:\n  redis:\n    image: redis:latest\n"
+    (testpath/"kontena.yml").write(test_yaml)
+    output = shell_output("#{bin}/kontena stack validate --format api-json")
+    assert_match "\"stack\": \"test/test\"", output
+    assert_match "\"expose\": null", output
     assert_match "NAME", shell_output("#{bin}/kontena master list")
   end
 end

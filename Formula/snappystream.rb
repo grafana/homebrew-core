@@ -1,32 +1,27 @@
 class Snappystream < Formula
   desc "C++ snappy stream realization (compatible with snappy)"
   homepage "https://github.com/hoxnox/snappystream"
-  url "https://github.com/hoxnox/snappystream/archive/0.2.7.tar.gz"
-  sha256 "be91c6bf304732b2d2d65c7ec57b8bf3daf1748c2ee932b852fd830db328ecc7"
-  revision 1
+  url "https://github.com/hoxnox/snappystream/archive/1.0.0.tar.gz"
+  sha256 "a50a1765eac1999bf42d0afd46d8704e8c4040b6e6c05dcfdffae6dcd5c6c6b8"
   head "https://github.com/hoxnox/snappystream.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "d0725f8e1b66534a5431abd46a999954a8ee51c4299096c5ec578d0d0a42a65c" => :high_sierra
-    sha256 "2ddc050a7e877cf161303f8ced149e1f2cf12e927b67b7b60d58414afd26ff83" => :sierra
-    sha256 "bfbec68310bb666e3601bb799a4bb2171eebc7da1441fbbeb419436dfb635fe0" => :el_capitan
-    sha256 "dcfb20c5f44c386648367e7f376afa25511f352395371f5f7506bd65e6f382df" => :yosemite
+    sha256 "3b4546ed797d251364320b9da77640c4980e913bb08b3376b7394a65833d8aa4" => :mojave
+    sha256 "75b9c1672f271ec42ca15cb6fa9b327bc3f081a2497804142961633a0ca57884" => :high_sierra
+    sha256 "0993bdf488fd8a1d59de3b5ecf3080d7ff4a6dee895dd801aff3687c5809d0ae" => :sierra
   end
 
   depends_on "cmake" => :build
   depends_on "snappy"
-  depends_on "boost" => :optional
 
   def install
-    args = std_cmake_args + %w[. -DBUILD_TESTS=ON]
-    args << "-DWITH_BOOST_IOSTREAMS=1" if build.with? "boost"
-    system "cmake", *args
+    system "cmake", ".", *std_cmake_args, "-DBUILD_TESTS=ON"
     system "make", "all", "test", "install"
   end
 
   test do
-    (testpath/"testsnappystream.cxx").write <<~EOS
+    (testpath/"test.cxx").write <<~EOS
       #include <iostream>
       #include <fstream>
       #include <iterator>
@@ -47,7 +42,9 @@ class Snappystream < Formula
         }
       }
     EOS
-    system ENV.cxx, "testsnappystream.cxx", "-lsnappy", "-L#{lib}", "-lsnappystream", "-o", "testsnappystream"
-    system "./testsnappystream < #{__FILE__} > out.dat && diff #{__FILE__} out.dat"
+    system ENV.cxx, "test.cxx", "-o", "test",
+                    "-L#{Formula["snappy"].opt_lib}", "-lsnappy",
+                    "-L#{lib}", "-lsnappystream"
+    system "./test < #{__FILE__} > out.dat && diff #{__FILE__} out.dat"
   end
 end

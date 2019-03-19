@@ -1,15 +1,14 @@
 class Jansson < Formula
   desc "C library for encoding, decoding, and manipulating JSON"
   homepage "http://www.digip.org/jansson/"
-  url "http://www.digip.org/jansson/releases/jansson-2.10.tar.gz"
-  sha256 "78215ad1e277b42681404c1d66870097a50eb084be9d771b1d15576575cf6447"
+  url "http://www.digip.org/jansson/releases/jansson-2.12.tar.gz"
+  sha256 "5f8dec765048efac5d919aded51b26a32a05397ea207aa769ff6b53c7027d2c9"
 
   bottle do
     cellar :any
-    sha256 "7a6bda990b3750ad5cc78dbc371a14ed13d2c4d713ce596bb54170c3a866b931" => :high_sierra
-    sha256 "701c9253fb60487c94b4840a57621d5faf6ad1a8d0659ae6a419e57b5bd94ced" => :sierra
-    sha256 "a51789b3b30f9e70232f9e872b08b5367caa5d027f7a8a72ed92c2ef68c432b7" => :el_capitan
-    sha256 "4fabfb2143c27b4460560af12a459180221f097ad69ed95e86cf082b436d4950" => :yosemite
+    sha256 "79437c250f1b9fff4eab1a15385bbc38e5a29856b0efe3e5b0d68356d24d1f7b" => :mojave
+    sha256 "aeb69f2744314df891be52ee4ff2fdb95e8991715a24f74858535063639f3491" => :high_sierra
+    sha256 "ffafd42341f4a86ab91bf46e56a2cc4436d840998a9d053bff38467f8b6f4a1b" => :sierra
   end
 
   def install

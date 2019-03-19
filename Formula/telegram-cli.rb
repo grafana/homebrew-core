@@ -2,25 +2,23 @@ class TelegramCli < Formula
   desc "Command-line interface for Telegram"
   homepage "https://github.com/vysheng/tg"
   url "https://github.com/vysheng/tg.git",
-      :tag => "1.3.1",
+      :tag      => "1.3.1",
       :revision => "5935c97ed05b90015418b5208b7beeca15a6043c"
-  revision 1
+  revision 2
   head "https://github.com/vysheng/tg.git"
 
   bottle do
-    sha256 "938c36ae945666dc88be1aec3e714a79a71d42f9daa1010d0e73206b61f9a635" => :high_sierra
-    sha256 "e9ff00dd7a4983b41b08519f0a756990a0aa30bc2263b6e262f72ee3e9b23ce2" => :sierra
-    sha256 "caabf1d19eb2b5b04560e9dc15583eb7dc3c0b0a733c732d73da09abf51dbbaf" => :el_capitan
+    sha256 "81be8a68355b7b07dd127cca1931571d8a6f3edc1933ad3d79a0d1b7f535eb12" => :mojave
+    sha256 "fc81065c039976aff803542298a166059dff35383513128a12d7fe26d3d11977" => :high_sierra
+    sha256 "37ff2799609915d3746a9482aeb332968170617b3e693693ef832b6bad2a00d5" => :sierra
   end
 
   depends_on "pkg-config" => :build
-  depends_on "readline"
+  depends_on "jansson"
+  depends_on "libconfig"
   depends_on "libevent"
   depends_on "openssl"
-  depends_on "libconfig"
-  depends_on "jansson"
-  depends_on "lua" => :optional
-  depends_on "python" => :optional
+  depends_on "readline"
 
   # Look for the configuration file under /usr/local/etc rather than /etc on OS X.
   # Pull Request: https://github.com/vysheng/tg/pull/1306
@@ -35,10 +33,9 @@ class TelegramCli < Formula
       CFLAGS=-I#{Formula["readline"].include}
       CPPFLAGS=-I#{Formula["readline"].include}
       LDFLAGS=-L#{Formula["readline"].lib}
+      --disable-liblua
+      --disable-python
     ]
-
-    args << "--disable-liblua" if build.without? "lua"
-    args << "--disable-python" if build.without? "python"
 
     system "./configure", *args
     system "make"

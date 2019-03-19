@@ -1,35 +1,24 @@
 class Ninja < Formula
   desc "Small build system for use with gyp or CMake"
   homepage "https://ninja-build.org/"
-  url "https://github.com/ninja-build/ninja/archive/v1.8.2.tar.gz"
-  sha256 "86b8700c3d0880c2b44c2ff67ce42774aaf8c28cbf57725cb881569288c1c6f4"
+  url "https://github.com/ninja-build/ninja/archive/v1.9.0.tar.gz"
+  sha256 "5d7ec75828f8d3fd1a0c2f31b5b0cea780cdfe1031359228c428c1a48bfcd5b9"
   head "https://github.com/ninja-build/ninja.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "eeba4fff08b3ed4b308250fb650f7d06630acd18465900ba0e27cecfe925a6cc" => :high_sierra
-    sha256 "90ecf90948f0fa65c82011d79338d7c5ca2a4d0cb7cb8dc3892243f749fbe2eb" => :sierra
-    sha256 "675165ce642fa811e1a0a363be0ba66a7b907d46056f89fd20938aa33e7d59f7" => :el_capitan
-  end
-
-  option "without-test", "Don't run build-time tests"
-
-  deprecated_option "without-tests" => "without-test"
-
-  resource "gtest" do
-    url "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/googletest/gtest-1.7.0.zip"
-    sha256 "247ca18dd83f53deb1328be17e4b1be31514cedfc1e3424f672bf11fd7e0d60d"
+    sha256 "d3f825237b23175d46ed02f492df8297968f3ce45f328362f167caf962323c98" => :mojave
+    sha256 "c6057431959eb3117f5eca1bb62d2403d189f3091f2cacaef89c9696b2ecec39" => :high_sierra
+    sha256 "dc8bba938426720e0f4f2158b882f331737059919cf46ff59fcb786261b8ea8c" => :sierra
   end
 
   def install
     system "python", "configure.py", "--bootstrap"
 
-    if build.with? "test"
-      (buildpath/"gtest").install resource("gtest")
-      system "./configure.py", "--with-gtest=gtest"
-      system "./ninja", "ninja_test"
-      system "./ninja_test", "--gtest_filter=-SubprocessTest.SetWithLots"
-    end
+    # Quickly test the build
+    system "./configure.py"
+    system "./ninja", "ninja_test"
+    system "./ninja_test", "--gtest_filter=-SubprocessTest.SetWithLots"
 
     bin.install "ninja"
     bash_completion.install "misc/bash-completion" => "ninja-completion.sh"

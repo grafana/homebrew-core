@@ -1,19 +1,18 @@
 class Zurl < Formula
   desc "HTTP and WebSocket client worker with ZeroMQ interface"
   homepage "https://github.com/fanout/zurl"
-  url "https://dl.bintray.com/fanout/source/zurl-1.9.0.tar.bz2"
-  sha256 "c97f430f9f815c3a8d9758e7611054224908727af938a28e0eef700add02e1dc"
-  revision 1
+  url "https://dl.bintray.com/fanout/source/zurl-1.10.0.tar.bz2"
+  sha256 "027636eb2cf9caaf7dda39031c80bc27dd3d0111990c20eedc355baa52579f4a"
 
   bottle do
     cellar :any
-    sha256 "eaac2e5b2f52a95cce831b6a96c6ec28dfb5f85fc599aef901d7436b3eb86154" => :high_sierra
-    sha256 "4e54b0684783343bd3ded9ff5f116e3bbeacdc5f6cc8edf06208a0541715df26" => :sierra
-    sha256 "d3daa46721f6b1c2e624e6704716085706e55e47a0125dac4ba3449a60fa4d42" => :el_capitan
+    sha256 "9d166e584afba1bcea0e325b284e32b6bc6ee2dc7112a260889c4e4fb80a377c" => :mojave
+    sha256 "b42c1e5f401a4a4053eacf6e3e4be5100ff6dc62ff5f691b42521a7664b710a6" => :high_sierra
+    sha256 "2a293ffcf5ec10aef9b35cbb32994d059698cd1e4f1c53ba07374a5ffc0eb6f5" => :sierra
   end
 
   depends_on "pkg-config" => :build
-  depends_on "curl" if MacOS.version < :lion
+  depends_on "python@2" => :test
   depends_on "qt"
   depends_on "zeromq"
 
@@ -36,15 +35,15 @@ class Zurl < Formula
 
     resource("pyzmq").stage { system "python", *Language::Python.setup_install_args(testpath/"vendor") }
 
-    conffile.write(<<~EOS
+    conffile.write(<<~EOS,
       [General]
       in_req_spec=ipc://#{ipcfile}
       defpolicy=allow
       timeout=10
-      EOS
+    EOS
                   )
 
-    runfile.write(<<~EOS
+    runfile.write(<<~EOS,
       import json
       import threading
       from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
@@ -85,7 +84,7 @@ class Zurl < Formula
       resp = json.loads(sock.recv()[1:])
       assert('type' not in resp)
       assert(resp['body'] == 'test response\\n')
-      EOS
+    EOS
                  )
 
     pid = fork do

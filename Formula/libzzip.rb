@@ -1,24 +1,20 @@
 class Libzzip < Formula
   desc "Library providing read access on ZIP-archives"
-  homepage "https://sourceforge.net/projects/zziplib/"
-  url "https://github.com/gdraheim/zziplib/archive/v0.13.67.tar.gz"
-  sha256 "1278178bdabac832da6bbf161033d890d335a2e38493c5af553ff5ce7b9b0220"
+  homepage "https://github.com/gdraheim/zziplib"
+  url "https://github.com/gdraheim/zziplib/archive/v0.13.69.tar.gz"
+  sha256 "846246d7cdeee405d8d21e2922c6e97f55f24ecbe3b6dcf5778073a88f120544"
 
   bottle do
     cellar :any
-    sha256 "ccdbd2db5fc153ad6b0990539b5b6702c65f964971f9256887e508c0c291d86f" => :high_sierra
-    sha256 "e041856e291f2b6731d586ef8deb08593f65fc2f859019ff54c248e6c960c608" => :sierra
-    sha256 "08baf77479ed193c4d80d3f0b6ce1d2625987d31b72ce26faed321ac21f55740" => :el_capitan
-    sha256 "58fd8baaaadd33339ece54c63dde70fd4147c6f0302e28b953c10e85700fbb47" => :yosemite
+    rebuild 1
+    sha256 "2e293f90e2ebee0734ff9bb6a23cdcd562383d87e801de996f57296aef3a15b4" => :mojave
+    sha256 "7ae8222e9b3f3d56639d19de2666eb1dffb6399d5985a64f52a24cdbe3763b58" => :high_sierra
+    sha256 "72c6927e722159e240f313b0bbc5dfd7648b340fd7a9c732d99e9eeaac6d4945" => :sierra
+    sha256 "2ed4dd48a0e3ae9b528164456652b0d5e8730153c398b6441a1ffb7d44e45f4d" => :el_capitan
   end
-
-  option "with-sdl", "Enable SDL usage and create SDL_rwops_zzip.pc"
-
-  deprecated_option "sdl" => "with-sdl"
 
   depends_on "pkg-config" => :build
   depends_on "xmlto" => :build
-  depends_on "sdl" => :optional
 
   def install
     ENV["XML_CATALOG_FILES"] = "#{etc}/xml/catalog"
@@ -28,7 +24,6 @@ class Libzzip < Formula
       --disable-dependency-tracking
       --prefix=#{prefix}
     ]
-    args << "--enable-sdl" if build.with? "sdl"
     system "./configure", *args
     system "make", "install"
   end

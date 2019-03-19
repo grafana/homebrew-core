@@ -2,14 +2,15 @@ class Xmount < Formula
   desc "Convert between multiple input & output disk image types"
   homepage "https://www.pinguin.lu/xmount/"
   url "https://code.pinguin.lu/diffusion/XMOUNT/xmount.git",
-      :tag => "v0.7.5",
-      :revision => "432ae6609af67f457e812378e6d2c7a1aacce777"
+      :tag      => "v0.7.6",
+      :revision => "d0f67c46632a69ff1b608e90ed2fba8344ab7f3d"
+  revision 1
 
   bottle do
-    sha256 "d26964f9d08df973bd5719a76f981a830fecf78f41a755db702d961fed7f4c91" => :high_sierra
-    sha256 "a7c90944e8790ce74164a68f484c07ce5231902a9ce0c81b7dea9ddbbbf47dc8" => :sierra
-    sha256 "4aef49b3ed42bec95ff2c2922940a28b9c1be0b1bb04f28f37be1e01e1808120" => :el_capitan
-    sha256 "2fd1e5caf50d64243c5151b016754acbe115d42150eb9a5ad26176e604fbb2e2" => :yosemite
+    sha256 "3cbc70ba1ced45797f95030b0509b0b2e3b2ad6d85cd1f4acdc362651d5e6ade" => :mojave
+    sha256 "79b616ecf3e76ae690945cccd66b04b716aadaa61a82e34917be86c6ac4a367c" => :high_sierra
+    sha256 "9fce7eb9aef96aaab3584783fedb7cece191cc9a218aba2ccc4ea7aefe38eb91" => :sierra
+    sha256 "07295242dc494ee0f5612f2fb542011170725c0839f003fb876d3dc6eff6ac48" => :el_capitan
   end
 
   depends_on "cmake" => :build

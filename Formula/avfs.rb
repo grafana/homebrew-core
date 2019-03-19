@@ -1,35 +1,35 @@
 class Avfs < Formula
   desc "Virtual file system that facilitates looking inside archives"
   homepage "https://avf.sourceforge.io/"
-  url "https://downloads.sourceforge.net/project/avf/avfs/1.0.5/avfs-1.0.5.tar.bz2"
-  sha256 "e5ce6b1f4193c37148b1b8a021f4f3d05e88f725cf11b16b95a58e8fdae50176"
+  url "https://downloads.sourceforge.net/project/avf/avfs/1.0.6/avfs-1.0.6.tar.bz2"
+  sha256 "4c1a3a776a01ce7a5b74d66c955269162304edd8c18489fb2186ef728f4be3c3"
 
   bottle do
-    sha256 "18dd2a2958a2a07b74309e3ec832dcc4c99de70b73e5d5b263be8833cc820ebb" => :high_sierra
-    sha256 "23a05f6de2db30b39d4ce575afe7feca996439857798628645f258085b6dbda5" => :sierra
+    sha256 "f7b1f3a2a166a4418f6f27707dae144391f6ee2db5fe6029a2369d8de6d2093d" => :mojave
+    sha256 "782ac0bc73deff3843c7af2b05e4b82cd99c8062c41014100ca1b2d56a5f5b53" => :high_sierra
+    sha256 "810afba90280d2aaef31560b9d0776cce882fc549e9c0575ba9777bd626687b7" => :sierra
   end
 
   depends_on "pkg-config" => :build
   depends_on :macos => :sierra # needs clock_gettime
-  depends_on "xz" => :recommended # Upstream recommends building with lzma support.
-  depends_on "openssl" => :optional
+  depends_on "openssl"
   depends_on :osxfuse
+  depends_on "xz"
 
   # Fix scripts to work on Mac OS X.
   # Nothing the patch fixes has been changed in 1.0.2, so still necessary.
   patch :DATA
 
   def install
-    args = [
-      "--prefix=#{prefix}",
-      "--disable-debug",
-      "--disable-dependency-tracking",
-      "--disable-silent-rules",
-      "--enable-fuse",
-      "--enable-library",
+    args = %W[
+      --prefix=#{prefix}
+      --disable-debug
+      --disable-dependency-tracking
+      --disable-silent-rules
+      --enable-fuse
+      --enable-library
+      --with-ssl=#{Formula["openssl"].opt_prefix}
     ]
-
-    args << "--with-ssl=#{Formula["openssl"].opt_prefix}" if build.with? "openssl"
 
     system "./configure", *args
     system "make", "install"

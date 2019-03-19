@@ -3,21 +3,20 @@ class Fceux < Formula
   homepage "http://fceux.com"
   url "https://downloads.sourceforge.net/project/fceultra/Source%20Code/2.2.3%20src/fceux-2.2.3.src.tar.gz"
   sha256 "4be6dda9a347f941809a3c4a90d21815b502384adfdd596adaa7b2daf088823e"
+  revision 1
 
   bottle do
     cellar :any
-    sha256 "27720eaa5e98124d75ce3f0e1ac4b4f0476d8b6528bbd2f45b554219752ead2b" => :high_sierra
-    sha256 "edd46321234cc9a464368a907f3202ba74c68353a513661aae36b200667d0418" => :sierra
-    sha256 "f581fdd1e3ba991f360be4f2bb1a011420436d614e26dba5b6bd66d1db459c7d" => :el_capitan
-    sha256 "38d021833d4f42f9f781801dcebe23c780126b13b1d4923f96375cd9436fa48b" => :yosemite
+    sha256 "5c0c3d6c59e39e053a1d64605f57a9e05fce54f62c8b9778ffb4103708842f23" => :mojave
+    sha256 "b075151a3db5a502f98f6ee8b5fcbd5ffa05064a88c786c99fa9fa908b85eacf" => :high_sierra
+    sha256 "4102c16cb5f5412d36cdcc52f739c98c2f457be7a8d4f0a55aa6f973eeb8c39d" => :sierra
+    sha256 "013d1b9b126426b76e814b56a5424281c348333e6a6e69db87cf603362c25397" => :el_capitan
   end
-
-  deprecated_option "no-gtk" => "without-gtk+3"
 
   depends_on "pkg-config" => :build
   depends_on "scons" => :build
+  depends_on "gtk+3"
   depends_on "sdl"
-  depends_on "gtk+3" => :recommended
 
   # Fix "error: ordered comparison between pointer and zero"
   if DevelopmentTools.clang_build_version >= 900
@@ -32,20 +31,15 @@ class Fceux < Formula
     # https://sourceforge.net/p/fceultra/bugs/755/
     inreplace "src/drivers/sdl/SConscript", "env.ParseConfig(config_string)", ""
 
-    args = []
-    args << "RELEASE=1"
-    args << "GTK=0"
-    args << "GTK3=1" if build.with? "gtk+3"
     # gdlib required for logo insertion, but headers are not detected
     # https://sourceforge.net/p/fceultra/bugs/756/
-    args << "LOGO=0"
-    scons *args
+    system "scons", "RELEASE=1", "GTK=0", "GTK3=1", "LOGO=0"
     libexec.install "src/fceux"
     pkgshare.install ["output/luaScripts", "output/palettes", "output/tools"]
     (bin/"fceux").write <<~EOS
       #!/bin/bash
       LUA_PATH=#{pkgshare}/luaScripts/?.lua #{libexec}/fceux "$@"
-      EOS
+    EOS
   end
 
   test do

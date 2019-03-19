@@ -1,16 +1,15 @@
 class Tup < Formula
   desc "File-based build system"
   homepage "http://gittup.org/tup/"
-  url "https://github.com/gittup/tup/archive/v0.7.5.tar.gz"
-  sha256 "361b3e069308ce1d9505d1cb927999ac448811a3425c724123e0c48602a9d1e4"
+  url "https://github.com/gittup/tup/archive/v0.7.8.tar.gz"
+  sha256 "37baed2d12ef6ce66ce186dc5aa9bcf23098c35d3aee2dc25cb3177eee224b60"
   head "https://github.com/gittup/tup.git"
 
   bottle do
     cellar :any
-    sha256 "057ef3d3629344c3553a529b1b1e7d9e62d92acfd8f006501ef49d4407e3efa7" => :high_sierra
-    sha256 "7cac0f32fced84617e15c3684502089d972be91ed5bcebe3fb382ae1ac4d8762" => :sierra
-    sha256 "fdd04fc05f339b5d87ecb77838538f80bf7f0343be020037feb7101a1966c953" => :el_capitan
-    sha256 "6c898724dee0ed50fda5900ff95957feae31673f8b59c7d58e1a988fbd132a8d" => :yosemite
+    sha256 "fe62bd2762c7ff15e628b6c241c8f6acd81d190c03136c6edce2fd76afafe9f0" => :mojave
+    sha256 "9a2e688be1a21af9fc0c2e9edb0e2a679eb7553356e59682037a760c6bd90b8d" => :high_sierra
+    sha256 "fc8a299e3ed77a756edbcb957343d1cc95594126f23514eea729649a7fcc6071" => :sierra
   end
 
   depends_on "pkg-config" => :build

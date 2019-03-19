@@ -1,10 +1,11 @@
 class Herrie < Formula
   desc "Minimalistic audio player built upon Ncurses"
-  homepage "http://herrie.info/"
-  url "http://herrie.info/distfiles/herrie-2.2.tar.bz2"
+  homepage "https://herrie.info/"
+  url "https://github.com/EdSchouten/herrie/releases/download/herrie-2.2/herrie-2.2.tar.bz2"
   sha256 "142341072920f86b6eb570b8f13bf5fd87c06cf801543dc7d1a819e39eb9fb2b"
 
   bottle do
+    sha256 "0b9903dc1b7998aa487b59e3c7520cace1c7868641045778d3cd334b1c6b3c4c" => :mojave
     sha256 "f837acb9b4c073ab4586f6d5a9bcfccd9d99e30391b04227fe6988835a9714b0" => :high_sierra
     sha256 "5d6d73767063b7f2be104fd2dbb00d8bf3b561a06e9720a822f60972bfb70d79" => :sierra
     sha256 "40c55a6d0c734674b4b464a96f7c52cd71e9490fb91ea8e8259fe7915f908b2f" => :el_capitan
@@ -15,10 +16,10 @@ class Herrie < Formula
   depends_on "pkg-config" => :build
   depends_on "gettext"
   depends_on "glib"
-  depends_on "libvorbis"
   depends_on "libid3tag"
-  depends_on "mad"
   depends_on "libsndfile"
+  depends_on "libvorbis"
+  depends_on "mad"
 
   def install
     ENV["PREFIX"] = prefix

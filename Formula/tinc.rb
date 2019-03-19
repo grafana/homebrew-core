@@ -1,19 +1,13 @@
 class Tinc < Formula
   desc "Virtual Private Network (VPN) tool"
   homepage "https://www.tinc-vpn.org/"
-  url "https://tinc-vpn.org/packages/tinc-1.0.32.tar.gz"
-  sha256 "4db24feaff8db4bbb7edb7a4b8f5f8edc39b26eb5feccc99e8e67a6960c05587"
+  url "https://tinc-vpn.org/packages/tinc-1.0.35.tar.gz"
+  sha256 "18c83b147cc3e2133a7ac2543eeb014d52070de01c7474287d3ccecc9b16895e"
 
   bottle do
-    sha256 "cc379d3508fd99fdc4c86849eaccbe4ca3a3b9f776d452c9d6b12371d5c253d3" => :high_sierra
-    sha256 "6345debc1249e4630ce3492d39c2e7ac6c8ccf51f38004c68f3b1cbe715628a2" => :sierra
-    sha256 "3a24d224c09e29969db5f60e792bfd42275a7003678abec5567f7e45ef210057" => :el_capitan
-    sha256 "163e958fca8bf041a7ca89c215399fd06e1e11c29136080f03c5fb249b18ab36" => :yosemite
-  end
-
-  devel do
-    url "https://www.tinc-vpn.org/packages/tinc-1.1pre15.tar.gz"
-    sha256 "41dc3e40c5f8be497b779acd6f59ef4572e1430d0d0f0436f2de5cb21a59ef18"
+    sha256 "98c73cd30d30b74363b2093621006361da5a8738e040d9c6bf329016d7f18c3f" => :mojave
+    sha256 "9c76119b5f3116772bff828dfb3032d44d1ee6d232236789c03871cf605d9f37" => :high_sierra
+    sha256 "0c78ab7901f43d6f2dd2406157308377722df4d225737fb193dcd7e3f3ef7714" => :sierra
   end
 
   depends_on "lzo"

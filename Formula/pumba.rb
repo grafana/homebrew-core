@@ -1,30 +1,26 @@
 class Pumba < Formula
   desc "Chaos testing tool for Docker"
-  homepage "https://github.com/gaia-adm/pumba"
-  url "https://github.com/gaia-adm/pumba/archive/0.4.5.tar.gz"
-  sha256 "23d2eaa1476fe8ec6fb7223dd9c1ebc0995596cfb8e368223836ff8368565473"
-  head "https://github.com/gaia-adm/pumba.git"
+  homepage "https://github.com/alexei-led/pumba"
+  url "https://github.com/alexei-led/pumba/archive/0.6.2.tar.gz"
+  sha256 "d94be5696cde2b1c6ef409040f24b8b1260d3a34b9e40f08dd492c2aa0c5b656"
+  head "https://github.com/alexei-led/pumba.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "001f187281e483e7daa08153f0842bfcbf61a3388cacb0da5f9720769d4226f0" => :high_sierra
-    sha256 "a3bc3d0a5b4a884f774fd7d0424442da279fd34dcff62b7992a4860c53f8cea5" => :sierra
-    sha256 "825f70eb70fc84aa51ed3f9cfe5ecfb616ec1ee5201586d7c8fc4c09b809a74f" => :el_capitan
-    sha256 "416382360c409b088e60055e2cd55dee70239eeb825709650395bcfd3a221858" => :yosemite
+    sha256 "ad17a6187a071b8de82f9f11cc6b031bed2e21bffc95055d84baf9f193056681" => :mojave
+    sha256 "c7804cc4dc62cca20b8c50b975fcfd4424206bbcf8344928ff2fe03a2db078e2" => :high_sierra
+    sha256 "1eb0685f20f4cf3d5b84e493c09d045dad41947351ffc7bfa5b4f3fd21c48042" => :sierra
   end
 
   depends_on "go" => :build
-  depends_on "docker" => :recommended
 
   def install
     ENV["GOPATH"] = buildpath
-    ENV["GLIDE_HOME"] = HOMEBREW_CACHE/"glide_home/#{name}"
+    (buildpath/"src/github.com/alexei-led/pumba").install buildpath.children
 
-    (buildpath/"src/github.com/gaia-adm/pumba").install buildpath.children
-
-    cd "src/github.com/gaia-adm/pumba" do
+    cd "src/github.com/alexei-led/pumba" do
       system "go", "build", "-o", bin/"pumba", "-ldflags",
-             "-X main.Version=#{version}"
+             "-X main.Version=#{version}", "./cmd"
       prefix.install_metafiles
     end
   end

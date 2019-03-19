@@ -6,6 +6,7 @@ class Winexe < Formula
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "43444e53e90a4f739a533e4a865952369874d9386460205e501631fa2b3ad2bb" => :mojave
     sha256 "765ad670de08f86b8c9b11ec43493148d1368e6c3ffa5e65d1bca898480996c2" => :high_sierra
     sha256 "e9594f927f9ef58608951175c0bd118b82cf7b25d5b829453195b66f45c2cbc1" => :sierra
     sha256 "58080b3729c9b261a65c7db2072ec867176bfd6a802c23f9b343feb44592789a" => :el_capitan
@@ -13,8 +14,15 @@ class Winexe < Formula
     sha256 "32261fefc9c9fd32e91ddb0776d6e43dcdda32b958f9382a8d784972ba09eb3e" => :mavericks
   end
 
-  depends_on "pkg-config" => :build
   depends_on "autoconf" => :build
+  depends_on "pkg-config" => :build
+
+  # This Winexe uses "getopts.pl" that is no longer supplied with newer
+  # versions of Perl
+  resource "Perl4::CoreLibs" do
+    url "https://cpan.metacpan.org/authors/id/Z/ZE/ZEFRAM/Perl4-CoreLibs-0.003.tar.gz"
+    sha256 "55c9b2b032944406dbaa2fd97aa3692a1ebce558effc457b4e800dabfaad9ade"
+  end
 
   # This patch removes second definition of event context, which *should* break the build
   # virtually everywhere, but for some reason it only breaks it on macOS.
@@ -22,22 +30,12 @@ class Winexe < Formula
   # Added by @vspy
   patch :DATA
 
-  # This Winexe uses "getopts.pl" that is no longer supplied with newer
-  # versions of Perl
-  resource "Perl4::CoreLibs" do
-    url "https://cpan.metacpan.org/authors/id/Z/ZE/ZEFRAM/Perl4-CoreLibs-0.003.tar.gz"
-    mirror "http://search.cpan.org/CPAN/authors/id/Z/ZE/ZEFRAM/Perl4-CoreLibs-0.003.tar.gz"
-    sha256 "55c9b2b032944406dbaa2fd97aa3692a1ebce558effc457b4e800dabfaad9ade"
-  end
-
   def install
-    if MacOS.version >= :mavericks
-      ENV.prepend_create_path "PERL5LIB", libexec+"lib/perl5"
-      resource("Perl4::CoreLibs").stage do
-        system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}"
-        system "make"
-        system "make", "install"
-      end
+    ENV.prepend_create_path "PERL5LIB", libexec/"lib/perl5"
+    resource("Perl4::CoreLibs").stage do
+      system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}"
+      system "make"
+      system "make", "install"
     end
 
     cd "source4" do
@@ -46,6 +44,10 @@ class Winexe < Formula
       system "make", "basics", "idl", "bin/winexe"
       bin.install "bin/winexe"
     end
+  end
+
+  test do
+    system "#{bin}/winexe", "--version"
   end
 end
 

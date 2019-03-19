@@ -1,16 +1,16 @@
 class GameMusicEmu < Formula
   desc "Videogame music file emulator collection"
   homepage "https://bitbucket.org/mpyne/game-music-emu"
-  url "https://bitbucket.org/mpyne/game-music-emu/downloads/game-music-emu-0.6.1.tar.bz2"
-  sha256 "dc11bea098072d540d4d52dfb252e76fc3d3af67ee2807da48fbd8dbda3fd321"
+  url "https://bitbucket.org/mpyne/game-music-emu/downloads/game-music-emu-0.6.2.tar.xz"
+  sha256 "5046cb471d422dbe948b5f5dd4e5552aaef52a0899c4b2688e5a68a556af7342"
   head "https://bitbucket.org/mpyne/game-music-emu.git"
 
   bottle do
     cellar :any
-    sha256 "5a5d6931476c23ab2542af2206e13486ada649b4e5a02ea9e07325bf9bfd64e1" => :high_sierra
-    sha256 "2f6a1e59526c952ae8c231adcf71f928bec5c11d35760d4d7def6a3c2477339b" => :sierra
-    sha256 "706653420e17c230ae1763da921c8ab08ace7f2db42dfbfd983746074e26b12d" => :el_capitan
-    sha256 "b9bba2cd313e782b126cd934acfab5ee801b55d887d6360c6f36c9843dec1c41" => :yosemite
+    rebuild 1
+    sha256 "e1fe807091f485642c81c4289c153ca402c8b2729eee12f1f3394662ad8b89b4" => :mojave
+    sha256 "0a47b9636e687252c399a7c8820cb168fa2f5fb00281c6c7808c5df767b320a9" => :high_sierra
+    sha256 "1ff25b427da3158fb382efb6a8f0b03015c789f9fb56e1e5c2bf4311b51c5c24" => :sierra
   end
 
   depends_on "cmake" => :build

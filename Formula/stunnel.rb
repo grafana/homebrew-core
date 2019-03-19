@@ -1,14 +1,15 @@
 class Stunnel < Formula
   desc "SSL tunneling program"
   homepage "https://www.stunnel.org/"
-  url "https://www.stunnel.org/downloads/stunnel-5.43.tar.gz"
-  mirror "https://www.usenix.org.uk/mirrors/stunnel/stunnel-5.43.tar.gz"
-  sha256 "05915babf705a0494886a72a7367913d403d07fc908ebb7b380d639e2d8bcee2"
+  url "https://www.stunnel.org/downloads/stunnel-5.50.tar.gz"
+  mirror "https://www.usenix.org.uk/mirrors/stunnel/stunnel-5.50.tar.gz"
+  sha256 "951d92502908b852a297bd9308568f7c36598670b84286d3e05d4a3a550c0149"
 
   bottle do
-    sha256 "71e7990924db19820f957912192cd5a07d07a68544c62727b9aede76ed09a635" => :high_sierra
-    sha256 "3a1b119d4aeaf8475521e22fa84527c3297c6339c1777708a990594aa25711df" => :sierra
-    sha256 "bcde32d3084d5a35afd9da5395d8e0d89d4062a219165083a2dc4ad9a59154fe" => :el_capitan
+    cellar :any
+    sha256 "e0fb492f1f33313f9b826df1c215b3e9249838ca6b86fc0f16ad82a06aa360ff" => :mojave
+    sha256 "992e36736d37859b9554a2c31ad76ed48d2ab112f1d93c440f1302cf6ce560fe" => :high_sierra
+    sha256 "ce75cbd34d1aa2d22faadbc78666e8663c6b5a629ccd76f1e7a343486aea95d8" => :sierra
   end
 
   depends_on "openssl"

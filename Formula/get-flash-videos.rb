@@ -1,15 +1,15 @@
 class GetFlashVideos < Formula
   desc "Download or play videos from various Flash-based websites"
   homepage "https://github.com/monsieurvideo/get-flash-videos"
-  url "https://github.com/monsieurvideo/get-flash-videos/archive/1.25.94.tar.gz"
-  sha256 "0a12fb9945d772e9c2c5347a712292be47c3f3551dc565b43eb74540370b1bdd"
+  url "https://github.com/monsieurvideo/get-flash-videos/archive/1.25.99.03.tar.gz"
+  sha256 "37267b41c7b0c240d99ed1f5e7ba04d00f98a8daff82ac9edd2b12c3bca83d73"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "ef67bfb8dbf0a78c4e0df2976ceae3b85d4debafb191ffb4aa4677dee15db056" => :high_sierra
-    sha256 "1bc1ddeba3234670bbbd03bdaae15e5014db0306edbf075914466db280c01904" => :sierra
-    sha256 "311d82564584099f493d97597e1a2a7d7e611a939f47b9c7d40c78592be79d2c" => :el_capitan
-    sha256 "f5493203c42ebcb77fed042135de07639c07b786bf344f336a24e428def4b4ad" => :yosemite
+    sha256 "ce0853c6ed07dfec3abce3ae4ca0cf073f5a8a38d530a227ffd966e7f1d946c4" => :mojave
+    sha256 "10e25788bbd00ffd0f0a5281c9c4c493c2957947ba4690cf92460c98aa72dc1b" => :high_sierra
+    sha256 "6c6e60aff2308881f4ef896b5a5c2dd1b05db9146d224be024793f042534dc6d" => :sierra
+    sha256 "0b7edca9b6518af848a6cb5f84bb34014cd017391279398ea9d796dc89ea7a57" => :el_capitan
   end
 
   depends_on "rtmpdump"
@@ -20,8 +20,8 @@ class GetFlashVideos < Formula
   end
 
   resource "LWP::Protocol" do
-    url "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/libwww-perl-6.26.tar.gz"
-    sha256 "d0c5435275f8638ff36fff8f655ad2ccad1156e66cc47bfacfb9e44fc585b24f"
+    url "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/libwww-perl-6.33.tar.gz"
+    sha256 "97417386f11f007ae129fe155b82fd8969473ce396a971a664c8ae6850c69b99"
   end
 
   resource "Tie::IxHash" do
@@ -30,18 +30,23 @@ class GetFlashVideos < Formula
   end
 
   resource "WWW::Mechanize" do
-    url "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/WWW-Mechanize-1.86.tar.gz"
-    sha256 "0e5468b89afeff096fb6d9b91a9a58418746c89445fb01adb5caa25ecf32d469"
+    url "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/WWW-Mechanize-1.88.tar.gz"
+    sha256 "36d97e778ab911ab5a762d551541686cbf3463c571f474322f7b5da77f50a879"
   end
 
   resource "Term::ProgressBar" do
-    url "https://cpan.metacpan.org/authors/id/M/MA/MANWAR/Term-ProgressBar-2.20.tar.gz"
-    sha256 "f9017571fee9eb1ba782a3ec56cc7f085960da8c462701162c973817297b7dae"
+    url "https://cpan.metacpan.org/authors/id/M/MA/MANWAR/Term-ProgressBar-2.21.tar.gz"
+    sha256 "66994f1a6ca94d8d92e3efac406142fb0d05033360c0acce2599862db9c30e44"
   end
 
   resource "Class::MethodMaker" do
     url "https://cpan.metacpan.org/authors/id/S/SC/SCHWIGON/class-methodmaker/Class-MethodMaker-2.24.tar.gz"
     sha256 "5eef58ccb27ebd01bcde5b14bcc553b5347a0699e5c3e921c7780c3526890328"
+  end
+
+  resource "Crypt::Rijndael" do
+    url "https://cpan.metacpan.org/authors/id/L/LE/LEONT/Crypt-Rijndael-1.13.tar.gz"
+    sha256 "cd7209a6dfe0a3dc8caffe1aa2233b0e6effec7572d76a7a93feefffe636214e"
   end
 
   def install

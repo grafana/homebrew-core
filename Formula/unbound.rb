@@ -1,20 +1,18 @@
 class Unbound < Formula
   desc "Validating, recursive, caching DNS resolver"
   homepage "https://www.unbound.net"
-  url "https://www.unbound.net/downloads/unbound-1.6.7.tar.gz"
-  sha256 "4e7bd43d827004c6d51bef73adf941798e4588bdb40de5e79d89034d69751c9f"
+  url "https://nlnetlabs.nl/downloads/unbound/unbound-1.9.1.tar.gz"
+  sha256 "c3c0bf9b86ccba4ca64f93dd4fe7351308ab54293f297a67de5a8914c1dc59c5"
+  head "https://github.com/NLnetLabs/unbound.git"
 
   bottle do
-    sha256 "6c2088a0ce3d415e5364c3580bdd797c77f5302f054216d2e5f08455b0654f32" => :high_sierra
-    sha256 "aa331fd3f81151688aefe67289323cfeaf2e7ab176eb3f786f8bfd732337a681" => :sierra
-    sha256 "ffe70f8e112a42fd48128e8cbea512bbef73a04a4416b9137279c8de957930a3" => :el_capitan
+    sha256 "89df414d18be41558471adda800315117044f68648e40d8457c788617b856466" => :mojave
+    sha256 "badbcd082ee047687ee5162846ffd72761041d5a88139800934a212d56806c94" => :high_sierra
+    sha256 "baf967dc36a36cd3f69c7502af0a22984abcd3a8853a279c89c8c6fe0051e977" => :sierra
   end
 
-  depends_on "openssl"
   depends_on "libevent"
-
-  depends_on :python => :optional
-  depends_on "swig" if build.with?("python")
+  depends_on "openssl"
 
   def install
     args = %W[
@@ -24,16 +22,7 @@ class Unbound < Formula
       --with-ssl=#{Formula["openssl"].opt_prefix}
     ]
 
-    if build.with? "python"
-      ENV.prepend "LDFLAGS", `python-config --ldflags`.chomp
-      ENV.prepend "PYTHON_VERSION", "2.7"
-
-      args << "--with-pyunbound"
-      args << "--with-pythonmodule"
-      args << "PYTHON_SITE_PKG=#{lib}/python2.7/site-packages"
-    end
-
-    args << "--with-libexpat=#{MacOS.sdk_path}/usr" unless MacOS::CLT.installed?
+    args << "--with-libexpat=#{MacOS.sdk_path}/usr" if MacOS.sdk_path_if_needed
     system "./configure", *args
 
     inreplace "doc/example.conf", 'username: "unbound"', 'username: "@@HOMEBREW-UNBOUND-USER@@"'
@@ -46,6 +35,7 @@ class Unbound < Formula
     conf = etc/"unbound/unbound.conf"
     return unless conf.exist?
     return unless conf.read.include?('username: "@@HOMEBREW-UNBOUND-USER@@"')
+
     inreplace conf, 'username: "@@HOMEBREW-UNBOUND-USER@@"',
                     "username: \"#{ENV["USER"]}\""
   end
@@ -78,7 +68,7 @@ class Unbound < Formula
         <string>/dev/null</string>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

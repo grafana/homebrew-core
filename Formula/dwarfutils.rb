@@ -1,36 +1,26 @@
 class Dwarfutils < Formula
   desc "Dump and produce DWARF debug information in ELF objects"
   homepage "https://www.prevanders.net/dwarf.html"
-  url "https://www.prevanders.net/libdwarf-20170709.tar.gz"
-  sha256 "46ccfb24ecd24bd7cce466d67a7bfeb62b9ed405dafdc924918d58c529abccb8"
+  url "https://www.prevanders.net/libdwarf-20180809.tar.gz"
+  sha256 "63e5947fbd8f342240d25bed2081251f8ec5428ee09e24dfad3b6956168bc400"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "a094f5785e8feb015608a4acdcf7f5ae00424adc3da04792581dc7ddbeea7e7a" => :high_sierra
-    sha256 "6be17e49a4a3e34c81a4c034a671db42bd53013bf9194c5ff8de4c0e91588292" => :sierra
-    sha256 "563dad4f509d2f1aa1f7d6b222614864c42dcb986d6bdc1fe7a094f952b55a9a" => :el_capitan
-    sha256 "99b4b4822bf18f7a6ce085a48cdf3116e27610117a64e18c4040a96a1929973d" => :yosemite
+    rebuild 1
+    sha256 "8887f39199612129dcf7af5afc5bd473be806c74fd862ff2e76f3a5c06103f58" => :mojave
+    sha256 "b31bc53474ac561e418ef6c81add9ccb8e885f8f744493971fae29fddc887f45" => :high_sierra
+    sha256 "f2909fb054f392f80318f7d621124c6bd5aee4e8637ad2d26f350d8b645ec5ef" => :sierra
   end
 
-  option "with-sanitize", "Use -fsanitize"
-
   depends_on "libelf" => :build
-  depends_on "gcc" if build.with? "sanitize"
 
   def install
-    args = ""
-
-    if build.with? "sanitize"
-      ENV["CC"] = "#{Formula["gcc"].bin}/gcc-6"
-      args << "--enable-sanitize"
-    end
-
-    system "./configure", args
+    system "./configure"
     system "make"
 
     bin.install "dwarfdump/dwarfdump"
     man1.install "dwarfdump/dwarfdump.1"
-    lib.install "libdwarf/libdwarf.a"
+    lib.install "libdwarf/.libs/libdwarf.a"
     include.install "libdwarf/dwarf.h"
     include.install "libdwarf/libdwarf.h"
   end

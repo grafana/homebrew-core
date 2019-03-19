@@ -1,15 +1,19 @@
 class Mono < Formula
   desc "Cross platform, open source .NET development framework"
-  homepage "http://www.mono-project.com/"
-  url "https://download.mono-project.com/sources/mono/mono-5.0.1.1.tar.bz2"
-  sha256 "48d6ae71d593cd01bf0f499de569359d45856cda325575e1bacb5fabaa7e9718"
+  homepage "https://www.mono-project.com/"
+  url "https://download.mono-project.com/sources/mono/mono-5.18.0.268.tar.bz2"
+  sha256 "04ee081482b2f3e37ab7e2f92e2127e9e7b63211dbaa364e5b22b227a6b1bb8c"
 
   bottle do
-    sha256 "ae35573df33c718c3d9999572392480d2426cc995cfc4b123f0a66f885ea8053" => :high_sierra
-    sha256 "8dab2660d98e8e3bb1fa7f4640db04ef33e4e7fcfb7c3ef8a5c718e5254d80bd" => :sierra
-    sha256 "89d4d7f5df7bbf0e61a24e042bac29c41433dd71e8008394ce181ef6e7a4b77f" => :el_capitan
-    sha256 "72dd883ab2c394bde73325086350545db1a0a0414989fb28b9a31b7b8217c7a7" => :yosemite
+    sha256 "dcf2276c920131e6e631fc05d4e5ba90f7c55f21d294a9c04003758a0dac4a55" => :mojave
+    sha256 "9a8479f67d9073dc3e0fb25ca5d4f7e228e222d1ec2404f596b114c36f81eee9" => :high_sierra
+    sha256 "3343153cbf23009edcfc2c3f57cb4f02866849654c0cc6328667a4c6d16a1d0c" => :sierra
   end
+
+  depends_on "cmake" => :build
+  depends_on "pkg-config" => :build
+
+  conflicts_with "xsd", :because => "both install `xsd` binaries"
 
   # xbuild requires the .exe files inside the runtime directories to
   # be executable
@@ -22,56 +26,54 @@ class Mono < Formula
   link_overwrite "lib/mono"
   link_overwrite "lib/cli"
 
-  option "without-fsharp", "Build without support for the F# language."
-
-  depends_on "automake" => :build
-  depends_on "autoconf" => :build
-  depends_on "pkg-config" => :build
-  depends_on "cmake" => :build
-
-  conflicts_with "xsd", :because => "both install `xsd` binaries"
-
   resource "fsharp" do
     url "https://github.com/fsharp/fsharp.git",
-        :tag => "4.1.18",
-        :revision => "3245fd24efcc7a54d4314a2897257f68cd194244"
+        :tag      => "10.2.1",
+        :revision => "3de387432de8d11a89f99d1af87aa9ce194fe21b"
+  end
+
+  # When upgrading Mono, make sure to use the revision from
+  # https://github.com/mono/mono/blob/mono-#{version}/packaging/MacSDK/msbuild.py
+  resource "msbuild" do
+    url "https://github.com/mono/msbuild.git",
+        :revision => "804bde742bdf9d65c7ceb672a3d5400c0c22e628"
   end
 
   def install
-    args = %W[
-      --prefix=#{prefix}
-      --disable-dependency-tracking
-      --disable-silent-rules
-      --enable-nls=no
-    ]
-
-    args << "--build=" + (MacOS.prefer_64_bit? ? "x86_64": "i686") + "-apple-darwin"
-
-    system "./configure", *args
+    system "./configure", "--prefix=#{prefix}",
+                          "--disable-dependency-tracking",
+                          "--disable-silent-rules",
+                          "--enable-nls=no",
+                          "--build=x86_64-apple-darwin"
     system "make"
     system "make", "install"
     # mono-gdb.py and mono-sgen-gdb.py are meant to be loaded by gdb, not to be
     # run directly, so we move them out of bin
     libexec.install bin/"mono-gdb.py", bin/"mono-sgen-gdb.py"
 
-    # Now build and install fsharp as well
-    if build.with? "fsharp"
-      resource("fsharp").stage do
-        ENV.prepend_path "PATH", bin
-        ENV.prepend_path "PKG_CONFIG_PATH", lib/"pkgconfig"
-        system "./autogen.sh", "--prefix=#{prefix}"
-        system "make"
-        system "make", "install"
-      end
+    # We'll need mono for msbuild, and then later msbuild for fsharp
+    ENV.prepend_path "PATH", bin
+
+    # Next build msbuild
+    resource("msbuild").stage do
+      system "./build.sh", "-hostType", "mono", "-configuration", "Release", "-skipTests"
+      system "./artifacts/mono-msbuild/msbuild", "mono/build/install.proj",
+             "/p:MonoInstallPrefix=#{prefix}", "/p:Configuration=Release-MONO",
+             "/p:IgnoreDiffFailure=true"
+    end
+
+    # Finally build and install fsharp as well
+    resource("fsharp").stage do
+      ENV.prepend_path "PKG_CONFIG_PATH", lib/"pkgconfig"
+      system "make"
+      system "make", "install"
     end
   end
 
   def caveats; <<~EOS
     To use the assemblies from other formulae you need to set:
       export MONO_GAC_PREFIX="#{HOMEBREW_PREFIX}"
-    Note that the 'mono' formula now includes F#. If you have
-    the 'fsharp' formula installed, remove it with 'brew uninstall fsharp'.
-    EOS
+  EOS
   end
 
   test do
@@ -106,42 +108,40 @@ class Mono < Formula
     EOS
     system bin/"xbuild", "test.csproj"
 
-    if build.with? "fsharp"
-      # Test that fsharpi is working
-      ENV.prepend_path "PATH", bin
-      (testpath/"test.fsx").write <<~EOS
-        printfn "#{test_str}"; 0
-      EOS
-      output = pipe_output("#{bin}/fsharpi test.fsx")
-      assert_match test_str, output
+    # Test that fsharpi is working
+    ENV.prepend_path "PATH", bin
+    (testpath/"test.fsx").write <<~EOS
+      printfn "#{test_str}"; 0
+    EOS
+    output = pipe_output("#{bin}/fsharpi test.fsx")
+    assert_match test_str, output
 
-      # Tests that xbuild is able to execute fsc.exe
-      (testpath/"test.fsproj").write <<~EOS
-        <?xml version="1.0" encoding="utf-8"?>
-        <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-          <PropertyGroup>
-            <ProductVersion>8.0.30703</ProductVersion>
-            <SchemaVersion>2.0</SchemaVersion>
-            <ProjectGuid>{B6AB4EF3-8F60-41A1-AB0C-851A6DEB169E}</ProjectGuid>
-            <OutputType>Exe</OutputType>
-            <FSharpTargetsPath>$(MSBuildExtensionsPath32)\\Microsoft\\VisualStudio\\v$(VisualStudioVersion)\\FSharp\\Microsoft.FSharp.Targets</FSharpTargetsPath>
-          </PropertyGroup>
-          <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
-          <ItemGroup>
-            <Compile Include="Main.fs" />
-          </ItemGroup>
-          <ItemGroup>
-            <Reference Include="mscorlib" />
-            <Reference Include="System" />
-            <Reference Include="FSharp.Core" />
-          </ItemGroup>
-        </Project>
-      EOS
-      (testpath/"Main.fs").write <<~EOS
-        [<EntryPoint>]
-        let main _ = printfn "#{test_str}"; 0
-      EOS
-      system bin/"xbuild", "test.fsproj"
-    end
+    # Tests that xbuild is able to execute fsc.exe
+    (testpath/"test.fsproj").write <<~EOS
+      <?xml version="1.0" encoding="utf-8"?>
+      <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+        <PropertyGroup>
+          <ProductVersion>8.0.30703</ProductVersion>
+          <SchemaVersion>2.0</SchemaVersion>
+          <ProjectGuid>{B6AB4EF3-8F60-41A1-AB0C-851A6DEB169E}</ProjectGuid>
+          <OutputType>Exe</OutputType>
+          <FSharpTargetsPath>$(MSBuildExtensionsPath32)\\Microsoft\\VisualStudio\\v$(VisualStudioVersion)\\FSharp\\Microsoft.FSharp.Targets</FSharpTargetsPath>
+        </PropertyGroup>
+        <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
+        <ItemGroup>
+          <Compile Include="Main.fs" />
+        </ItemGroup>
+        <ItemGroup>
+          <Reference Include="mscorlib" />
+          <Reference Include="System" />
+          <Reference Include="FSharp.Core" />
+        </ItemGroup>
+      </Project>
+    EOS
+    (testpath/"Main.fs").write <<~EOS
+      [<EntryPoint>]
+      let main _ = printfn "#{test_str}"; 0
+    EOS
+    system bin/"xbuild", "test.fsproj"
   end
 end

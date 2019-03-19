@@ -3,33 +3,34 @@ class DcosCli < Formula
 
   desc "Cross-platform command-line utility to manage DC/OS clusters"
   homepage "https://dcos.io/docs/latest/cli/"
-  url "https://github.com/dcos/dcos-cli/archive/0.5.6.tar.gz"
-  sha256 "88d5690259947e7c4fbb382deb1c259def3752a344df62f3f8624392036f832d"
+  url "https://github.com/dcos/dcos-cli/archive/0.6.3.tar.gz"
+  sha256 "4cb59674eb0191bb6471749a8352a1d7611173d6357f318fc69678416c040cfe"
   head "https://github.com/dcos/dcos-cli.git"
 
   bottle do
     cellar :any
-    sha256 "fe40dc5f529b7214b9db75b45d4a66ee92c0c76975bfd42e77824a144fc7f8d8" => :high_sierra
-    sha256 "bd5f0806237bafa5220d48b8d0adb9579570f7c905c03fc6851b5fda887285e3" => :sierra
-    sha256 "7032a4e70181ccd058d537ff3e95827da867599b4d3068568f1183b9cba5debc" => :el_capitan
+    sha256 "96c9722c152028ed02e76bd782c50722fb6469677e0f4d59e351f5da36802855" => :mojave
+    sha256 "290b09815b412354a29728fd37bb1217192bf6e91913dbc43dbc798f237a6e5a" => :high_sierra
+    sha256 "052ac256bd597fce2dd43ea317f493ec2f355407a525261bb3e6fc8561ce27d4" => :sierra
+    sha256 "f682f24ac66465cc1367e7fe30be40e430f420d8d65a0e7b4fcecc65ae6cad8f" => :el_capitan
   end
 
-  depends_on :python3
-  depends_on "openssl@1.1"
+  depends_on "openssl"
+  depends_on "python"
 
   resource "asn1crypto" do
-    url "https://files.pythonhosted.org/packages/31/53/8bca924b30cb79d6d70dbab6a99e8731d1e4dd3b090b7f3d8412a8d8ffbc/asn1crypto-0.23.0.tar.gz"
-    sha256 "0874981329cfebb366d6584c3d16e913f2a0eb026c9463efcc4aaf42a9d94d70"
+    url "https://files.pythonhosted.org/packages/fc/f1/8db7daa71f414ddabfa056c4ef792e1461ff655c2ae2928a2b675bfed6b4/asn1crypto-0.24.0.tar.gz"
+    sha256 "9d5c20441baf0cb60a4ac34cc447c6c189024b6b4c6cd7877034f4965c464e49"
   end
 
   resource "certifi" do
-    url "https://files.pythonhosted.org/packages/20/d0/3f7a84b0c5b89e94abbd073a5f00c7176089f526edb056686751d5064cbd/certifi-2017.7.27.1.tar.gz"
-    sha256 "40523d2efb60523e113b44602298f0960e900388cf3bb6043f645cf57ea9e3f5"
+    url "https://files.pythonhosted.org/packages/4d/9c/46e950a6f4d6b4be571ddcae21e7bc846fcbb88f1de3eff0f6dd0a6be55d/certifi-2018.4.16.tar.gz"
+    sha256 "13e698f54293db9f89122b0581843a782ad0934a4fe0172d2a980ba77fc61bb7"
   end
 
   resource "cffi" do
-    url "https://files.pythonhosted.org/packages/c9/70/89b68b6600d479034276fed316e14b9107d50a62f5627da37fafe083fde3/cffi-1.11.2.tar.gz"
-    sha256 "ab87dd91c0c4073758d07334c1e5f712ce8fe48f007b86f8238773963ee700a6"
+    url "https://files.pythonhosted.org/packages/e7/a7/4cd50e57cc6f436f1cc3a7e8fa700ff9b8b4d471620629074913e3735fb2/cffi-1.11.5.tar.gz"
+    sha256 "e90f17980e6ab0f3c2f3730e56d1fe9bcba1891eeea58966e89d352492cc74f4"
   end
 
   resource "chardet" do
@@ -38,8 +39,8 @@ class DcosCli < Formula
   end
 
   resource "cryptography" do
-    url "https://files.pythonhosted.org/packages/0a/23/ffee389a45f752dc745706cdb2d354b91ddb71594506fac45236cf67af49/cryptography-2.0.2.tar.gz"
-    sha256 "3780b2663ee7ebb37cb83263326e3cd7f8b2ea439c448539d4b87de12c8d06ab"
+    url "https://files.pythonhosted.org/packages/79/a2/61c8625f96c8582d3053f89368c483ba62e56233d055e58e372f94a393f0/cryptography-2.3.tar.gz"
+    sha256 "c132bab45d4bd0fff1d3fe294d92b0a6eb8404e93337b3127bdec9f21de117e6"
   end
 
   resource "docopt" do
@@ -48,13 +49,8 @@ class DcosCli < Formula
   end
 
   resource "idna" do
-    url "https://files.pythonhosted.org/packages/f4/bd/0467d62790828c23c47fc1dfa1b1f052b24efdf5290f071c7a91d0d82fd3/idna-2.6.tar.gz"
-    sha256 "2c6a5de3089009e3da7c5dde64a141dbc8551d5b7f6cf4ed7c2568d0cc520a8f"
-  end
-
-  resource "idna" do
-    url "https://files.pythonhosted.org/packages/f4/bd/0467d62790828c23c47fc1dfa1b1f052b24efdf5290f071c7a91d0d82fd3/idna-2.6.tar.gz"
-    sha256 "2c6a5de3089009e3da7c5dde64a141dbc8551d5b7f6cf4ed7c2568d0cc520a8f"
+    url "https://files.pythonhosted.org/packages/65/c4/80f97e9c9628f3cac9b98bfca0402ede54e0563b56482e3e6e45c43c4935/idna-2.7.tar.gz"
+    sha256 "684a38a6f903c1d71d6d5fac066b58d7768af4de2b832e426ec79c30daa94a16"
   end
 
   resource "jsonschema" do
@@ -88,13 +84,13 @@ class DcosCli < Formula
   end
 
   resource "PyJWT" do
-    url "https://files.pythonhosted.org/packages/8f/10/9ce7e91d8ec9d852db6f9f2b076811d9f51ed7b0360602432d95e6ea4feb/PyJWT-1.4.2.tar.gz"
-    sha256 "87a831b7a3bfa8351511961469ed0462a769724d4da48a501cb8c96d1e17f570"
+    url "https://files.pythonhosted.org/packages/c9/2a/ffd27735280696f6f244c8d1b4d2dd130511340475a29768ed317f9eaf0c/PyJWT-1.5.3.tar.gz"
+    sha256 "500be75b17a63f70072416843dc80c8821109030be824f4d14758f114978bae7"
   end
 
   resource "requests" do
-    url "https://files.pythonhosted.org/packages/b0/e1/eab4fc3752e3d240468a8c0b284607899d2fbfb236a56b7377a329aa8d09/requests-2.18.4.tar.gz"
-    sha256 "9c443e7324ba5b85070c4a818ade28bfabedf16ea10206da1132edaa6dda237e"
+    url "https://files.pythonhosted.org/packages/54/1f/782a5734931ddf2e1494e4cd615a51ff98e1879cbe9eecbdfeaf09aa75e9/requests-2.19.1.tar.gz"
+    sha256 "ec22d826a36ed72a7358ff3fe56cbd4ba69dd7a6718ffd450ff0e9df7a47ce6a"
   end
 
   resource "retrying" do
@@ -108,23 +104,23 @@ class DcosCli < Formula
   end
 
   resource "sseclient" do
-    url "https://files.pythonhosted.org/packages/01/b2/58df4fcd9fa6c70ed4c19a09841227378d78388687cd461926de3cb4743d/sseclient-0.0.14.tar.gz"
-    sha256 "fb07aeb662033cc5924d66455cb4aa77e9660eec340eaeb801ddeefa032fbda8"
+    url "https://files.pythonhosted.org/packages/e3/fd/29f3bb9beaabf36fe61ff08463e9a2c49c54b9cfee20eceafd5c922e790a/sseclient-0.0.19.tar.gz"
+    sha256 "7a2ea3f4c8525ae9a677bc8193df5db88e23bcaafcc34938a1ee665975703a9f"
   end
 
   resource "toml" do
-    url "https://files.pythonhosted.org/packages/af/06/edd820aa8a04ba82354a841af00aa28dcde391a7759a1e34579bb33d63bf/toml-0.9.3.1.tar.gz"
-    sha256 "e1e8c220046889234df5ec688d6f97b734fc4a08a6d8edfc176f4e6abf90cfb5"
+    url "https://files.pythonhosted.org/packages/f5/f9/044110c267e6408013b85166a7cfcd352cf85275aa8ce700aa5c0eb407ba/toml-0.9.4.tar.gz"
+    sha256 "8e86bd6ce8cc11b9620cb637466453d94f5d57ad86f17e98a98d1f73e3baab2d"
   end
 
   resource "urllib3" do
-    url "https://files.pythonhosted.org/packages/ee/11/7c59620aceedcc1ef65e156cc5ce5a24ef87be4107c2b74458464e437a5d/urllib3-1.22.tar.gz"
-    sha256 "cc44da8e1145637334317feebd728bd869a35285b93cbb4cca2577da7e62db4f"
+    url "https://files.pythonhosted.org/packages/3c/d2/dc5471622bd200db1cd9319e02e71bc655e9ea27b8e0ce65fc69de0dac15/urllib3-1.23.tar.gz"
+    sha256 "a68ac5e15e76e7e5dd2b8f94007233e01effe3e50e8daddf69acfd81cb686baf"
   end
 
   resource "virtualenv" do
-    url "https://files.pythonhosted.org/packages/d4/0c/9840c08189e030873387a73b90ada981885010dd9aea134d6de30cd24cb8/virtualenv-15.1.0.tar.gz"
-    sha256 "02f8102c2436bb03b3ee6dede1919d1dac8a427541652e5ec95171ec8adbc93a"
+    url "https://files.pythonhosted.org/packages/b1/72/2d70c5a1de409ceb3a27ff2ec007ecdd5cc52239e7c74990e32af57affe9/virtualenv-15.2.0.tar.gz"
+    sha256 "1d7e241b431e7afce47e77f8843a276f652699d1fa4f93b9d8ce0076fd7b0b54"
   end
 
   def install

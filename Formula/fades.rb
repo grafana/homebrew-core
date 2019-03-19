@@ -1,19 +1,20 @@
 class Fades < Formula
   desc "Automatically handle virtualenvs for python scripts"
   homepage "https://fades.readthedocs.org/"
-  url "https://files.pythonhosted.org/packages/59/18/cc80eb5c0a2e15c4b95df6a3c6158e06acb2e075ef2b811753936a6bdf57/fades-6.0.1.tar.gz"
-  sha256 "747ee3a159be1cb7512fd7ea4163d22e2734209e474aa2dbbccc29a0f0c92d09"
+  url "https://files.pythonhosted.org/packages/27/89/dd5b165986f4064d2a3285461e1a15fb7006793b453a7b2a3b518377b8f2/fades-7.0.tar.gz"
+  sha256 "b91f2221f1ae8e9eae35f58dac279d2d3935e66de428e79e1509814392449dda"
+  revision 1
   head "https://github.com/PyAr/fades.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "a253b997f7e16ad61f602449567b1883a9ccd742665b1ff67dce545f6cae52d1" => :high_sierra
-    sha256 "c24a39184e8fb1c487e6c579b3fd66aba3e6c13be4f86c5583ce59beaab99655" => :sierra
-    sha256 "8a6869cbb401853eff4aa5c176feebdcb0b493ec09052f9f7a516d87320d96f3" => :el_capitan
-    sha256 "8a6869cbb401853eff4aa5c176feebdcb0b493ec09052f9f7a516d87320d96f3" => :yosemite
+    sha256 "568d9c2abc721d568e81c2b2c9c00d18323cf72597cdb2a2e22786a3416ee834" => :mojave
+    sha256 "1ba996deb40bae3649bb34d3fbd73495979daf805cdfa48c7f0c423b64675fa2" => :high_sierra
+    sha256 "1ba996deb40bae3649bb34d3fbd73495979daf805cdfa48c7f0c423b64675fa2" => :sierra
+    sha256 "2de71da4212f19ffb8373f0f334d7534adf512bc14de942d32ffc3390b4c14f8" => :el_capitan
   end
 
-  depends_on :python3
+  depends_on "python"
 
   def install
     pyver = Language::Python.major_minor_version "python3"

@@ -1,16 +1,16 @@
 class ThePlatinumSearcher < Formula
   desc "Multi-platform code-search similar to ack and ag"
   homepage "https://github.com/monochromegane/the_platinum_searcher"
-  url "https://github.com/monochromegane/the_platinum_searcher/archive/v2.1.5.tar.gz"
-  sha256 "dfed3b92f35501d063a2c646d5dfd51f2ee12cee53dd9e1d04a6c7710b71050f"
+  url "https://github.com/monochromegane/the_platinum_searcher/archive/v2.2.0.tar.gz"
+  sha256 "3d5412208644b13723b2b7ca4af0870d25c654e3a76feee846164c51b88240b0"
   head "https://github.com/monochromegane/the_platinum_searcher.git"
 
   bottle do
     cellar :any_skip_relocation
-    rebuild 1
-    sha256 "1df209ab319d3dda7050c4f9d63138712bba558193a08cf9bfb39bc06a7af3e4" => :high_sierra
-    sha256 "bbba09f3a7c2c6af71c778d64a363297c3d4f3f01d99a076d6cf709fc65ac85d" => :sierra
-    sha256 "f3eb248d0506445f80e1ed80ea52e255551612dbcf8e425024ad4dd4b94b849f" => :el_capitan
+    sha256 "b2e99bee242a5b9a1667a321de1e777eb83a8023b034ebe0da3fc0953a193f26" => :mojave
+    sha256 "5b85047b2b893e8ec45e3f68b37c09cfb80ceb0a7c2b9c70937f2f2ca1f6f0bc" => :high_sierra
+    sha256 "1e952c6a666f180343cfdc1afa859f702638276e597d4292520fa6cf91ac82b8" => :sierra
+    sha256 "3439437518655cdd74c95eda5a161c01d5fe80604ef9c3e8936449a96ba3dcc1" => :el_capitan
   end
 
   depends_on "go" => :build

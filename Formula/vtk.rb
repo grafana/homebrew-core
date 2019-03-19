@@ -1,18 +1,16 @@
 class Vtk < Formula
   desc "Toolkit for 3D computer graphics, image processing, and visualization"
   homepage "https://www.vtk.org/"
-  url "https://www.vtk.org/files/release/8.0/VTK-8.0.1.tar.gz"
-  sha256 "49107352923dea6de05a7b4c3906aaf98ef39c91ad81c383136e768dcf304069"
-  revision 1
+  url "https://www.vtk.org/files/release/8.1/VTK-8.1.2.tar.gz"
+  sha256 "0995fb36857dd76ccfb8bb07350c214d9f9099e80b1e66b4a8909311f24ff0db"
+  revision 2
   head "https://github.com/Kitware/VTK.git"
 
   bottle do
-    sha256 "0a0f29977a603317e57d86fc613c7ad3ae4e2d5df4b22d50e9ad0b65736b7c85" => :high_sierra
-    sha256 "babcfed0fbd3eed2e1c3d427d1e0a37ae15a78cd54f93b54d031db6202cd3454" => :sierra
-    sha256 "3d7de16d0b920653591bafc3bd17fa738f6f0727972b77bf5c56878e898d80a4" => :el_capitan
+    sha256 "acd90fab027fe1d8c3fee002e9d6ae53d37cb193867e6760349a95f4cc61c6ed" => :mojave
+    sha256 "9e4cd8949c2562df2ead05265f9e192b270d6b5bfa66c58cb2b235ff32ec1a4f" => :high_sierra
+    sha256 "73986d08c7dcec7cdb5122352e84b4ca7b7c2eb4f1e69ccd4d1a5624c9d5808b" => :sierra
   end
-
-  option "without-python", "Build without python2 support"
 
   depends_on "cmake" => :build
   depends_on "boost"
@@ -22,14 +20,17 @@ class Vtk < Formula
   depends_on "libpng"
   depends_on "libtiff"
   depends_on "netcdf"
-  depends_on :python => :recommended if MacOS.version <= :snow_leopard
-  depends_on :python3 => :optional
-  depends_on "qt" => :optional
-  depends_on "pyqt" if build.with? "qt"
-
-  needs :cxx11
+  depends_on "pyqt"
+  depends_on "python"
+  depends_on "qt"
 
   def install
+    python_executable = `which python3`.strip
+    python_prefix = `#{python_executable} -c 'import sys;print(sys.prefix)'`.chomp
+    python_include = `#{python_executable} -c 'from distutils import sysconfig;print(sysconfig.get_python_inc(True))'`.chomp
+    python_version = "python" + `#{python_executable} -c 'import sys;print(sys.version[:3])'`.chomp
+    py_site_packages = "#{lib}/#{python_version}/site-packages"
+
     args = std_cmake_args + %W[
       -DBUILD_SHARED_LIBS=ON
       -DBUILD_TESTING=OFF
@@ -48,78 +49,59 @@ class Vtk < Formula
       -DVTK_USE_SYSTEM_PNG=ON
       -DVTK_USE_SYSTEM_TIFF=ON
       -DVTK_USE_SYSTEM_ZLIB=ON
-      -DVTK_WRAP_TCL=ON
+      -DVTK_WRAP_PYTHON=ON
+      -DPYTHON_EXECUTABLE='#{python_executable}'
+      -DPYTHON_INCLUDE_DIR='#{python_include}'
+      -DVTK_INSTALL_PYTHON_MODULE_DIR='#{py_site_packages}/'
+      -DVTK_QT_VERSION:STRING=5
+      -DVTK_Group_Qt=ON
+      -DVTK_WRAP_PYTHON_SIP=ON
+      -DSIP_PYQT_DIR='#{Formula["pyqt5"].opt_share}/sip'
     ]
 
-    unless MacOS::CLT.installed?
-      # We are facing an Xcode-only installation, and we have to keep
-      # vtk from using its internal Tk headers (that differ from OSX's).
-      args << "-DTK_INCLUDE_PATH:PATH=#{MacOS.sdk_path}/System/Library/Frameworks/Tk.framework/Headers"
-      args << "-DTK_INTERNAL_PATH:PATH=#{MacOS.sdk_path}/System/Library/Frameworks/Tk.framework/Headers/tk-private"
+    # CMake picks up the system's python dylib, even if we have a brewed one.
+    if File.exist? "#{python_prefix}/Python"
+      args << "-DPYTHON_LIBRARY='#{python_prefix}/Python'"
+    elsif File.exist? "#{python_prefix}/lib/lib#{python_version}.a"
+      args << "-DPYTHON_LIBRARY='#{python_prefix}/lib/lib#{python_version}.a'"
+    elsif File.exist? "#{python_prefix}/lib/lib#{python_version}.dylib"
+      args << "-DPYTHON_LIBRARY='#{python_prefix}/lib/lib#{python_version}.dylib'"
+    else
+      odie "No libpythonX.Y.{dylib|a} file found!"
     end
 
     mkdir "build" do
-      if build.with?("python3") && build.with?("python")
-        # VTK Does not support building both python 2 and 3 versions
-        odie "VTK: Does not support building both python 2 and 3 wrappers"
-      elsif build.with?("python") || build.with?("python3")
-        python_executable = `which python`.strip if build.with? "python"
-        python_executable = `which python3`.strip if build.with? "python3"
-
-        python_prefix = `#{python_executable} -c 'import sys;print(sys.prefix)'`.chomp
-        python_include = `#{python_executable} -c 'from distutils import sysconfig;print(sysconfig.get_python_inc(True))'`.chomp
-        python_version = "python" + `#{python_executable} -c 'import sys;print(sys.version[:3])'`.chomp
-        py_site_packages = "#{lib}/#{python_version}/site-packages"
-
-        args << "-DVTK_WRAP_PYTHON=ON"
-        args << "-DPYTHON_EXECUTABLE='#{python_executable}'"
-        args << "-DPYTHON_INCLUDE_DIR='#{python_include}'"
-        # CMake picks up the system's python dylib, even if we have a brewed one.
-        if File.exist? "#{python_prefix}/Python"
-          args << "-DPYTHON_LIBRARY='#{python_prefix}/Python'"
-        elsif File.exist? "#{python_prefix}/lib/lib#{python_version}.a"
-          args << "-DPYTHON_LIBRARY='#{python_prefix}/lib/lib#{python_version}.a'"
-        elsif File.exist? "#{python_prefix}/lib/lib#{python_version}.dylib"
-          args << "-DPYTHON_LIBRARY='#{python_prefix}/lib/lib#{python_version}.dylib'"
-        else
-          odie "No libpythonX.Y.{dylib|a} file found!"
-        end
-        # Set the prefix for the python bindings to the Cellar
-        args << "-DVTK_INSTALL_PYTHON_MODULE_DIR='#{py_site_packages}/'"
-      end
-
-      if build.with? "qt"
-        args << "-DVTK_QT_VERSION:STRING=5" << "-DVTK_Group_Qt=ON"
-        args << "-DVTK_WRAP_PYTHON_SIP=ON"
-        args << "-DSIP_PYQT_DIR='#{Formula["pyqt5"].opt_share}/sip'"
-      end
-
       system "cmake", "..", *args
       system "make"
       system "make", "install"
     end
-  end
 
-  def caveats; <<~EOS
-    Even without the --with-qt option, you can display native VTK render windows
-    from python. Alternatively, you can integrate the RenderWindowInteractor
-    in PyQt5, Tk or Wx at runtime. Read more:
-      import vtk.qt5; help(vtk.qt5) or import vtk.wx; help(vtk.wx)
-    EOS
+    # Avoid hard-coding Python's Cellar paths
+    inreplace Dir["#{lib}/cmake/**/vtkPython.cmake"].first,
+      Formula["python"].prefix.realpath,
+      Formula["python"].opt_prefix
+
+    # Avoid hard-coding HDF5's Cellar path
+    inreplace Dir["#{lib}/cmake/**/vtkhdf5.cmake"].first,
+      Formula["hdf5"].prefix.realpath,
+      Formula["hdf5"].opt_prefix
   end
 
   test do
-    (testpath/"version.cpp").write <<-EOS
+    vtk_include = Dir[opt_include/"vtk-*"].first
+    major, minor = vtk_include.match(/.*-(.*)$/)[1].split(".")
+
+    (testpath/"version.cpp").write <<~EOS
       #include <vtkVersion.h>
       #include <assert.h>
       int main(int, char *[]) {
-        assert (vtkVersion::GetVTKMajorVersion()==8);
-        assert (vtkVersion::GetVTKMinorVersion()==0);
+        assert (vtkVersion::GetVTKMajorVersion()==#{major});
+        assert (vtkVersion::GetVTKMinorVersion()==#{minor});
         return EXIT_SUCCESS;
       }
     EOS
 
-    system ENV.cxx, "version.cpp", "-I#{opt_include}/vtk-8.0"
+    system ENV.cxx, "-std=c++11", "version.cpp", "-I#{vtk_include}"
     system "./a.out"
     system "#{bin}/vtkpython", "-c", "exit()"
   end

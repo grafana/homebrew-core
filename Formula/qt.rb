@@ -3,53 +3,25 @@
 class Qt < Formula
   desc "Cross-platform application and UI framework"
   homepage "https://www.qt.io/"
-  url "https://download.qt.io/official_releases/qt/5.9/5.9.2/single/qt-everywhere-opensource-src-5.9.2.tar.xz"
-  mirror "https://www.mirrorservice.org/sites/download.qt-project.org/official_releases/qt/5.9/5.9.2/single/qt-everywhere-opensource-src-5.9.2.tar.xz"
-  sha256 "6c6171a4d1ea3fbd4212d6a04899650218583df3ec583a8a6a4a589fe18620ff"
-  head "https://code.qt.io/qt/qt5.git", :branch => "5.9", :shallow => false
+  url "https://download.qt.io/official_releases/qt/5.12/5.12.2/single/qt-everywhere-src-5.12.2.tar.xz"
+  mirror "https://qt.mirror.constant.com/archive/qt/5.12/5.12.2/single/qt-everywhere-src-5.12.2.tar.xz"
+  mirror "https://ftp.osuosl.org/pub/blfs/conglomeration/qt5/qt-everywhere-src-5.12.2.tar.xz"
+  sha256 "59b8cb4e728450b21224dcaaa40eb25bafc5196b6988f2225c394c6b7f881ff5"
+
+  head "https://code.qt.io/qt/qt5.git", :branch => "dev", :shallow => false
 
   bottle do
-    sha256 "bbba35b2261a372ebd5511dc6db7687fd772c28c8dfd86d4604f8d6087be210e" => :high_sierra
-    sha256 "9fa18fecb5c9f99e21f3725bcdebf531fda2336a115d117e3c35ef3ddaf85163" => :sierra
-    sha256 "aaa16640e5c34d3bad308b496c3cd8ef32f7294b6ac4f007d582720449062482" => :el_capitan
+    cellar :any
+    sha256 "92231ed38a80af35cf73b851894bf5bda0ff27a2e0c43d6e8447420635cff773" => :mojave
+    sha256 "e80159c1b66e0f24a5b2189b2996c65422ebdf1ebd17eb104fdd4f28be8ad12e" => :high_sierra
+    sha256 "2c5ab299799b315b944daae13dabe7c40fc9058c3fbeda818aa58e408c0aa26c" => :sierra
   end
 
   keg_only "Qt 5 has CMake issues when linked"
 
-  option "with-docs", "Build documentation"
-  option "with-examples", "Build examples"
-
-  # OS X 10.7 Lion is still supported in Qt 5.5, but is no longer a reference
-  # configuration and thus untested in practice. Builds on OS X 10.7 have been
-  # reported to fail: <https://github.com/Homebrew/homebrew/issues/45284>.
-  depends_on :macos => :mountain_lion
-
   depends_on "pkg-config" => :build
   depends_on :xcode => :build
-  depends_on :mysql => :optional
-  depends_on :postgresql => :optional
-
-  # Restore `.pc` files for framework-based build of Qt 5 on OS X. This
-  # partially reverts <https://codereview.qt-project.org/#/c/140954/> merged
-  # between the 5.5.1 and 5.6.0 releases. (Remove this as soon as feasible!)
-  #
-  # Core formulae known to fail without this patch (as of 2016-10-15):
-  #   * gnuplot  (with `--with-qt` option)
-  #   * mkvtoolnix (with `--with-qt` option, silent build failure)
-  #   * poppler    (with `--with-qt` option)
-  patch do
-    url "https://raw.githubusercontent.com/Homebrew/formula-patches/e8fe6567/qt5/restore-pc-files.patch"
-    sha256 "48ff18be2f4050de7288bddbae7f47e949512ac4bcd126c2f504be2ac701158b"
-  end
-
-  # Remove for >= 5.10
-  # Fix for upstream issue "macdeployqt does not work with Homebrew"
-  # See https://bugreports.qt.io/browse/QTBUG-56814
-  # Upstream commit from 23 Dec 2016 https://github.com/qt/qttools/commit/8f9b747f030bb41556831a23ec2a8e7e76fb7dc0#diff-2b6e250f93810fd9bcf9bbecf5d2be88
-  patch do
-    url "https://raw.githubusercontent.com/Homebrew/formula-patches/a627e0a/qt5/QTBUG-56814.patch"
-    sha256 "b18e4715fcef2992f051790d3784a54900508c93350c25b0f2228cb058567142"
-  end
+  depends_on :macos => :sierra
 
   def install
     args = %W[
@@ -62,39 +34,18 @@ class Qt < Formula
       -qt-libjpeg
       -qt-freetype
       -qt-pcre
+      -nomake examples
       -nomake tests
       -no-rpath
       -pkg-config
       -dbus-runtime
+      -proprietary-codecs
     ]
-
-    args << "-nomake" << "examples" if build.without? "examples"
-
-    if build.with? "mysql"
-      args << "-plugin-sql-mysql"
-      (buildpath/"brew_shim/mysql_config").write <<~EOS
-        #!/bin/sh
-        if [ x"$1" = x"--libs" ]; then
-          mysql_config --libs | sed "s/-lssl -lcrypto//"
-        else
-          exec mysql_config "$@"
-        fi
-      EOS
-      chmod 0755, "brew_shim/mysql_config"
-      args << "-mysql_config" << buildpath/"brew_shim/mysql_config"
-    end
-
-    args << "-plugin-sql-psql" if build.with? "postgresql"
 
     system "./configure", *args
     system "make"
     ENV.deparallelize
     system "make", "install"
-
-    if build.with? "docs"
-      system "make", "docs"
-      system "make", "install_docs"
-    end
 
     # Some config scripts will only find Qt in a "Frameworks" folder
     frameworks.install_symlink Dir["#{lib}/*.framework"]
@@ -115,9 +66,9 @@ class Qt < Formula
   end
 
   def caveats; <<~EOS
-    We agreed to the Qt opensource license for you.
+    We agreed to the Qt open source license for you.
     If this is unacceptable you should uninstall.
-    EOS
+  EOS
   end
 
   test do

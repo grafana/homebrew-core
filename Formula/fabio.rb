@@ -1,25 +1,26 @@
 class Fabio < Formula
   desc "Zero-conf load balancing HTTP(S) router"
   homepage "https://github.com/fabiolb/fabio"
-  url "https://github.com/fabiolb/fabio/archive/v1.5.3.tar.gz"
-  sha256 "bad6442a9c3424986ff55839efd3ac20839dfee2acdbb05206b013f7e9272f1f"
+  url "https://github.com/fabiolb/fabio/archive/v1.5.11.tar.gz"
+  sha256 "628e7382b766f5b03ef72209f38694a723fe5838d044764c9619c3cc84696b67"
   head "https://github.com/fabiolb/fabio.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "81e9966383aa941b9ee2f043060d15990adaed962a004d1005080652978e48db" => :high_sierra
-    sha256 "76b727eb7592f82953753c23da05167e8b2642f53df0762493af64257c3bef37" => :sierra
-    sha256 "24e9bf94e082d6298094da3b1a71efc9192aa05573044e6eeb4c2a786a8b255a" => :el_capitan
+    sha256 "67487a58775ce639924c4cdd51907b23d61d10c23667efca9b9d9e5752b3f363" => :mojave
+    sha256 "aec5deb6a536a861abc132e787336c990a6a5635ab55454171877e2541e3543a" => :high_sierra
+    sha256 "4cd2e56d77e3ea61a8689f69a9b73a5b9184b7224ed56e5c6e0b406de1873dab" => :sierra
   end
 
   depends_on "go" => :build
-  depends_on "consul" => :recommended
+  depends_on "consul"
 
   def install
     mkdir_p buildpath/"src/github.com/fabiolb"
     ln_s buildpath, buildpath/"src/github.com/fabiolb/fabio"
 
     ENV["GOPATH"] = buildpath.to_s
+    ENV["GO111MODULE"] = "off"
 
     system "go", "install", "github.com/fabiolb/fabio"
     bin.install "#{buildpath}/bin/fabio"
@@ -33,16 +34,12 @@ class Fabio < Formula
     FABIO_DEFAULT_PORT = 9999
     LOCALHOST_IP = "127.0.0.1".freeze
 
-    def port_open?(ip, port, seconds = 1)
+    def port_open?(ip_address, port, seconds = 1)
       Timeout.timeout(seconds) do
-        begin
-          TCPSocket.new(ip, port).close
-          true
-        rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
-          false
-        end
+        TCPSocket.new(ip_address, port).close
       end
-    rescue Timeout::Error
+      true
+    rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Timeout::Error
       false
     end
 

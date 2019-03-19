@@ -1,60 +1,28 @@
 class Cppcheck < Formula
   desc "Static analysis of C and C++ code"
   homepage "https://sourceforge.net/projects/cppcheck/"
-  url "https://github.com/danmar/cppcheck/archive/1.81.tar.gz"
-  sha256 "12396eee334b22bf3aa3d629d483f27f287125348b97586dfd4da87b26ae2a56"
+  url "https://github.com/danmar/cppcheck/archive/1.87.tar.gz"
+  sha256 "ea7ac1cd2f5c00ecffd596fd0f7281cba44308e565a634fae02b77ecd927c153"
   head "https://github.com/danmar/cppcheck.git"
 
   bottle do
-    sha256 "d92360a0974ae00e273cb313f428cd235752cd952e8ede41eead31a3f35b0259" => :high_sierra
-    sha256 "f52a30f12d779c44da05b82c610248547cd890d89c235ed34a00e31185940ef0" => :sierra
-    sha256 "e14819c084affa65e3d5f3aceefa145c2f6914e04215a6d344413b862f59563c" => :el_capitan
+    sha256 "459379b27b56d2d21e66a73b971f5f95a95cc40a05bfea06584b59600ee606f4" => :mojave
+    sha256 "ac488840fa1fbb9e4413f0720a23ef262884805d42712f922e83ff0cae0b279f" => :high_sierra
+    sha256 "76f7886607cb555fc93e61032b5d56b84ddb9e40b5d61920bbfb1e98e876ed49" => :sierra
   end
 
-  option "without-rules", "Build without rules (no pcre dependency)"
-  option "with-qt", "Build the cppcheck GUI (requires Qt)"
-
-  deprecated_option "no-rules" => "without-rules"
-  deprecated_option "with-gui" => "with-qt"
-  deprecated_option "with-qt5" => "with-qt"
-
-  depends_on "pcre" if build.with? "rules"
-  depends_on "qt" => :optional
-
-  needs :cxx11
+  depends_on "pcre"
 
   def install
     ENV.cxx11
 
-    # Man pages aren't installed as they require docbook schemas.
-
-    # Pass to make variables.
-    if build.with? "rules"
-      system "make", "HAVE_RULES=yes", "CFGDIR=#{prefix}/cfg"
-    else
-      system "make", "HAVE_RULES=no", "CFGDIR=#{prefix}/cfg"
-    end
+    system "make", "HAVE_RULES=yes", "CFGDIR=#{prefix}/cfg"
 
     # CFGDIR is relative to the prefix for install, don't add #{prefix}.
     system "make", "DESTDIR=#{prefix}", "BIN=#{bin}", "CFGDIR=/cfg", "install"
 
     # Move the python addons to the cppcheck pkgshare folder
     (pkgshare/"addons").install Dir.glob(bin/"*.py")
-
-    if build.with? "qt"
-      cd "gui" do
-        if build.with? "rules"
-          system "qmake", "HAVE_RULES=yes",
-                          "INCLUDEPATH+=#{Formula["pcre"].opt_include}",
-                          "LIBS+=-L#{Formula["pcre"].opt_lib}"
-        else
-          system "qmake", "HAVE_RULES=no"
-        end
-
-        system "make"
-        prefix.install "cppcheck-gui.app"
-      end
-    end
   end
 
   test do
@@ -134,7 +102,7 @@ class Cppcheck < Formula
     system "#{bin}/cppcheck", "--dump", test_cpp_file
     test_cpp_file_dump = "#{test_cpp_file}.dump"
     assert_predicate testpath/test_cpp_file_dump, :exist?
-    python_addon_output = shell_output "python #{sample_addon_file} #{test_cpp_file_dump}"
-    assert_match "#{expect_function_names}\n#{expect_token_count}", python_addon_output
+    output = shell_output("python #{sample_addon_file} #{test_cpp_file_dump}")
+    assert_match "#{expect_function_names}\n#{expect_token_count}", output
   end
 end

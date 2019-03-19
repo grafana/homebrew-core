@@ -3,12 +3,13 @@ class Isync < Formula
   homepage "https://isync.sourceforge.io/"
   url "https://downloads.sourceforge.net/project/isync/isync/1.3.0/isync-1.3.0.tar.gz"
   sha256 "8d5f583976e3119705bdba27fa4fc962e807ff5996f24f354957178ffa697c9c"
+  revision 1
 
   bottle do
     cellar :any
-    sha256 "7b7ffd0c838626b698145a205c8325c6c74051c073fc793db724264a5d841dd3" => :high_sierra
-    sha256 "646490217fc6569fd0c8999aac9e3b7dfd4ae18aaa20cd0c0b99f0dfd350b4de" => :sierra
-    sha256 "060669b949a1d59d8d2432d8c169c4b6af457bde209e670bd0056f4efe9ef0d9" => :el_capitan
+    sha256 "31b4efc0a70abc3dd02a71c0c89256180166cecfa159f471ef509f3e032da688" => :mojave
+    sha256 "4eb1fc073f003929e0743f00b8d127b853fa9352cf15dbc2058fb1bc5e1f6b37" => :high_sierra
+    sha256 "500e23f8ba9a7aae5ef3af184c8bb7ad7b36ba17f4356305dd860fed9ae3b8e3" => :sierra
   end
 
   head do
@@ -18,8 +19,8 @@ class Isync < Formula
     depends_on "automake" => :build
   end
 
+  depends_on "berkeley-db"
   depends_on "openssl"
-  depends_on "berkeley-db" => :optional
 
   def install
     system "./autogen.sh" if build.head?
@@ -29,7 +30,6 @@ class Isync < Formula
       --prefix=#{prefix}
       --disable-silent-rules
     ]
-    args << "ac_cv_berkdb4=no" if build.without? "berkeley-db"
 
     system "./configure", *args
     system "make", "install"
@@ -54,6 +54,7 @@ class Isync < Formula
         <key>ProgramArguments</key>
         <array>
           <string>#{opt_bin}/mbsync</string>
+          <string>-a</string>
           <string>Periodic</string>
         </array>
         <key>StartInterval</key>
@@ -66,7 +67,7 @@ class Isync < Formula
         <string>/dev/null</string>
       </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do

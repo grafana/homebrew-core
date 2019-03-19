@@ -1,18 +1,18 @@
 class Libid3tag < Formula
   desc "ID3 tag manipulation library"
-  homepage "http://www.underbit.com/products/mad/"
+  homepage "https://www.underbit.com/products/mad/"
   url "https://downloads.sourceforge.net/project/mad/libid3tag/0.15.1b/libid3tag-0.15.1b.tar.gz"
   sha256 "63da4f6e7997278f8a3fef4c6a372d342f705051d1eeb6a46a86b03610e26151"
 
   bottle do
     cellar :any
     rebuild 1
+    sha256 "51257e9e96bedecb39c15f25bdefc4150ba636f76c828240df0c214c6dc8381f" => :mojave
     sha256 "42909989a248048c3c03c64d937ab3ffc655dbf8fc90d6deffaa74f979bdbdba" => :high_sierra
     sha256 "f80ff2abda5796fcabba3ff54405d9626628c3969f844723e9232d66e85e745f" => :sierra
     sha256 "75e446174dd2a9dc17326c998757c4218a89cddb734f3000d0b0506de801732a" => :el_capitan
     sha256 "07ef662e3ab9be0cce16eabb13dbc046fc60c42184ac003285371dc955859697" => :yosemite
     sha256 "d832f73e16b185fed6a66d2f00199a7d76411e438854988262463f4769b40d5b" => :mavericks
-    sha256 "35d74caea8ad8110b36e9718175ef9a7f2824cc70c0d470018ad70319ced7b69" => :mountain_lion
   end
 
   # patch for utf-16 (memory leaks), see https://bugs.launchpad.net/mixxx/+bug/403586
@@ -23,7 +23,7 @@ class Libid3tag < Formula
     "file-write"                         => "eff855cabd8a51866a29246a1b257da64f46aab72d4b8e163e2a4c0d15165bf1",
   }.each do |name, sha|
     patch do
-      url "http://mirror.ovh.net/gentoo-portage/media-libs/libid3tag/files/0.15.1b/libid3tag-0.15.1b-#{name}.patch"
+      url "https://gitweb.gentoo.org/repo/gentoo.git/plain/media-libs/libid3tag/files/0.15.1b/libid3tag-0.15.1b-#{name}.patch?id=56bd759df1d0"
       sha256 sha
     end
   end
@@ -35,14 +35,14 @@ class Libid3tag < Formula
     "tag"          => "ca7262ddad158ab0be804429d705f8c6a1bb120371dec593323fa4876c1b277f",
   }.each do |name, sha|
     patch :p0 do
-      url "http://mirror.ovh.net/gentoo-portage/media-libs/libid3tag/files/0.15.1b/libid3tag-0.15.1b-#{name}.patch"
+      url "https://gitweb.gentoo.org/repo/gentoo.git/plain/media-libs/libid3tag/files/0.15.1b/libid3tag-0.15.1b-#{name}.patch?id=56bd759df1d0"
       sha256 sha
     end
   end
 
   # corrects "a cappella" typo
   patch :p2 do
-    url "http://mirror.ovh.net/gentoo-portage/media-libs/libid3tag/files/0.15.1b/libid3tag-0.15.1b-a_capella.patch"
+    url "https://gitweb.gentoo.org/repo/gentoo.git/plain/media-libs/libid3tag/files/0.15.1b/libid3tag-0.15.1b-a_capella.patch?id=56bd759df1d0"
     sha256 "5e86270ebb179d82acee686700d203e90f42e82beeed455b0163d8611657d395"
   end
 
@@ -66,6 +66,6 @@ class Libid3tag < Formula
     Conflicts:
     Libs: -L${libdir} -lid3tag -lz
     Cflags: -I${includedir}
-    EOS
+  EOS
   end
 end

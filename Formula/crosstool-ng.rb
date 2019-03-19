@@ -1,32 +1,49 @@
 class CrosstoolNg < Formula
   desc "Tool for building toolchains"
-  homepage "http://crosstool-ng.org"
+  homepage "https://crosstool-ng.github.io/"
   url "http://crosstool-ng.org/download/crosstool-ng/crosstool-ng-1.23.0.tar.xz"
   sha256 "68a43ea98ccf9cb345cb6eec494a497b224fee24c882e8c14c6713afbbe79196"
+  revision 3
+  head "https://github.com/crosstool-ng/crosstool-ng.git"
 
   bottle do
     cellar :any
-    sha256 "2e6df99ebde627f3ca8b8309724fb132baa749ddae237d4f4fc8b5e03f34c06c" => :high_sierra
-    sha256 "bda4c02b605a79fa980bf8df055d3b9d1a7da01f4212a98ebc79a5ccc57649a3" => :sierra
-    sha256 "67563525dbf2cc4a8cf60da1e398474609c1aa8f0ef3d8ac68d318064aba4c28" => :el_capitan
-    sha256 "c119b94b8b4782935e7c2968d195cddcfd2faa089768c0a0bf84dfcb8d5713cc" => :yosemite
+    sha256 "1431c7979e1c9e9162a885644d170d17c00754d6fa1832f2f0474a5e43a015fb" => :mojave
+    sha256 "eb263584b93acaea45ee6418a5ec8a0e6d3851c2c56d2225e47d3056177ce190" => :high_sierra
+    sha256 "e997043c6f35b1ac4cc8a83a274e3fb1f684d68e7d322c76cea46594af9ce4fc" => :sierra
   end
 
   depends_on "help2man" => :build
-  depends_on "autoconf" => :run
-  depends_on "automake" => :run
-  depends_on "libtool" => :run
+  depends_on "autoconf"
+  depends_on "automake"
   depends_on "binutils"
   depends_on "coreutils"
   depends_on "flex"
   depends_on "gawk"
   depends_on "gnu-sed"
   depends_on "grep"
+  depends_on "libtool"
   depends_on "m4"
+  depends_on "make"
+  depends_on "ncurses" if DevelopmentTools.clang_build_version >= 1000
   depends_on "xz"
 
+  if build.head?
+    depends_on "bash"
+    depends_on "bison"
+    depends_on "gettext"
+    depends_on "lzip"
+  end
+
   def install
+    if build.head?
+      system "./bootstrap"
+      ENV["BISON"] = "#{Formula["bison"].opt_bin}/bison"
+      ENV.append "LDFLAGS", "-lintl"
+    end
+
     ENV["M4"] = "#{Formula["m4"].opt_bin}/m4"
+    ENV["MAKE"] = "#{Formula["make"].opt_bin}/gmake"
 
     system "./configure", "--prefix=#{prefix}"
 

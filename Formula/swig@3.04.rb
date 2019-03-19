@@ -5,6 +5,7 @@ class SwigAT304 < Formula
   sha256 "410ffa80ef5535244b500933d70c1b65206333b546ca5a6c89373afb65413795"
 
   bottle do
+    sha256 "264a8dc6653c2fc3ae88f1b0a8d60aef2b54db681b4fce4ce783b4f73f6daa84" => :mojave
     sha256 "fa6edd5df156b7a985bfe6f74f56cf15682af6b01d11f0ed342f2f05444234f0" => :high_sierra
     sha256 "51b8115c0a2813caf115fb5f082e7aa1b84b7c51acec70822b8619e918969a14" => :sierra
     sha256 "84988480f25dea3fce15b6ca0e9a3322222cc473066f23626d59b20001574fdf" => :el_capitan
@@ -41,7 +42,7 @@ class SwigAT304 < Formula
     EOS
     system "#{bin}/swig", "-ruby", "test.i"
     system ENV.cc, "-c", "test.c"
-    system ENV.cc, "-c", "test_wrap.c", "-I/System/Library/Frameworks/Ruby.framework/Headers/"
+    system ENV.cc, "-c", "test_wrap.c", "-I#{MacOS.sdk_path}/System/Library/Frameworks/Ruby.framework/Headers/"
     system ENV.cc, "-bundle", "-flat_namespace", "-undefined", "suppress", "test.o", "test_wrap.o", "-o", "test.bundle"
     assert_equal "2", shell_output("/usr/bin/ruby run.rb").strip
   end

@@ -1,36 +1,31 @@
 class Imlib2 < Formula
   desc "Image loading and rendering library"
   homepage "https://sourceforge.net/projects/enlightenment/"
-  url "https://downloads.sourceforge.net/project/enlightenment/imlib2-src/1.4.10/imlib2-1.4.10.tar.bz2"
-  sha256 "3f698cd285cbbfc251c1d6405f249b99fafffafa5e0a5ecf0ca7ae49bbc0a272"
-  revision 1
+  url "https://downloads.sourceforge.net/project/enlightenment/imlib2-src/1.5.1/imlib2-1.5.1.tar.bz2"
+  sha256 "fa4e57452b8843f4a70f70fd435c746ae2ace813250f8c65f977db5d7914baae"
 
   bottle do
     rebuild 1
-    sha256 "b4ca64f45e433cfa1779ed0a8616f2b8130d63b8e15796dea55ff390cbeaff46" => :high_sierra
-    sha256 "8ee074fbc1fa4ec9b48151518cc4dcfaf02ad15a9001288f636d94684e7172a1" => :sierra
-    sha256 "139bf652a1e3b056f9100d33adeab3a576cd87cc86e7d7566cf1acadd8638fda" => :el_capitan
-    sha256 "c817b22453401f614d195af1009aaa3a94d0e5c08db2d4ef34cf76a1c74720b5" => :yosemite
+    sha256 "f2bb2e5ca54865edf5808245b54b0b636669e496757989bd4d6a19dc098b152b" => :mojave
+    sha256 "0349423dda370df2ec72d02ff5d818f0f7c34197b9d6661212ae03c14b6dfbb0" => :high_sierra
+    sha256 "1bebf0a2a3e58f6766e32fe6cbafa8f478788eb9aaed64204fa113204981a3f5" => :sierra
   end
-
-  deprecated_option "without-x" => "without-x11"
 
   depends_on "pkg-config" => :build
   depends_on "freetype"
-  depends_on "libpng" => :recommended
-  depends_on "jpeg" => :recommended
-  depends_on "giflib" => :recommended
-  depends_on "libtiff" => :recommended
-  depends_on "libid3tag" => :optional
-  depends_on :x11 => :recommended
+  depends_on "giflib"
+  depends_on "jpeg"
+  depends_on "libpng"
+  depends_on "libtiff"
+  depends_on :x11
 
   def install
     args = %W[
       --disable-dependency-tracking
       --prefix=#{prefix}
       --enable-amd64=no
+      --without-id3
     ]
-    args << "--without-x" if build.without? "x11"
 
     system "./configure", *args
     system "make", "install"

@@ -8,16 +8,15 @@ class Fmdiff < Formula
   bottle do
     cellar :any_skip_relocation
     rebuild 2
+    sha256 "4c5fb2bb25510c7269a40ef77d55a3d7e52377db2a012d60c3003a9512616314" => :mojave
     sha256 "03bf7b7acda053f3b96de99591fb97cef678297941eab37f52802a3c2734afdd" => :high_sierra
     sha256 "59d9c9d8a8759531a2f715619cfb2bce404fc7378235cf416ea5a426eb8d967f" => :sierra
     sha256 "59d9c9d8a8759531a2f715619cfb2bce404fc7378235cf416ea5a426eb8d967f" => :el_capitan
     sha256 "59d9c9d8a8759531a2f715619cfb2bce404fc7378235cf416ea5a426eb8d967f" => :yosemite
   end
 
-  # Needs FileMerge.app, which has been part of Xcode since Xcode 4 (OS X 10.7)
-  # Prior to that it was included in the Developer Tools package.
-  # "make" has logic for checking both possibilities.
-  depends_on :xcode if MacOS.version >= :lion
+  # Needs FileMerge.app, which is part of Xcode.
+  depends_on :xcode
 
   def install
     system "make"

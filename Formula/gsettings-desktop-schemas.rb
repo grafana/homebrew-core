@@ -1,32 +1,30 @@
 class GsettingsDesktopSchemas < Formula
   desc "GSettings schemas for desktop components"
   homepage "https://download.gnome.org/sources/gsettings-desktop-schemas/"
-  url "https://download.gnome.org/sources/gsettings-desktop-schemas/3.24/gsettings-desktop-schemas-3.24.1.tar.xz"
-  sha256 "76a3fa309f9de6074d66848987214f0b128124ba7184c958c15ac78a8ac7eea7"
+  url "https://download.gnome.org/sources/gsettings-desktop-schemas/3.32/gsettings-desktop-schemas-3.32.0.tar.xz"
+  sha256 "2d59b4b3a548859dfae46314ee4666787a00d5c82db382e97df7aa9d0e310a35"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "6852bd372272eb28017382189011107af8563211a86ef4e8f9b686cef440fc66" => :high_sierra
-    sha256 "e4f5ab8d16e84e09cf10439b7f827d80b403efe598e3b05d593b745d1d5675fa" => :sierra
-    sha256 "e4f5ab8d16e84e09cf10439b7f827d80b403efe598e3b05d593b745d1d5675fa" => :el_capitan
-    sha256 "e4f5ab8d16e84e09cf10439b7f827d80b403efe598e3b05d593b745d1d5675fa" => :yosemite
+    sha256 "b2873d19eca42edb79cbf3055f0814eb66314edd60df6400ce91a3119661a3a9" => :mojave
+    sha256 "b2873d19eca42edb79cbf3055f0814eb66314edd60df6400ce91a3119661a3a9" => :high_sierra
+    sha256 "efa60ccb64f70f0a0d0e73df86d3989592205eabaaa186e0d3d50f705cdb27eb" => :sierra
   end
 
-  depends_on "pkg-config" => :build
-  depends_on "intltool" => :build
   depends_on "gobject-introspection" => :build
+  depends_on "meson" => :build
+  depends_on "ninja" => :build
+  depends_on "pkg-config" => :build
   depends_on "glib"
-  depends_on "gettext"
-  depends_on "libffi"
-  depends_on "python" if MacOS.version <= :mavericks
 
   def install
-    system "./configure", "--disable-dependency-tracking",
-                          "--disable-silent-rules",
-                          "--prefix=#{prefix}",
-                          "--disable-schemas-compile",
-                          "--enable-introspection=yes"
-    system "make", "install"
+    ENV["DESTDIR"] = "/"
+
+    mkdir "build" do
+      system "meson", "--prefix=#{prefix}", ".."
+      system "ninja", "-v"
+      system "ninja", "install", "-v"
+    end
   end
 
   def post_install

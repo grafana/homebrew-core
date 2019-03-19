@@ -3,23 +3,27 @@ class ArgusClients < Formula
   homepage "https://qosient.com/argus/"
   url "https://qosient.com/argus/src/argus-clients-3.0.8.2.tar.gz"
   sha256 "32073a60ddd56ea8407a4d1b134448ff4bcdba0ee7399160c2f801a0aa913bb1"
-  revision 1
+  revision 4
 
   bottle do
     cellar :any
-    sha256 "89342797ffcc699dea17d8f44413871ba92e57e5761639b943494359434add3c" => :high_sierra
-    sha256 "982c7d32e91f1fd551d87db458c7cd9770e46a4637b840dc1e82324c21b30087" => :sierra
-    sha256 "cdc0e038a7f7d01e8d37d2e6c432f8d589104c8c9c73d06174a8c1ae63013865" => :el_capitan
-    sha256 "7d0c81e5c0378b3faefbf893053be9492e6977e18393e0fe89d8b9e0e951d3b6" => :yosemite
+    sha256 "ed00932e81d23c0a2cb872190088994a190967f4bbe8dc08e9f04212e6ede2e0" => :mojave
+    sha256 "3c231bbc8dccff67f8eadb490bb128bbf063e9200993d53d0306e1730ea0bc5e" => :high_sierra
+    sha256 "edfae9718df8bd3d4fe6225cca8170513638b1581234fffa8deaa5f9e228593d" => :sierra
   end
 
-  depends_on "readline" => :recommended
-  depends_on "rrdtool" => :recommended
+  depends_on "geoip"
+  depends_on "readline"
+  depends_on "rrdtool"
 
   def install
     ENV.append "CFLAGS", "-std=gnu89"
     system "./configure", "--prefix=#{prefix}"
     system "make"
     system "make", "install"
+  end
+
+  test do
+    assert_match "Ra Version #{version}", shell_output("#{bin}/ra -h", 1)
   end
 end

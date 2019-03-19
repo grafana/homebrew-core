@@ -1,14 +1,14 @@
 class Gource < Formula
   desc "Version Control Visualization Tool"
   homepage "https://github.com/acaudwell/Gource"
-  url "https://github.com/acaudwell/Gource/releases/download/gource-0.47/gource-0.47.tar.gz"
-  sha256 "f2b16083a01b897b6c062b363793028fb9e01cd6f888d91772ee06e56ce398d2"
+  url "https://github.com/acaudwell/Gource/releases/download/gource-0.49/gource-0.49.tar.gz"
+  sha256 "a9dd23693861e224322708a8e26c9e3aaa3e4c9ec41264b1ee2d5dcd6e2c0e8a"
 
   bottle do
-    sha256 "d42a81092141197cd74f4bbec4e0265c1cbb81a7d00f150dc6cea18319e5b6d2" => :high_sierra
-    sha256 "4620f83a4698992da638c4c0b1b02c81ee1e5aecf1e6280a1568043d4af12a2e" => :sierra
-    sha256 "bca74b4a29161250c85c39edcb41930fc284abc06024955c759b9c74932a8990" => :el_capitan
-    sha256 "8fd44f73f13254c88e52da1c891ebe7d425d426b056764a3142d628519ecff2e" => :yosemite
+    rebuild 1
+    sha256 "f7b1c895b7c202aae26d1396b2634082ede889eb5c9bf0b2d7758e52f88c924e" => :mojave
+    sha256 "72e08ff92d3ac208ec5fcb9a6514ca0d47db160eb9cab604a236ea3a31a149de" => :high_sierra
+    sha256 "de278ad81dfaa50d78f66b307044464b3db7741f02b5933ea1046347775674b8" => :sierra
   end
 
   head do
@@ -19,27 +19,15 @@ class Gource < Formula
     depends_on "libtool" => :build
   end
 
-  depends_on :x11 => :optional
-
-  depends_on "pkg-config" => :build
   depends_on "glm" => :build
+  depends_on "pkg-config" => :build
+  depends_on "boost"
   depends_on "freetype"
   depends_on "glew"
   depends_on "libpng"
   depends_on "pcre"
   depends_on "sdl2"
   depends_on "sdl2_image"
-
-  # boost failing on lion
-  depends_on :macos => :mountain_lion
-
-  if MacOS.version < :mavericks
-    depends_on "boost" => "c++11"
-  else
-    depends_on "boost"
-  end
-
-  needs :cxx11
 
   def install
     # clang on Mt. Lion will try to build against libstdc++,

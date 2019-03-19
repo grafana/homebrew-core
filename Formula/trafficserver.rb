@@ -1,15 +1,17 @@
 class Trafficserver < Formula
   desc "HTTP/1.1 compliant caching proxy server"
   homepage "https://trafficserver.apache.org/"
-  url "https://www.apache.org/dyn/closer.cgi?path=trafficserver/trafficserver-7.1.1.tar.bz2"
-  mirror "https://archive.apache.org/dist/trafficserver/trafficserver-7.1.1.tar.bz2"
-  sha256 "2c7ec32ef1460a76e5ee0e7caf95e9b6ca6b7c9612f135d280171bb2166ded36"
+
+  stable do
+    url "https://www.apache.org/dyn/closer.cgi?path=trafficserver/trafficserver-7.1.4.tar.bz2"
+    sha256 "1c5213f8565574ec8a66e08529fd20060c1b9a6cd9b803ba9bbb3b9847651b53"
+  end
 
   bottle do
     rebuild 1
-    sha256 "84555aa82d766a0ad65891591f308f660c25ce17ab390c32d434e3cb3b70ecb6" => :high_sierra
-    sha256 "a0bfb2d4b4ae2cbf45633290daa870c3aa67a3df301482536c7c7c1dad34043f" => :sierra
-    sha256 "9a9515884155903c8300357012cd54d0c424e5f26d1090efee079c79341d3444" => :el_capitan
+    sha256 "5fb5f9e4d0e7bc111c22d094de568ec45373400fa0e4189a751f4602afc0e533" => :mojave
+    sha256 "cd1e05ee174b9fa8c4aed38819649a5013d9390d90d607cd56705577bd0a16b2" => :high_sierra
+    sha256 "c7a1bb274aea0e1129ab7fb29106b47142b5dd62fc1a840722468b0e0f615c3a" => :sierra
   end
 
   head do
@@ -18,22 +20,22 @@ class Trafficserver < Formula
     depends_on "autoconf" => :build
     depends_on "automake" => :build
     depends_on "libtool"  => :build
-  end
 
-  option "with-experimental-plugins", "Enable experimental plugins"
+    fails_with :clang do
+      build 800
+      cause "needs C++17"
+    end
+  end
 
   depends_on "openssl"
   depends_on "pcre"
 
-  needs :cxx11
-
   def install
-    ENV.cxx11
+    ENV.cxx11 if build.stable?
 
-    # Needed for OpenSSL headers
-    if MacOS.version <= :lion
-      ENV.append_to_cflags "-Wno-deprecated-declarations"
-    end
+    # Per https://luajit.org/install.html: If MACOSX_DEPLOYMENT_TARGET
+    # is not set then it's forced to 10.4, which breaks compile on Mojave.
+    ENV["MACOSX_DEPLOYMENT_TARGET"] = MacOS.version
 
     args = %W[
       --prefix=#{prefix}
@@ -44,9 +46,8 @@ class Trafficserver < Formula
       --with-tcl=#{MacOS.sdk_path}/System/Library/Frameworks/Tcl.framework
       --with-group=admin
       --disable-silent-rules
+      --enable-experimental-plugins
     ]
-
-    args << "--enable-experimental-plugins" if build.with? "experimental-plugins"
 
     system "autoreconf", "-fvi" if build.head?
     system "./configure", *args

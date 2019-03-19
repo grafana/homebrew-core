@@ -1,33 +1,28 @@
 class Mednafen < Formula
   desc "Multi-system emulator"
-  homepage "http://mednafen.fobby.net/"
-  url "https://mednafen.github.io/releases/files/mednafen-0.9.48.tar.xz"
-  sha256 "d3cc0c838f496511946d6ea18fda5965d2b71577c610acc811835cc87d152102"
+  homepage "https://mednafen.github.io/"
+  url "https://mednafen.github.io/releases/files/mednafen-1.22.1.tar.xz"
+  sha256 "f5b502e9f2f615c8b69fa1e151da20ab387377c72748cd8e19deb75a432ecfd2"
 
   bottle do
-    sha256 "bf8c7892c65f2edebdc14e3afdf342551689078a4d342c48354e6ae0390f728a" => :high_sierra
-    sha256 "28d2204ee6d2a149c52f2e3fa5eb93df32ade953f23d55baf7b42a6dc2381c6c" => :sierra
+    sha256 "da5af9ae42a2b43ad3a5ce16cf16e8431540ca40cab4ef265a2dd8e1681106aa" => :mojave
+    sha256 "288d8e4dd7ee68a50f5b18d245bdea6ace0b4b443ac243148d171f68a1d1715e" => :high_sierra
+    sha256 "d0ce5c4a7cbcc62fd8fcc0dd47014db47374ceba78eeea8240c1d211ca2bcae6" => :sierra
   end
 
   depends_on "pkg-config" => :build
-  depends_on "sdl"
+  depends_on "gettext"
   depends_on "libsndfile"
   depends_on :macos => :sierra # needs clock_gettime
-  depends_on "gettext"
+  depends_on "sdl2"
 
   def install
-    # Fix run-time crash "Assertion failed: (x == TestLLVM15470_Counter), function
-    # TestLLVM15470_Sub2, file tests.cpp, line 643."
-    # LLVM miscompiles some loop code with optimization
-    # https://llvm.org/bugs/show_bug.cgi?id=15470
-    ENV.O2
-
     system "./configure", "--prefix=#{prefix}", "--disable-dependency-tracking"
     system "make", "install"
   end
 
   test do
-    cmd = "#{bin}/mednafen -dump_modules_def M >/dev/null || head -n 1 M"
+    cmd = "#{bin}/mednafen | head -n1 | grep -o '[0-9].*'"
     assert_equal version.to_s, shell_output(cmd).chomp
   end
 end

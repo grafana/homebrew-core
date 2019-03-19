@@ -1,16 +1,16 @@
 class Pdfsandwich < Formula
   desc "Generate sandwich OCR PDFs from scanned file"
   homepage "http://www.tobias-elze.de/pdfsandwich/"
-  url "https://downloads.sourceforge.net/project/pdfsandwich/pdfsandwich%200.1.6/pdfsandwich-0.1.6.tar.bz2"
-  sha256 "96831eb191bcd43e730dcce169d5c14b47bba0b6cd5152a8703e3b573013a2a2"
+  url "https://downloads.sourceforge.net/project/pdfsandwich/pdfsandwich%200.1.7/pdfsandwich-0.1.7.tar.bz2"
+  sha256 "9795ffea84b9b6b501f38d49a4620cf0469ddf15aac31bac6dbdc9ec1716fa39"
   head "https://svn.code.sf.net/p/pdfsandwich/code/trunk/src"
 
   bottle do
     cellar :any_skip_relocation
-    rebuild 1
-    sha256 "b1496789548ad2a0335a22ca7e6ca3995bd8c664783126b8b83fd192f4f9f7c5" => :high_sierra
-    sha256 "1192a119a2190852ba71ed21e4144a9610be8f52bddb3dfaf6fde9f2c5348567" => :sierra
-    sha256 "b04ebe1a431fe29bbdd5ac1d0885ea9b1d58fff020d097f4edb245756b276f95" => :el_capitan
+    sha256 "0b298e9deb1b4b62ebfe4eca95b678aff27f9ed76b6f0b13dd6ff9679768cba2" => :mojave
+    sha256 "2471d2ff0242228e150a825e08b051803ffa96442c2949155d89aa5ab0163e0c" => :high_sierra
+    sha256 "55481ac412ee714452c1ef754718e28a215c395106fac5eb25c07d5908c38603" => :sierra
+    sha256 "af5eaeb89d1e89eb0fb48d2e1661ddfdc21c3f35f08cbfb4fb3aff594b4ab1da" => :el_capitan
   end
 
   depends_on "gawk" => :build

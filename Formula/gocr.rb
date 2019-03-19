@@ -1,26 +1,23 @@
 class Gocr < Formula
   desc "Optical Character Recognition (OCR), converts images back to text"
-  homepage "https://jocr.sourceforge.io/"
-  url "https://www-e.uni-magdeburg.de/jschulen/ocr/gocr-0.50.tar.gz"
-  sha256 "bc261244f887419cba6d962ec1ad58eefd77176885093c4a43061e7fd565f5b5"
+  homepage "https://wasd.urz.uni-magdeburg.de/jschulen/ocr/"
+  url "https://wasd.urz.uni-magdeburg.de/jschulen/ocr/gocr-0.51.tar.gz"
+  sha256 "6eb2ae0fa4eb07cf4163081e0194ea65f605f7db9709dd30680686804dfc2692"
+  revision 1
 
   bottle do
-    cellar :any_skip_relocation
-    rebuild 1
-    sha256 "eb3148c555bda4196603d07612992d2de8b0d4698e674d70e8ce8c328a924042" => :high_sierra
-    sha256 "0e3df7c5f1304de66cb85b98b12612ed99e43177b37c02605892b02c947f0ef0" => :sierra
-    sha256 "3b3a0351d949f3f798dc973e0f31a283b8df3f73d1c7f251c7f15229ceb2fb20" => :el_capitan
-    sha256 "94207525e139ef275415f46ff50baab26fef6a2ba52ca71a6a00aa3035ced71c" => :yosemite
-    sha256 "467ce3a1411e022f44b60691bf71bf8a7b86ba234b21dad23cc1f2b258d92e9b" => :mavericks
+    cellar :any
+    sha256 "8e292594bb5ae676b124f9fc8eab283c855d9f9f37ae9f4cf6c1604ebd2f1058" => :mojave
+    sha256 "b5652dd7beb78696522af201f4ce30247efbbdd9f92c949cf45da6b742ee133f" => :high_sierra
+    sha256 "a918bc515db9bae30544a958c99f76b7f1fab5889828e4c3c9efe91224c369b6" => :sierra
+    sha256 "6f7abd6d0e1d71e456bfef7320cb60f267a3b09881e3eaeada72a99c773a69f3" => :el_capitan
   end
 
-  option "with-lib", "Install library and headers"
-
-  depends_on "netpbm" => :optional
-  depends_on "jpeg" => :optional
+  depends_on "jpeg"
+  depends_on "netpbm"
 
   # Edit makefile to install libs per developer documentation
-  patch :DATA if build.with? "lib"
+  patch :DATA
 
   def install
     system "./configure", "--disable-debug",
@@ -32,12 +29,12 @@ class Gocr < Formula
       s.change_make_var! "mandir", "/share/man"
     end
 
-    system "make", "libs" if build.with? "lib"
+    system "make", "libs"
     system "make", "install"
   end
 
   test do
-    system "#{bin}/gocr", "-h"
+    system "#{bin}/gocr", "--help"
   end
 end
 

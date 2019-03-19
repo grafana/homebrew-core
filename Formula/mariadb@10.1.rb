@@ -1,27 +1,16 @@
 class MariadbAT101 < Formula
   desc "Drop-in replacement for MySQL"
   homepage "https://mariadb.org/"
-  url "https://downloads.mariadb.org/f/mariadb-10.1.28/source/mariadb-10.1.28.tar.gz"
-  sha256 "292dc8fff420c4bdaf3a2c3381ec3c99292965db2b09de0d7fec414c00032bbd"
+  url "https://downloads.mariadb.org/f/mariadb-10.1.38/source/mariadb-10.1.38.tar.gz"
+  sha256 "caf1f4fc237d143343995b6625375aef911dfc366433645d400727e7063f077f"
 
   bottle do
-    sha256 "bdb5ca2aa68c7b4fbb2f09b3803ae04f2de65deea80d34c14aba3a04b37d7020" => :high_sierra
-    sha256 "e384bb3533f0a98580bec80b71885a09cdcecdd293aa3faf541f532d1244e9a1" => :sierra
-    sha256 "3a06f26aaba9fcb9d6417c47a270c426b56f29015cc0bf2f5fe328f4ea04d1a9" => :el_capitan
+    sha256 "fdf4d7ddc9765cdf0ee512ccd4fd1e875649e73cb0031a460d63fcf5156dcb1e" => :mojave
+    sha256 "5fc8bba94fe8dd032140ac423a9c86254ae72d81567f73c070e80aab9cd6e490" => :high_sierra
+    sha256 "7f8d5cace418bc309cab6107e3420221cf74d83bff9929735af3b098c49c905e" => :sierra
   end
 
   keg_only :versioned_formula
-
-  option "with-test", "Keep test when installing"
-  option "with-bench", "Keep benchmark app when installing"
-  option "with-embedded", "Build the embedded server"
-  option "with-libedit", "Compile with editline wrapper instead of readline"
-  option "with-archive-storage-engine", "Compile with the ARCHIVE storage engine enabled"
-  option "with-blackhole-storage-engine", "Compile with the BLACKHOLE storage engine enabled"
-  option "with-local-infile", "Build with local infile loading support"
-
-  deprecated_option "enable-local-infile" => "with-local-infile"
-  deprecated_option "with-tests" => "with-test"
 
   depends_on "cmake" => :build
   depends_on "openssl"
@@ -44,32 +33,17 @@ class MariadbAT101 < Formula
       -DINSTALL_INFODIR=share/info
       -DINSTALL_MYSQLSHAREDIR=share/mysql
       -DWITH_PCRE=bundled
+      -DWITH_READLINE=yes
       -DWITH_SSL=yes
-      -DDEFAULT_CHARSET=utf8
-      -DDEFAULT_COLLATION=utf8_general_ci
+      -DWITH_UNIT_TESTS=OFF
+      -DDEFAULT_CHARSET=utf8mb4
+      -DDEFAULT_COLLATION=utf8mb4_general_ci
       -DINSTALL_SYSCONFDIR=#{etc}
       -DCOMPILATION_COMMENT=Homebrew
     ]
 
     # disable TokuDB, which is currently not supported on macOS
     args << "-DPLUGIN_TOKUDB=NO"
-
-    args << "-DWITH_UNIT_TESTS=OFF" if build.without? "test"
-
-    # Build the embedded server
-    args << "-DWITH_EMBEDDED_SERVER=ON" if build.with? "embedded"
-
-    # Compile with readline unless libedit is explicitly chosen
-    args << "-DWITH_READLINE=yes" if build.without? "libedit"
-
-    # Compile with ARCHIVE engine enabled if chosen
-    args << "-DPLUGIN_ARCHIVE=YES" if build.with? "archive-storage-engine"
-
-    # Compile with BLACKHOLE engine enabled if chosen
-    args << "-DPLUGIN_BLACKHOLE=YES" if build.with? "blackhole-storage-engine"
-
-    # Build with local infile loading support
-    args << "-DENABLED_LOCAL_INFILE=1" if build.with? "local-infile"
 
     system "cmake", ".", *std_cmake_args, *args
     system "make"
@@ -85,8 +59,9 @@ class MariadbAT101 < Formula
     # See: https://github.com/Homebrew/homebrew/issues/4975
     rm_rf prefix/"data"
 
-    (prefix/"mysql-test").rmtree if build.without? "test" # save 121MB!
-    (prefix/"sql-bench").rmtree if build.without? "bench"
+    # Save space
+    (prefix/"mysql-test").rmtree
+    (prefix/"sql-bench").rmtree
 
     # Link the setup script into bin
     bin.install_symlink prefix/"scripts/mysql_install_db"
@@ -137,7 +112,7 @@ class MariadbAT101 < Formula
 
     To connect:
         mysql -uroot
-    EOS
+  EOS
   end
 
   plist_options :manual => "#{HOMEBREW_PREFIX}/opt/mariadb@10.1/bin/mysql.server start"
@@ -162,16 +137,10 @@ class MariadbAT101 < Formula
       <string>#{var}</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do
-    if build.with? "test"
-      (prefix/"mysql-test").cd do
-        system "./mysql-test-run.pl", "status"
-      end
-    else
-      system bin/"mysqld", "--version"
-    end
+    system bin/"mysqld", "--version"
   end
 end

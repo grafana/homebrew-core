@@ -1,14 +1,14 @@
 class Ats2Postiats < Formula
   desc "Programming language with formal specification features"
   homepage "http://www.ats-lang.org/"
-  url "https://downloads.sourceforge.net/project/ats2-lang/ats2-lang/ats2-postiats-0.3.7/ATS2-Postiats-0.3.7.tgz"
-  sha256 "d8e78f5c6f7fd47b09da61ba6255d5054fe5bc872e5f4c3d1e420ab20393f88c"
+  url "https://downloads.sourceforge.net/project/ats2-lang/ats2-lang/ats2-postiats-0.3.12/ATS2-Postiats-0.3.12.tgz"
+  sha256 "63eb02b225a11752745e8f08691140ed764288ab4ceda3710670cde24835b0d8"
 
   bottle do
     cellar :any
-    sha256 "42478768ce3516ce46d82c0df9cb7499b96e39f5cb527d2fb1f3e04da40eda98" => :high_sierra
-    sha256 "670a2c12297acc3627258522e925ee0b2cc47fd197cd78b970ba83b8ed06d581" => :sierra
-    sha256 "dc9f99d784c8b80d3903af019f78d70e2552c7f17f064d76cbabf8c45e5eb9be" => :el_capitan
+    sha256 "71301764b2f0f5e8e9a3dfadb3a232d758a48cc3f42a0c3c6e8588319d8a528c" => :mojave
+    sha256 "009876aeeda5ff2a4294ce33b9f214a0e5fdf7e46f01bc8826702f84220bdad1" => :high_sierra
+    sha256 "03fb2632e129c51dcf3da35df4094e5a699d61676f49428478fdb1899d76c006" => :sierra
   end
 
   depends_on "gmp"

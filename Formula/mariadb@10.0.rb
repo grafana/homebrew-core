@@ -1,29 +1,18 @@
 class MariadbAT100 < Formula
   desc "Drop-in replacement for MySQL"
   homepage "https://mariadb.org/"
-  url "https://downloads.mariadb.org/f/mariadb-10.0.33/source/mariadb-10.0.33.tar.gz"
-  sha256 "e3e3d583c51761aee2fcd0e51bfa7d592c1299cf5eb977e61ea9dc72932e8870"
+  url "https://downloads.mariadb.org/f/mariadb-10.0.38/source/mariadb-10.0.38.tar.gz"
+  sha256 "022620ebeb4fb3744d101e72443ec55b4585e7d9a3d8c92aa846bc30e6808ac1"
 
   bottle do
-    sha256 "605c3111b6324be3f9b69c54b8d962405abb8e562b434afdcac9ee9ad3ebccda" => :high_sierra
-    sha256 "e2fe8aba6f0c5d2aec2a49af2b0d6200af5aeffb6eae3ddf6a1d154e82cde13d" => :sierra
-    sha256 "813d43b6d573d16b3e8b9b6cccec70547d125010150c46f92c436f3fb04c6994" => :el_capitan
+    sha256 "a7f0c2b6a8331ec16fd99041ca36a21b2d549f8348bbf5741243f79b81c47891" => :mojave
+    sha256 "a583dc308eda30c397b5254a7c2bb1d89607081daac6c272e515e74e1899d3d2" => :high_sierra
+    sha256 "31510d6ab60ab73fafc8e079303e755d1a10a0860104236a7a4a84dce8062224" => :sierra
   end
 
   keg_only :versioned_formula
 
-  option "with-test", "Keep test when installing"
-  option "with-bench", "Keep benchmark app when installing"
-  option "with-embedded", "Build the embedded server"
-  option "with-libedit", "Compile with editline wrapper instead of readline"
-  option "with-archive-storage-engine", "Compile with the ARCHIVE storage engine enabled"
-  option "with-blackhole-storage-engine", "Compile with the BLACKHOLE storage engine enabled"
-  option "with-local-infile", "Build with local infile loading support"
-
-  deprecated_option "with-tests" => "with-test"
-
   depends_on "cmake" => :build
-  depends_on "pidof" unless MacOS.version >= :mountain_lion
   depends_on "openssl"
 
   def install
@@ -44,36 +33,17 @@ class MariadbAT100 < Formula
       -DINSTALL_INFODIR=share/info
       -DINSTALL_MYSQLSHAREDIR=share/mysql
       -DWITH_PCRE=bundled
+      -DWITH_READLINE=yes
       -DWITH_SSL=yes
-      -DDEFAULT_CHARSET=utf8
-      -DDEFAULT_COLLATION=utf8_general_ci
+      -DWITH_UNIT_TESTS=OFF
+      -DDEFAULT_CHARSET=utf8mb4
+      -DDEFAULT_COLLATION=utf8mb4_general_ci
       -DINSTALL_SYSCONFDIR=#{etc}
       -DCOMPILATION_COMMENT=Homebrew
     ]
 
     # disable TokuDB, which is currently not supported on Mac OS X
     args << "-DWITHOUT_TOKUDB=1"
-
-    args << "-DWITH_UNIT_TESTS=OFF" if build.without? "tests"
-
-    # Build the embedded server
-    args << "-DWITH_EMBEDDED_SERVER=ON" if build.with? "embedded"
-
-    # Compile with readline unless libedit is explicitly chosen
-    args << "-DWITH_READLINE=yes" if build.without? "libedit"
-
-    # Compile with ARCHIVE engine enabled if chosen
-    if build.with? "archive-storage-engine"
-      args << "-DWITH_ARCHIVE_STORAGE_ENGINE=1"
-    end
-
-    # Compile with BLACKHOLE engine enabled if chosen
-    if build.with? "blackhole-storage-engine"
-      args << "-DWITH_BLACKHOLE_STORAGE_ENGINE=1"
-    end
-
-    # Build with local infile loading support
-    args << "-DENABLED_LOCAL_INFILE=1" if build.with? "local-infile"
 
     system "cmake", ".", *std_cmake_args, *args
     system "make"
@@ -89,8 +59,9 @@ class MariadbAT100 < Formula
     # See: https://github.com/Homebrew/homebrew/issues/4975
     rm_rf prefix+"data"
 
-    (prefix+"mysql-test").rmtree if build.without? "tests" # save 121MB!
-    (prefix+"sql-bench").rmtree if build.without? "bench"
+    # Save space
+    (prefix+"mysql-test").rmtree
+    (prefix+"sql-bench").rmtree
 
     # Link the setup script into bin
     bin.install_symlink prefix/"scripts/mysql_install_db"
@@ -128,7 +99,7 @@ class MariadbAT100 < Formula
 
     To connect:
         mysql -uroot
-    EOS
+  EOS
   end
 
   plist_options :manual => "#{HOMEBREW_PREFIX}/opt/mariadb@10.0/bin/mysql.server start"
@@ -153,16 +124,10 @@ class MariadbAT100 < Formula
       <string>#{var}</string>
     </dict>
     </plist>
-    EOS
+  EOS
   end
 
   test do
-    if build.with? "tests"
-      (prefix+"mysql-test").cd do
-        system "./mysql-test-run.pl", "status"
-      end
-    else
-      system "#{bin}/mysqld", "--version"
-    end
+    system "#{bin}/mysqld", "--version"
   end
 end

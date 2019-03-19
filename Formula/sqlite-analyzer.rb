@@ -1,19 +1,22 @@
 class SqliteAnalyzer < Formula
   desc "Analyze how space is allocated inside an SQLite file"
   homepage "https://www.sqlite.org/"
-  url "https://www.sqlite.org/2017/sqlite-src-3210000.zip"
-  version "3.21.0"
-  sha256 "8681a34e059b30605f611ac85168ca54edbade50c71468b5882f5abbcd66b94e"
+  url "https://sqlite.org/2019/sqlite-src-3270100.zip"
+  version "3.27.1"
+  sha256 "f0fcc4da31e61a9c516f7c1ff21ec71ad6a05b1fe88f7f0b4d9aa54649c85986"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "364f920740c6902f81389284f1fa84e9f39c51d1bd74e6979beda0a678091552" => :high_sierra
-    sha256 "78c53b52a9426e91dc64b856a34bc8a1ad1ccb8afc4c3561823b9e163b91df3b" => :sierra
-    sha256 "ceb9ed5f337ea2722070ccf33679b1a1aeea9f89b99c508e5e0cca50099f75e4" => :el_capitan
+    sha256 "a8c9c16f964bdd9b56857c20f6f2becdb516e59013df0b0ffeec5651d32be1d4" => :mojave
+    sha256 "a64448007f6ce27f80449a33996fadbdc2af781eebc0a02f74aae77e6d3580f3" => :high_sierra
+    sha256 "0f88839367289ed0f225ef977a0720c9f74d6ca220687460a11a867479e84688" => :sierra
   end
 
   def install
-    system "./configure", "--disable-debug", "--with-tcl=/System/Library/Frameworks/Tcl.framework/", "--prefix=#{prefix}"
+    sdkprefix = MacOS.sdk_path_if_needed ? MacOS.sdk_path : ""
+    system "./configure", "--disable-debug",
+                          "--with-tcl=#{sdkprefix}/System/Library/Frameworks/Tcl.framework/",
+                          "--prefix=#{prefix}"
     system "make", "sqlite3_analyzer"
     bin.install "sqlite3_analyzer"
   end

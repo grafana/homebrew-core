@@ -1,7 +1,7 @@
 class Qca < Formula
   desc "Qt Cryptographic Architecture (QCA)"
-  homepage "http://delta.affinix.com/qca/"
-  revision 1
+  homepage "https://userbase.kde.org/QCA"
+  revision 2
   head "https://anongit.kde.org/qca.git"
 
   stable do
@@ -31,44 +31,30 @@ class Qca < Formula
   end
 
   bottle do
-    sha256 "ed324934d67ea40f70c3d17e1fda7e3b7cedca31a04cada753142cecafc126bc" => :high_sierra
-    sha256 "d906fecec28f2af312e2309398c43c9d5208ace0a24f65462d5c0ee6999acaa6" => :sierra
-    sha256 "7ef949fefdbddb7309cd3f687fa2ad2a4c02622b7ca92d7416494bd13d40eb4c" => :el_capitan
-    sha256 "d3a865bed9af87d7d54b87080cc973341385ced03dd5d257a9bc590e4d656c80" => :yosemite
+    rebuild 2
+    sha256 "2bb9c83e54cd7ffef77b7111c1163ce2aa2efe450aab7be62c4ba4f8968f2bfc" => :mojave
+    sha256 "ec20d95d269615e6ab276c21866b54ecd13fcaf33d543e47b8b9f45362f4d801" => :high_sierra
+    sha256 "23eeb0c71865eaa6e5c29311480bbdcf2a80aa9c818853e8b7155b5a97689fb1" => :sierra
   end
-
-  option "with-api-docs", "Build API documentation"
-
-  deprecated_option "with-gnupg" => "with-gpg2"
 
   depends_on "cmake" => :build
   depends_on "pkg-config" => :build
+  depends_on "openssl" # qca-ossl plugin
   depends_on "qt"
-
-  # Plugins (QCA needs at least one plugin to do anything useful)
-  depends_on "openssl" # qca-ossl
-  depends_on "botan" => :optional # qca-botan
-  depends_on "libgcrypt" => :optional # qca-gcrypt
-  depends_on :gpg => [:optional, :run] # qca-gnupg
-  depends_on "nss" => :optional # qca-nss
-  depends_on "pkcs11-helper" => :optional # qca-pkcs11
-
-  if build.with? "api-docs"
-    depends_on "graphviz" => :build
-    depends_on "doxygen" => :build
-  end
 
   def install
     args = std_cmake_args
     args << "-DQT4_BUILD=OFF"
     args << "-DBUILD_TESTS=OFF"
+    args << "-DQCA_PLUGINS_INSTALL_DIR=#{lib}/qt5/plugins"
 
-    # Plugins (qca-ossl, qca-cyrus-sasl, qca-logger, qca-softstore always built)
-    args << "-DWITH_botan_PLUGIN=#{build.with?("botan") ? "YES" : "NO"}"
-    args << "-DWITH_gcrypt_PLUGIN=#{build.with?("libgcrypt") ? "YES" : "NO"}"
-    args << "-DWITH_gnupg_PLUGIN=#{build.with?("gpg2") ? "YES" : "NO"}"
-    args << "-DWITH_nss_PLUGIN=#{build.with?("nss") ? "YES" : "NO"}"
-    args << "-DWITH_pkcs11_PLUGIN=#{build.with?("pkcs11-helper") ? "YES" : "NO"}"
+    # Disable some plugins. qca-ossl, qca-cyrus-sasl, qca-logger,
+    # qca-softstore are always built.
+    args << "-DWITH_botan_PLUGIN=NO"
+    args << "-DWITH_gcrypt_PLUGIN=NO"
+    args << "-DWITH_gnupg_PLUGIN=NO"
+    args << "-DWITH_nss_PLUGIN=NO"
+    args << "-DWITH_pkcs11_PLUGIN=NO"
 
     # ensure opt_lib for framework install name and linking (can't be done via CMake configure)
     inreplace "src/CMakeLists.txt",
@@ -77,11 +63,6 @@ class Qca < Formula
 
     system "cmake", ".", *args
     system "make", "install"
-
-    if build.with? "api-docs"
-      system "make", "doc"
-      doc.install "apidocs/html"
-    end
   end
 
   test do

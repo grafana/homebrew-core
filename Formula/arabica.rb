@@ -8,6 +8,7 @@ class Arabica < Formula
 
   bottle do
     cellar :any
+    sha256 "448e31922f8c9b913ca5ca450599bfd631ed9781007cb7ff64fe69f14014cc27" => :mojave
     sha256 "0d3da860ba0b953abb9f70665cc73620ae2b0cd0570dacb55bfe8954ae0d58e7" => :high_sierra
     sha256 "6a08cb5b8af8d2034569451ad499260acebc610ab390383b20398fc10a6fb115" => :sierra
     sha256 "185edd120b5759f25d1e69b9f24840eef6a404b1001c90e684546e359cf75928" => :el_capitan
@@ -15,18 +16,21 @@ class Arabica < Formula
     sha256 "5d247d4d5819106404bc7091e3b6141b4d298c77636bee39bfc524a3c5481e7f" => :mavericks
   end
 
-  option "without-test", "Skip compile-time make checks (Not Recommended)"
-
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "boost" => :recommended
+  depends_on "boost"
 
   def install
     system "autoreconf", "-fvi"
     system "./configure", "--disable-dependency-tracking", "--prefix=#{prefix}"
     system "make"
-    system "make", "check" if build.with? "test"
+    system "make", "check"
     system "make", "install"
+  end
+
+  test do
+    output = shell_output("#{bin}/mangle")
+    assert_match "mangle is an (in-development) XSLT processor", output
   end
 end

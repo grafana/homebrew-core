@@ -1,11 +1,12 @@
 class John < Formula
   desc "Featureful UNIX password cracker"
-  homepage "http://www.openwall.com/john/"
-  url "http://www.openwall.com/john/j/john-1.8.0.tar.xz"
+  homepage "https://www.openwall.com/john/"
+  url "https://www.openwall.com/john/j/john-1.8.0.tar.xz"
   sha256 "952cf68369fb5b27f2d112ce7ca1eb16b975c85cbce8c658abb8bc5a20e1b266"
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "47b5ee6540c5840df7311cc03f898b57ad671f85a3ee9b2fc32084409602a3cf" => :mojave
     sha256 "92504df8f94b8f7c8c9bd47ce8ef7c489ac78c62cf7b6e9797f1086d0a4b6f60" => :high_sierra
     sha256 "2574e6b0ae4e5906b1cb546b23dc74b06c0c3494d477b8ce0c1d743d1515bfee" => :sierra
     sha256 "729c644b587941668f0412de6a1d7aafc078b375f96421b278daecba51469ed8" => :el_capitan
@@ -19,10 +20,8 @@ class John < Formula
 
   def install
     ENV.deparallelize
-    arch = MacOS.prefer_64_bit? ? "64" : "sse2"
-    target = "macosx-x86-#{arch}"
 
-    system "make", "-C", "src", "clean", "CC=#{ENV.cc}", target
+    system "make", "-C", "src", "clean", "CC=#{ENV.cc}", "macosx-x86-64"
 
     # Remove the README symlink and install the real file
     rm "README"

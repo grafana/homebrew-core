@@ -1,28 +1,27 @@
 class KubernetesHelm < Formula
   desc "The Kubernetes package manager"
   homepage "https://helm.sh/"
-  url "https://github.com/kubernetes/helm.git",
-      :tag => "v2.7.0",
-      :revision => "08c1144f5eb3e3b636d9775617287cc26e53dba4"
-  head "https://github.com/kubernetes/helm.git"
+  url "https://github.com/helm/helm.git",
+      :tag      => "v2.13.0",
+      :revision => "79d07943b03aea2b76c12644b4b54733bc5958d6"
+  head "https://github.com/helm/helm.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "1ecf10a071f7f2d63e885ea82ec30eababc42be3796fcd95e7f15803e947773a" => :high_sierra
-    sha256 "763a4ca21914b5388c5576869e1f3afd620f0d913174edac4923071f5080026f" => :sierra
-    sha256 "9bd7a2db55a057cbcccef388c89c9e10558f4dff8168c1b2dc3b704d227952f2" => :el_capitan
+    sha256 "dd868f7d8c5c7f54c0052fdfcaa8c73a278162026c66d24d653457a58a52fc93" => :mojave
+    sha256 "8af0800b2eb2d549d901d94fa4985439267410a40106ecbb216cc886a1e8be3e" => :high_sierra
+    sha256 "95f80024bdbf993598a806c4de10ecf6a7389493779b9369824892423fca0440" => :sierra
   end
 
-  depends_on :hg => :build
-  depends_on "go" => :build
   depends_on "glide" => :build
+  depends_on "go" => :build
+  depends_on "mercurial" => :build
 
   def install
     ENV["GOPATH"] = buildpath
     ENV["GLIDE_HOME"] = HOMEBREW_CACHE/"glide_home/#{name}"
     ENV.prepend_create_path "PATH", buildpath/"bin"
-    arch = MacOS.prefer_64_bit? ? "amd64" : "x86"
-    ENV["TARGETS"] = "darwin/#{arch}"
+    ENV["TARGETS"] = "darwin/amd64"
     dir = buildpath/"src/k8s.io/helm"
     dir.install buildpath.children - [buildpath/".brew_home"]
 
@@ -33,7 +32,13 @@ class KubernetesHelm < Formula
       bin.install "bin/helm"
       bin.install "bin/tiller"
       man1.install Dir["docs/man/man1/*"]
-      bash_completion.install "scripts/completions.bash" => "helm"
+
+      output = Utils.popen_read("SHELL=bash #{bin}/helm completion bash")
+      (bash_completion/"helm").write output
+
+      output = Utils.popen_read("SHELL=zsh #{bin}/helm completion zsh")
+      (zsh_completion/"_helm").write output
+
       prefix.install_metafiles
     end
   end

@@ -1,23 +1,25 @@
 class Sqliteodbc < Formula
   desc "SQLite ODBC driver"
-  homepage "http://www.ch-werner.de/sqliteodbc/"
-  url "http://www.ch-werner.de/sqliteodbc/sqliteodbc-0.9995.tar.gz"
-  sha256 "73deed973ff525195a225699e9a8a24eb42f8242f49871ef196168a5600a1acb"
+  homepage "https://ch-werner.homepage.t-online.de/sqliteodbc/"
+  url "https://ch-werner.homepage.t-online.de/sqliteodbc/sqliteodbc-0.9996.tar.gz"
+  sha256 "8afbc9e0826d4ff07257d7881108206ce31b5f719762cbdb4f68201b60b0cb4e"
 
   bottle do
     cellar :any
-    sha256 "873d91d7cd66ad93b6c9197372ea6e8c6829f2c1e944771244fe4a06c92d9177" => :high_sierra
-    sha256 "3b50601a3dd200c8706dc421b7d4ec26bdcd316d5165100ca6d87533fb35ecf1" => :sierra
-    sha256 "2ab8fb2d6cd9bf40121b4c92c88d34001be074a3d7a41e4d14bf897b35868e77" => :el_capitan
-    sha256 "3a05177887821c6ed86053bcc54795ca7968eb541a9fc689c6b0952c88ed88b8" => :yosemite
+    rebuild 1
+    sha256 "a49afbd00eb6230ecf0a0a4573c961fe697ab6326998f2a894348d8509dc1c0d" => :mojave
+    sha256 "6afd81a210f7a0f7b70e70d4d5b89a659c4cf2c9916d85ff65d89ef042bdba52" => :high_sierra
+    sha256 "73755a497df2713b8f3cc9cd0f19df24aaab01f33bf001be3718c5f8318c784c" => :sierra
   end
 
   depends_on "sqlite"
   depends_on "unixodbc"
 
   def install
+    ENV["SDKROOT"] = MacOS.sdk_path if MacOS.version == :sierra
+
     lib.mkdir
-    system "./configure", "--prefix=#{prefix}", "--with-odbc=#{Formula["unixodbc"].opt_prefix}"
+    system "./configure", "--prefix=#{prefix}", "--with-odbc=#{Formula["unixodbc"].opt_prefix}", "--with-sqlite3=#{Formula["sqlite"].opt_prefix}"
     system "make"
     system "make", "install"
     lib.install_symlink "#{lib}/libsqlite3odbc.dylib" => "libsqlite3odbc.so"

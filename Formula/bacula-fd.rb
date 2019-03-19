@@ -1,17 +1,20 @@
 class BaculaFd < Formula
   desc "Network backup solution"
   homepage "https://www.bacula.org/"
-  url "https://downloads.sourceforge.net/project/bacula/bacula/9.0.5/bacula-9.0.5.tar.gz"
-  sha256 "0b1ac35f93296d3114be8b35fe134f311083ed5807e9ff4ffb96a7d76b48421d"
+  url "https://downloads.sourceforge.net/project/bacula/bacula/9.4.2/bacula-9.4.2.tar.gz"
+  sha256 "a40d04d2c48135972cecb6578405e835c4b9d798c0950017de0fad40ca94e8a0"
 
   bottle do
-    sha256 "1a7dc849dc79e9c1c9fa0eb2d4f388860a55f2f4d3d78efe33ccd746270654dc" => :high_sierra
-    sha256 "aa22d10f36e88b0557a13439c953109fb97088222bf24c6dd9072bb40d66693d" => :sierra
-    sha256 "90267264cccaa5e9453b7a0bf87c3048807e0c5d3c203ca8af70a3539fc656fc" => :el_capitan
+    sha256 "e44148506fe45be0d0af0d63c7373492422a4de571a667dc40f3ad48ef9a510c" => :mojave
+    sha256 "5089ce4adb3949e99787afe92172b214170193c66032135b12f3477f9e89674b" => :high_sierra
+    sha256 "278520eb714f64ab33b41bbab1b04eba647ad84df1a73b6aedc7291a25cf4542" => :sierra
   end
 
-  depends_on "readline"
   depends_on "openssl"
+  depends_on "readline"
+
+  conflicts_with "bareos-client",
+    :because => "Both install a `bconsole` executable."
 
   def install
     # * sets --disable-conio in order to force the use of readline

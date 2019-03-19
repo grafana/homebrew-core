@@ -6,6 +6,7 @@ class Ahcpd < Formula
 
   bottle do
     cellar :any_skip_relocation
+    sha256 "8852e7e5e11d6ea413657d012e4d49ca0d9ac406e56da6bf7c0daa6d4d788a16" => :mojave
     sha256 "ab3221a9f28ded916f8d2ef4b8377a2a793fa2fee5f891b9a97e3dede0d294ae" => :high_sierra
     sha256 "d3a8a4efb712e2c6a8a055276e5d93d3275a638df4231a4dfe8d428a2606d776" => :sierra
     sha256 "b37143ee365a4a3afd9623d5f49eab0bc4bdf9ac3662d22db9671cffa1078224" => :el_capitan
@@ -18,6 +19,31 @@ class Ahcpd < Formula
   def install
     system "make", "LDLIBS=''"
     system "make", "install", "PREFIX=", "TARGET=#{prefix}"
+  end
+
+  test do
+    pid_file = testpath/"ahcpd.pid"
+    log_file = testpath/"ahcpd.log"
+    mkdir testpath/"leases"
+
+    (testpath/"ahcpd.conf").write <<~EOS
+      mode server
+
+      prefix fde6:20f5:c9ac:358::/64
+      prefix 192.168.4.128/25
+      lease-dir #{testpath}/leases
+      name-server fde6:20f5:c9ac:358::1
+      name-server 192.168.4.1
+      ntp-server 192.168.4.2
+    EOS
+
+    system "#{bin}/ahcpd", "-c", "ahcpd.conf", "-I", pid_file, "-L", log_file, "-D", "lo0"
+    sleep(2)
+
+    assert_predicate pid_file, :exist?, "The file containing the PID of the child process was not created."
+    assert_predicate log_file, :exist?, "The file containing the log was not created."
+
+    Process.kill("TERM", pid_file.read.to_i)
   end
 end
 

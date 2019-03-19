@@ -6,16 +6,16 @@ class Pla < Formula
 
   bottle do
     cellar :any
+    sha256 "9d5e86767de6c9a2ac741e9edd32d053da5fde96563446a63d1b0475f4da595a" => :mojave
     sha256 "af3163cf8322d872694753f3d3352384fb9c8ce923c66f7be82f50bdbbe734bc" => :high_sierra
     sha256 "c6edebbefcf192ea4bcad704ca5b4c27157f77b4a47e3a993ac2a61e7165c13c" => :sierra
     sha256 "3fd0d11d1bdfa24e93bf94cb854e28382307c291b25994c82a2a8c1a64ce5072" => :el_capitan
     sha256 "308920e8bf8642826cd973eaa63e22f0fc3dec43a0152485d358ba575638291f" => :yosemite
     sha256 "df4b500589672dc1c415866b7da4c678621858f48cbac2cab5765c2b4fb1857d" => :mavericks
-    sha256 "81969ccdf4fe754600e348d7aa34243ccf86d4ee4bcaf85b12fa5b5df99d9ec7" => :mountain_lion
   end
 
-  depends_on "cairo"
   depends_on "pkg-config" => :build
+  depends_on "cairo"
 
   def install
     system "make"

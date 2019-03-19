@@ -6,6 +6,7 @@ class Sdl2Ttf < Formula
 
   bottle do
     cellar :any
+    sha256 "f7b460020055a498bb642c7f774f282c517f5423cc1c238e565dbeab53ec7329" => :mojave
     sha256 "a132a5656ba547e19361adab1e49ed84c2d3e379496058e8b39ebc676c77e2cc" => :high_sierra
     sha256 "6420d0ad3f91d4683441a23323e347fa3116a5e484d810d896ac7a484a599e82" => :sierra
     sha256 "29e62db1a48f1cd9142c04d4a734298f30c8924b32eaa914a6aaef574d4a6f01" => :el_capitan
@@ -14,8 +15,8 @@ class Sdl2Ttf < Formula
   end
 
   depends_on "pkg-config" => :build
-  depends_on "sdl2"
   depends_on "freetype"
+  depends_on "sdl2"
 
   def install
     inreplace "SDL2_ttf.pc.in", "@prefix@", HOMEBREW_PREFIX
@@ -23,5 +24,20 @@ class Sdl2Ttf < Formula
     system "./configure", "--disable-dependency-tracking",
                           "--prefix=#{prefix}"
     system "make", "install"
+  end
+
+  test do
+    (testpath/"test.c").write <<~EOS
+      #include <SDL2/SDL_ttf.h>
+
+      int main()
+      {
+          int success = TTF_Init();
+          TTF_Quit();
+          return success;
+      }
+    EOS
+    system ENV.cc, "-L#{lib}", "-lsdl2_ttf", "test.c", "-o", "test"
+    system "./test"
   end
 end

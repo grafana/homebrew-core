@@ -1,8 +1,8 @@
 class Bnd < Formula
   desc "The Swiss Army Knife for OSGi bundles"
-  homepage "http://bnd.bndtools.org/"
-  url "https://search.maven.org/remotecontent?filepath=biz/aQute/bnd/biz.aQute.bnd/3.5.0/biz.aQute.bnd-3.5.0.jar"
-  sha256 "6ecfd9b416eb637f6cdd0caa9e86a86ffe9a4c6215de4260824b5669ada160c6"
+  homepage "https://bnd.bndtools.org/"
+  url "https://search.maven.org/remotecontent?filepath=biz/aQute/bnd/biz.aQute.bnd/4.2.0/biz.aQute.bnd-4.2.0.jar"
+  sha256 "c3ae2bca2b11183630c9cafa1ac4fe247ad510b0352574b17333f1afc1bbf3a0"
 
   bottle :unneeded
 
@@ -37,6 +37,9 @@ class Bnd < Formula
     (testpath/"launch.bndrun").write <<~EOS
       -standalone: index.xml
       -runrequires: osgi.identity;filter:='(osgi.identity=#{test_bsn})'
+    EOS
+
+    (testpath/"cnf/build.bnd").write <<~EOS
     EOS
 
     output = shell_output("#{bin}/bnd resolve resolve -b launch.bndrun")

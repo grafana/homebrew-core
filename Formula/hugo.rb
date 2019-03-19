@@ -1,26 +1,25 @@
 class Hugo < Formula
   desc "Configurable static site generator"
   homepage "https://gohugo.io/"
-  url "https://github.com/gohugoio/hugo/archive/v0.30.2.tar.gz"
-  sha256 "44a5012a0ee8a567cf12c8a5fd21de031e85148206a9d513942fd409f75b9a7d"
+  url "https://github.com/gohugoio/hugo/archive/v0.54.0.tar.gz"
+  sha256 "fe0f4d4542491706cc19cb8c0acd63f1d9989cfbeaaad39d93031e91bf73fd91"
   head "https://github.com/gohugoio/hugo.git"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "af4871951f143ff35fb2105ef63b04f3a102aaf2210241a1d03ed423411f71b7" => :high_sierra
-    sha256 "7e7c676576de893838318a5e13af830cc6139f9f7178f63be2e748ac9f4ea0be" => :sierra
-    sha256 "be105eaf7b49d69133ddd83cfc92e1420af64e183bb947e3be5cc2e4521792c2" => :el_capitan
+    sha256 "cb972dc07bdc26253eda33ab4aca6b8660eee660fbf5ade5f557ba912c1fc8ce" => :mojave
+    sha256 "c8809dad0d4800a7862d92d90aaf8dbe1ac4b018dd5c36e34f0c146f663465c3" => :high_sierra
+    sha256 "768bcec40e0b82a440010c4eec8cb1d6b56f1987f3a5cd61caa453acb9f60f3c" => :sierra
   end
 
   depends_on "go" => :build
-  depends_on "govendor" => :build
 
   def install
-    ENV["GOPATH"] = buildpath
+    ENV["GOPATH"] = HOMEBREW_CACHE/"go_cache"
     (buildpath/"src/github.com/gohugoio/hugo").install buildpath.children
+
     cd "src/github.com/gohugoio/hugo" do
-      system "govendor", "sync"
-      system "go", "build", "-o", bin/"hugo", "main.go"
+      system "go", "build", "-o", bin/"hugo", "-tags", "extended", "main.go"
 
       # Build bash completion
       system bin/"hugo", "gen", "autocomplete", "--completionfile=hugo.sh"

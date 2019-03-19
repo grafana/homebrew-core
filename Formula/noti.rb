@@ -1,14 +1,15 @@
 class Noti < Formula
   desc "Trigger notifications when a process completes"
   homepage "https://github.com/variadico/noti"
-  url "https://github.com/variadico/noti/archive/v2.7.0.tar.gz"
-  sha256 "afa49bf15795e007b5cfd3cf65eb46187f16f39c2afd1040a2c6dccc4adeb2d0"
+  url "https://github.com/variadico/noti/archive/3.1.0.tar.gz"
+  sha256 "3210059aefb9dbbefc67948518509eb2800209fe61bceb158360931dc8d2bd32"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "5a63f09b546e77296a027a7624263854d2e14f7567c14e80ba00039c7e103049" => :high_sierra
-    sha256 "ca4dffa990853c8a15e3575f378b72fc4ecfc76227762f060d5a52819f9a12f6" => :sierra
-    sha256 "5cb76f8a66ce64787ec736ae07dd0a739a41f9c2a5dc69fc29e63a1352231548" => :el_capitan
+    sha256 "472aa21bb739b064f79f2b7aed61ec699b1aa7ae9d239baef7947fa72817b583" => :mojave
+    sha256 "2ce04f2a8cf722016935a83010314a08a0bb0d9ca7aeed7b62dd9ceab4b73cda" => :high_sierra
+    sha256 "72d72841b3a4f488014abe42d27913c8d9049f681851e4abde30a4a8b2e64554" => :sierra
+    sha256 "72b5fa9563eaf47e3f25f7792bcd9500fb71432932aa4840af70c81c936b94c1" => :el_capitan
   end
 
   depends_on "go" => :build
