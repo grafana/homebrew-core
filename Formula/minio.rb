@@ -2,22 +2,21 @@ class Minio < Formula
   desc "Amazon S3 compatible object storage server"
   homepage "https://github.com/minio/minio"
   url "https://github.com/minio/minio.git",
-      :tag      => "RELEASE.2019-05-23T00-29-34Z",
-      :revision => "e252114f067b07e6c22b91f46a6fa9815450e7a8"
-  version "20190523002934"
+      :tag      => "RELEASE.2019-09-26T19-42-35Z",
+      :revision => "2a2ff96ee1cb263058e7bfcc553e99054a1e9000"
+  version "20190926194235"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "3ca4080c0e1b384cbdc74af0f3a28742f620616bc4699c8e4aee183a8b521d47" => :mojave
-    sha256 "6854df247ace64b661b394e599a1ae2f91cbfe103537ec21a99a50437b22f3d7" => :high_sierra
-    sha256 "550090c606ac27c73efd8fcb624f489d7bd3dc951f247d8ccd6a8d6c2ed3b30d" => :sierra
+    sha256 "52ae4d5d6f1779d3caddf254a7f23862fa33d6089293cf19fc2fc51b735c6b4f" => :catalina
+    sha256 "2f4ad1a761dbd65a846b3b3250a6fe76d475259e34e6ad2f574d6b62672f6b2c" => :mojave
+    sha256 "4f9cbadbfd31475df42343a0d2a17bf3f10ea63c33a0a7f1fbca5d85067ab4e4" => :high_sierra
   end
 
   depends_on "go" => :build
 
   def install
     ENV["GOPATH"] = buildpath
-    ENV["GO111MODULE"] = "on"
     src = buildpath/"src/github.com/minio/minio"
     src.install buildpath.children
     src.cd do
@@ -63,7 +62,7 @@ class Minio < Formula
             <string>#{opt_bin}/minio</string>
             <string>server</string>
             <string>--config-dir=#{etc}/minio</string>
-            <string>--address :9000</string>
+            <string>--address=:9000</string>
             <string>#{var}/minio</string>
           </array>
           <key>RunAtLoad</key>
@@ -73,9 +72,9 @@ class Minio < Formula
           <key>WorkingDirectory</key>
           <string>#{HOMEBREW_PREFIX}</string>
           <key>StandardErrorPath</key>
-          <string>#{var}/log/minio/output.log</string>
+          <string>#{var}/log/minio.log</string>
           <key>StandardOutPath</key>
-          <string>#{var}/log/minio/output.log</string>
+          <string>#{var}/log/minio.log</string>
           <key>RunAtLoad</key>
           <true/>
         </dict>

@@ -1,8 +1,8 @@
 class Rabbitmq < Formula
   desc "Messaging broker"
   homepage "https://www.rabbitmq.com"
-  url "https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.7.15/rabbitmq-server-generic-unix-3.7.15.tar.xz"
-  sha256 "4d70e4d057c6e40022369584626fd7c2bdaa24997aae5cc7f8f182c6d46456cf"
+  url "https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.8.0/rabbitmq-server-generic-unix-3.8.0.tar.xz"
+  sha256 "821e7f5312b1386a00a026d594523b026b2114d3b353d4458a829c7f1a35fa0d"
 
   bottle :unneeded
 
@@ -97,6 +97,7 @@ class Rabbitmq < Formula
   test do
     ENV["RABBITMQ_MNESIA_BASE"] = testpath/"var/lib/rabbitmq/mnesia"
     system sbin/"rabbitmq-server", "-detached"
+    sleep 5
     system sbin/"rabbitmqctl", "status"
     system sbin/"rabbitmqctl", "stop"
   end

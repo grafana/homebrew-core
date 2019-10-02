@@ -1,15 +1,15 @@
 class Exiv2 < Formula
   desc "EXIF and IPTC metadata manipulation library and tools"
   homepage "https://www.exiv2.org/"
-  url "https://www.exiv2.org/builds/exiv2-0.27.1-Source.tar.gz"
-  sha256 "f125286980fd1bcb28e188c02a93946951c61e10784720be2301b661a65b3081"
+  url "https://www.exiv2.org/builds/exiv2-0.27.2-Source.tar.gz"
+  sha256 "2652f56b912711327baff6dc0c90960818211cf7ab79bb5e1eb59320b78d153f"
   head "https://github.com/Exiv2/exiv2.git"
 
   bottle do
     cellar :any
-    sha256 "57031a4f2db1e2f493eaf70a3633335f568b22bd3a325791d90dc2aba2d89902" => :mojave
-    sha256 "3bc7f852d91f4c88e4f23d3926f7097f912af373948fb565f4241605eaec6122" => :high_sierra
-    sha256 "e1a838f4ce6aa87f914aac1153a45fcf5e66347f6d2b5f2e3072a3738866a8cf" => :sierra
+    sha256 "3b78b8fbffcc6d62685bc4a9a0a51855f5ccf6fe7fabc866f0970e1a12ced0b4" => :mojave
+    sha256 "8a4e65d47307247b11127c00cdad18626425eafb271faaeb1c076beb57298e12" => :high_sierra
+    sha256 "fe386bc9bfe7270655a6b3163f8e33a6fc6e6f36512e6ac6e6a49a1650a6a485" => :sierra
   end
 
   depends_on "cmake" => :build

@@ -1,19 +1,25 @@
 class Ship < Formula
   desc "Reducing the overhead of maintaining 3rd-party applications in Kubernetes"
   homepage "https://www.replicated.com/ship"
-  url "https://github.com/replicatedhq/ship/archive/v0.44.0.tar.gz"
-  sha256 "40ee3eaab3a43163631d43db24c54c89861f135268c9748f2300e95b852bea53"
+  url "https://github.com/replicatedhq/ship/archive/v0.51.3.tar.gz"
+  sha256 "8ced5155af6a766114272b180f4ac98d2361dd983fe7305dc75c632ac68ea692"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "e82d45b51579809cf98f2cd9a1fe577fba923d734fa355e208f45759cb15f03f" => :mojave
-    sha256 "9deebf44a0c5b5a8bc30813d47e51aa1a82de7679ebde867596e213e2e78a80b" => :high_sierra
-    sha256 "12861a0f733d3b36b7a52fa5c97d2f0cde321de2210ecac434af743793d7e601" => :sierra
+    sha256 "72282d39f3c1f86ded8529b029ea70743c6039ff125de0d184ecd0ce553d2c39" => :catalina
+    sha256 "3fd89e2cb6f036254f7aca3760fdaa6fbf38ac9b9fdc0b02b1e5f968786317e4" => :mojave
+    sha256 "7463ca09a5fa07beedcff76d95e4d8dc43417d18bdda6c2ed96970e4c41c62b8" => :high_sierra
   end
 
   depends_on "go" => :build
   depends_on "node@8" => :build
   depends_on "yarn" => :build
+
+  # Should be removed in the next release of v0.51.3
+  patch do
+    url "https://github.com/replicatedhq/ship/pull/1073.diff?full_index=1"
+    sha256 "ba2409ea94093529f6c94ff7ae1d377ae209f195a14aa07eccf42164e33f5d37"
+  end
 
   def install
     ENV["GOPATH"] = buildpath

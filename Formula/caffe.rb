@@ -3,12 +3,12 @@ class Caffe < Formula
   homepage "https://caffe.berkeleyvision.org/"
   url "https://github.com/BVLC/caffe/archive/1.0.tar.gz"
   sha256 "71d3c9eb8a183150f965a465824d01fe82826c22505f7aa314f700ace03fa77f"
-  revision 12
+  revision 14
 
   bottle do
-    sha256 "5f4e67881a63eca1fcbf7bc5a26282acd8578f8bdd88700eebf7a1a2573821c6" => :mojave
-    sha256 "96d273fc669816ce375372dfaf3c5cee5afe2d730f0ae6c829c56cb017f2be61" => :high_sierra
-    sha256 "d99367e6fb98a106a7417b8de4cba8376b50b41aa9d417e297c459c4d61f3271" => :sierra
+    sha256 "e42c7b0dd7165199c299008551f1224353982421bb9fc3ef2a006c380907a6de" => :mojave
+    sha256 "5cb7b806c64970fe3013ba3e9c7c10ff0667bf5d2b90da03bde23e5d42461c69" => :high_sierra
+    sha256 "3186e66f6bead0992c8fbe39d4177c14b4e4328c2bb2cc22fc4d9e5113e27063" => :sierra
   end
 
   depends_on "cmake" => :build

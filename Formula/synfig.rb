@@ -3,12 +3,13 @@ class Synfig < Formula
   homepage "https://synfig.org/"
   url "https://downloads.sourceforge.net/project/synfig/releases/1.2.2/source/synfig-1.2.2.tar.gz"
   sha256 "5f5f7b33483041165f9a63fe4d95eb815971c7444569e574206f6964e83cc2ef"
+  revision 2
   head "https://svn.code.sf.net/p/synfig/code/"
 
   bottle do
-    sha256 "77f27d5c6f35bf653da0099f6da7025bd1ef9ebb1afab05021fa244a0010ed9d" => :mojave
-    sha256 "911f536413e6e676a3080c7250db3e40602a4f001833637ec1e14859e3996a93" => :high_sierra
-    sha256 "d42d8eb59ba3dad42c4e891e6f7e187c1f49f580f2891a3752e5fb14dc4c8a98" => :sierra
+    sha256 "8c23d2d8dc22af0f7a5957753f109b540b6e975a98381b93cffc61162740c47f" => :mojave
+    sha256 "3de1f07e71b1ce87ddb9e1e7d9a9bc85efdadc630f7aabbaed55554a2d8d1bcc" => :high_sierra
+    sha256 "1a62720c482cf4e45a545d5d895192e8aeed43855d9c80cdd3781409282c5ae7" => :sierra
   end
 
   depends_on "intltool" => :build
@@ -20,7 +21,7 @@ class Synfig < Formula
   depends_on "freetype"
   depends_on "gettext"
   depends_on "libpng"
-  depends_on "libsigc++"
+  depends_on "libsigc++@2"
   depends_on "libtool"
   depends_on "libxml++"
   depends_on "mlt"
@@ -56,7 +57,7 @@ class Synfig < Formula
     glib = Formula["glib"]
     glibmm = Formula["glibmm"]
     libpng = Formula["libpng"]
-    libsigcxx = Formula["libsigc++"]
+    libsigcxx = Formula["libsigc++@2"]
     libxmlxx = Formula["libxml++"]
     mlt = Formula["mlt"]
     pango = Formula["pango"]

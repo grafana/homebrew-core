@@ -3,17 +3,22 @@ class Yaf < Formula
   homepage "https://tools.netsa.cert.org/yaf/"
   url "https://tools.netsa.cert.org/releases/yaf-2.11.0.tar.gz"
   sha256 "5e2523eeeaa5ac7e08f73b38c599f321ba93f239011efec9c39cfcbc30489dca"
+  revision 1
 
   bottle do
     cellar :any
-    sha256 "c2b96aad363ab74963c8b7659845578813ff1c866a440246b78c4c442d552ebf" => :mojave
-    sha256 "8eeb9c55a48289c0797eafd00563adf0baae88df44a38397ca6b48cba15ca6e9" => :high_sierra
-    sha256 "62175a5fd81fcf2b4677c7a67ae13e8a6c6943ca26d93d3d5c07052dff5446f1" => :sierra
+    rebuild 1
+    sha256 "7395026369a9b4b30f6614ab98baa1d810de2af29511b635b3ba2ad5a3d82289" => :mojave
+    sha256 "3e4ba45a90c4a47bcb4edc7dd9d9bf227d8b70af3989368bbf6cc4b006d2a9f7" => :high_sierra
+    sha256 "f9f45a164b81d2b4d4ef3b45664faa81d8317039cee93b69a1f4dc2d55786068" => :sierra
   end
 
   depends_on "pkg-config" => :build
+  depends_on "gettext"
   depends_on "glib"
   depends_on "libfixbuf"
+  depends_on "libtool"
+  depends_on "pcre"
 
   def install
     system "./configure", "--disable-dependency-tracking",

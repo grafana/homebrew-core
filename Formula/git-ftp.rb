@@ -1,21 +1,21 @@
 class GitFtp < Formula
   desc "Git-powered FTP client"
   homepage "https://git-ftp.github.io/"
-  url "https://github.com/git-ftp/git-ftp/archive/1.5.1.tar.gz"
-  sha256 "8cca25e1f718b987ea22ec05c7d72522f21cacedd00a8a0e827f87cd68e101f0"
-  revision 3
+  url "https://github.com/git-ftp/git-ftp/archive/1.5.2.tar.gz"
+  sha256 "a6bf52f6f1d30c4d8f52fd0fbd61dc9f32e66099e3e9c4994bec65094305605b"
   head "https://github.com/git-ftp/git-ftp.git", :branch => "develop"
 
   bottle do
     cellar :any
     rebuild 1
-    sha256 "05d8eaa07ce02ca49b84b11452e0532e75ce32d7b8925ab25e942dedf22ca417" => :mojave
-    sha256 "dec17745a52217c32716095cae029e9bfdc33767f05244d6376c1e31a0e3206f" => :high_sierra
-    sha256 "68a9a026483d20a5dd9bf9e17200e4e9b91fdf1349618217fb43ee59648d5be6" => :sierra
+    sha256 "18ee331150260d506bd251040a44e193b2ba465f0c0309432804d800f029e1c1" => :mojave
+    sha256 "4774f0b5928275dad5d77e0374829fdf93b7c56e4a7cf8ea9bb44a750ff8e9cd" => :high_sierra
+    sha256 "a1fab3f3590f66260a76fc494d4688d9e01be9d29e9c01cbf136aec176406c6a" => :sierra
   end
 
   depends_on "pandoc" => :build
   depends_on "libssh2"
+  uses_from_macos "zlib"
 
   resource "curl" do
     url "https://curl.haxx.se/download/curl-7.62.0.tar.bz2"

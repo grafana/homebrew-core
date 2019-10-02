@@ -1,20 +1,22 @@
 class Icecream < Formula
   desc "Distributed compiler with a central scheduler to share build load"
   homepage "https://en.opensuse.org/Icecream"
-  url "https://github.com/icecc/icecream/archive/1.2.tar.gz"
-  sha256 "12d4132e5aacf6907877b691a8ac09e3e2f704ca016c49bc5eb566fc9185f544"
+  url "https://github.com/icecc/icecream/archive/1.3.tar.gz"
+  sha256 "5e147544dcc557ae6f0b13246aa1445f0f244f010de8e137053078275613bd00"
 
   bottle do
-    sha256 "b87ca590dee1a7dcb5bc3d33e649a3a2c174e9901ab9b26900410adcd846fb0a" => :mojave
-    sha256 "e1e83865487cbc7b38cd9bbbb157a1328f0b2441786a06e03bc488adc9260b7d" => :high_sierra
-    sha256 "3026c93650786878ff45f7cb899ee2cfa1c21c44de3b9bb9cb44d9a9890773d0" => :sierra
+    sha256 "6bebd258c4ad165dc3218fad1e34999fd61bb817f3e9b8d7edffc93b30d2ff1f" => :mojave
+    sha256 "1b27b28324a463527ac2f25168b915eeca1fb754d26c098eeadfc10d51f10cae" => :high_sierra
+    sha256 "400a0b2499cbd472afecc999a774f61867747099469a3aa6bc1eb607ae46c8cc" => :sierra
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "docbook2x" => :build
   depends_on "libtool" => :build
+  depends_on "libarchive"
   depends_on "lzo"
+  depends_on "zstd"
 
   def install
     args = %W[
@@ -28,31 +30,28 @@ class Icecream < Formula
     system "./configure", *args
     system "make", "install"
 
-    (prefix/"org.opensuse.icecc.plist").write iceccd_plist
-    (prefix/"org.opensuse.icecc-scheduler.plist").write scheduler_plist
+    # Manually install scheduler property list
+    (prefix/"#{plist_name}-scheduler.plist").write scheduler_plist
   end
 
   def caveats; <<~EOS
     To override the toolset with icecc, add to your path:
       #{opt_libexec}/icecc/bin
-
-    To have launchd start the icecc daemon at login:
-      cp #{opt_prefix}/org.opensuse.icecc.plist ~/Library/LaunchAgents/
-      launchctl load -w ~/Library/LaunchAgents/org.opensuse.icecc.plist
   EOS
   end
 
-  def iceccd_plist; <<~EOS
+  plist_options :manual => "iceccd"
+
+  def plist; <<~EOS
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
     <plist version="1.0">
     <dict>
         <key>Label</key>
-        <string>Icecc Daemon</string>
+        <string>#{plist_name}</string>
         <key>ProgramArguments</key>
         <array>
         <string>#{sbin}/iceccd</string>
-        <string>-d</string>
         </array>
         <key>RunAtLoad</key>
         <true/>
@@ -67,11 +66,10 @@ class Icecream < Formula
     <plist version="1.0">
     <dict>
         <key>Label</key>
-        <string>Icecc Scheduler</string>
+        <string>#{plist_name}-scheduler</string>
         <key>ProgramArguments</key>
         <array>
         <string>#{sbin}/icecc-scheduler</string>
-        <string>-d</string>
         </array>
         <key>RunAtLoad</key>
         <true/>

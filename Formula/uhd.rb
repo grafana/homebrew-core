@@ -1,14 +1,15 @@
 class Uhd < Formula
   desc "Hardware driver for all USRP devices"
   homepage "https://files.ettus.com/manual/"
-  url "https://github.com/EttusResearch/uhd/archive/v3.14.0.0.tar.gz"
-  sha256 "612bcc4e857e126c2e1ace98618816209665b20c4136c9e987c67511661715df"
+  url "https://github.com/EttusResearch/uhd/archive/v3.14.1.0.tar.gz"
+  sha256 "8fc1ad70d80f7f69a30c957fee218ef8767cfd5a0ee4f0830e506f2b22e5b923"
   head "https://github.com/EttusResearch/uhd.git"
 
   bottle do
-    sha256 "3eacbff6e35b276dda53c2bee7cd46cab690258c2d723ff7dac89df2f8d99c83" => :mojave
-    sha256 "ed187800f2255414f237d93cfc3852433ebc17d6920c18ece82d03f3e37ef865" => :high_sierra
-    sha256 "dec154f562fa22f2aecedb86ff836d7e8e8713eb06f5073be8805c1fe9c83f1c" => :sierra
+    rebuild 1
+    sha256 "e863c8d13b724e3173450439dfe83c4445494bd2273ae805ca358f8a28836082" => :mojave
+    sha256 "a3936c62d3b079197e9f3cbf12cf6fb7aeeaacc99e477424f541462a06830921" => :high_sierra
+    sha256 "aa90d30bc003ef14116d2aed08ea159276ad0bb414e553eca95d7f86e8dd072d" => :sierra
   end
 
   depends_on "cmake" => :build
@@ -31,7 +32,7 @@ class Uhd < Formula
     end
 
     mkdir "host/build" do
-      system "cmake", "..", *std_cmake_args, "-DENABLE_PYTHON3=ON"
+      system "cmake", "..", *std_cmake_args, "-DENABLE_PYTHON3=ON", "-DENABLE_STATIC_LIBS=ON"
       system "make"
       system "make", "test"
       system "make", "install"

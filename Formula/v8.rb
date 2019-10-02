@@ -2,28 +2,48 @@ class V8 < Formula
   desc "Google's JavaScript engine"
   homepage "https://github.com/v8/v8/wiki"
   # Track V8 version from Chrome stable: https://omahaproxy.appspot.com
-  url "https://github.com/v8/v8/archive/7.4.288.25.tar.gz"
-  sha256 "8dd79e891fbe6563d75d20956475a641dcbd21bf6c35ba769204167ca8a9080c"
+  url "https://github.com/v8/v8/archive/7.7.299.11.tar.gz"
+  sha256 "03d8abac7b5cb427b1d29085d82bf3a9f8030cc39cbc6f8528518053075adbbc"
 
   bottle do
     cellar :any
-    sha256 "6f5fe5c2581ba0cb5a4de2f4d3e592899a0abb9dcdfcec5aaa554d6f60e73731" => :mojave
-    sha256 "5712b65e0fe66764d79fd3b41ba5b3a4b8ce0babbead51c9a67326e0b9e9576c" => :high_sierra
-    sha256 "cda2f215197079eb9daf3225fea2df717646250edcc93d1ea6ff2bfc4be04837" => :sierra
+    sha256 "37ddfeec0f0405ca375e23b25351cb91a014a53d86c28f35adb9ea7ca86ea97f" => :mojave
+    sha256 "8963019a39391ea1f93d143ee2d62986536b810729c700276b049d93b18a5efd" => :high_sierra
+    sha256 "3dc8186f25a9efd9b5aef9e69943053bb98d3600d8de3f536f8035a2c87e2c93" => :sierra
   end
 
   depends_on "ninja" => :build
-  depends_on "python@2" => :build # GN require Python 2.7+
   depends_on "llvm" if MacOS.version < :mojave
 
   # https://bugs.chromium.org/p/chromium/issues/detail?id=620127
   depends_on :macos => :el_capitan
 
   # Look up the correct resource revisions in the DEP file of the specific releases tag
-  # e.g.: https://github.com/v8/v8/blob/7.4.288.25/DEPS#L19 for the revision of build for v8 7.4.288.25
+  # e.g. for CIPD dependency gn: https://github.com/v8/v8/blob/7.6.303.27/DEPS#L15
+  resource "gn" do
+    url "https://gn.googlesource.com/gn.git",
+      :revision => "972ed755f8e6d31cae9ba15fcd08136ae1a7886f"
+  end
+
+  # e.g.: https://github.com/v8/v8/blob/7.6.303.27/DEPS#L60 for the revision of build for v8 7.6.303.27
   resource "v8/build" do
     url "https://chromium.googlesource.com/chromium/src/build.git",
-      :revision => "80892bfe019dc854c6acdbfbb7304cca63986d4f"
+      :revision => "1e5d7d692f816af8136c738b79fe9e8dde8057f6"
+  end
+
+  resource "v8/third_party/icu" do
+    url "https://chromium.googlesource.com/chromium/deps/icu.git",
+      :revision => "fd97d4326fac6da84452b2d5fe75ff0949368dab"
+  end
+
+  resource "v8/base/trace_event/common" do
+    url "https://chromium.googlesource.com/chromium/src/base/trace_event/common.git",
+      :revision => "cfe8887fa6ac3170e23a68949930e28d4705a16f"
+  end
+
+  resource "v8/third_party/googletest/src" do
+    url "https://chromium.googlesource.com/external/github.com/google/googletest.git",
+      :revision => "6077f444da944d96d311d358d761164261f1cdd0"
   end
 
   resource "v8/third_party/jinja2" do
@@ -34,26 +54,6 @@ class V8 < Formula
   resource "v8/third_party/markupsafe" do
     url "https://chromium.googlesource.com/chromium/src/third_party/markupsafe.git",
       :revision => "8f45f5cfa0009d2a70589bcda0349b8cb2b72783"
-  end
-
-  resource "v8/third_party/googletest/src" do
-    url "https://chromium.googlesource.com/external/github.com/google/googletest.git",
-      :revision => "efecb0bfa687cf87836494f5d62868485c00fb66"
-  end
-
-  resource "v8/base/trace_event/common" do
-    url "https://chromium.googlesource.com/chromium/src/base/trace_event/common.git",
-      :revision => "936ba8a963284a6b3737cf2f0474a7131073abee"
-  end
-
-  resource "v8/third_party/icu" do
-    url "https://chromium.googlesource.com/chromium/deps/icu.git",
-      :revision => "8c67416ccb4da42d817e7081ff83a2193b1aabe7"
-  end
-
-  resource "gn" do
-    url "https://gn.googlesource.com/gn.git",
-      :revision => "64b846c96daeb3eaf08e26d8a84d8451c6cb712b"
   end
 
   def install

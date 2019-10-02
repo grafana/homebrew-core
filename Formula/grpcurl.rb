@@ -1,14 +1,14 @@
 class Grpcurl < Formula
   desc "Like cURL, but for gRPC"
   homepage "https://github.com/fullstorydev/grpcurl"
-  url "https://github.com/fullstorydev/grpcurl/archive/v1.2.1.tar.gz"
-  sha256 "7fc2c263b6c89aa5be2379bb1606fe435a937f13f2652141da5b9280fde41307"
+  url "https://github.com/fullstorydev/grpcurl/archive/v1.4.0.tar.gz"
+  sha256 "183884375171db964e47ef778ef57764ceebebae0c6ea73ae028fb700b8a2c13"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "d4404289bcc9e02585c9afbf73ce7372c426d2274ebb28a7764bef51964bce38" => :mojave
-    sha256 "366f1e6b432335bad1d04e1fed44f3789a25430af1b6ee172bea024832d823b5" => :high_sierra
-    sha256 "378fee0c7f67ef2bf3333fa01db7b833cfa477f457ab9bd904eb90c47d2f92eb" => :sierra
+    sha256 "8dc4195a050588d6a9ef9825a2c70e0dba4d5c6c1178c9d2689ea3a93d5c166b" => :catalina
+    sha256 "130085a5a3429f642b65659504ea47767271ecbb98a8b8e0c0eb60925894114e" => :mojave
+    sha256 "cf3e2d3ea747ee2dd39ab6d94111864cac2b9a990e53416055697f165e93782b" => :high_sierra
   end
 
   depends_on "go" => :build

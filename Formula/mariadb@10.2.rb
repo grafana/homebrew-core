@@ -1,19 +1,20 @@
 class MariadbAT102 < Formula
   desc "Drop-in replacement for MySQL"
   homepage "https://mariadb.org/"
-  url "https://downloads.mariadb.org/f/mariadb-10.2.24/source/mariadb-10.2.24.tar.gz"
-  sha256 "97f4d924e69f77abb2f650116785c2f5ef356230442534ebcbaadb51d9bb8bc4"
+  url "https://downloads.mariadb.org/f/mariadb-10.2.25/source/mariadb-10.2.25.tar.gz"
+  sha256 "face0818bb51b7dc20712ae225489c85a477d505cb6c2f6a6f6cf7d51ecfecc9"
+  revision 1
 
   bottle do
-    sha256 "fbed1b95bdc356f9af5f3e7575bb8309d022db78db3ecbf87317b09a0e06ca80" => :mojave
-    sha256 "c0a2b54118563ebf96f8c5889062b54e210789c2e6131e47422849ead448dacf" => :high_sierra
-    sha256 "516d39b977a5c0b81d87242f3ff28569a27767ba0c36093762dfacd468bb2a31" => :sierra
+    sha256 "e27afce9d25e3aab490fa06f2723a5d6d10b8d8e50b632802e4914a7d68ef6c8" => :mojave
+    sha256 "6f154ca9cc5385503fcb7b01571809e3fe01b284d3be9f69d7596e6c054485a5" => :high_sierra
+    sha256 "f77c56acc6492f3cdef5b67d6eb220687d3fd5cfaa2105f556b0f122bdf912ff" => :sierra
   end
 
   keg_only :versioned_formula
 
   depends_on "cmake" => :build
-  depends_on "openssl"
+  depends_on "openssl@1.1"
 
   def install
     # Set basedir and ldata so that mysql_install_db can find the server

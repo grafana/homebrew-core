@@ -1,16 +1,15 @@
 class Root < Formula
   desc "Object oriented framework for large scale data analysis"
   homepage "https://root.cern.ch/"
-  url "https://root.cern.ch/download/root_v6.16.00.source.tar.gz"
-  version "6.16.00"
-  sha256 "2a45055c6091adaa72b977c512f84da8ef92723c30837c7e2643eecc9c5ce4d8"
-  revision 3
+  url "https://root.cern.ch/download/root_v6.18.04.source.tar.gz"
+  version "6.18.04"
+  sha256 "315a85fc8363f8eb1bffa0decbf126121258f79bd273513ed64795675485cfa4"
   head "https://github.com/root-project/root.git"
 
   bottle do
-    sha256 "2558ee66fabed50042b220de1c44dd76f1abf5d51189d87b9683344cadabf37f" => :mojave
-    sha256 "f58e215c3d48c84c82292765888c70075d3bec7cfd31b95fb23c0bca05e7c68a" => :high_sierra
-    sha256 "912c3a161650b00341b96007ebd614dccecf7fe3cb2bf97612ed801eae660156" => :sierra
+    sha256 "9ce760ff961b29b382d8373c6fbe72808e025b9a3e6113deb64df8586b0a853d" => :mojave
+    sha256 "acbac57657964414945706d499bab86ad7ac6367c78493a5e47de2eba111e0f1" => :high_sierra
+    sha256 "82e6f8dc5048f3977c9a942c2fd62671423f95bfe77e6d5abd9f53b6ac141b13" => :sierra
   end
 
   # https://github.com/Homebrew/homebrew-core/issues/30726
@@ -35,7 +34,7 @@ class Root < Formula
   # https://github.com/Homebrew/brew/issues/5068
   depends_on "libxml2" if MacOS.version >= :mojave
   depends_on "lz4"
-  depends_on "openssl"
+  depends_on "openssl@1.1"
   depends_on "pcre"
   depends_on "python"
   depends_on "tbb"
@@ -56,20 +55,11 @@ class Root < Formula
               "http://lcgpackages",
               "https://lcgpackages"
 
-    # Fix issue with ROOT 6.12-6.16 on a case-insensitive filesystem
-    # with /usr/local/include included before /usr/local/include/root
-    # Will be fixed in 6.16.02
-    # See https://trac.macports.org/ticket/57007
-    inreplace "core/base/inc/RConfig.h",
-              "<ROOT/RConfig.h>",
-              "\"ROOT/RConfig.h\""
-
     py_exe = Utils.popen_read("which python3").strip
     py_prefix = Utils.popen_read("python3 -c 'import sys;print(sys.prefix)'").chomp
     py_inc = Utils.popen_read("python3 -c 'from distutils import sysconfig;print(sysconfig.get_python_inc(True))'").chomp
 
     args = std_cmake_args + %W[
-      -Dcxx11=OFF
       -DCLING_CXX_PATH=clang++
       -DCMAKE_INSTALL_ELISPDIR=#{elisp}
       -DPYTHON_EXECUTABLE=#{py_exe}
@@ -95,14 +85,8 @@ class Root < Formula
       -Dxrootd=ON
     ]
 
-    # This will become -DCMAKE_CXX_STANDARD=14 (or 17) in ROOT 6.18
-    if MacOS.version < :mojave
-      args << "-Dcxx14=ON"
-      args << "-Dcxx17=OFF"
-    else
-      args << "-Dcxx14=OFF"
-      args << "-Dcxx17=ON"
-    end
+    cxx_version = (MacOS.version < :mojave) ? 14 : 17
+    args << "-DCMAKE_CXX_STANDARD=#{cxx_version}"
 
     mkdir "builddir" do
       system "cmake", "..", *args

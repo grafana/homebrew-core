@@ -1,21 +1,28 @@
 class NodeAT10 < Formula
   desc "Platform built on V8 to build network applications"
   homepage "https://nodejs.org/"
-  url "https://nodejs.org/dist/v10.15.3/node-v10.15.3.tar.gz"
-  sha256 "db460a63d057ac015b75bb6a879fcbe2fefaaf22afa4b6f6445b9db61ce2270d"
+  url "https://nodejs.org/dist/v10.16.3/node-v10.16.3.tar.gz"
+  sha256 "db5a5e03a815b84a1266a4b48bb6a6d887175705f84fd2472f0d28e5e305a1f8"
 
   bottle do
     cellar :any
-    sha256 "da02e50a7340a9607fb2d6a0018dee8f27ef4d81d70c406e70d12c93619ae15b" => :mojave
-    sha256 "9df422426a6985b48cac83b1c80f1671bf4863113d42c68623e892a71fabf256" => :high_sierra
-    sha256 "14fdca7a4dcbc40c6e2a70a3d36f1bc2655f660527cdb7eefd62b132905ab62e" => :sierra
+    sha256 "f00c89bb2e1181f8e430b3b0acbd00b0edfa4b22a3d1647c8a1a9e9866bcba38" => :catalina
+    sha256 "39b1a9fd71a615d690203b57588be046e838250af15cbe00d1f8a5e9dd60f02b" => :mojave
+    sha256 "4716d08e4a8f6b1b52555563a11cb190b6f9e273dd5834f73ea9022eb219ca4d" => :high_sierra
+    sha256 "0b7d09d24666d72a2985eb92e2ab3e997946928399bed368ccdbd0a12a9551df" => :sierra
   end
 
   keg_only :versioned_formula
 
   depends_on "pkg-config" => :build
-  depends_on "python@2" => :build
+  depends_on "python@2" => :build # does not support Python 3
   depends_on "icu4c"
+
+  # Fixes detecting Apple clang 11.
+  patch do
+    url "https://github.com/nodejs/node/commit/1f143b8625c2985b4317a40f279232f562417077.patch?full_index=1"
+    sha256 "12d8af6647e9a5d81f68f610ad0ed17075bf14718f4d484788baac37a0d3f842"
+  end
 
   def install
     system "./configure", "--prefix=#{prefix}", "--with-intl=system-icu"

@@ -3,19 +3,20 @@ class Hfstospell < Formula
   homepage "https://hfst.github.io/"
   url "https://github.com/hfst/hfst-ospell/releases/download/v0.5.0/hfstospell-0.5.0.tar.gz"
   sha256 "0fd2ad367f8a694c60742deaee9fcf1225e4921dd75549ef0aceca671ddfe1cd"
-  revision 4
+  revision 6
 
   bottle do
     cellar :any
-    sha256 "ca06202abe572f8741ef0a218c05d7d5e48b9d081457fe431d5a80e064ce8eb1" => :mojave
-    sha256 "c72856d4fe5eb9d87927514950779c334f7e69ba407006b5a1d95855664b0b96" => :high_sierra
-    sha256 "298de977286392989fece4a8ac93a9d2ffe3dfd5aeec3e899d46f9fe0f2652cb" => :sierra
+    sha256 "9c6c69212f1e6784eba39c412fee40fc7f67e113f0ce905573d71dd1ea3e1c5e" => :mojave
+    sha256 "2f9c344944d7e1ab33854b091421df503a9ae7b6d1ac052b3879616e85173086" => :high_sierra
+    sha256 "75b751ea37a89444b7f815d3fb356c8fd8bbe6c60a07161f966bb32719431235" => :sierra
   end
 
   depends_on "pkg-config" => :build
   depends_on "icu4c"
   depends_on "libarchive"
   depends_on "libxml++"
+  uses_from_macos "libxml2"
 
   # Fix "error: no template named 'auto_ptr' in namespace 'std'"
   # Upstream PR 20 Jun 2018 "C++14 (C++1y) should be the highest supported standard."

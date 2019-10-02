@@ -3,13 +3,13 @@ require "language/node"
 class AtomistCli < Formula
   desc "The Atomist CLI"
   homepage "https://github.com/atomist/cli#readme"
-  url "https://registry.npmjs.org/@atomist/cli/-/@atomist/cli-1.3.0.tgz"
-  sha256 "313b5f356bee3f77b800ebda3f4225813a6b1453fe26624cacbad82ba5b5d9d7"
+  url "https://registry.npmjs.org/@atomist/cli/-/@atomist/cli-1.8.0.tgz"
+  sha256 "64bcc7484fa2f1b7172984c278ae928450149fb02b750f79454b1a6683d17f62"
 
   bottle do
-    sha256 "74aa8f383e1b7fcc49f45e22e87a1a7e7bb7c03283f9ea2757c33b4e149094ab" => :mojave
-    sha256 "4ee165787a2463c8cbcbf16c6615966ab140666c4bffe15d7f3307fe509a5915" => :high_sierra
-    sha256 "ddef71ceeed53263d2e3b87bbb6b18244322efc96a69b4e611895d60f826bace" => :sierra
+    sha256 "a1f611e6f70a5dbdf886c6cf0a2aec9d6024a12e2e768e1f0230087babe7b3d6" => :mojave
+    sha256 "f109033a8fa80bcf777e053dfae07b84fd134c40d1ed356dbedddfad1e7b85f8" => :high_sierra
+    sha256 "314c7129a7b8f2e37ab46324dba4423c8c7712b99f1bd8f0dd5eb5904d9d3e3e" => :sierra
   end
 
   depends_on "node"
@@ -26,7 +26,7 @@ class AtomistCli < Formula
     assert_predicate bin/"@atomist", :exist?
     assert_predicate bin/"@atomist", :executable?
 
-    run_output = shell_output("#{bin}/atomist 2>&1")
+    run_output = shell_output("#{bin}/atomist 2>&1", 1)
     assert_match "Not enough non-option arguments", run_output
     assert_match "Specify --help for available options", run_output
 

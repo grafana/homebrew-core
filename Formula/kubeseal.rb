@@ -1,27 +1,33 @@
 class Kubeseal < Formula
   desc "Kubernetes controller and tool for one-way encrypted Secrets"
   homepage "https://github.com/bitnami-labs/sealed-secrets"
-  url "https://github.com/bitnami-labs/sealed-secrets/archive/v0.7.0.tar.gz"
-  sha256 "9254c11ecbb55a87fd6cfc6025a1a41d6fb7ad6bb11d248a3e6c2f9ee9cc74bd"
+  url "https://github.com/bitnami-labs/sealed-secrets.git",
+      :tag      => "v0.9.1",
+      :revision => "537a4811a3f1a85aacade373fe00c74f8856f645"
+  sha256 "753f9084a0bf5dfccfe84dff036e87b899a3be921c1d33a497a4b44ac582f00d"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "99ee78122f26f43c836cf29fa746138997896df6b4a01bd3dce9a4b6525cb267" => :mojave
-    sha256 "2df510d796d6d1a0b58bc5786e659efb5a8b497f7aa0219d9417fbcbe89c09a0" => :high_sierra
-    sha256 "e2f578be802be280ee0d6ce581a5a357b2c48cba0d2d5f8ba2ab11aafd8c5f82" => :sierra
+    sha256 "0e712e49442f7fbaaf873c9671987cd0bedee944c195adfdd37f98b9123bd044" => :catalina
+    sha256 "1589c0c720cd2a02b21102569c986d1e5c074f5256431c9fa2de0046a74242f0" => :mojave
+    sha256 "5878a9d34fb9913f66a67bb1990331040c172a505f7bdc3f3976b99a4558c180" => :high_sierra
   end
 
   depends_on "go" => :build
 
   def install
-    ENV["GOPATH"] = buildpath
-    kubesealpath = buildpath/"src/github.com/bitnami-labs/sealed-secrets"
-    kubesealpath.install Dir["*"]
-    system "make", "-C", kubesealpath, "kubeseal"
-    bin.install kubesealpath/"kubeseal"
+    cd buildpath do
+      system "make", "kubeseal"
+      bin.install "kubeseal"
+    end
   end
 
   test do
+    # ensure build reports the (git tag) version
+    output = shell_output("#{bin}/kubeseal --version")
+    assert_equal "kubeseal version: v0.9.1", output.strip
+
+    # ensure kubeseal can seal secrets
     secretyaml = [
       "apiVersion: v1",
       "kind: Secret",

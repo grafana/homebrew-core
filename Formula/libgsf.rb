@@ -3,11 +3,13 @@ class Libgsf < Formula
   homepage "https://developer.gnome.org/gsf/"
   url "https://download.gnome.org/sources/libgsf/1.14/libgsf-1.14.46.tar.xz"
   sha256 "ea36959b1421fc8e72caa222f30ec3234d0ed95990e2bf28943a85f33eadad2d"
+  revision 1
 
   bottle do
-    sha256 "25109b3e2ea58c821bf66afea7eb83396c863575261252cc1a209439e5e7a69a" => :mojave
-    sha256 "0c51ceb879565696a729f0f04154d3c0cbbe5ef58b0b2fd4c225f589db4e7631" => :high_sierra
-    sha256 "10aa1ebe555e6976645075b059e50ee408311c40030fe5750ba6f7be9a23e9ab" => :sierra
+    sha256 "1a1cfea4de83f58bc0b21040700f980033f679c83d752377a3fc4e31b37b4d19" => :catalina
+    sha256 "e4ce2838b44594d27c99dac9d17ad1f7d2752bd7cf33d514fce0a54e94542efe" => :mojave
+    sha256 "8016acb38bd84a9d659a2c938b52e84128a242e54bf0c44236da9d875ae5de92" => :high_sierra
+    sha256 "7534eb511218574e344d0c5ebc4ebdb110e6c476d6a2936277f9d584b88f765a" => :sierra
   end
 
   head do

@@ -1,14 +1,15 @@
 class AvroCpp < Formula
   desc "Data serialization system"
   homepage "https://avro.apache.org/"
-  url "https://www.apache.org/dyn/closer.cgi?path=avro/avro-1.9.0/cpp/avro-cpp-1.9.0.tar.gz"
-  sha256 "3a66aa600dbb171cda4664fce1c5a73a9720c8b0f55b13f76650453be6d6ab97"
+  url "https://www.apache.org/dyn/closer.cgi?path=avro/avro-1.9.1/cpp/avro-cpp-1.9.1.tar.gz"
+  sha256 "ff0c98f6f81294167677b221edcdd56b350fac523d857a5f53cf7fcd2187c683"
+  revision 1
 
   bottle do
     cellar :any
-    sha256 "8a05fbeddd6c8ed0c942eb18bce185d8bdf6cbd0cfadf13c5a0916164ead4964" => :mojave
-    sha256 "38e7dd9b74cbc673a2564898075d75b38c17fa9690b014bb5955b511c6ee6bb1" => :high_sierra
-    sha256 "59510bd149f8600f5dcff4915a67bd4600ff3c150ed20cfe30e3d58a8073eaae" => :sierra
+    sha256 "c8914248f52cfdb0b14bdc2a35265b57e63188d90734697f54cbf190838da70f" => :mojave
+    sha256 "5b663117e9a813100c712de902a12499e56a0f242425e79e50e964e2239d8b96" => :high_sierra
+    sha256 "75e045cca21a51f2ea403edca2dc5f17f1a164969f02b605bdc3e7f733abe64d" => :sierra
   end
 
   depends_on "cmake" => :build

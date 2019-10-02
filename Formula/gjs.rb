@@ -1,13 +1,13 @@
 class Gjs < Formula
   desc "JavaScript Bindings for GNOME"
   homepage "https://gitlab.gnome.org/GNOME/gjs/wikis/Home"
-  url "https://download.gnome.org/sources/gjs/1.56/gjs-1.56.2.tar.xz"
-  sha256 "4c89818c3d0e2186fcc4cb5228e9bf2a1866dd7d6646a18f1b37219b6710a3ac"
+  url "https://download.gnome.org/sources/gjs/1.58/gjs-1.58.0.tar.xz"
+  sha256 "1ed16a09c5970064df8b6f59564d0748f81e62eb56257c8911c01ff1ece57ef3"
 
   bottle do
-    sha256 "4ff4de93e8368705bdecccc0592485336bb04ae5781b1751029c2767665c0cdc" => :mojave
-    sha256 "8f1c927f65c3146393f19f13f7c539142e6076262c22bcb23b0d7947499da0be" => :high_sierra
-    sha256 "aed90a9e0b180924e800a32d4478de531f563f9724b80c61ca62fb5671a3bb59" => :sierra
+    sha256 "bd65cd789180236c3bd5f97d282162a88194a510a7ce4d3d43c3d41f36f34ce1" => :mojave
+    sha256 "1485fa0ab14b4c9cd9474d5d1bd5e84b10a5160d7302e3410e733636f119c6aa" => :high_sierra
+    sha256 "b412445e80a0ba4d59519283df3493b34c1259e8a19a96430d8d256aece1562e" => :sierra
   end
 
   depends_on "autoconf@2.13" => :build
@@ -66,8 +66,13 @@ class Gjs < Formula
                           "--disable-silent-rules",
                           "--without-dbus-tests",
                           "--disable-profiler",
+                          "--disable-schemas-compile",
                           "--prefix=#{prefix}"
     system "make", "install"
+  end
+
+  def post_install
+    system "#{Formula["glib"].opt_bin}/glib-compile-schemas", "#{HOMEBREW_PREFIX}/share/glib-2.0/schemas"
   end
 
   test do

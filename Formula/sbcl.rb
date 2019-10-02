@@ -1,13 +1,12 @@
 class Sbcl < Formula
   desc "Steel Bank Common Lisp system"
   homepage "http://www.sbcl.org/"
-  url "https://downloads.sourceforge.net/project/sbcl/sbcl/1.5.2/sbcl-1.5.2-source.tar.bz2"
-  sha256 "dac6aef3ec7628c284a31f2222ede5d47d9d94f9cfdffe0f00ef40f9531e3c3f"
+  url "https://downloads.sourceforge.net/project/sbcl/sbcl/1.5.7/sbcl-1.5.7-source.tar.bz2"
+  sha256 "54742fb5e2f3f350fbafd72bc73662fca21382b5553ed6a146098950d2409485"
 
   bottle do
-    sha256 "4e222e6638b2b4d45d4e388de414e0dffd5056bf3f8791504fb29f9d40fb8fad" => :mojave
-    sha256 "2c17b99d0258ef4759aa088ceab8ef1916a5b988b655726a5c9b2fdfb653dd85" => :high_sierra
-    sha256 "74e424684d75c2b83bf2470bd9d03f730f8f987989b5f3ceb2d6e8366b848510" => :sierra
+    sha256 "03b4defdea7af26e6b1e78c61b1d77071f3b951c273d0c2fc35925ff9823de3b" => :mojave
+    sha256 "e8c571577442bec73ca4ed1f91f88643219a93fc467177708ad22ca14df9496a" => :high_sierra
   end
 
   # Current binary versions are listed at https://sbcl.sourceforge.io/platform-table.html

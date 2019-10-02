@@ -3,19 +3,20 @@ class AzureStorageCpp < Formula
   homepage "https://azure.github.io/azure-storage-cpp"
   url "https://github.com/Azure/azure-storage-cpp/archive/v6.1.0.tar.gz"
   sha256 "a0b6107372125f756783bf6e5d57d24e2c8330a4941f4c72e8ddcf13c31618ed"
+  revision 2
 
   bottle do
     cellar :any
-    sha256 "2113fe5944654429f6d9e3a580588cbd954bca8c455d0947c90990dce86ebd84" => :mojave
-    sha256 "370139544c478e8af10d82e2b4e9a32b61abeecfe553589fd8e05f3da9215d49" => :high_sierra
-    sha256 "f32ae964285fb86613c99e0e216be516403810c07df60d48a7661bd9bc4be131" => :sierra
+    sha256 "541d3b592a79f2b512bfb1bc9b5fe2b48f8ae4743e079297a405e918c781c480" => :mojave
+    sha256 "d2aa03ecacd88103758a20cac1347c4d95e35eb02201133bc9d971a07d510296" => :high_sierra
+    sha256 "e7baae44142163f5ee87e68b940fbaa8c5aa5bf3e953602555a138d7c446d186" => :sierra
   end
 
   depends_on "cmake" => :build
   depends_on "boost"
   depends_on "cpprestsdk"
   depends_on "gettext"
-  depends_on "openssl"
+  depends_on "openssl@1.1"
 
   # patch submitted upstream at https://github.com/Azure/azure-storage-cpp/pull/261
   patch :DATA
@@ -44,11 +45,11 @@ class AzureStorageCpp < Formula
     EOS
     flags = ["-stdlib=libc++", "-std=c++11", "-I#{include}",
              "-I#{Formula["boost"].include}",
-             "-I#{Formula["openssl"].include}",
+             "-I#{Formula["openssl@1.1"].include}",
              "-I#{Formula["cpprestsdk"].include}",
              "-L#{Formula["boost"].lib}",
              "-L#{Formula["cpprestsdk"].lib}",
-             "-L#{Formula["openssl"].lib}",
+             "-L#{Formula["openssl@1.1"].lib}",
              "-L#{lib}",
              "-lcpprest", "-lboost_system-mt", "-lssl", "-lcrypto", "-lazurestorage"] + ENV.cflags.to_s.split
     system ENV.cxx, "-o", "test_azurestoragecpp", "test.cpp", *flags

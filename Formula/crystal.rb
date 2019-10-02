@@ -1,10 +1,11 @@
 class Crystal < Formula
   desc "Fast and statically typed, compiled language with Ruby-like syntax"
   homepage "https://crystal-lang.org/"
+  revision 1
 
   stable do
-    url "https://github.com/crystal-lang/crystal/archive/0.28.0.tar.gz"
-    sha256 "4206f57c6345454504ec4cd8cbd1b9354b9be29fae4cdcdd173f4a28cc13b102"
+    url "https://github.com/crystal-lang/crystal/archive/0.31.0.tar.gz"
+    sha256 "483ffcdce30b98f89b8c6cf6e48c62652cd0450205f609e04721a37997c32486"
 
     resource "shards" do
       url "https://github.com/crystal-lang/shards/archive/v0.8.1.tar.gz"
@@ -13,9 +14,9 @@ class Crystal < Formula
   end
 
   bottle do
-    sha256 "131fc2303d2f15e46f3c928487ed64bf0d139cb3deb64fe9ff25c0df886f4101" => :mojave
-    sha256 "1189ba40af5f99c898361112a0c393bf5ca98f2cb1ac01e0d75edaf44ed12fee" => :high_sierra
-    sha256 "e9ced10a0d2b3e5a4d19b8f1c6dc84c432abddfbc380317c4d1ddd6bec6be4c4" => :sierra
+    sha256 "a1fe1a4600c29faca4b8e4fa1016e1daa6667129b5956ff9d5777efe4da629b2" => :mojave
+    sha256 "e6af5b650eb9b5200e503989cee515f2da25b7778c651259288c8c62520aeb6c" => :high_sierra
+    sha256 "beff786db2fef34041bcc562909067fe667c315a57c30c5fc708ca80a838c0ba" => :sierra
   end
 
   head do
@@ -34,7 +35,7 @@ class Crystal < Formula
   depends_on "gmp" # std uses it but it's not linked
   depends_on "libevent"
   depends_on "libyaml"
-  depends_on "llvm@6"
+  depends_on "llvm@8"
   depends_on "pcre"
   depends_on "pkg-config" # @[Link] will use pkg-config if available
 
@@ -51,9 +52,9 @@ class Crystal < Formula
   end
 
   resource "boot" do
-    url "https://github.com/crystal-lang/crystal/releases/download/0.27.2/crystal-0.27.2-1-darwin-x86_64.tar.gz"
-    version "0.27.2-1"
-    sha256 "2fcd11a3c3d12176004c13aa90d8ca15acde7d1ffa9a82cbaadcd526984a8691"
+    url "https://github.com/crystal-lang/crystal/releases/download/0.30.1/crystal-0.30.1-1-darwin-x86_64.tar.gz"
+    version "0.30.1-1"
+    sha256 "ffc3ee9124367a2dcd76f9b4c2bf8df083ba8fce506aaf0e3c6bfad738257adc"
   end
 
   def install
@@ -76,15 +77,7 @@ class Crystal < Formula
       system "make"
     end
 
-    # TODO: in 0.29.0 this can be replaced with CRYSTAL_LIBRARY_PATH
-    #       in order to build the compiler binary with a static libgc.a
-    ENV.prepend_path "PKG_CONFIG_PATH", buildpath
-    (buildpath/"gc.pc").write <<~EOS
-      Name: bdwgc
-      Description:
-      Version: 8.0.4+mt
-      Libs: #{buildpath/"gc"}/.libs/libgc.a
-    EOS
+    ENV.prepend_path "CRYSTAL_LIBRARY_PATH", buildpath/"gc/.libs"
 
     # Build crystal
     (buildpath/".build").mkpath
@@ -99,7 +92,13 @@ class Crystal < Formula
 
     # Build shards
     resource("shards").stage do
-      system buildpath/"bin/crystal", "build", "-o", buildpath/".build/shards", "src/shards.cr"
+      system buildpath/"bin/crystal", "build",
+                                      "-o", buildpath/".build/shards",
+                                      "src/shards.cr",
+                                      "--release", "--no-debug"
+
+      man1.install "man/shards.1"
+      man5.install "man/shard.yml.5"
     end
 
     bin.install ".build/shards"
@@ -109,6 +108,8 @@ class Crystal < Formula
 
     bash_completion.install "etc/completion.bash" => "crystal"
     zsh_completion.install "etc/completion.zsh" => "_crystal"
+
+    man1.install "man/crystal.1"
   end
 
   test do

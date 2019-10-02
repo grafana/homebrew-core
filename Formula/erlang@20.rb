@@ -2,14 +2,15 @@ class ErlangAT20 < Formula
   desc "Programming language for highly scalable real-time systems"
   homepage "https://www.erlang.org/"
   # Download tarball from GitHub; it is served faster than the official tarball.
-  url "https://github.com/erlang/otp/archive/OTP-20.3.8.21.tar.gz"
-  sha256 "50413c5784aeb33368806593a258f18adfc4e62687a4928c12f2c1a9ca2259fd"
+  url "https://github.com/erlang/otp/archive/OTP-20.3.8.22.tar.gz"
+  sha256 "d2c36130938659a63d8de094c3d4f8a1d3ea33d4d993d0723ba9c745df2a2753"
+  revision 1
 
   bottle do
     cellar :any
-    sha256 "b196831d137c875796453cf9f163053b2361d5baa0fdfd9a26fc33ebdccbc22a" => :mojave
-    sha256 "b510b82b30bf89a81d214e02591f3a621579e85f58f4bb87bb9900489f5960cc" => :high_sierra
-    sha256 "9be2bb75ca91b960c45034792b8ae81496aabce4d83a2bf53db4e89dbeffd94e" => :sierra
+    sha256 "e099e5f75fb5e924ff43791778e84ae8030656f02995e08c97cef3d357468875" => :mojave
+    sha256 "a3544497c4940df02a427eab843b2a267777f6dd85fb6fa2a17738087a12a8ab" => :high_sierra
+    sha256 "e76e6ac51e9f8c93684633f918a16f4aea13bdf29db4699a28fceaa0f99ff0c4" => :sierra
   end
 
   keg_only :versioned_formula
@@ -17,7 +18,7 @@ class ErlangAT20 < Formula
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "openssl"
+  depends_on "openssl@1.1"
   depends_on "wxmac"
 
   resource "man" do
@@ -52,7 +53,7 @@ class ErlangAT20 < Formula
       --enable-smp-support
       --enable-threads
       --enable-wx
-      --with-ssl=#{Formula["openssl"].opt_prefix}
+      --with-ssl=#{Formula["openssl@1.1"].opt_prefix}
       --without-javac
       --enable-darwin-64bit
     ]

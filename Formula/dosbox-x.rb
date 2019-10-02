@@ -1,21 +1,21 @@
 class DosboxX < Formula
   desc "DOSBox with accurate emulation and wide testing"
-  homepage "http://dosbox-x.com/"
-  url "https://github.com/joncampbell123/dosbox-x/archive/dosbox-x-v0.82.15.tar.gz"
-  sha256 "60e196ee49e4532327d0786a9e3b4f1d28820906b0b868abecf89a19300fb3da"
+  homepage "https://dosbox-x.com/"
+  url "https://github.com/joncampbell123/dosbox-x/archive/dosbox-x-v0.82.21.tar.gz"
+  sha256 "2b5ddf9fc86bd6ff55b3bfdc2984c87698939583e9f8956d552ae922eb4fcb3d"
   version_scheme 1
   head "https://github.com/joncampbell123/dosbox-x.git"
 
   bottle do
     cellar :any
-    sha256 "fa821e37147ed4c1760f39da2a2d7ea50bfe36941df4ccbf53b88fa762481ef4" => :mojave
-    sha256 "c4e47a8bc4e6d8107b1c92d1135770a9cc50993b337d68d1f3225e01257d6ae0" => :high_sierra
-    sha256 "364f2d423f0710fd050c6ce92fa641fd98b8fe4147e46e491a4f4aa93ea924d0" => :sierra
+    sha256 "af7f527be49f3547484915474cc31619122fc8d5ec3c6c212d579df4bb1dc235" => :mojave
+    sha256 "1e586820dfdb67d163c46df2833539e8128f131106082bb7fc9f1c2a0789c336" => :high_sierra
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "fluid-synth"
+  depends_on :macos => :high_sierra # needs futimens
 
   def install
     ENV.cxx11

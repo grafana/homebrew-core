@@ -3,14 +3,14 @@ class Sshfs < Formula
   homepage "https://osxfuse.github.io/"
   url "https://github.com/libfuse/sshfs/releases/download/sshfs-2.10/sshfs-2.10.tar.gz"
   sha256 "70845dde2d70606aa207db5edfe878e266f9c193f1956dd10ba1b7e9a3c8d101"
+  revision 2
 
   bottle do
     cellar :any
-    sha256 "e4c05b69dfe45387aa294ca3fa675cf487db6c99b795859730ec6900fa61ec46" => :mojave
-    sha256 "283859a4868df7d91fc4a6fcef6ddc590957a661f833fbf81da25f6f2c72a585" => :high_sierra
-    sha256 "534fc64f25ee6757e4fd802988deee9d2df8f1c38604d36c525a12a67b1d23fa" => :sierra
-    sha256 "27c5e0d7f9bed4219c12267bd459fbd25a143abf0a9e3f5fa12fd0b587f10007" => :el_capitan
-    sha256 "61c578fbd666a6c2b5b452a7429e3fd5a64da153652d428386c41b4ebb6e30fa" => :yosemite
+    sha256 "aceff3131dd0b098bdef8b5dda54d117b5dd5269ca146f7a5032ecde3c99b6d2" => :catalina
+    sha256 "5f69267c0f1f2489989e108919d66210e058423d0d1f1661812c0194b164619c" => :mojave
+    sha256 "58d222f37622b399352f16eaf823d3e564445d9e951629e965281ac31de5ef4a" => :high_sierra
+    sha256 "dc4a7f24c2cbebd7c35891200b043d737ba6586a28992708ef849ffedff7bb01" => :sierra
   end
 
   depends_on "autoconf" => :build
@@ -19,6 +19,16 @@ class Sshfs < Formula
   depends_on "pkg-config" => :build
   depends_on "glib"
   depends_on :osxfuse
+
+  # Apply patch that clears one remaining roadblock that prevented setting
+  # a custom I/O buffer size on macOS. With this patch in place, it's
+  # recommended to use e.g. `-o iosize=1048576` (or other, reasonable value)
+  # when lauching `sshfs`, for improved performance.
+  # See also: https://github.com/libfuse/sshfs/issues/11
+  patch do
+    url "https://github.com/libfuse/sshfs/commit/667cf34622e2e873db776791df275c7a582d6295.diff?full_index=1"
+    sha256 "6a121d58a94cf0efebbfa217d62aa4d9915a8e6573ae2c086170ff9d9fc09456"
+  end
 
   def install
     system "./configure", "--disable-dependency-tracking", "--prefix=#{prefix}"

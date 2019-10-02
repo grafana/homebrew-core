@@ -1,14 +1,14 @@
 class Topgrade < Formula
   desc "Upgrade all the things"
   homepage "https://github.com/r-darwish/topgrade"
-  url "https://github.com/r-darwish/topgrade/archive/v1.13.0.tar.gz"
-  sha256 "c94a9c53191b301a80e5e817b24a141bb5cdebddcb0ed37b72d0edf3049a3276"
+  url "https://github.com/r-darwish/topgrade/archive/v3.0.2.tar.gz"
+  sha256 "f0b6e3f4cff2040f62ffba6dfadaf4f62a652d018967c7184a8abaa9004121f2"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "6eac805f435f22435756ae83a2d924308000e643ed6da3f909b2c0a1645f4526" => :mojave
-    sha256 "873c09768905a4e14b4aff55f553fcace377184ef79ae3166600011456700743" => :high_sierra
-    sha256 "0fd3aff7e36ef7b0dea1262159c02e86490366f653a1d7be0dafb09bdf179b72" => :sierra
+    sha256 "633733601bf0d74903248ef332e4518e953f07a4cc0c5af7f66c77d94d429e18" => :catalina
+    sha256 "5fcf11837e9258c5c6ba2f3c5c7e33f9327fde4e08a72dbd0b67d336e3575885" => :mojave
+    sha256 "5e57ae993fe274869820084dd971cfe90b20a0a1611f81761328e81094e61e71" => :high_sierra
   end
 
   depends_on "rust" => :build
@@ -18,6 +18,18 @@ class Topgrade < Formula
   end
 
   test do
+    # Configuraton path details: https://github.com/r-darwish/topgrade/blob/master/README.md#configuration-path
+    # Sample config file: https://github.com/r-darwish/topgrade/blob/master/config.example.toml
+    (testpath/"Library/Preferences/topgrade.toml").write <<~EOS
+      # Additional git repositories to pull
+      #git_repos = [
+      #    "~/src/*/",
+      #    "~/.config/something"
+      #]
+    EOS
+
+    assert_match version.to_s, shell_output("#{bin}/topgrade --version")
+
     output = shell_output("#{bin}/topgrade -n")
     assert_match "Dry running: #{HOMEBREW_PREFIX}/bin/brew upgrade", output
     assert_not_match /\sSelf update\s/, output
