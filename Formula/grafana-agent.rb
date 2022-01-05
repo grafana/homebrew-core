@@ -45,33 +45,11 @@ class GrafanaAgent < Formula
     EOS
   end
 
-  plist_options manual: "grafana-agent -config.file=#{HOMEBREW_PREFIX}/etc/grafana-agent/config.yml"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-        <plist version="1.0">
-        <dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{opt_bin}/grafana-agent</string>
-            <string>-config.file</string>
-            <string>#{etc}/grafana-agent/config.yml</string>
-          </array>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>KeepAlive</key>
-          <false/>
-          <key>StandardErrorPath</key>
-          <string>#{var}/log/grafana-agent.err.log</string>
-          <key>StandardOutPath</key>
-          <string>#{var}/log/grafana-agent.log</string>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_bin/"grafana-agent", "-config.file", etc/"grafana-agent/config.yml"]
+    keep_alive true
+    log_path var/"log/grafana-agent.log"
+    error_log_path var/"log/grafana-agent.err.log"
   end
 
   test do
