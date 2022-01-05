@@ -1,3 +1,6 @@
+# typed: false
+# frozen_string_literal: true
+
 class GrafanaAgent < Formula
   desc "Exporter for Prometheus Metrics, Loki Logs, and Tempo Traces"
   homepage "https://grafana.com/docs/agent/"
@@ -31,11 +34,53 @@ class GrafanaAgent < Formula
     system "go", "build", *std_go_args(ldflags: ldflags.join(" ")), "-o", bin/"grafana-agentctl", "./cmd/agentctl"
   end
 
+  def post_install
+    (etc/"grafana-agent").mkpath
+  end
+
+  def caveats
+    <<~EOS
+      The agent uses a configuration file that you must customize before running:
+        #{etc}/grafana-agent/config.yml
+    EOS
+  end
+
+  plist_options manual: "grafana-agent -config.file=#{HOMEBREW_PREFIX}/etc/grafana-agent/config.yml"
+
+  def plist
+    <<~EOS
+      <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+          <key>Label</key>
+          <string>#{plist_name}</string>
+          <key>ProgramArguments</key>
+          <array>
+            <string>#{opt_bin}/grafana-agent</string>
+            <string>-config.file</string>
+            <string>#{etc}/grafana-agent/config.yml</string>
+          </array>
+          <key>RunAtLoad</key>
+          <true/>
+          <key>KeepAlive</key>
+          <false/>
+          <key>StandardErrorPath</key>
+          <string>#{var}/log/grafana-agent.err.log</string>
+          <key>StandardOutPath</key>
+          <string>#{var}/log/grafana-agent.log</string>
+        </dict>
+      </plist>
+    EOS
+  end
+
   test do
     assert_match version.to_s, shell_output("#{bin}/grafana-agent --version")
     assert_match version.to_s, shell_output("#{bin}/grafana-agentctl --version")
 
     port = free_port
+
+    (testpath/"wal").mkpath
 
     (testpath/"grafana-agent.yaml").write <<~EOS
       server:
@@ -47,7 +92,8 @@ class GrafanaAgent < Formula
     system "#{bin}/grafana-agentctl", "config-check", "#{testpath}/grafana-agent.yaml"
 
     fork do
-      exec bin/"grafana-agent", "-config.file=#{testpath}/grafana-agent.yaml"
+      exec bin/"grafana-agent", "-config.file=#{testpath}/grafana-agent.yaml",
+        "-prometheus.wal-directory=#{testpath}/wal"
     end
     sleep 3
 
