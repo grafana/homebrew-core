@@ -73,7 +73,7 @@ class GrafanaAgent < Formula
       exec bin/"grafana-agent", "-config.file=#{testpath}/grafana-agent.yaml",
         "-prometheus.wal-directory=#{testpath}/wal"
     end
-    sleep 3
+    sleep 10
 
     output = shell_output("curl -s 127.0.0.1:#{port}/metrics")
     assert_match "agent_build_info", output
